@@ -215,6 +215,7 @@
         }
         
         [_manifest accumulateArgument:argument forOption:self.currentOption.longName];
+        self.currentOption = nil;
     } else {
         [_manifest accumulateRemainderArgument:argument];
     }
