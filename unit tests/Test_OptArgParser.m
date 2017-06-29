@@ -71,37 +71,9 @@
     XCTAssertEqualObjects(error.localizedDescription, @"unrecognized option: 'foo'");
 }
 
-- (void)testOnlyOptions
-{
-    NSArray *argv = @[ @"-b", @"--foo", @"flarn", @"-b" ];
-    NSArray *options = @[
-         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
-         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:NO],
-    ];
-    
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    
-    NSDictionary *expectedFreeOptions = @{
-        @"bar" : @(2)
-    };
-    
-    NSDictionary *expectedOptionArguments = @{
-        @"foo" : @[ @"flarn" ]
-    };
-    
-    XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
-    XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
-    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
-}
-
 - (void)testFreeOptions
 {
-    NSArray *argv = @[ @"--foo", @"-f", @"-b", @"/flarn.txt"];
+    NSArray *argv = @[ @"--foo", @"-f", @"-b" ];
     NSArray *options = @[
         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:NO],
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:NO]
@@ -121,12 +93,12 @@
     
     XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
     XCTAssertEqualObjects(manifest.optionArguments, @{});
-    XCTAssertEqualObjects(manifest.remainderArguments, @[ @"/flarn.txt" ]);
+    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
 }
 
 - (void)testOptionArguments
 {
-    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie", @"/flarn.txt"];
+    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie"];
     NSArray *options = @[
         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
@@ -146,7 +118,32 @@
     
     XCTAssertEqualObjects(manifest.freeOptions, @{});
     XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
-    XCTAssertEqualObjects(manifest.remainderArguments, @[ @"/flarn.txt" ]);
+    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
+}
+
+- (void)testRemainderArguments
+{
+    NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt"];
+    NSArray *options = @[
+        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
+    ];
+    
+    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
+    
+    NSError *error = nil;
+    OptArgManifest *manifest = [parser parseArguments:&error];
+    XCTAssertNotNil(manifest);
+    XCTAssertNil(error);
+    
+    NSDictionary *expectedOptionArguments = @{
+        @"foo" : @[ @"bar" ]
+    };
+    
+    NSArray *expectedRemainderArguments = @[ @"/flarn.txt", @"/bort.txt" ];
+    
+    XCTAssertEqualObjects(manifest.freeOptions, @{});
+    XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
+    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
 }
 
 - (void)testRemainderArgumentsOnly
@@ -164,14 +161,12 @@
     XCTAssertNotNil(manifest);
     XCTAssertNil(error);
     
-    NSArray *expectedRemainderArguments = @[ @"/flarn.txt", @"/bort.txt" ];
-    
     XCTAssertEqualObjects(manifest.freeOptions, @{});
     XCTAssertEqualObjects(manifest.optionArguments, @{});
-    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
+    XCTAssertEqualObjects(manifest.remainderArguments, argv);
 }
 
-- (void)testRemainderArgumentsOnly_noOptions
+- (void)testRemainderArgumentsOnly_noParserOptions
 {
     NSArray *argv = @[ @"alpha", @"bravo", @"charlie" ];
     OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:@[]];
