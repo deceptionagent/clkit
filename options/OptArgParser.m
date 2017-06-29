@@ -182,7 +182,7 @@
     return [self _parseOptionName:optionName usingMap:_shortOptionMap error:outError];
 }
 
-- (OAParserState)_parseShortOptionGroup:(NSError **)outError
+- (OAParserState)_parseShortOptionGroup:(__unused NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *optionGroup = [[_argumentVector popFirstObject] substringFromIndex:1];
