@@ -10,12 +10,40 @@
 #import "OptArgParser.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Test_OptArgParser : XCTestCase
+
+- (void)performTestWithArgv:(NSArray<NSString *> *)argv
+                    options:(NSArray<Option *> *)options
+        expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
+    expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
+ expectedRemainderArguments:(NSArray<NSString *> *)expectedRemainderArguments;
 
 @end
 
+NS_ASSUME_NONNULL_END
+
 
 @implementation Test_OptArgParser
+
+- (void)performTestWithArgv:(NSArray<NSString *> *)argv
+                    options:(NSArray<Option *> *)options
+        expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
+    expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
+ expectedRemainderArguments:(NSArray<NSString *> *)expectedRemainderArguments
+{
+    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
+    NSError *error = nil;
+    OptArgManifest *manifest = [parser parseArguments:&error];
+    XCTAssertNotNil(manifest);
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
+    XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
+    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
+}
+
+#pragma mark -
 
 - (void)testInit
 {
@@ -42,15 +70,7 @@
          [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:@[] options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    XCTAssertEqualObjects(manifest.freeOptions, @{});
-    XCTAssertEqualObjects(manifest.optionArguments, @{});
-    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
+    [self performTestWithArgv:@[] options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:@[]];
 }
 
 - (void)testUnrecognizedOption
@@ -79,21 +99,12 @@
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:NO]
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    
     NSDictionary *expectedFreeOptions = @{
         @"foo" : @(2),
         @"bar" : @(1)
     };
     
-    XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
-    XCTAssertEqualObjects(manifest.optionArguments, @{});
-    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
+    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedRemainderArguments:@[]];
 }
 
 - (void)testOptionArguments
@@ -104,21 +115,12 @@
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    
     NSDictionary *expectedOptionArguments = @{
         @"foo" : @[ @"alpha", @"bravo" ],
         @"bar" : @[ @"charlie" ]
     };
     
-    XCTAssertEqualObjects(manifest.freeOptions, @{});
-    XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
-    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:@[]];
 }
 
 - (void)testRemainderArguments
@@ -128,22 +130,12 @@
         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    
     NSDictionary *expectedOptionArguments = @{
         @"foo" : @[ @"bar" ]
     };
     
     NSArray *expectedRemainderArguments = @[ @"/flarn.txt", @"/bort.txt" ];
-    
-    XCTAssertEqualObjects(manifest.freeOptions, @{});
-    XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
-    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
 }
 
 - (void)testRemainderArgumentsOnly
@@ -154,30 +146,13 @@
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    
-    XCTAssertEqualObjects(manifest.freeOptions, @{});
-    XCTAssertEqualObjects(manifest.optionArguments, @{});
-    XCTAssertEqualObjects(manifest.remainderArguments, argv);
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
 }
 
 - (void)testRemainderArgumentsOnly_noParserOptions
 {
     NSArray *argv = @[ @"alpha", @"bravo", @"charlie" ];
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:@[]];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    XCTAssertEqualObjects(manifest.freeOptions, @{});
-    XCTAssertEqualObjects(manifest.optionArguments, @{});
-    XCTAssertEqualObjects(manifest.remainderArguments, argv);
+    [self performTestWithArgv:argv options:@[] expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
 }
 
 - (void)testComplexMix
@@ -191,13 +166,6 @@
          [Option optionWithLongName:@"spline" shortName:@"p" hasArgument:NO],
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
-    
-    NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
-    XCTAssertNotNil(manifest);
-    XCTAssertNil(error);
-    
     NSDictionary *expectedFreeOptions = @{
         @"xyzzy" : @(4),
         @"spline" : @(1)
@@ -209,10 +177,7 @@
     };
     
     NSArray *expectedRemainderArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];
-    
-    XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
-    XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
-    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
+    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
 }
 
 @end
