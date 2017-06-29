@@ -30,11 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Reading Manifests
 
-- (BOOL)freeOptionEnabled:(NSString *)optionName;
-- (uint32_t)freeOptionCount:(NSString *)optionName;
-
-- (nullable NSArray *)argumentsForOption:(NSString *)optionName;
-@property (nullable, readonly) NSArray<NSString *> *remainderArguments;
+@property (readonly) NSDictionary<NSString *, NSNumber *> *freeOptions;
+@property (readonly) NSDictionary<NSString *, NSArray *> *optionArguments;
+@property (readonly) NSArray<NSString *> *remainderArguments;
 
 @end
 

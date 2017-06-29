@@ -21,10 +21,7 @@
     XCTAssertEqualObjects(option.longName, @"flarn");
     XCTAssertEqualObjects(option.shortName, @"f");
     XCTAssertTrue(option.hasArgument);
-}
 
-- (void)testInitExceptions
-{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertThrows([Option optionWithLongName:nil shortName:nil hasArgument:NO]);

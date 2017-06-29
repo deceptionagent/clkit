@@ -7,6 +7,10 @@
 
 @implementation OptArgManifest
 
+@synthesize freeOptions = _freeOptions;
+@synthesize optionArguments = _optionArguments;
+@synthesize remainderArguments = _remainderArguments;
+
 - (instancetype)init
 {
     self = [super init];
@@ -32,8 +36,8 @@
 
 - (void)accumulateFreeOption:(NSString *)optionName
 {
-    uint32_t occurrences = [self freeOptionCount:optionName];
-    _freeOptions[optionName] = @(occurrences + 1);
+    NSNumber *occurrences = _freeOptions[optionName];
+    _freeOptions[optionName] = @(occurrences.unsignedIntValue + 1);
 }
 
 - (void)accumulateArgument:(id)argument forOption:(NSString *)optionName
@@ -51,29 +55,5 @@
 {
     [_remainderArguments addObject:argument];
 }
-
-#pragma mark -
-#pragma mark Reading Manifests
-
-- (BOOL)freeOptionEnabled:(NSString *)optionName
-{
-    return ([self freeOptionCount:optionName] > 0);
-}
-
-- (uint32_t)freeOptionCount:(NSString *)optionName
-{
-    return _freeOptions[optionName].unsignedIntValue;
-}
-
-- (NSArray *)argumentsForOption:(NSString *)optionName
-{
-    return _optionArguments[optionName];
-}
-
-- (NSArray<NSString *> *)remainderArguments
-{
-    return (_remainderArguments.count > 0 ? _remainderArguments : nil);
-}
-
 
 @end
