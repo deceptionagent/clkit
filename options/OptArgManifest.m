@@ -31,6 +31,12 @@
     [super dealloc];
 }
 
+- (NSString *)debugDescription
+{
+    NSString *fmt = @"%@\n\nfree options:\n%@\n\noption arguments:\n%@\n\nremainder arguments:\n%@";
+    return [NSString stringWithFormat:fmt, super.debugDescription, _freeOptions, _optionArguments, _remainderArguments];
+}
+
 #pragma mark -
 #pragma mark Building Manifests
 
