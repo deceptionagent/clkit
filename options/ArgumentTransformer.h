@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 
-- (nullable id)transformArgument:(id)argument error:(NSError **)outError;
+- (nullable id)transformArgument:(NSString *)argument error:(NSError **)outError;
 
 @end
 
