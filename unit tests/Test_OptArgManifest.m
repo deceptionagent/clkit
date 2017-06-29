@@ -22,21 +22,16 @@
     [manifest accumulateArgument:@"foo" forOption:@"bar"];
     [manifest accumulateRemainderArgument:@"barf"];
     
-    XCTAssertFalse([manifest freeOptionEnabled:@"flarn"]);
-    XCTAssertEqual([manifest freeOptionCount:@"flarn"], 0);
+    XCTAssertNil(manifest.freeOptions[@"flarn"]);
     
     [manifest accumulateFreeOption:@"flarn"];
-    XCTAssertTrue([manifest freeOptionEnabled:@"flarn"]);
-    XCTAssertEqual([manifest freeOptionCount:@"flarn"], 1);
-    XCTAssertFalse([manifest freeOptionEnabled:@"barf"]);
-    XCTAssertEqual([manifest freeOptionCount:@"barf"], 0);
+    XCTAssertEqualObjects(manifest.freeOptions[@"flarn"], @(1));
+    XCTAssertNil(manifest.freeOptions[@"barf"]);
     
     [manifest accumulateFreeOption:@"flarn"];
     [manifest accumulateFreeOption:@"barf"];
-    XCTAssertTrue([manifest freeOptionEnabled:@"flarn"]);
-    XCTAssertEqual([manifest freeOptionCount:@"flarn"], 2);
-    XCTAssertTrue([manifest freeOptionEnabled:@"barf"]);
-    XCTAssertEqual([manifest freeOptionCount:@"barf"], 1);
+    XCTAssertEqualObjects(manifest.freeOptions[@"flarn"], @(2));
+    XCTAssertEqualObjects(manifest.freeOptions[@"barf"], @(1));
 }
 
 - (void)testOptArgPairs
@@ -47,7 +42,7 @@
     [manifest accumulateFreeOption:@"free"];
     [manifest accumulateRemainderArgument:@"remainder"];
     
-    XCTAssertNil([manifest argumentsForOption:@"lorem"]);
+    XCTAssertNil(manifest.optionArguments[@"lorem"]);
     
     [manifest accumulateArgument:@"alpha" forOption:@"lorem"];
     [manifest accumulateArgument:@"bravo" forOption:@"lorem"];
@@ -56,21 +51,11 @@
     [manifest accumulateArgument:@"echo" forOption:@"dolor"];
     [manifest accumulateArgument:@"echo" forOption:@"dolor"];
     [manifest accumulateArgument:@"foxtrot" forOption:@"solo"];
-
-    NSArray *argumentListLorem = [manifest argumentsForOption:@"lorem"];
-    NSArray *argumentListIpsum = [manifest argumentsForOption:@"ipsum"];
-    NSArray *argumentListDolor = [manifest argumentsForOption:@"dolor"];
-    NSArray *argumentListSolo = [manifest argumentsForOption:@"solo"];
-    NSArray *expectedArgumentListLorem = @[ @"alpha", @"bravo" ];
-    NSArray *expectedArgumentListIpsum = @[ @"charlie", @"delta" ];
-    NSArray *expectedArgumentListDolor = @[ @"echo", @"echo" ];
-    NSArray *expectedArgumentListSolo = @[ @"foxtrot" ];
-    
-    XCTAssertEqualObjects(argumentListLorem, expectedArgumentListLorem);
-    XCTAssertEqualObjects(argumentListIpsum, expectedArgumentListIpsum);
-    XCTAssertEqualObjects(argumentListDolor, expectedArgumentListDolor);
-    XCTAssertEqualObjects(argumentListSolo, expectedArgumentListSolo);
-    XCTAssertNil([manifest argumentsForOption:@"flarn"]);
+    XCTAssertEqualObjects(manifest.optionArguments[@"lorem"], (@[ @"alpha", @"bravo" ]));
+    XCTAssertEqualObjects(manifest.optionArguments[@"ipsum"], (@[ @"charlie", @"delta" ]));
+    XCTAssertEqualObjects(manifest.optionArguments[@"dolor"], (@[ @"echo", @"echo" ]));
+    XCTAssertEqualObjects(manifest.optionArguments[@"solo"], @[ @"foxtrot" ]);
+    XCTAssertNil(manifest.optionArguments[@"flarn"]);
 }
 
 - (void)testRemainderArguments
@@ -81,19 +66,12 @@
     [manifest accumulateArgument:@"foo" forOption:@"bar"];
     [manifest accumulateFreeOption:@"flarn"];
     
-    XCTAssertNil(manifest.remainderArguments);
+    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
     
     [manifest accumulateRemainderArgument:@"alpha"];
     [manifest accumulateRemainderArgument:@"bravo"];
     [manifest accumulateRemainderArgument:@"alpha"];
-    
-    NSArray *expectedRemainderArguments = @[
-        @"alpha",
-        @"bravo",
-        @"alpha"
-    ];
-    
-    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
+    XCTAssertEqualObjects(manifest.remainderArguments, (@[ @"alpha", @"bravo", @"alpha"]));
 }
 
 @end
