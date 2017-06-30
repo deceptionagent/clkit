@@ -21,7 +21,10 @@
     XCTAssertEqualObjects(option.longName, @"flarn");
     XCTAssertEqualObjects(option.shortName, @"f");
     XCTAssertTrue(option.hasArgument);
-
+    
+    XCTAssertThrows([Option optionWithLongName:@"--flarn" shortName:@"f"]);
+    XCTAssertThrows([Option optionWithLongName:@"flarn" shortName:@"-f"]);
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertThrows([Option optionWithLongName:nil shortName:nil]);

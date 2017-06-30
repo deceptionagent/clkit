@@ -33,6 +33,8 @@
 
 - (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument
 {
+    NSParameterAssert(![longName hasPrefix:@"-"]);
+    NSParameterAssert(![shortName hasPrefix:@"-"]);
     NSParameterAssert(longName.length > 0);
     NSParameterAssert(shortName.length == 1);
     
