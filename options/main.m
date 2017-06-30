@@ -22,8 +22,8 @@ int main(int argc, const char *argv[])
     @autoreleasepool
     {
         NSArray *argvec = [NSArray arrayWithArgv:(argv + 1) argc:(argc - 1)];
-        Option *flarnOption = [Option optionWithLongName:@"flarn" shortName:@"f" hasArgument:NO];
-        Option *bortOption = [Option optionWithLongName:@"bort" shortName:@"b" hasArgument:YES];
+        Option *flarnOption = [Option freeOptionWithLongName:@"flarn" shortName:@"f"];
+        Option *bortOption = [Option optionWithLongName:@"bort" shortName:@"b"];
         NSArray *options = @[ flarnOption, bortOption ];
         OptArgParser *parser = [OptArgParser parserWithArgumentVector:argvec options:options];
         

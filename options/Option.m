@@ -7,6 +7,13 @@
 #import "ArgumentTransformer.h"
 
 
+@interface Option ()
+
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument NS_DESIGNATED_INITIALIZER;
+
+@end
+
+
 @implementation Option
 
 @synthesize longName = _longName;
@@ -14,12 +21,17 @@
 @synthesize hasArgument = _hasArgument;
 @synthesize argumentTransformer = _argumentTransformer;
 
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument
++ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName
 {
-	return [[[self alloc] initWithLongName:longName shortName:shortName hasArgument:hasArgument] autorelease];
+    return [[[self alloc] _initWithLongName:longName shortName:shortName hasArgument:YES] autorelease];
 }
 
-- (instancetype)initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument
++ (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName
+{
+    return [[[self alloc] _initWithLongName:longName shortName:shortName hasArgument:NO] autorelease];
+}
+
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument
 {
     NSParameterAssert(longName.length > 0);
     NSParameterAssert(shortName.length == 1);

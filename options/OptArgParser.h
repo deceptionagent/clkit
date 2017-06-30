@@ -34,7 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<Option *> *)options;
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<Option *> *)options;
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<Option *> *)options NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 - (nullable OptArgManifest *)parseArguments:(NSError **)outError;
 

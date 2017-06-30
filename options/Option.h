@@ -18,8 +18,15 @@ NS_ASSUME_NONNULL_BEGIN
     id<ArgumentTransformer> _argumentTransformer;
 }
 
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument;
-- (instancetype)initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument;
+// there are two basic kinds of options:
+//    - normal options that expect arguments
+//    - free options that don't have arguments
+//
+// long and short names should not include leading dashes.
++ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
++ (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly) NSString *longName;
 @property (readonly) NSString *shortName;
