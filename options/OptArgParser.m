@@ -33,7 +33,7 @@
     
     self = [super init];
     if (self != nil) {
-        _state = OAPStateReadNextItem;
+        _state = OAPStateBegin;
         _argumentVector = [argv mutableCopy];
         _longOptionMap = [[NSMutableDictionary alloc] init];
         _shortOptionMap = [[NSMutableDictionary alloc] init];
@@ -65,7 +65,7 @@
 
 - (nullable OptArgManifest *)parseArguments:(NSError **)outError
 {
-    NSAssert(_state != OAPStateBegin, @"cannot re-run a parser after use");
+    NSAssert((_state == OAPStateBegin), @"cannot re-run a parser after use");
     
     while (_state != OAPStateEnd) {
         switch (_state) {

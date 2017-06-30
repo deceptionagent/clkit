@@ -197,4 +197,12 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
 }
 
+- (void)testParserReuseNotAllowed
+{
+    OptArgParser *parser = [OptArgParser parserWithArgumentVector:@[] options:@[]];
+    OptArgManifest *manifest = [parser parseArguments:nil];
+    XCTAssertNotNil(manifest);
+    XCTAssertThrows([parser parseArguments:nil]);
+}
+
 @end
