@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testOptionArguments
 {
-    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie"];
+    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie" ];
     NSArray *options = @[
         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testRemainderArguments
 {
-    NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt"];
+    NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
     ];
@@ -140,7 +140,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testRemainderArgumentsOnly
 {
-    NSArray *argv = @[ @"/flarn.txt", @"/bort.txt"];
+    NSArray *argv = @[ @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
@@ -155,9 +155,26 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgv:argv options:@[] expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
 }
 
+- (void)testOptionArgumentNotProvided
+{
+    NSArray *argv = @[ @"--foo", @"--bar", @"what" ];
+    NSArray *options = @[
+        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
+        [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
+    ];
+    
+    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
+    NSError *error = nil;
+    OptArgManifest *manifest = [parser parseArguments:&error];
+    XCTAssertNil(manifest);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, EINVAL);
+    XCTAssertEqualObjects(error.localizedDescription, @"expected argument but encountered option-like token '--bar'");
+}
+
 - (void)testComplexMix
 {
-    NSArray *argv = @[ @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx", @"--syn", @"cathedra", @"confound", @"delivery"];
+    NSArray *argv = @[ @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx", @"--syn", @"cathedra", @"confound", @"delivery" ];
     NSArray *options = @[
          [Option optionWithLongName:@"syn" shortName:@"s" hasArgument:YES],
          [Option optionWithLongName:@"ack" shortName:@"a" hasArgument:YES],
