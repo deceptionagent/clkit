@@ -205,4 +205,27 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([parser parseArguments:nil]);
 }
 
+- (void)testDuplicateOptionGuard
+{
+    NSArray *options = @[
+         [Option optionWithLongName:@"syn" shortName:@"s"],
+         [Option optionWithLongName:@"ack" shortName:@"a"],
+         [Option optionWithLongName:@"ack" shortName:@"a"],
+         [Option freeOptionWithLongName:@"xyzzy" shortName:@"x"],
+         [Option freeOptionWithLongName:@"spline" shortName:@"p"],
+    ];
+    
+    XCTAssertThrows([OptArgParser parserWithArgumentVector:@[] options:options]);
+    
+    options = @[
+         [Option optionWithLongName:@"syn" shortName:@"s"],
+         [Option optionWithLongName:@"ack" shortName:@"a"],
+         [Option freeOptionWithLongName:@"xyzzy" shortName:@"x"],
+         [Option freeOptionWithLongName:@"xyzzy" shortName:@"x"],
+         [Option freeOptionWithLongName:@"spline" shortName:@"p"],
+    ];
+    
+    XCTAssertThrows([OptArgParser parserWithArgumentVector:@[] options:options]);
+}
+
 @end
