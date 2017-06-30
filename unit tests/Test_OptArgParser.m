@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--flarn" ];
     NSArray *options = @[
-         [Option optionWithLongName:@"barf" shortName:@"b" hasArgument:NO],
+         [Option freeOptionWithLongName:@"barf" shortName:@"b"],
     ];
     
     XCTAssertNotNil([OptArgParser parserWithArgumentVector:argv options:options]);
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_END
 - (void)testEmptyArgv
 {
     NSArray *options = @[
-         [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
+         [Option optionWithLongName:@"foo" shortName:@"f"],
     ];
     
     [self performTestWithArgv:@[] options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:@[]];
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"flarn" ];
     NSArray *options = @[
-         [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:NO],
+         [Option freeOptionWithLongName:@"bar" shortName:@"b"],
     ];
     
     OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
@@ -95,8 +95,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"-f", @"-b" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:NO],
-        [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:NO]
+        [Option freeOptionWithLongName:@"foo" shortName:@"f"],
+        [Option freeOptionWithLongName:@"bar" shortName:@"b"]
     ];
     
     NSDictionary *expectedFreeOptions = @{
@@ -111,8 +111,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
-        [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
+        [Option optionWithLongName:@"foo" shortName:@"f"],
+        [Option optionWithLongName:@"bar" shortName:@"b"]
     ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -127,7 +127,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
+        [Option optionWithLongName:@"foo" shortName:@"f"],
     ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -142,8 +142,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
-        [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
+        [Option optionWithLongName:@"foo" shortName:@"f"],
+        [Option optionWithLongName:@"bar" shortName:@"b"]
     ];
     
     [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
@@ -159,8 +159,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"--bar", @"what" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f" hasArgument:YES],
-        [Option optionWithLongName:@"bar" shortName:@"b" hasArgument:YES]
+        [Option optionWithLongName:@"foo" shortName:@"f"],
+        [Option optionWithLongName:@"bar" shortName:@"b"]
     ];
     
     OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
@@ -176,11 +176,11 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx", @"--syn", @"cathedra", @"confound", @"delivery" ];
     NSArray *options = @[
-         [Option optionWithLongName:@"syn" shortName:@"s" hasArgument:YES],
-         [Option optionWithLongName:@"ack" shortName:@"a" hasArgument:YES],
-         [Option optionWithLongName:@"ghost" shortName:@"g" hasArgument:YES], // not provided in argv
-         [Option optionWithLongName:@"xyzzy" shortName:@"x" hasArgument:NO],
-         [Option optionWithLongName:@"spline" shortName:@"p" hasArgument:NO],
+         [Option optionWithLongName:@"syn" shortName:@"s"],
+         [Option optionWithLongName:@"ack" shortName:@"a"],
+         [Option optionWithLongName:@"ghost" shortName:@"g"], // not provided in argv
+         [Option freeOptionWithLongName:@"xyzzy" shortName:@"x"],
+         [Option freeOptionWithLongName:@"spline" shortName:@"p"],
     ];
     
     NSDictionary *expectedFreeOptions = @{
