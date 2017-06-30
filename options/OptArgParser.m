@@ -119,7 +119,7 @@
         return OAPStateEnd;
     }
     
-    // meaningless input
+    // reject meaningless input
     // [TACK] if we wanted to support overflow arguments, we would remove the "--" guard and add that as a scenario
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
         if (outError != nil) {
@@ -206,6 +206,16 @@
     NSString *argument = [_argumentVector popFirstObject];
     
     if (self.currentOption != nil) {
+        // reject: the next argument is some kind of option, but we expect an argument
+        if ([argument hasPrefix:@"-"]) {
+            if (outError != nil) {
+                NSDictionary *info = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"expected argument but encountered option-like token '%@'", argument] };
+                *outError = [NSError errorWithDomain:NSPOSIXErrorDomain code:EINVAL userInfo:info];
+            }
+            
+            return OAPStateError;
+        }
+        
         id<ArgumentTransformer> transformer = self.currentOption.argumentTransformer;
         if (transformer != nil) {
             argument = [transformer transformArgument:argument error:outError];
