@@ -159,7 +159,7 @@
         return OAPStateError;
     }
     
-    if (self.currentOption.hasArgument) {
+    if (self.currentOption.expectsArgument) {
         return OAPStateParseArgument;
     }
     
