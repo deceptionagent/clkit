@@ -5,8 +5,8 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSMutableArray (OptArgAdditions)
+@interface NSMutableArray (CLKAdditions)
 
-- (nullable id)popFirstObject;
+- (nullable id)clk_popFirstObject;
 
 @end

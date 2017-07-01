@@ -2,10 +2,10 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "OptArgManifest.h"
+#import "CLKOptArgManifest.h"
 
 
-@implementation OptArgManifest
+@implementation CLKOptArgManifest
 
 @synthesize freeOptions = _freeOptions;
 @synthesize optionArguments = _optionArguments;

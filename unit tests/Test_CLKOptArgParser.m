@@ -5,18 +5,18 @@
 
 #import <XCTest/XCTest.h>
 
-#import "ArgumentTransformer.h"
-#import "Option.h"
-#import "OptArgManifest.h"
-#import "OptArgParser.h"
+#import "CLKArgumentTransformer.h"
+#import "CLKOption.h"
+#import "CLKOptArgManifest.h"
+#import "CLKOptArgParser.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Test_OptArgParser : XCTestCase
+@interface Test_CLKOptArgParser : XCTestCase
 
 - (void)performTestWithArgv:(NSArray<NSString *> *)argv
-                    options:(NSArray<Option *> *)options
+                    options:(NSArray<CLKOption *> *)options
         expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
  expectedRemainderArguments:(NSArray<NSString *> *)expectedRemainderArguments;
@@ -26,17 +26,17 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 
-@implementation Test_OptArgParser
+@implementation Test_CLKOptArgParser
 
 - (void)performTestWithArgv:(NSArray<NSString *> *)argv
-                    options:(NSArray<Option *> *)options
+                    options:(NSArray<CLKOption *> *)options
         expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
  expectedRemainderArguments:(NSArray<NSString *> *)expectedRemainderArguments
 {
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
     NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
+    CLKOptArgManifest *manifest = [parser parseArguments:&error];
     XCTAssertNotNil(manifest);
     XCTAssertNil(error);
     XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
@@ -50,25 +50,25 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--flarn" ];
     NSArray *options = @[
-         [Option freeOptionWithLongName:@"barf" shortName:@"b"],
+         [CLKOption freeOptionWithLongName:@"barf" shortName:@"b"],
     ];
     
-    XCTAssertNotNil([OptArgParser parserWithArgumentVector:argv options:options]);
-    XCTAssertNotNil([OptArgParser parserWithArgumentVector:argv options:@[]]);
-    XCTAssertNotNil([OptArgParser parserWithArgumentVector:argv options:@[]]);
+    XCTAssertNotNil([CLKOptArgParser parserWithArgumentVector:argv options:options]);
+    XCTAssertNotNil([CLKOptArgParser parserWithArgumentVector:argv options:@[]]);
+    XCTAssertNotNil([CLKOptArgParser parserWithArgumentVector:argv options:@[]]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([OptArgParser parserWithArgumentVector:nil options:nil]);
-    XCTAssertThrows([OptArgParser parserWithArgumentVector:nil options:options]);
-    XCTAssertThrows([OptArgParser parserWithArgumentVector:argv options:nil]);
+    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:nil options:nil]);
+    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:nil options:options]);
+    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:argv options:nil]);
 #pragma clang diagnostic pop
 }
 
 - (void)testEmptyArgv
 {
     NSArray *options = @[
-         [Option optionWithLongName:@"foo" shortName:@"f"],
+         [CLKOption optionWithLongName:@"foo" shortName:@"f"],
     ];
     
     [self performTestWithArgv:@[] options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:@[]];
@@ -78,13 +78,13 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"flarn" ];
     NSArray *options = @[
-         [Option freeOptionWithLongName:@"bar" shortName:@"b"],
+         [CLKOption freeOptionWithLongName:@"bar" shortName:@"b"],
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
     
     NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
+    CLKOptArgManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, EINVAL);
@@ -96,8 +96,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"-f", @"-b" ];
     NSArray *options = @[
-        [Option freeOptionWithLongName:@"foo" shortName:@"f"],
-        [Option freeOptionWithLongName:@"bar" shortName:@"b"]
+        [CLKOption freeOptionWithLongName:@"foo" shortName:@"f"],
+        [CLKOption freeOptionWithLongName:@"bar" shortName:@"b"]
     ];
     
     NSDictionary *expectedFreeOptions = @{
@@ -112,8 +112,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f"],
-        [Option optionWithLongName:@"bar" shortName:@"b"]
+        [CLKOption optionWithLongName:@"foo" shortName:@"f"],
+        [CLKOption optionWithLongName:@"bar" shortName:@"b"]
     ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f"],
+        [CLKOption optionWithLongName:@"foo" shortName:@"f"],
     ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -143,8 +143,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f"],
-        [Option optionWithLongName:@"bar" shortName:@"b"]
+        [CLKOption optionWithLongName:@"foo" shortName:@"f"],
+        [CLKOption optionWithLongName:@"bar" shortName:@"b"]
     ];
     
     [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
@@ -160,13 +160,13 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"--bar", @"what" ];
     NSArray *options = @[
-        [Option optionWithLongName:@"foo" shortName:@"f"],
-        [Option optionWithLongName:@"bar" shortName:@"b"]
+        [CLKOption optionWithLongName:@"foo" shortName:@"f"],
+        [CLKOption optionWithLongName:@"bar" shortName:@"b"]
     ];
     
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:argv options:options];
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
     NSError *error = nil;
-    OptArgManifest *manifest = [parser parseArguments:&error];
+    CLKOptArgManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, EINVAL);
@@ -177,9 +177,9 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     
-    IntegerArgumentTransformer *transformer = [IntegerArgumentTransformer transformer];
-    Option *syn = [Option optionWithLongName:@"strange" shortName:@"s" transformer:transformer];
-    Option *ack = [Option optionWithLongName:@"aeons" shortName:@"a" transformer:transformer];
+    CLKIntegerArgumentTransformer *transformer = [CLKIntegerArgumentTransformer transformer];
+    CLKOption *syn = [CLKOption optionWithLongName:@"strange" shortName:@"s" transformer:transformer];
+    CLKOption *ack = [CLKOption optionWithLongName:@"aeons" shortName:@"a" transformer:transformer];
     NSArray *options = @[ syn, ack ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -199,12 +199,12 @@ NS_ASSUME_NONNULL_END
     ];
     
     NSArray *options = @[
-         [Option optionWithLongName:@"syn" shortName:@"s"],
-         [Option optionWithLongName:@"ack" shortName:@"a"],
-         [Option optionWithLongName:@"noise" shortName:@"n" transformer:[IntegerArgumentTransformer transformer]],
-         [Option optionWithLongName:@"ghost" shortName:@"g"], // not provided in argv
-         [Option freeOptionWithLongName:@"xyzzy" shortName:@"x"],
-         [Option freeOptionWithLongName:@"spline" shortName:@"p"],
+         [CLKOption optionWithLongName:@"syn" shortName:@"s"],
+         [CLKOption optionWithLongName:@"ack" shortName:@"a"],
+         [CLKOption optionWithLongName:@"noise" shortName:@"n" transformer:[CLKIntegerArgumentTransformer transformer]],
+         [CLKOption optionWithLongName:@"ghost" shortName:@"g"], // not provided in argv
+         [CLKOption freeOptionWithLongName:@"xyzzy" shortName:@"x"],
+         [CLKOption freeOptionWithLongName:@"spline" shortName:@"p"],
     ];
     
     NSDictionary *expectedFreeOptions = @{
@@ -224,8 +224,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)testParserReuseNotAllowed
 {
-    OptArgParser *parser = [OptArgParser parserWithArgumentVector:@[] options:@[]];
-    OptArgManifest *manifest = [parser parseArguments:nil];
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:@[] options:@[]];
+    CLKOptArgManifest *manifest = [parser parseArguments:nil];
     XCTAssertNotNil(manifest);
     XCTAssertThrows([parser parseArguments:nil]);
 }
@@ -234,21 +234,21 @@ NS_ASSUME_NONNULL_END
 {
     // two --ack opts, different short names
     NSArray *options = @[
-         [Option optionWithLongName:@"ack" shortName:@"a"],
-         [Option optionWithLongName:@"syn" shortName:@"s"],
-         [Option freeOptionWithLongName:@"ack" shortName:@"c"],
+         [CLKOption optionWithLongName:@"ack" shortName:@"a"],
+         [CLKOption optionWithLongName:@"syn" shortName:@"s"],
+         [CLKOption freeOptionWithLongName:@"ack" shortName:@"c"],
     ];
     
-    XCTAssertThrows([OptArgParser parserWithArgumentVector:@[] options:options]);
+    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:@[] options:options]);
     
     // two -x opts, different long names
     options = @[
-         [Option optionWithLongName:@"xyzzy" shortName:@"x"],
-         [Option freeOptionWithLongName:@"spline" shortName:@"p"],
-         [Option freeOptionWithLongName:@"yzzyx" shortName:@"x"],
+         [CLKOption optionWithLongName:@"xyzzy" shortName:@"x"],
+         [CLKOption freeOptionWithLongName:@"spline" shortName:@"p"],
+         [CLKOption freeOptionWithLongName:@"yzzyx" shortName:@"x"],
     ];
     
-    XCTAssertThrows([OptArgParser parserWithArgumentVector:@[] options:options]);
+    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:@[] options:options]);
 }
 
 @end

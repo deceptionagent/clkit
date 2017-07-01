@@ -8,23 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
-		A66A9DEB1F023CE200456347 /* Option.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* Option.m */; };
-		A66A9DF31F02406F00456347 /* Test_Option.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DF21F02406F00456347 /* Test_Option.m */; };
-		A66A9DF81F0240AB00456347 /* Option.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* Option.m */; };
-		A66A9DFB1F0241DB00456347 /* OptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* OptArgParser.m */; };
-		A66A9DFE1F02DF4300456347 /* OptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* OptArgManifest.m */; };
-		A66A9DFF1F0370DB00456347 /* OptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* OptArgManifest.m */; };
-		A66A9E011F037A9400456347 /* Test_OptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_OptArgManifest.m */; };
-		A66A9E041F03968A00456347 /* NSMutableArray+OptArgAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+OptArgAdditions.m */; };
-		A66A9E051F03A10E00456347 /* OptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* OptArgParser.m */; };
-		A66A9E071F03A14400456347 /* Test_OptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E061F03A14400456347 /* Test_OptArgParser.m */; };
-		A66A9E081F03A41800456347 /* NSMutableArray+OptArgAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+OptArgAdditions.m */; };
-		A66A9E0D1F041DE600456347 /* NSArray+OptArgAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */; };
-		A66A9E0F1F04219E00456347 /* Test_ArrayAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0E1F04219E00456347 /* Test_ArrayAdditions.m */; };
-		A66A9E101F0421C500456347 /* NSArray+OptArgAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */; };
-		A67BF0E41F078C270091B233 /* ArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E31F078C270091B233 /* ArgumentTransformer.m */; };
-		A67BF0E51F078C270091B233 /* ArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E31F078C270091B233 /* ArgumentTransformer.m */; };
-		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformer.m */; };
+		A66A9DEB1F023CE200456347 /* CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* CLKOption.m */; };
+		A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DF21F02406F00456347 /* Test_CLKOption.m */; };
+		A66A9DF81F0240AB00456347 /* CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* CLKOption.m */; };
+		A66A9DFB1F0241DB00456347 /* CLKOptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */; };
+		A66A9DFE1F02DF4300456347 /* CLKOptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */; };
+		A66A9DFF1F0370DB00456347 /* CLKOptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */; };
+		A66A9E011F037A9400456347 /* Test_CLKOptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */; };
+		A66A9E041F03968A00456347 /* NSMutableArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */; };
+		A66A9E051F03A10E00456347 /* CLKOptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */; };
+		A66A9E071F03A14400456347 /* Test_CLKOptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */; };
+		A66A9E081F03A41800456347 /* NSMutableArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */; };
+		A66A9E0D1F041DE600456347 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
+		A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */; };
+		A66A9E101F0421C500456347 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
+		A67BF0E41F078C270091B233 /* CLKArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E31F078C270091B233 /* CLKArgumentTransformer.m */; };
+		A67BF0E51F078C270091B233 /* CLKArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E31F078C270091B233 /* CLKArgumentTransformer.m */; };
+		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,25 +42,25 @@
 /* Begin PBXFileReference section */
 		A66A9DDF1F02294800456347 /* options */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = options; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66A9DE21F02294800456347 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A66A9DE91F023CE200456347 /* Option.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Option.h; sourceTree = "<group>"; };
-		A66A9DEA1F023CE200456347 /* Option.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Option.m; sourceTree = "<group>"; };
+		A66A9DE91F023CE200456347 /* CLKOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption.h; sourceTree = "<group>"; };
+		A66A9DEA1F023CE200456347 /* CLKOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOption.m; sourceTree = "<group>"; };
 		A66A9DF01F02406F00456347 /* unit tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "unit tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A66A9DF21F02406F00456347 /* Test_Option.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_Option.m; sourceTree = "<group>"; };
+		A66A9DF21F02406F00456347 /* Test_CLKOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOption.m; sourceTree = "<group>"; };
 		A66A9DF41F02406F00456347 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A66A9DF91F0241DB00456347 /* OptArgParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptArgParser.h; sourceTree = "<group>"; };
-		A66A9DFA1F0241DB00456347 /* OptArgParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptArgParser.m; sourceTree = "<group>"; };
-		A66A9DFC1F02DF4300456347 /* OptArgManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptArgManifest.h; sourceTree = "<group>"; };
-		A66A9DFD1F02DF4300456347 /* OptArgManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptArgManifest.m; sourceTree = "<group>"; };
-		A66A9E001F037A9400456347 /* Test_OptArgManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_OptArgManifest.m; sourceTree = "<group>"; };
-		A66A9E021F03968A00456347 /* NSMutableArray+OptArgAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+OptArgAdditions.h"; sourceTree = "<group>"; };
-		A66A9E031F03968A00456347 /* NSMutableArray+OptArgAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+OptArgAdditions.m"; sourceTree = "<group>"; };
-		A66A9E061F03A14400456347 /* Test_OptArgParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_OptArgParser.m; sourceTree = "<group>"; };
-		A66A9E091F03A9EE00456347 /* ArgumentTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentTransformer.h; sourceTree = "<group>"; };
-		A66A9E0B1F041DE600456347 /* NSArray+OptArgAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+OptArgAdditions.h"; sourceTree = "<group>"; };
-		A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+OptArgAdditions.m"; sourceTree = "<group>"; };
-		A66A9E0E1F04219E00456347 /* Test_ArrayAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArrayAdditions.m; sourceTree = "<group>"; };
-		A67BF0E31F078C270091B233 /* ArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgumentTransformer.m; sourceTree = "<group>"; };
-		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformer.m; sourceTree = "<group>"; };
+		A66A9DF91F0241DB00456347 /* CLKOptArgParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgParser.h; sourceTree = "<group>"; };
+		A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOptArgParser.m; sourceTree = "<group>"; };
+		A66A9DFC1F02DF4300456347 /* CLKOptArgManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgManifest.h; sourceTree = "<group>"; };
+		A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOptArgManifest.m; sourceTree = "<group>"; };
+		A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptArgManifest.m; sourceTree = "<group>"; };
+		A66A9E021F03968A00456347 /* NSMutableArray+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+CLKAdditions.h"; sourceTree = "<group>"; };
+		A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+CLKAdditions.m"; sourceTree = "<group>"; };
+		A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptArgParser.m; sourceTree = "<group>"; };
+		A66A9E091F03A9EE00456347 /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
+		A66A9E0B1F041DE600456347 /* NSArray+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+CLKAdditions.h"; sourceTree = "<group>"; };
+		A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+CLKAdditions.m"; sourceTree = "<group>"; };
+		A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAdditions.m; sourceTree = "<group>"; };
+		A67BF0E31F078C270091B233 /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
+		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformers.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,14 +104,14 @@
 			children = (
 				A66A9DE21F02294800456347 /* main.m */,
 				A66A9E0A1F041DBB00456347 /* Categories */,
-				A66A9E091F03A9EE00456347 /* ArgumentTransformer.h */,
-				A67BF0E31F078C270091B233 /* ArgumentTransformer.m */,
-				A66A9DE91F023CE200456347 /* Option.h */,
-				A66A9DEA1F023CE200456347 /* Option.m */,
-				A66A9DFC1F02DF4300456347 /* OptArgManifest.h */,
-				A66A9DFD1F02DF4300456347 /* OptArgManifest.m */,
-				A66A9DF91F0241DB00456347 /* OptArgParser.h */,
-				A66A9DFA1F0241DB00456347 /* OptArgParser.m */,
+				A66A9E091F03A9EE00456347 /* CLKArgumentTransformer.h */,
+				A67BF0E31F078C270091B233 /* CLKArgumentTransformer.m */,
+				A66A9DE91F023CE200456347 /* CLKOption.h */,
+				A66A9DEA1F023CE200456347 /* CLKOption.m */,
+				A66A9DFC1F02DF4300456347 /* CLKOptArgManifest.h */,
+				A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */,
+				A66A9DF91F0241DB00456347 /* CLKOptArgParser.h */,
+				A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */,
 			);
 			path = options;
 			sourceTree = "<group>";
@@ -119,11 +119,11 @@
 		A66A9DF11F02406F00456347 /* unit tests */ = {
 			isa = PBXGroup;
 			children = (
-				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformer.m */,
-				A66A9E0E1F04219E00456347 /* Test_ArrayAdditions.m */,
-				A66A9DF21F02406F00456347 /* Test_Option.m */,
-				A66A9E001F037A9400456347 /* Test_OptArgManifest.m */,
-				A66A9E061F03A14400456347 /* Test_OptArgParser.m */,
+				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
+				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
+				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
+				A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */,
+				A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);
 			path = "unit tests";
@@ -132,10 +132,10 @@
 		A66A9E0A1F041DBB00456347 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				A66A9E0B1F041DE600456347 /* NSArray+OptArgAdditions.h */,
-				A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */,
-				A66A9E021F03968A00456347 /* NSMutableArray+OptArgAdditions.h */,
-				A66A9E031F03968A00456347 /* NSMutableArray+OptArgAdditions.m */,
+				A66A9E0B1F041DE600456347 /* NSArray+CLKAdditions.h */,
+				A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */,
+				A66A9E021F03968A00456347 /* NSMutableArray+CLKAdditions.h */,
+				A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -227,12 +227,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A66A9E041F03968A00456347 /* NSMutableArray+OptArgAdditions.m in Sources */,
-				A66A9DFB1F0241DB00456347 /* OptArgParser.m in Sources */,
-				A66A9DFE1F02DF4300456347 /* OptArgManifest.m in Sources */,
-				A67BF0E41F078C270091B233 /* ArgumentTransformer.m in Sources */,
-				A66A9E0D1F041DE600456347 /* NSArray+OptArgAdditions.m in Sources */,
-				A66A9DEB1F023CE200456347 /* Option.m in Sources */,
+				A66A9E041F03968A00456347 /* NSMutableArray+CLKAdditions.m in Sources */,
+				A66A9DFB1F0241DB00456347 /* CLKOptArgParser.m in Sources */,
+				A66A9DFE1F02DF4300456347 /* CLKOptArgManifest.m in Sources */,
+				A67BF0E41F078C270091B233 /* CLKArgumentTransformer.m in Sources */,
+				A66A9E0D1F041DE600456347 /* NSArray+CLKAdditions.m in Sources */,
+				A66A9DEB1F023CE200456347 /* CLKOption.m in Sources */,
 				A66A9DE31F02294800456347 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -241,17 +241,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A66A9DF81F0240AB00456347 /* Option.m in Sources */,
-				A66A9E081F03A41800456347 /* NSMutableArray+OptArgAdditions.m in Sources */,
-				A66A9DF31F02406F00456347 /* Test_Option.m in Sources */,
-				A66A9E101F0421C500456347 /* NSArray+OptArgAdditions.m in Sources */,
-				A67BF0E51F078C270091B233 /* ArgumentTransformer.m in Sources */,
-				A66A9DFF1F0370DB00456347 /* OptArgManifest.m in Sources */,
-				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformer.m in Sources */,
-				A66A9E051F03A10E00456347 /* OptArgParser.m in Sources */,
-				A66A9E0F1F04219E00456347 /* Test_ArrayAdditions.m in Sources */,
-				A66A9E011F037A9400456347 /* Test_OptArgManifest.m in Sources */,
-				A66A9E071F03A14400456347 /* Test_OptArgParser.m in Sources */,
+				A66A9DF81F0240AB00456347 /* CLKOption.m in Sources */,
+				A66A9E081F03A41800456347 /* NSMutableArray+CLKAdditions.m in Sources */,
+				A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */,
+				A66A9E101F0421C500456347 /* NSArray+CLKAdditions.m in Sources */,
+				A67BF0E51F078C270091B233 /* CLKArgumentTransformer.m in Sources */,
+				A66A9DFF1F0370DB00456347 /* CLKOptArgManifest.m in Sources */,
+				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
+				A66A9E051F03A10E00456347 /* CLKOptArgParser.m in Sources */,
+				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
+				A66A9E011F037A9400456347 /* Test_CLKOptArgManifest.m in Sources */,
+				A66A9E071F03A14400456347 /* Test_CLKOptArgParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

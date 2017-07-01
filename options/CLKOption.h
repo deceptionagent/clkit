@@ -5,17 +5,17 @@
 #import <Foundation/Foundation.h>
 
 
-@class ArgumentTransformer;
+@class CLKArgumentTransformer;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Option : NSObject
+@interface CLKOption : NSObject
 {
     NSString *_longName;
     NSString *_shortName;
     BOOL _hasArgument;
-    ArgumentTransformer *_transformer;
+    CLKArgumentTransformer *_transformer;
 }
 
 // there are two basic kinds of options:
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 //
 // long and short names should not include leading dashes.
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable ArgumentTransformer *)transformer;
++ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer;
 + (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString *longName;
 @property (readonly) NSString *shortName;
 @property (readonly) BOOL hasArgument;
-@property (nullable, readonly) ArgumentTransformer *transformer;
+@property (nullable, readonly) CLKArgumentTransformer *transformer;
 
 @end
 

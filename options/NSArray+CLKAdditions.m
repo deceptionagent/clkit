@@ -2,12 +2,12 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "NSArray+OptArgAdditions.h"
+#import "NSArray+CLKAdditions.h"
 
 
-@implementation NSArray (OptArgAdditions)
+@implementation NSArray (CLKAdditions)
 
-+ (NSArray *)arrayWithArgv:(const char *[])argv argc:(int)argc
++ (NSArray *)clk_arrayWithArgv:(const char *[])argv argc:(int)argc
 {
     NSMutableArray *array = [NSMutableArray array];
     

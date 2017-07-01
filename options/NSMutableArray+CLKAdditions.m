@@ -2,12 +2,12 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "NSMutableArray+OptArgAdditions.h"
+#import "NSMutableArray+CLKAdditions.h"
 
 
-@implementation NSMutableArray (OptArgAdditions)
+@implementation NSMutableArray (CLKAdditions)
 
-- (id)popFirstObject
+- (id)clk_popFirstObject
 {
     if (self.count == 0) {
         return nil;
