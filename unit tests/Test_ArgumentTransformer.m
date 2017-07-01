@@ -16,7 +16,7 @@
 
 - (void)testIntegerArgumentTransformer
 {
-    IntegerArgumentTransformer *transformer = [[[IntegerArgumentTransformer alloc] init] autorelease];
+    IntegerArgumentTransformer *transformer = [IntegerArgumentTransformer transformer];
     
     NSError *error = nil;
     NSNumber *num = [transformer transformedArgument:@"0" error:&error];
