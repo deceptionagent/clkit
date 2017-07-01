@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 //    2. free options that don't have arguments
 //
 // long and short names should not include leading dashes.
+
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer;
 + (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
