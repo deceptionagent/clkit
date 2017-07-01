@@ -9,7 +9,7 @@
 
 @interface Option ()
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable ArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -19,19 +19,24 @@
 @synthesize longName = _longName;
 @synthesize shortName = _shortName;
 @synthesize hasArgument = _hasArgument;
-@synthesize argumentTransformer = _argumentTransformer;
+@synthesize transformer = _transformer;
 
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName
 {
-    return [[[self alloc] _initWithLongName:longName shortName:shortName hasArgument:YES] autorelease];
+    return [self optionWithLongName:longName shortName:shortName transformer:nil];
+}
+
++ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable ArgumentTransformer *)transformer
+{
+    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:transformer hasArgument:YES] autorelease];
 }
 
 + (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName
 {
-    return [[[self alloc] _initWithLongName:longName shortName:shortName hasArgument:NO] autorelease];
+    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:nil hasArgument:NO] autorelease];
 }
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName hasArgument:(BOOL)hasArgument
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(ArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument
 {
     NSParameterAssert(![longName hasPrefix:@"-"]);
     NSParameterAssert(![shortName hasPrefix:@"-"]);
@@ -42,6 +47,7 @@
     if (self != nil) {
         _longName = [longName copy];
         _shortName = [shortName copy];
+        _transformer = [transformer retain];
         _hasArgument = hasArgument;
     }
     
@@ -50,7 +56,7 @@
 
 - (void)dealloc
 {
-    [_argumentTransformer release];
+    [_transformer release];
     [_shortName release];
     [_longName release];
     [super dealloc];

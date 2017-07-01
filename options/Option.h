@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol ArgumentTransformer;
+@class ArgumentTransformer;
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,15 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *_longName;
     NSString *_shortName;
     BOOL _hasArgument;
-    id<ArgumentTransformer> _argumentTransformer;
+    ArgumentTransformer *_transformer;
 }
 
 // there are two basic kinds of options:
-//    - normal options that expect arguments
-//    - free options that don't have arguments
+//
+//    1. normal options that expect arguments
+//    2. free options that don't have arguments
 //
 // long and short names should not include leading dashes.
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
++ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable ArgumentTransformer *)transformer;
 + (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -31,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString *longName;
 @property (readonly) NSString *shortName;
 @property (readonly) BOOL hasArgument;
-@property (nullable, retain) id<ArgumentTransformer> argumentTransformer;
+@property (nullable, readonly) ArgumentTransformer *transformer;
 
 @end
 

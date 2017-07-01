@@ -216,9 +216,9 @@
             return OAPStateError;
         }
         
-        id<ArgumentTransformer> transformer = self.currentOption.argumentTransformer;
+        ArgumentTransformer *transformer = self.currentOption.transformer;
         if (transformer != nil) {
-            argument = [transformer transformArgument:argument error:outError];
+            argument = [transformer transformedArgument:argument error:outError];
             if (argument == nil) {
                 return OAPStateError;
             }
