@@ -22,7 +22,7 @@
     XCTAssertEqualObjects(option.longName, @"flarn");
     XCTAssertEqualObjects(option.shortName, @"f");
     XCTAssertNil(option.transformer);
-    XCTAssertTrue(option.hasArgument);
+    XCTAssertTrue(option.expectsArgument);
 
     option = [CLKOption optionWithLongName:@"flarn" shortName:@"f" transformer:nil];
     XCTAssertNotNil(option);
@@ -55,7 +55,7 @@
     XCTAssertEqualObjects(option.longName, @"flarn");
     XCTAssertEqualObjects(option.shortName, @"f");
     XCTAssertNil(option.transformer);
-    XCTAssertFalse(option.hasArgument);
+    XCTAssertFalse(option.expectsArgument);
 
     XCTAssertThrows([CLKOption freeOptionWithLongName:@"--flarn" shortName:@"f"]);
     XCTAssertThrows([CLKOption freeOptionWithLongName:@"flarn" shortName:@"-f"]);

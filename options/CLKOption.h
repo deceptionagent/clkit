@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 {
     NSString *_longName;
     NSString *_shortName;
-    BOOL _hasArgument;
+    BOOL _expectsArgument;
     CLKArgumentTransformer *_transformer;
 }
 
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) NSString *longName;
 @property (readonly) NSString *shortName;
-@property (readonly) BOOL hasArgument;
+@property (readonly) BOOL expectsArgument;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
 
 @end

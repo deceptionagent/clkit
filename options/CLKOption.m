@@ -9,7 +9,7 @@
 
 @interface CLKOption ()
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -18,7 +18,7 @@
 
 @synthesize longName = _longName;
 @synthesize shortName = _shortName;
-@synthesize hasArgument = _hasArgument;
+@synthesize expectsArgument = _expectsArgument;
 @synthesize transformer = _transformer;
 
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName
@@ -28,15 +28,15 @@
 
 + (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:transformer hasArgument:YES] autorelease];
+    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:transformer expectsArgument:YES] autorelease];
 }
 
 + (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName
 {
-    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:nil hasArgument:NO] autorelease];
+    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:nil expectsArgument:NO] autorelease];
 }
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(CLKArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
 {
     NSParameterAssert(![longName hasPrefix:@"-"]);
     NSParameterAssert(![shortName hasPrefix:@"-"]);
@@ -48,7 +48,7 @@
         _longName = [longName copy];
         _shortName = [shortName copy];
         _transformer = [transformer retain];
-        _hasArgument = hasArgument;
+        _expectsArgument = expectsArgument;
     }
     
     return self;
@@ -64,7 +64,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | hasArgument: %@ }", super.description, _longName, _shortName, (_hasArgument ? @"YES" : @"NO")];
+    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expectsArgument: %@ }", super.description, _longName, _shortName, (_expectsArgument ? @"YES" : @"NO")];
 }
 
 @end
