@@ -49,7 +49,22 @@
 
 - (id)transformedArgument:(NSString *)argument error:(NSError **)outError
 {
-    return argument;
+    errno = 0;
+    char *slop = NULL;
+    float f = strtof(argument.UTF8String, &slop);
+    if ((f == 0 && errno != 0) || *slop != '\0') {
+        if (outError != nil) {
+            NSDictionary *info = @{
+                NSLocalizedDescriptionKey : [NSString stringWithFormat:@"couldn't coerce '%@' to a floating-point value", argument]
+            };
+            
+            *outError = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:info];
+        }
+        
+        return nil;
+    }
+    
+    return @(f);
 }
 
 @end
