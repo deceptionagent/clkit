@@ -22,6 +22,9 @@
 		A66A9E0D1F041DE600456347 /* NSArray+OptArgAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */; };
 		A66A9E0F1F04219E00456347 /* Test_ArrayAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0E1F04219E00456347 /* Test_ArrayAdditions.m */; };
 		A66A9E101F0421C500456347 /* NSArray+OptArgAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */; };
+		A67BF0E41F078C270091B233 /* ArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E31F078C270091B233 /* ArgumentTransformer.m */; };
+		A67BF0E51F078C270091B233 /* ArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E31F078C270091B233 /* ArgumentTransformer.m */; };
+		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +59,8 @@
 		A66A9E0B1F041DE600456347 /* NSArray+OptArgAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+OptArgAdditions.h"; sourceTree = "<group>"; };
 		A66A9E0C1F041DE600456347 /* NSArray+OptArgAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+OptArgAdditions.m"; sourceTree = "<group>"; };
 		A66A9E0E1F04219E00456347 /* Test_ArrayAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArrayAdditions.m; sourceTree = "<group>"; };
+		A67BF0E31F078C270091B233 /* ArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgumentTransformer.m; sourceTree = "<group>"; };
+		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +105,7 @@
 				A66A9DE21F02294800456347 /* main.m */,
 				A66A9E0A1F041DBB00456347 /* Categories */,
 				A66A9E091F03A9EE00456347 /* ArgumentTransformer.h */,
+				A67BF0E31F078C270091B233 /* ArgumentTransformer.m */,
 				A66A9DE91F023CE200456347 /* Option.h */,
 				A66A9DEA1F023CE200456347 /* Option.m */,
 				A66A9DFC1F02DF4300456347 /* OptArgManifest.h */,
@@ -113,6 +119,7 @@
 		A66A9DF11F02406F00456347 /* unit tests */ = {
 			isa = PBXGroup;
 			children = (
+				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformer.m */,
 				A66A9E0E1F04219E00456347 /* Test_ArrayAdditions.m */,
 				A66A9DF21F02406F00456347 /* Test_Option.m */,
 				A66A9E001F037A9400456347 /* Test_OptArgManifest.m */,
@@ -223,6 +230,7 @@
 				A66A9E041F03968A00456347 /* NSMutableArray+OptArgAdditions.m in Sources */,
 				A66A9DFB1F0241DB00456347 /* OptArgParser.m in Sources */,
 				A66A9DFE1F02DF4300456347 /* OptArgManifest.m in Sources */,
+				A67BF0E41F078C270091B233 /* ArgumentTransformer.m in Sources */,
 				A66A9E0D1F041DE600456347 /* NSArray+OptArgAdditions.m in Sources */,
 				A66A9DEB1F023CE200456347 /* Option.m in Sources */,
 				A66A9DE31F02294800456347 /* main.m in Sources */,
@@ -237,7 +245,9 @@
 				A66A9E081F03A41800456347 /* NSMutableArray+OptArgAdditions.m in Sources */,
 				A66A9DF31F02406F00456347 /* Test_Option.m in Sources */,
 				A66A9E101F0421C500456347 /* NSArray+OptArgAdditions.m in Sources */,
+				A67BF0E51F078C270091B233 /* ArgumentTransformer.m in Sources */,
 				A66A9DFF1F0370DB00456347 /* OptArgManifest.m in Sources */,
+				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformer.m in Sources */,
 				A66A9E051F03A10E00456347 /* OptArgParser.m in Sources */,
 				A66A9E0F1F04219E00456347 /* Test_ArrayAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_OptArgManifest.m in Sources */,

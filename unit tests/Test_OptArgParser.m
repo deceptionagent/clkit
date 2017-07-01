@@ -5,6 +5,7 @@
 
 #import <XCTest/XCTest.h>
 
+#import "ArgumentTransformer.h"
 #import "Option.h"
 #import "OptArgManifest.h"
 #import "OptArgParser.h"
@@ -172,12 +173,35 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(error.localizedDescription, @"expected argument but encountered option-like token '--bar'");
 }
 
+- (void)testArgumentTransformation
+{
+    NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
+    
+    IntegerArgumentTransformer *transformer = [IntegerArgumentTransformer transformer];
+    Option *syn = [Option optionWithLongName:@"strange" shortName:@"s" transformer:transformer];
+    Option *ack = [Option optionWithLongName:@"aeons" shortName:@"a" transformer:transformer];
+    NSArray *options = @[ syn, ack ];
+    
+    NSDictionary *expectedOptionArguments = @{
+        @"strange" : @[ @(7) ],
+        @"aeons" : @[ @(819) ],
+    };
+    
+    NSArray *expectedRemainderArguments = @[ @"/fatum/iustum/stultorum" ];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
+}
+
 - (void)testComplexMix
 {
-    NSArray *argv = @[ @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx", @"--syn", @"cathedra", @"confound", @"delivery" ];
+    NSArray *argv = @[
+        @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx",
+        @"--syn", @"cathedra", @"--noise", @"819", @"confound", @"delivery"
+    ];
+    
     NSArray *options = @[
          [Option optionWithLongName:@"syn" shortName:@"s"],
          [Option optionWithLongName:@"ack" shortName:@"a"],
+         [Option optionWithLongName:@"noise" shortName:@"n" transformer:[IntegerArgumentTransformer transformer]],
          [Option optionWithLongName:@"ghost" shortName:@"g"], // not provided in argv
          [Option freeOptionWithLongName:@"xyzzy" shortName:@"x"],
          [Option freeOptionWithLongName:@"spline" shortName:@"p"],
@@ -190,7 +214,8 @@ NS_ASSUME_NONNULL_END
     
     NSDictionary *expectedOptionArguments = @{
         @"syn" : @[ @"aeons", @"cathedra" ],
-        @"ack" : @[ @"hack" ]
+        @"ack" : @[ @"hack" ],
+        @"noise" : @[ @(819) ]
     };
     
     NSArray *expectedRemainderArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];

@@ -7,11 +7,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol ArgumentTransformer <NSObject>
+@interface ArgumentTransformer : NSObject
 
-@required
++ (instancetype)transformer;
 
-- (nullable id)transformArgument:(NSString *)argument error:(NSError **)outError;
+- (nullable id)transformedArgument:(NSString *)argument error:(NSError **)outError;
+
+@end
+
+
+@interface IntegerArgumentTransformer : ArgumentTransformer
+
+@end
+
+
+@interface FloatArgumentTransformer : ArgumentTransformer
 
 @end
 
