@@ -5,15 +5,15 @@
 #import <Foundation/Foundation.h>
 
 
-typedef NS_ENUM(uint32_t, OAParserState) {
-    OAPStateBegin = 0,
-    OAPStateReadNextItem,
-    OAPStateParseLongOption,
-    OAPStateParseShortOption,
-    OAPStateParseShortOptionGroup,
-    OAPStateParseArgument,
-    OAPStateError,
-    OAPStateEnd
+typedef NS_ENUM(uint32_t, CLKOAPState) {
+    CLKOAPStateBegin = 0,
+    CLKOAPStateReadNextItem,
+    CLKOAPStateParseLongOption,
+    CLKOAPStateParseShortOption,
+    CLKOAPStateParseShortOptionGroup,
+    CLKOAPStateParseArgument,
+    CLKOAPStateError,
+    CLKOAPStateEnd
 };
 
 
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOptArgParser : NSObject
 {
-    OAParserState _state;
+    CLKOAPState _state;
     CLKOption *_currentOption;
     NSMutableArray<NSString *> *_argumentVector;
     NSMutableDictionary<NSString *, CLKOption *> *_longOptionMap;
