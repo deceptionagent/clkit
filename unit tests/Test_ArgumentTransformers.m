@@ -4,19 +4,19 @@
 
 #import <XCTest/XCTest.h>
 
-#import "ArgumentTransformer.h"
+#import "CLKArgumentTransformer.h"
 
 
-@interface Test_ArgumentTransformer : XCTestCase
+@interface Test_ArgumentTransformers : XCTestCase
 
 @end
 
 
-@implementation Test_ArgumentTransformer
+@implementation Test_ArgumentTransformers
 
 - (void)testIntegerArgumentTransformer
 {
-    IntegerArgumentTransformer *transformer = [IntegerArgumentTransformer transformer];
+    CLKIntegerArgumentTransformer *transformer = [CLKIntegerArgumentTransformer transformer];
     
     NSError *error = nil;
     NSNumber *num = [transformer transformedArgument:@"0" error:&error];
@@ -59,7 +59,7 @@
 
 - (void)testFloatArgumentTransformer
 {
-    FloatArgumentTransformer *transformer = [FloatArgumentTransformer transformer];
+    CLKFloatArgumentTransformer *transformer = [CLKFloatArgumentTransformer transformer];
     
     NSError *error = nil;
     NSNumber *num = [transformer transformedArgument:@"0.7" error:&error];

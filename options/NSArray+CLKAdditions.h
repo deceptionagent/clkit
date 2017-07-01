@@ -5,8 +5,8 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSArray (OptArgAdditions)
+@interface NSArray (CLKAdditions)
 
-+ (NSArray *)arrayWithArgv:(const char *[])argv argc:(int)argc;
++ (NSArray *)clk_arrayWithArgv:(const char *[])argv argc:(int)argc;
 
 @end

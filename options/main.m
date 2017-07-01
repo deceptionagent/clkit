@@ -6,10 +6,10 @@
 
 #import <sysexits.h>
 
-#import "NSArray+OptArgAdditions.h"
-#import "Option.h"
-#import "OptArgManifest.h"
-#import "OptArgParser.h"
+#import "NSArray+CLKAdditions.h"
+#import "CLKOption.h"
+#import "CLKOptArgManifest.h"
+#import "CLKOptArgParser.h"
 
 
 int main(int argc, const char *argv[])
@@ -21,14 +21,14 @@ int main(int argc, const char *argv[])
     
     @autoreleasepool
     {
-        NSArray *argvec = [NSArray arrayWithArgv:(argv + 1) argc:(argc - 1)];
-        Option *flarnOption = [Option freeOptionWithLongName:@"flarn" shortName:@"f"];
-        Option *bortOption = [Option optionWithLongName:@"bort" shortName:@"b"];
+        NSArray *argvec = [NSArray clk_arrayWithArgv:(argv + 1) argc:(argc - 1)];
+        CLKOption *flarnOption = [CLKOption freeOptionWithLongName:@"flarn" shortName:@"f"];
+        CLKOption *bortOption = [CLKOption optionWithLongName:@"bort" shortName:@"b"];
         NSArray *options = @[ flarnOption, bortOption ];
-        OptArgParser *parser = [OptArgParser parserWithArgumentVector:argvec options:options];
+        CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
         
         NSError *error;
-        OptArgManifest *manifest = [parser parseArguments:&error];
+        CLKOptArgManifest *manifest = [parser parseArguments:&error];
         if (manifest == nil) {
             fprintf(stderr, "%s: %s (error %ld)\n", getprogname(), error.localizedDescription.UTF8String, (long)error.code);
             return 1;

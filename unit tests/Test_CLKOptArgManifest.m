@@ -4,19 +4,19 @@
 
 #import <XCTest/XCTest.h>
 
-#import "OptArgManifest.h"
+#import "CLKOptArgManifest.h"
 
 
-@interface Test_OptArgManifest : XCTestCase
+@interface Test_CLKOptArgManifest : XCTestCase
 
 @end
 
 
-@implementation Test_OptArgManifest
+@implementation Test_CLKOptArgManifest
 
 - (void)testFreeOptions
 {
-    OptArgManifest *manifest = [[[OptArgManifest alloc] init] autorelease];
+    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
     // optarg pairs and remainder arguments should not affect free options
     [manifest accumulateArgument:@"foo" forOption:@"bar"];
@@ -36,7 +36,7 @@
 
 - (void)testOptArgPairs
 {
-    OptArgManifest *manifest = [[[OptArgManifest alloc] init] autorelease];
+    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
     // free options and remainder arguments should not affect optarg pairs
     [manifest accumulateFreeOption:@"free"];
@@ -60,7 +60,7 @@
 
 - (void)testRemainderArguments
 {
-    OptArgManifest *manifest = [[[OptArgManifest alloc] init] autorelease];
+    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
     // free options and optarg pairs should not affect remainder arguments
     [manifest accumulateArgument:@"foo" forOption:@"bar"];

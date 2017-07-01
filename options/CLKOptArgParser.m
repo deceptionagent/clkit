@@ -2,31 +2,31 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "OptArgParser.h"
+#import "CLKOptArgParser.h"
 
-#import "ArgumentTransformer.h"
-#import "NSMutableArray+OptArgAdditions.h"
-#import "Option.h"
-#import "OptArgManifest.h"
+#import "NSMutableArray+CLKAdditions.h"
+#import "CLKArgumentTransformer.h"
+#import "CLKOption.h"
+#import "CLKOptArgManifest.h"
 
 
-@interface OptArgParser ()
+@interface CLKOptArgParser ()
 
-@property (nullable, retain) Option *currentOption;
+@property (nullable, retain) CLKOption *currentOption;
 
 @end
 
 
-@implementation OptArgParser
+@implementation CLKOptArgParser
 
 @synthesize currentOption = _currentOption;
 
-+ (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<Option *> *)options
++ (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
     return [[[self alloc] initWithArgumentVector:argv options:options] autorelease];
 }
 
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<Option *> *)options
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
     NSParameterAssert(argv != nil);
     NSParameterAssert(options != nil);
@@ -38,14 +38,14 @@
         _longOptionMap = [[NSMutableDictionary alloc] init];
         _shortOptionMap = [[NSMutableDictionary alloc] init];
         
-        for (Option *opt in options) {
+        for (CLKOption *opt in options) {
             NSAssert((_longOptionMap[opt.longName] == nil), @"duplicate option '%@'", opt.longName);
             NSAssert((_shortOptionMap[opt.shortName] == nil), @"duplicate option '%@'", opt.longName);
             _longOptionMap[opt.longName] = opt;
             _shortOptionMap[opt.shortName] = opt;
         }
         
-        _manifest = [[OptArgManifest alloc] init];
+        _manifest = [[CLKOptArgManifest alloc] init];
     }
     
     return self;
@@ -63,7 +63,7 @@
 
 #pragma mark -
 
-- (nullable OptArgManifest *)parseArguments:(NSError **)outError
+- (nullable CLKOptArgManifest *)parseArguments:(NSError **)outError
 {
     NSAssert((_state == OAPStateBegin), @"cannot re-run a parser after use");
     
@@ -147,7 +147,7 @@
     return OAPStateParseArgument;
 }
 
-- (OAParserState)_parseOptionName:(NSString *)optionName usingMap:(NSDictionary<NSString *, Option *> *)optionMap error:(NSError **)outError
+- (OAParserState)_parseOptionName:(NSString *)optionName usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError
 {
     self.currentOption = optionMap[optionName];
     if (self.currentOption == nil) {
@@ -171,21 +171,21 @@
 - (OAParserState)_parseLongOption:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *optionName = [[_argumentVector popFirstObject] substringFromIndex:2];
+    NSString *optionName = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
     return [self _parseOptionName:optionName usingMap:_longOptionMap error:outError];
 }
 
 - (OAParserState)_parseShortOption:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *optionName = [[_argumentVector popFirstObject] substringFromIndex:1];
+    NSString *optionName = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
     return [self _parseOptionName:optionName usingMap:_shortOptionMap error:outError];
 }
 
 - (OAParserState)_parseShortOptionGroup:(__unused NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *optionGroup = [[_argumentVector popFirstObject] substringFromIndex:1];
+    NSString *optionGroup = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
     
     // simple trick to implement short option groups:
     //    1. explode the group into individual options
@@ -203,7 +203,7 @@
 - (OAParserState)_parseArgument:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *argument = [_argumentVector popFirstObject];
+    NSString *argument = [_argumentVector clk_popFirstObject];
     
     if (self.currentOption != nil) {
         // reject: the next argument is some kind of option, but we expect an argument
@@ -216,7 +216,7 @@
             return OAPStateError;
         }
         
-        ArgumentTransformer *transformer = self.currentOption.transformer;
+        CLKArgumentTransformer *transformer = self.currentOption.transformer;
         if (transformer != nil) {
             argument = [transformer transformedArgument:argument error:outError];
             if (argument == nil) {

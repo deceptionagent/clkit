@@ -2,10 +2,10 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "ArgumentTransformer.h"
+#import "CLKArgumentTransformer.h"
 
 
-@implementation ArgumentTransformer
+@implementation CLKArgumentTransformer
 
 + (instancetype)transformer
 {
@@ -20,7 +20,7 @@
 @end
 
 
-@implementation IntegerArgumentTransformer
+@implementation CLKIntegerArgumentTransformer
 
 - (id)transformedArgument:(NSString *)argument error:(NSError **)outError
 {
@@ -45,7 +45,7 @@
 @end
 
 
-@implementation FloatArgumentTransformer
+@implementation CLKFloatArgumentTransformer
 
 - (id)transformedArgument:(NSString *)argument error:(NSError **)outError
 {

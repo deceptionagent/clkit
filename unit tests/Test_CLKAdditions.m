@@ -4,29 +4,29 @@
 
 #import <XCTest/XCTest.h>
 
-#import "NSArray+OptArgAdditions.h"
-#import "NSMutableArray+OptArgAdditions.h"
+#import "NSArray+CLKAdditions.h"
+#import "NSMutableArray+CLKAdditions.h"
 
 
-@interface Test_NSArray_OptArgAdditions : XCTestCase
+@interface Test_NSArray_CLKAdditions : XCTestCase
 
 @end
 
 
-@implementation Test_NSArray_OptArgAdditions
+@implementation Test_NSArray_CLKAdditions
 
-- (void)test_arrayWithArgv_argc
+- (void)test_clk_arrayWithArgv_argc
 {
     const char *argvAlpha[] = { "alpha" };
-    NSArray *alpha = [NSArray arrayWithArgv:argvAlpha argc:1];
+    NSArray *alpha = [NSArray clk_arrayWithArgv:argvAlpha argc:1];
     XCTAssertEqualObjects(alpha, @[ @"alpha" ]);
     
     const char *argvBravo[] = { "alpha", "bravo" };
-    NSArray *bravo = [NSArray arrayWithArgv:argvBravo argc:2];
+    NSArray *bravo = [NSArray clk_arrayWithArgv:argvBravo argc:2];
     XCTAssertEqualObjects(bravo, (@[ @"alpha", @"bravo" ]));
     
     const char *argvCharlie[] = {};
-    NSArray *charlie = [NSArray arrayWithArgv:argvCharlie argc:0];
+    NSArray *charlie = [NSArray clk_arrayWithArgv:argvCharlie argc:0];
     XCTAssertNotNil(charlie);
     XCTAssertEqual(charlie.count, 0);
 }
@@ -37,25 +37,25 @@
 #pragma mark -
 
 
-@interface Test_NSMutableArray_OptArgAdditions : XCTestCase
+@interface Test_NSMutableArray_CLKAdditions : XCTestCase
 
 @end
 
 
-@implementation Test_NSMutableArray_OptArgAdditions
+@implementation Test_NSMutableArray_CLKAdditions
 
-- (void)test_popLastObject
+- (void)test_clk_popLastObject
 {
     NSMutableArray *alpha = [[@[ @"alpha" ] mutableCopy] autorelease];
-    XCTAssertEqualObjects([alpha popFirstObject], @"alpha");
+    XCTAssertEqualObjects([alpha clk_popFirstObject], @"alpha");
     XCTAssertEqual(alpha.count, 0);
     
     NSMutableArray *bravo = [[@[ @"alpha", @"bravo" ] mutableCopy] autorelease];
-    XCTAssertEqualObjects([bravo popFirstObject], @"alpha");
+    XCTAssertEqualObjects([bravo clk_popFirstObject], @"alpha");
     XCTAssertEqualObjects(bravo, @[ @"bravo" ]);
     
     NSMutableArray *charlie = [NSMutableArray array];
-    XCTAssertNil([charlie popFirstObject]);
+    XCTAssertNil([charlie clk_popFirstObject]);
     XCTAssertEqual(charlie.count, 0);
 }
 

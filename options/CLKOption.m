@@ -2,19 +2,19 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "Option.h"
+#import "CLKOption.h"
 
-#import "ArgumentTransformer.h"
+#import "CLKArgumentTransformer.h"
 
 
-@interface Option ()
+@interface CLKOption ()
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable ArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument NS_DESIGNATED_INITIALIZER;
 
 @end
 
 
-@implementation Option
+@implementation CLKOption
 
 @synthesize longName = _longName;
 @synthesize shortName = _shortName;
@@ -26,7 +26,7 @@
     return [self optionWithLongName:longName shortName:shortName transformer:nil];
 }
 
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable ArgumentTransformer *)transformer
++ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer
 {
     return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:transformer hasArgument:YES] autorelease];
 }
@@ -36,7 +36,7 @@
     return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:nil hasArgument:NO] autorelease];
 }
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(ArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument
+- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(CLKArgumentTransformer *)transformer hasArgument:(BOOL)hasArgument
 {
     NSParameterAssert(![longName hasPrefix:@"-"]);
     NSParameterAssert(![shortName hasPrefix:@"-"]);

@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface OptArgManifest : NSObject
+@interface CLKOptArgManifest : NSObject
 {
     NSMutableDictionary<NSString *, NSNumber *> *_freeOptions; // accumulation count
     NSMutableDictionary<NSString *, NSMutableArray *> *_optionArguments;

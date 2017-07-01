@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ArgumentTransformer : NSObject
+@interface CLKArgumentTransformer : NSObject
 
 + (instancetype)transformer;
 
@@ -16,12 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-@interface IntegerArgumentTransformer : ArgumentTransformer
+@interface CLKIntegerArgumentTransformer : CLKArgumentTransformer
 
 @end
 
 
-@interface FloatArgumentTransformer : ArgumentTransformer
+@interface CLKFloatArgumentTransformer : CLKArgumentTransformer
 
 @end
 
