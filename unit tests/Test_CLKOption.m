@@ -71,4 +71,17 @@
 #pragma clang diagnostic pop
 }
 
+- (void)testEquality
+{
+    CLKOption *alphaA = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
+    CLKOption *alphaB = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
+    CLKOption *alphaC = [CLKOption optionWithLongName:@"alpha" shortName:@"c"];
+    CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"a"];
+
+    XCTAssertTrue([alphaA isEqual:alphaA]);
+    XCTAssertTrue([alphaA isEqual:alphaB]);
+    XCTAssertTrue([alphaA isEqual:alphaC]);
+    XCTAssertFalse([alphaA isEqual:bravo]);
+}
+
 @end

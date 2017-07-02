@@ -67,4 +67,23 @@
     return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expectsArgument: %@ }", super.description, _longName, _shortName, (_expectsArgument ? @"YES" : @"NO")];
 }
 
+- (NSUInteger)hash
+{
+    return _longName.hash;
+}
+
+- (BOOL)isEqual:(id)obj
+{
+    if (obj == self) {
+        return YES;
+    }
+    
+    if (![obj isKindOfClass:[CLKOption class]]) {
+        return NO;
+    }
+    
+    CLKOption *opt = (CLKOption *)obj;
+    return [opt.longName isEqualToString:_longName];
+}
+
 @end
