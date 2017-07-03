@@ -52,11 +52,11 @@
 		A6527C3E1F0A31E300BF6FAE /* CLKVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKVerb.m; sourceTree = "<group>"; };
 		A6527C3F1F0A31E300BF6FAE /* CLKVerb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKVerb.h; sourceTree = "<group>"; };
 		A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKVerbDepot.m; sourceTree = "<group>"; };
-		A66A9DDF1F02294800456347 /* options */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = options; sourceTree = BUILT_PRODUCTS_DIR; };
+		A66A9DDF1F02294800456347 /* clklab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clklab; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66A9DE21F02294800456347 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A66A9DE91F023CE200456347 /* CLKOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption.h; sourceTree = "<group>"; };
 		A66A9DEA1F023CE200456347 /* CLKOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOption.m; sourceTree = "<group>"; };
-		A66A9DF01F02406F00456347 /* unit tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "unit tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A66A9DF01F02406F00456347 /* Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66A9DF21F02406F00456347 /* Test_CLKOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOption.m; sourceTree = "<group>"; };
 		A66A9DF41F02406F00456347 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A66A9DF91F0241DB00456347 /* CLKOptArgParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgParser.h; sourceTree = "<group>"; };
@@ -120,8 +120,8 @@
 		A66A9DD61F02294800456347 = {
 			isa = PBXGroup;
 			children = (
-				A66A9DE11F02294800456347 /* options */,
-				A66A9DF11F02406F00456347 /* unit tests */,
+				A66A9DE11F02294800456347 /* CLKit */,
+				A66A9DF11F02406F00456347 /* Unit Tests */,
 				A66A9DE01F02294800456347 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,13 +129,13 @@
 		A66A9DE01F02294800456347 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A66A9DDF1F02294800456347 /* options */,
-				A66A9DF01F02406F00456347 /* unit tests.xctest */,
+				A66A9DDF1F02294800456347 /* clklab */,
+				A66A9DF01F02406F00456347 /* Unit Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A66A9DE11F02294800456347 /* options */ = {
+		A66A9DE11F02294800456347 /* CLKit */ = {
 			isa = PBXGroup;
 			children = (
 				A66A9DE21F02294800456347 /* main.m */,
@@ -143,10 +143,10 @@
 				A6527C471F0A4CFA00BF6FAE /* Options */,
 				A6527C481F0A4D1000BF6FAE /* Verbs */,
 			);
-			path = options;
+			path = CLKit;
 			sourceTree = "<group>";
 		};
-		A66A9DF11F02406F00456347 /* unit tests */ = {
+		A66A9DF11F02406F00456347 /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
@@ -157,7 +157,7 @@
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);
-			path = "unit tests";
+			path = "Unit Tests";
 			sourceTree = "<group>";
 		};
 		A66A9E0A1F041DBB00456347 /* Categories */ = {
@@ -174,9 +174,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A66A9DDE1F02294800456347 /* options */ = {
+		A66A9DDE1F02294800456347 /* clklab */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A66A9DE61F02294800456347 /* Build configuration list for PBXNativeTarget "options" */;
+			buildConfigurationList = A66A9DE61F02294800456347 /* Build configuration list for PBXNativeTarget "clklab" */;
 			buildPhases = (
 				A66A9DDB1F02294800456347 /* Sources */,
 				A66A9DDC1F02294800456347 /* Frameworks */,
@@ -186,14 +186,14 @@
 			);
 			dependencies = (
 			);
-			name = options;
+			name = clklab;
 			productName = options;
-			productReference = A66A9DDF1F02294800456347 /* options */;
+			productReference = A66A9DDF1F02294800456347 /* clklab */;
 			productType = "com.apple.product-type.tool";
 		};
-		A66A9DEF1F02406F00456347 /* unit tests */ = {
+		A66A9DEF1F02406F00456347 /* Unit Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A66A9DF51F02406F00456347 /* Build configuration list for PBXNativeTarget "unit tests" */;
+			buildConfigurationList = A66A9DF51F02406F00456347 /* Build configuration list for PBXNativeTarget "Unit Tests" */;
 			buildPhases = (
 				A66A9DEC1F02406F00456347 /* Sources */,
 				A66A9DED1F02406F00456347 /* Frameworks */,
@@ -203,9 +203,9 @@
 			);
 			dependencies = (
 			);
-			name = "unit tests";
+			name = "Unit Tests";
 			productName = "unit tests";
-			productReference = A66A9DF01F02406F00456347 /* unit tests.xctest */;
+			productReference = A66A9DF01F02406F00456347 /* Unit Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -225,7 +225,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A66A9DDA1F02294800456347 /* Build configuration list for PBXProject "options" */;
+			buildConfigurationList = A66A9DDA1F02294800456347 /* Build configuration list for PBXProject "CLKit" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -237,8 +237,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A66A9DDE1F02294800456347 /* options */,
-				A66A9DEF1F02406F00456347 /* unit tests */,
+				A66A9DDE1F02294800456347 /* clklab */,
+				A66A9DEF1F02406F00456347 /* Unit Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -440,7 +440,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A66A9DDA1F02294800456347 /* Build configuration list for PBXProject "options" */ = {
+		A66A9DDA1F02294800456347 /* Build configuration list for PBXProject "CLKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A66A9DE41F02294800456347 /* Debug */,
@@ -449,7 +449,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A66A9DE61F02294800456347 /* Build configuration list for PBXNativeTarget "options" */ = {
+		A66A9DE61F02294800456347 /* Build configuration list for PBXNativeTarget "clklab" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A66A9DE71F02294800456347 /* Debug */,
@@ -458,7 +458,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A66A9DF51F02406F00456347 /* Build configuration list for PBXNativeTarget "unit tests" */ = {
+		A66A9DF51F02406F00456347 /* Build configuration list for PBXNativeTarget "Unit Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A66A9DF61F02406F00456347 /* Debug */,
