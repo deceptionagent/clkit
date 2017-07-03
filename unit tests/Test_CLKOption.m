@@ -73,15 +73,39 @@
 
 - (void)testEquality
 {
+    // short names are just conveniences -- the canoical identifier of an option is its long name
     CLKOption *alphaA = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
     CLKOption *alphaB = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
-    CLKOption *alphaC = [CLKOption optionWithLongName:@"alpha" shortName:@"c"];
+    CLKOption *alphaC = [CLKOption optionWithLongName:@"alpha" shortName:@"A"];
     CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"a"];
-
+    
     XCTAssertTrue([alphaA isEqual:alphaA]);
     XCTAssertTrue([alphaA isEqual:alphaB]);
     XCTAssertTrue([alphaA isEqual:alphaC]);
     XCTAssertFalse([alphaA isEqual:bravo]);
+}
+
+- (void)testCollectionSupport
+{
+    // short names are just conveniences -- the full identity of an option is related only to its long name
+    CLKOption *alphaA = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
+    CLKOption *alphaB = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
+    CLKOption *alphaC = [CLKOption optionWithLongName:@"alpha" shortName:@"A"];
+    CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"b"];
+    
+    NSSet *set = [NSSet setWithObjects:alphaA, alphaB, alphaC, bravo, nil];
+    XCTAssertEqual(set.count, 2);
+    XCTAssertTrue([set containsObject:alphaA]);
+    XCTAssertTrue([set containsObject:bravo]);
+    
+    int alphaCount = 0;
+    for (CLKOption *opt in set.allObjects) {
+        if ([opt.longName isEqualToString:@"alpha"]) {
+            alphaCount++;
+        }
+    }
+    
+    XCTAssertEqual(alphaCount, 1, @"expected only one --alpha option, found: %@", set);
 }
 
 @end
