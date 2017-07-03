@@ -34,8 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options;
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options NS_DESIGNATED_INITIALIZER;
 
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (nullable CLKOptArgManifest *)parseArguments:(NSError **)outError;
