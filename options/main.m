@@ -10,7 +10,41 @@
 #import "CLKOption.h"
 #import "CLKOptArgManifest.h"
 #import "CLKOptArgParser.h"
+#import "CLKVerb.h"
+#import "CLKVerbDepot.h"
 
+
+static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
+{
+    CLKOption *alpha = [CLKOption freeOptionWithLongName:@"alpha" shortName:@"a"];
+    CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"b"];
+    NSArray *options = @[ alpha, bravo ];
+    
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
+    CLKOptArgManifest *manifest = [parser parseArguments:outError];
+    if (manifest == nil) {
+        return 1;
+    }
+    
+    fprintf(stdout, "*** verb_flarn ***\n\n%s\n", manifest.debugDescription.UTF8String);
+    return 0;
+}
+
+static int verb_barf(NSArray<NSString *> *argvec, NSError **outError)
+{
+    CLKOption *charlie = [CLKOption freeOptionWithLongName:@"charlie" shortName:@"c"];
+    CLKOption *delta = [CLKOption optionWithLongName:@"delta" shortName:@"d"];
+    NSArray *options = @[ charlie, delta ];
+    
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
+    CLKOptArgManifest *manifest = [parser parseArguments:outError];
+    if (manifest == nil) {
+        return 1;
+    }
+    
+    fprintf(stdout, "*** verb_barf ***\n\n%s\n", manifest.debugDescription.UTF8String);
+    return 0;
+}
 
 int main(int argc, const char *argv[])
 {
@@ -19,23 +53,28 @@ int main(int argc, const char *argv[])
         return EX_USAGE;
     }
     
+    int status = 0;
+    
     @autoreleasepool
     {
-        NSArray *argvec = [NSArray clk_arrayWithArgv:(argv + 1) argc:(argc - 1)];
-        CLKOption *flarnOption = [CLKOption freeOptionWithLongName:@"flarn" shortName:@"f"];
-        CLKOption *bortOption = [CLKOption optionWithLongName:@"bort" shortName:@"b"];
-        NSArray *options = @[ flarnOption, bortOption ];
-        CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
+        CLKVerb *flarn = [CLKVerb verbWithName:@"flarn" block:^(NSArray<NSString *> *argvec, NSError **outError) {
+            return verb_flarn(argvec, outError);
+        }];
+        
+        CLKVerb *barf = [CLKVerb verbWithName:@"barf" block:^(NSArray<NSString *> *argvec, NSError **outError) {
+            return verb_barf(argvec, outError);
+        }];
+        
+        NSArray *verbs = @[ flarn, barf ];
+        NSArray *argvec = [NSArray clk_arrayWithArgv:argv argc:argc];
+        CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:argvec verbs:verbs];
         
         NSError *error;
-        CLKOptArgManifest *manifest = [parser parseArguments:&error];
-        if (manifest == nil) {
+        status = [depot dispatch:&error];
+        if (status != 0) {
             fprintf(stderr, "%s: %s (error %ld)\n", getprogname(), error.localizedDescription.UTF8String, (long)error.code);
-            return 1;
         }
-        
-        fprintf(stdout, "%s\n", manifest.debugDescription.UTF8String);
     }
     
-    return 0;
+    return status;
 }
