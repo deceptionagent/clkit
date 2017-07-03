@@ -67,7 +67,7 @@ int main(int argc, const char *argv[])
         
         NSArray *verbs = @[ flarn, barf ];
         NSArray *argvec = [NSArray clk_arrayWithArgv:argv argc:argc];
-        CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:argvec verbs:verbs];
+        CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:argvec verbs:verbs] autorelease];
         
         NSError *error;
         status = [depot dispatch:&error];
