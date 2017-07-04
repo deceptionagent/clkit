@@ -20,7 +20,6 @@ NS_ASSUME_NONNULL_END
 
 @synthesize name = _name;
 @synthesize block = _block;
-@synthesize hidden = _hidden;
 
 + (instancetype)verbWithName:(NSString *)name block:(CLKVerbBlock)block
 {

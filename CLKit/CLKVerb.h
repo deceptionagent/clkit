@@ -14,7 +14,6 @@ typedef int (^CLKVerbBlock)(NSArray<NSString *> *, NSError **outError);
 {
     NSString *_name;
     CLKVerbBlock _block;
-    BOOL _hidden;
 }
 
 + (instancetype)verbWithName:(NSString *)name block:(CLKVerbBlock)block;
@@ -23,7 +22,6 @@ typedef int (^CLKVerbBlock)(NSArray<NSString *> *, NSError **outError);
 
 @property (readonly) NSString *name;
 @property (readonly) CLKVerbBlock block;
-@property BOOL hidden;
 
 @end
 
