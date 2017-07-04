@@ -19,7 +19,7 @@ extern NSString * const CLKVerbDepotErrorDomain;
     NSMutableDictionary<NSString *, CLKVerb *> *_verbs;
 }
 
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<CLKVerb *> *)verbs;
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<CLKVerb *> *)verbs NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (int)dispatch:(NSError **)outError;
