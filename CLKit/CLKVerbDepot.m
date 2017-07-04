@@ -23,8 +23,9 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
         _argumentVector = [argumentVector copy];
         _verbs = [[NSMutableDictionary alloc] init];
         for (CLKVerb *verb in verbs) {
-            NSAssert((_verbs[verb.name] == nil), @"duplicate verb name: '%@'", verb.name);
-            _verbs[verb.name] = verb;
+            NSString *verbName = verb.name.lowercaseString; // verb lookups are case-insensitive
+            NSAssert((_verbs[verbName] == nil), @"duplicate verb name: '%@'", verb.name);
+            _verbs[verbName] = verb;
         }
     }
     
@@ -50,8 +51,7 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
     NSMutableArray *argumentVector = [[_argumentVector mutableCopy] autorelease];
     NSString *arg;
     while ((arg = [argumentVector clk_popFirstObject]) != nil) {
-        arg = [arg lowercaseString];
-        verb = _verbs[arg];
+        verb = _verbs[arg.lowercaseString]; // verb lookups are case-insensitive
         if (verb != nil) {
             break;
         }

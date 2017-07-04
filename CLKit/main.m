@@ -16,9 +16,10 @@
 
 static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
 {
-    CLKOption *alpha = [CLKOption freeOptionWithLongName:@"alpha" shortName:@"a"];
-    CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"b"];
-    NSArray *options = @[ alpha, bravo ];
+    NSArray *options = @[
+        [CLKOption freeOptionWithLongName:@"alpha" shortName:@"a"],
+        [CLKOption optionWithLongName:@"bravo" shortName:@"b"]
+    };
     
     CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
     CLKOptArgManifest *manifest = [parser parseArguments:outError];
@@ -32,9 +33,10 @@ static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
 
 static int verb_barf(NSArray<NSString *> *argvec, NSError **outError)
 {
-    CLKOption *charlie = [CLKOption freeOptionWithLongName:@"charlie" shortName:@"c"];
-    CLKOption *delta = [CLKOption optionWithLongName:@"delta" shortName:@"d"];
-    NSArray *options = @[ charlie, delta ];
+    NSArray *options = @[
+        [CLKOption freeOptionWithLongName:@"charlie" shortName:@"c"],
+        [[CLKOption optionWithLongName:@"delta" shortName:@"d"]
+    ];
     
     CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
     CLKOptArgManifest *manifest = [parser parseArguments:outError];

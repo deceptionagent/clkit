@@ -75,12 +75,12 @@
 
 - (void)testCaseInsensitiveVerbDispatch
 {
-    NSArray *argv = @[ @"/usr/bin/lol", @"FLARN", @"--womp" ];
+    NSArray *argv = @[ @"/usr/bin/lol", @"fLaRn", @"--womp" ];
     
     __block BOOL flarnRan = NO;
     __block NSArray *verbArgv = nil;
     
-    CLKVerb *flarn = [CLKVerb verbWithName:@"flarn" block:^(NSArray *argv_, NSError **outError) {
+    CLKVerb *flarn = [CLKVerb verbWithName:@"FlArN" block:^(NSArray *argv_, NSError **outError) {
         XCTAssert(outError == nil, @"passed nil to -dispatch:, expected nil outError in verb block");
         XCTAssertFalse(flarnRan, @"flarn verb unexpectedly invoked twice");
         flarnRan = YES;
