@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 
 #import "NSArray+CLKAdditions.h"
+#import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
 
 
@@ -29,6 +30,32 @@
     NSArray *charlie = [NSArray clk_arrayWithArgv:argvCharlie argc:0];
     XCTAssertNotNil(charlie);
     XCTAssertEqual(charlie.count, 0);
+}
+
+@end
+
+
+#pragma mark -
+
+
+@interface Test_NSError_CLKAdditions : XCTestCase
+
+@end
+
+
+@implementation Test_NSError_CLKAdditions
+
+- (void)test_clk_POSIXErrorWithCode_localizedDescription
+{
+    NSError *error = [NSError clk_POSIXErrorWithCode:ENOENT localizedDescription:@"404 flarn not found"];
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, ENOENT);
+    XCTAssertEqualObjects(error.localizedDescription, @"404 flarn not found");
+    
+    error = [NSError clk_POSIXErrorWithCode:ENOENT localizedDescription:@"404 %@ not found", @"flarn"];
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, ENOENT);
+    XCTAssertEqualObjects(error.localizedDescription, @"404 flarn not found");
 }
 
 @end
