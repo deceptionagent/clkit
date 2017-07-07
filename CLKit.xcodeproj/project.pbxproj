@@ -29,6 +29,8 @@
 		A66A9E0D1F041DE600456347 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
 		A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */; };
 		A66A9E101F0421C500456347 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
+		A6794E631F0F82D8004FEA4A /* NSError+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */; };
+		A6794E641F0F87E8004FEA4A /* NSError+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */; };
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +72,8 @@
 		A66A9E0B1F041DE600456347 /* NSArray+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+CLKAdditions.h"; sourceTree = "<group>"; };
 		A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+CLKAdditions.m"; sourceTree = "<group>"; };
 		A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAdditions.m; sourceTree = "<group>"; };
+		A6794E611F0F82D8004FEA4A /* NSError+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSError+CLKAdditions.h"; sourceTree = "<group>"; };
+		A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+CLKAdditions.m"; sourceTree = "<group>"; };
 		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformers.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -165,6 +169,8 @@
 			children = (
 				A66A9E0B1F041DE600456347 /* NSArray+CLKAdditions.h */,
 				A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */,
+				A6794E611F0F82D8004FEA4A /* NSError+CLKAdditions.h */,
+				A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */,
 				A66A9E021F03968A00456347 /* NSMutableArray+CLKAdditions.h */,
 				A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */,
 			);
@@ -260,6 +266,7 @@
 			files = (
 				A66A9E041F03968A00456347 /* NSMutableArray+CLKAdditions.m in Sources */,
 				A66A9DFB1F0241DB00456347 /* CLKOptArgParser.m in Sources */,
+				A6794E631F0F82D8004FEA4A /* NSError+CLKAdditions.m in Sources */,
 				A66A9DFE1F02DF4300456347 /* CLKOptArgManifest.m in Sources */,
 				A66A9E0D1F041DE600456347 /* NSArray+CLKAdditions.m in Sources */,
 				A6527C3A1F0A2D0C00BF6FAE /* CLKArgumentTransformer.m in Sources */,
@@ -281,6 +288,7 @@
 				A66A9E101F0421C500456347 /* NSArray+CLKAdditions.m in Sources */,
 				A66A9DFF1F0370DB00456347 /* CLKOptArgManifest.m in Sources */,
 				A6527C411F0A31E400BF6FAE /* CLKVerbDepot.m in Sources */,
+				A6794E641F0F87E8004FEA4A /* NSError+CLKAdditions.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
 				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
 				A6527C431F0A31E400BF6FAE /* CLKVerb.m in Sources */,

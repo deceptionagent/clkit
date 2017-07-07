@@ -4,6 +4,7 @@
 
 #import "CLKOptArgParser.h"
 
+#import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
@@ -123,8 +124,7 @@
     // [TACK] if we wanted to support overflow arguments, we would remove the "--" guard and add that as a scenario
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
         if (outError != nil) {
-            NSDictionary *info = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"unexpected token in argument vector: '%@'", nextItem] };
-            *outError = [NSError errorWithDomain:NSPOSIXErrorDomain code:EINVAL userInfo:info];
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unexpected token in argument vector: '%@'", nextItem];
         }
         
         return CLKOAPStateError;
@@ -152,8 +152,7 @@
     self.currentOption = optionMap[optionName];
     if (self.currentOption == nil) {
         if (outError != nil) {
-            NSDictionary *info = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"unrecognized option: '%@'", optionName] };
-            *outError = [NSError errorWithDomain:NSPOSIXErrorDomain code:EINVAL userInfo:info];
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unrecognized option: '%@'", optionName];
         }
         
         return CLKOAPStateError;
@@ -209,8 +208,7 @@
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
             if (outError != nil) {
-                NSDictionary *info = @{ NSLocalizedDescriptionKey : [NSString stringWithFormat:@"expected argument but encountered option-like token '%@'", argument] };
-                *outError = [NSError errorWithDomain:NSPOSIXErrorDomain code:EINVAL userInfo:info];
+                *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"expected argument but encountered option-like token '%@'", argument];
             }
             
             return CLKOAPStateError;
