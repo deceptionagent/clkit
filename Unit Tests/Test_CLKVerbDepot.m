@@ -49,7 +49,6 @@
     NSArray *argv = @[ @"/usr/bin/lol", @"barf", @"--womp" ];
     
     __block BOOL barfRan = NO;
-    __block NSArray *verbArgv = nil;
     
     CLKVerb *flarn = [CLKVerb verbWithName:@"flarn" block:^(__unused NSArray *argv_, __unused NSError **outError) {
         XCTFail(@"flarn verb invoked unexpectedly");
@@ -57,10 +56,10 @@
     }];
     
     CLKVerb *barf = [CLKVerb verbWithName:@"barf" block:^(NSArray *argv_, NSError **outError) {
+        XCTAssertEqualObjects(argv_, @[ @"--womp" ]);
         XCTAssert(outError == nil, @"passed nil to -dispatch:, expected nil outError in verb block");
         XCTAssertFalse(barfRan, @"barf verb unexpectedly invoked twice");
         barfRan = YES;
-        verbArgv = argv_;
         return 1;
     }];
     
@@ -70,7 +69,6 @@
     int result = [depot dispatch:nil];
     XCTAssertEqual(result, 1);
     XCTAssertTrue(barfRan);
-    XCTAssertEqualObjects(verbArgv, @[ @"--womp" ]);
 }
 
 - (void)testCaseInsensitiveVerbDispatch
@@ -78,13 +76,12 @@
     NSArray *argv = @[ @"/usr/bin/lol", @"fLaRn", @"--womp" ];
     
     __block BOOL flarnRan = NO;
-    __block NSArray *verbArgv = nil;
     
     CLKVerb *flarn = [CLKVerb verbWithName:@"FlArN" block:^(NSArray *argv_, NSError **outError) {
+        XCTAssertEqualObjects(argv_, @[ @"--womp" ]);
         XCTAssert(outError == nil, @"passed nil to -dispatch:, expected nil outError in verb block");
         XCTAssertFalse(flarnRan, @"flarn verb unexpectedly invoked twice");
         flarnRan = YES;
-        verbArgv = argv_;
         return 1;
     }];
     
@@ -92,7 +89,6 @@
     int result = [depot dispatch:nil];
     XCTAssertEqual(result, 1);
     XCTAssertTrue(flarnRan);
-    XCTAssertEqualObjects(verbArgv, @[ @"--womp" ]);
 }
 
 - (void)testVerbNotFound
@@ -112,6 +108,26 @@
     XCTAssertEqual(error.code, 404);
     XCTAssertEqualObjects(error.domain, CLKVerbDepotErrorDomain);
     XCTAssertEqualObjects(error.localizedDescription, @"verb not found");
+}
+
+- (void)testVerbBlockOutError
+{
+    NSArray *argv = @[ @"/usr/bin/lol", @"flarn" ];
+    
+    CLKVerb *flarn = [CLKVerb verbWithName:@"flarn" block:^(__unused NSArray *argv_, NSError **outError) {
+        XCTAssert(outError != nil, @"passed nil to -dispatch:, expected nil outError in verb block");
+        *outError = [NSError errorWithDomain:CLKVerbDepotErrorDomain code:666 userInfo:@{ @"foo" : @"bar" }];
+        return 1;
+    }];
+    
+    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:@[ flarn ]] autorelease];
+    NSError *error = nil;
+    int result = [depot dispatch:&error];;
+    XCTAssertEqual(result, 1);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, 666);
+    XCTAssertEqualObjects(error.domain, CLKVerbDepotErrorDomain);
+    XCTAssertEqualObjects(error.userInfo[@"foo"], @"bar");
 }
 
 @end
