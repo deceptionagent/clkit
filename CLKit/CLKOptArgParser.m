@@ -36,14 +36,14 @@
     if (self != nil) {
         _state = CLKOAPStateBegin;
         _argumentVector = [argv mutableCopy];
-        _longOptionMap = [[NSMutableDictionary alloc] init];
-        _shortOptionMap = [[NSMutableDictionary alloc] init];
+        _optionNameMap = [[NSMutableDictionary alloc] init];
+        _optionFlagMap = [[NSMutableDictionary alloc] init];
         
         for (CLKOption *opt in options) {
-            NSAssert((_longOptionMap[opt.longName] == nil), @"duplicate option '%@'", opt.longName);
-            NSAssert((_shortOptionMap[opt.shortName] == nil), @"duplicate option '%@'", opt.longName);
-            _longOptionMap[opt.longName] = opt;
-            _shortOptionMap[opt.shortName] = opt;
+            NSAssert((_optionNameMap[opt.name] == nil), @"duplicate option '%@'", opt.name);
+            NSAssert((_optionFlagMap[opt.flag] == nil), @"duplicate option '%@'", opt.name);
+            _optionNameMap[opt.name] = opt;
+            _optionFlagMap[opt.flag] = opt;
         }
         
         _manifest = [[CLKOptArgManifest alloc] init];
@@ -56,8 +56,8 @@
 {
     [_manifest release];
     [_argumentVector release];
-    [_shortOptionMap release];
-    [_longOptionMap release];
+    [_optionFlagMap release];
+    [_optionNameMap release];
     [_currentOption release];
     [super dealloc];
 }
@@ -78,16 +78,16 @@
                 _state = [self _readNextItem:outError];
                 break;
             
-            case CLKOAPStateParseLongOption:
-                _state = [self _parseLongOption:outError];
+            case CLKOAPStateParseOptionName:
+                _state = [self _parseOptionName:outError];
                 break;
             
-            case CLKOAPStateParseShortOption:
-                _state = [self _parseShortOption:outError];
+            case CLKOAPStateParseOptionFlag:
+                _state = [self _parseOptionFlag:outError];
                 break;
             
-            case CLKOAPStateParseShortOptionGroup:
-                _state = [self _parseShortOptionGroup:outError];
+            case CLKOAPStateParseOptionFlagGroup:
+                _state = [self _parseOptionFlagGroup:outError];
                 break;
             
             case CLKOAPStateParseArgument:
@@ -131,69 +131,72 @@
     }
     
     if ([nextItem hasPrefix:@"--"]) {
-        return CLKOAPStateParseLongOption;
+        return CLKOAPStateParseOptionName;
     }
     
     if ([nextItem hasPrefix:@"-"]) {
         if (nextItem.length == 2) {
-            return CLKOAPStateParseShortOption;
+            return CLKOAPStateParseOptionFlag;
         }
         
         if (nextItem.length > 2) {
-            return CLKOAPStateParseShortOptionGroup;
+            return CLKOAPStateParseOptionFlagGroup;
         }
     }
     
     return CLKOAPStateParseArgument;
 }
 
-- (CLKOAPState)_parseOptionName:(NSString *)optionName usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError
+- (CLKOAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError
 {
-    self.currentOption = optionMap[optionName];
-    if (self.currentOption == nil) {
+    CLKOption *option = optionMap[identifier];
+    if (option == nil) {
         if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unrecognized option: '%@'", optionName];
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unrecognized option: '%@'", identifier];
         }
         
         return CLKOAPStateError;
     }
     
-    if (self.currentOption.expectsArgument) {
+    if (option.expectsArgument) {
+        self.currentOption = option;
         return CLKOAPStateParseArgument;
     }
     
-    [_manifest accumulateFreeOption:self.currentOption.longName];
-    self.currentOption = nil;
+    [_manifest accumulateFreeOptionNamed:option.name];
     return CLKOAPStateReadNextItem;
 }
 
-- (CLKOAPState)_parseLongOption:(NSError **)outError
+- (CLKOAPState)_parseOptionName:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *optionName = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
-    return [self _parseOptionName:optionName usingMap:_longOptionMap error:outError];
+    NSString *name = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
+    return [self _processOptionIdentifier:name usingMap:_optionNameMap error:outError];
 }
 
-- (CLKOAPState)_parseShortOption:(NSError **)outError
+- (CLKOAPState)_parseOptionFlag:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *optionName = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
-    return [self _parseOptionName:optionName usingMap:_shortOptionMap error:outError];
+    NSString *flag = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
+    return [self _processOptionIdentifier:flag usingMap:_optionFlagMap error:outError];
 }
 
-- (CLKOAPState)_parseShortOptionGroup:(__unused NSError **)outError
+- (CLKOAPState)_parseOptionFlagGroup:(__unused NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *optionGroup = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
+    NSString *flagGroup = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
     
-    // simple trick to implement short option groups:
-    //    1. explode the group into individual options
-    //    2. add the options to the front of argv
-    //    3. let normal short option parsing take care of them
-    NSRange range = [optionGroup rangeOfString:optionGroup];
-    NSStringEnumerationOptions flags = (NSStringEnumerationByComposedCharacterSequences | NSStringEnumerationReverse); // backwards to preserve order when inserting
-    [optionGroup enumerateSubstringsInRange:range options:flags usingBlock:^(NSString *optionName, __unused NSRange substringRange, __unused NSRange enclosingRange, __unused BOOL *outStop) {
-        [_argumentVector insertObject:[@"-" stringByAppendingString:optionName] atIndex:0];
+    // simple trick to implement option flag groups:
+    //
+    //    1. explode the group into individual flags
+    //    2. add the flags to the front of argv
+    //    3. let normal option flag parsing take care of them
+    //
+    
+    NSRange range = [flagGroup rangeOfString:flagGroup];
+    NSStringEnumerationOptions enumerationOpts = (NSStringEnumerationByComposedCharacterSequences | NSStringEnumerationReverse); // backwards to preserve order when inserting
+    [flagGroup enumerateSubstringsInRange:range options:enumerationOpts usingBlock:^(NSString *flag, __unused NSRange substringRange, __unused NSRange enclosingRange, __unused BOOL *outStop) {
+        [_argumentVector insertObject:[@"-" stringByAppendingString:flag] atIndex:0];
     }];
     
     return CLKOAPStateReadNextItem;
@@ -222,7 +225,7 @@
             }
         }
         
-        [_manifest accumulateArgument:argument forOption:self.currentOption.longName];
+        [_manifest accumulateArgument:argument forOptionNamed:self.currentOption.name];
         self.currentOption = nil;
     } else {
         [_manifest accumulateRemainderArgument:argument];

@@ -9,44 +9,44 @@
 
 @interface CLKOption ()
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument NS_DESIGNATED_INITIALIZER;
 
 @end
 
 
 @implementation CLKOption
 
-@synthesize longName = _longName;
-@synthesize shortName = _shortName;
+@synthesize name = _name;
+@synthesize flag = _flag;
 @synthesize expectsArgument = _expectsArgument;
 @synthesize transformer = _transformer;
 
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName
++ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [self optionWithLongName:longName shortName:shortName transformer:nil];
+    return [self optionWithName:name flag:flag transformer:nil];
 }
 
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer
++ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:transformer expectsArgument:YES] autorelease];
+    return [[[self alloc] _initWithName:name flag:flag transformer:transformer expectsArgument:YES] autorelease];
 }
 
-+ (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName
++ (instancetype)freeOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] _initWithLongName:longName shortName:shortName transformer:nil expectsArgument:NO] autorelease];
+    return [[[self alloc] _initWithName:name flag:flag transformer:nil expectsArgument:NO] autorelease];
 }
 
-- (instancetype)_initWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
+- (instancetype)_initWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
 {
-    NSParameterAssert(![longName hasPrefix:@"-"]);
-    NSParameterAssert(![shortName hasPrefix:@"-"]);
-    NSParameterAssert(longName.length > 0);
-    NSParameterAssert(shortName.length == 1);
+    NSParameterAssert(![name hasPrefix:@"-"]);
+    NSParameterAssert(![flag hasPrefix:@"-"]);
+    NSParameterAssert(name.length > 0);
+    NSParameterAssert(flag.length == 1);
     
     self = [super init];
     if (self != nil) {
-        _longName = [longName copy];
-        _shortName = [shortName copy];
+        _name = [name copy];
+        _flag = [flag copy];
         _transformer = [transformer retain];
         _expectsArgument = expectsArgument;
     }
@@ -57,19 +57,19 @@
 - (void)dealloc
 {
     [_transformer release];
-    [_shortName release];
-    [_longName release];
+    [_flag release];
+    [_name release];
     [super dealloc];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expectsArgument: %@ }", super.description, _longName, _shortName, (_expectsArgument ? @"YES" : @"NO")];
+    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expectsArgument: %@ }", super.description, _name, _flag, (_expectsArgument ? @"YES" : @"NO")];
 }
 
 - (NSUInteger)hash
 {
-    return _longName.hash;
+    return _name.hash;
 }
 
 - (BOOL)isEqual:(id)obj
@@ -83,7 +83,7 @@
     }
     
     CLKOption *opt = (CLKOption *)obj;
-    return [opt.longName isEqualToString:_longName];
+    return [opt.name isEqualToString:_name];
 }
 
 @end

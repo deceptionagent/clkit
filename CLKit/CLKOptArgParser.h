@@ -8,9 +8,9 @@
 typedef NS_ENUM(uint32_t, CLKOAPState) {
     CLKOAPStateBegin = 0,
     CLKOAPStateReadNextItem,
-    CLKOAPStateParseLongOption,
-    CLKOAPStateParseShortOption,
-    CLKOAPStateParseShortOptionGroup,
+    CLKOAPStateParseOptionName,
+    CLKOAPStateParseOptionFlag,
+    CLKOAPStateParseOptionFlagGroup,
     CLKOAPStateParseArgument,
     CLKOAPStateError,
     CLKOAPStateEnd
@@ -28,8 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
     CLKOAPState _state;
     CLKOption *_currentOption;
     NSMutableArray<NSString *> *_argumentVector;
-    NSMutableDictionary<NSString *, CLKOption *> *_longOptionMap;
-    NSMutableDictionary<NSString *, CLKOption *> *_shortOptionMap;
+    NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
+    NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
     CLKOptArgManifest *_manifest;
 }
 

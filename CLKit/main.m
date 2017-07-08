@@ -17,8 +17,8 @@
 static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
 {
     NSArray *options = @[
-        [CLKOption freeOptionWithLongName:@"alpha" shortName:@"a"],
-        [CLKOption optionWithLongName:@"bravo" shortName:@"b"]
+        [CLKOption freeOptionWithName:@"alpha" flag:@"a"],
+        [CLKOption optionWithName:@"bravo" flag:@"b"]
     };
     
     CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
@@ -34,8 +34,8 @@ static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
 static int verb_barf(NSArray<NSString *> *argvec, NSError **outError)
 {
     NSArray *options = @[
-        [CLKOption freeOptionWithLongName:@"charlie" shortName:@"c"],
-        [[CLKOption optionWithLongName:@"delta" shortName:@"d"]
+        [CLKOption freeOptionWithName:@"charlie" flag:@"c"],
+        [[CLKOption optionWithName:@"delta" flag:@"d"]
     ];
     
     CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
