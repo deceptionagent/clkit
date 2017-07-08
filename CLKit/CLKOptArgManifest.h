@@ -14,17 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray<NSString *> *_remainderArguments;
 }
 
-// cool stuff to know:
-//
-//    - "free options" are options that have no argument
-//    - option names are always long names
-//
-
 #pragma mark -
 #pragma mark Building Manifests
 
-- (void)accumulateFreeOption:(NSString *)optionName;
-- (void)accumulateArgument:(id)argument forOption:(NSString *)optionName;
+- (void)accumulateFreeOptionNamed:(NSString *)name;
+- (void)accumulateArgument:(id)argument forOptionNamed:(NSString *)name;
 - (void)accumulateRemainderArgument:(NSString *)argument;
 
 #pragma mark -

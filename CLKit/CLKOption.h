@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOption : NSObject
 {
-    NSString *_longName;
-    NSString *_shortName;
+    NSString *_name;
+    NSString *_flag;
     BOOL _expectsArgument;
     CLKArgumentTransformer *_transformer;
 }
@@ -23,16 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
 //    1. normal options that expect arguments
 //    2. free options that don't have arguments
 //
-// long and short names should not include leading dashes.
+// names and flags should not include leading dashes.
 
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
-+ (instancetype)optionWithLongName:(NSString *)longName shortName:(NSString *)shortName transformer:(nullable CLKArgumentTransformer *)transformer;
-+ (instancetype)freeOptionWithLongName:(NSString *)longName shortName:(NSString *)shortName;
++ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag;
++ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
++ (instancetype)freeOptionWithName:(NSString *)name flag:(NSString *)flag;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (readonly) NSString *longName;
-@property (readonly) NSString *shortName;
+@property (readonly) NSString *name;
+@property (readonly) NSString *flag;
 @property (readonly) BOOL expectsArgument;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
 

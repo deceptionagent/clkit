@@ -19,17 +19,17 @@
     CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
     // optarg pairs and remainder arguments should not affect free options
-    [manifest accumulateArgument:@"foo" forOption:@"bar"];
+    [manifest accumulateArgument:@"foo" forOptionNamed:@"bar"];
     [manifest accumulateRemainderArgument:@"barf"];
     
     XCTAssertNil(manifest.freeOptions[@"flarn"]);
     
-    [manifest accumulateFreeOption:@"flarn"];
+    [manifest accumulateFreeOptionNamed:@"flarn"];
     XCTAssertEqualObjects(manifest.freeOptions[@"flarn"], @(1));
     XCTAssertNil(manifest.freeOptions[@"barf"]);
     
-    [manifest accumulateFreeOption:@"flarn"];
-    [manifest accumulateFreeOption:@"barf"];
+    [manifest accumulateFreeOptionNamed:@"flarn"];
+    [manifest accumulateFreeOptionNamed:@"barf"];
     XCTAssertEqualObjects(manifest.freeOptions[@"flarn"], @(2));
     XCTAssertEqualObjects(manifest.freeOptions[@"barf"], @(1));
 }
@@ -39,18 +39,18 @@
     CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
     // free options and remainder arguments should not affect optarg pairs
-    [manifest accumulateFreeOption:@"free"];
+    [manifest accumulateFreeOptionNamed:@"free"];
     [manifest accumulateRemainderArgument:@"remainder"];
     
     XCTAssertNil(manifest.optionArguments[@"lorem"]);
     
-    [manifest accumulateArgument:@"alpha" forOption:@"lorem"];
-    [manifest accumulateArgument:@"bravo" forOption:@"lorem"];
-    [manifest accumulateArgument:@"charlie" forOption:@"ipsum"];
-    [manifest accumulateArgument:@"delta" forOption:@"ipsum"];
-    [manifest accumulateArgument:@"echo" forOption:@"dolor"];
-    [manifest accumulateArgument:@"echo" forOption:@"dolor"];
-    [manifest accumulateArgument:@"foxtrot" forOption:@"solo"];
+    [manifest accumulateArgument:@"alpha" forOptionNamed:@"lorem"];
+    [manifest accumulateArgument:@"bravo" forOptionNamed:@"lorem"];
+    [manifest accumulateArgument:@"charlie" forOptionNamed:@"ipsum"];
+    [manifest accumulateArgument:@"delta" forOptionNamed:@"ipsum"];
+    [manifest accumulateArgument:@"echo" forOptionNamed:@"dolor"];
+    [manifest accumulateArgument:@"echo" forOptionNamed:@"dolor"];
+    [manifest accumulateArgument:@"foxtrot" forOptionNamed:@"solo"];
     XCTAssertEqualObjects(manifest.optionArguments[@"lorem"], (@[ @"alpha", @"bravo" ]));
     XCTAssertEqualObjects(manifest.optionArguments[@"ipsum"], (@[ @"charlie", @"delta" ]));
     XCTAssertEqualObjects(manifest.optionArguments[@"dolor"], (@[ @"echo", @"echo" ]));
@@ -63,8 +63,8 @@
     CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
     // free options and optarg pairs should not affect remainder arguments
-    [manifest accumulateArgument:@"foo" forOption:@"bar"];
-    [manifest accumulateFreeOption:@"flarn"];
+    [manifest accumulateArgument:@"foo" forOptionNamed:@"bar"];
+    [manifest accumulateFreeOptionNamed:@"flarn"];
     
     XCTAssertEqualObjects(manifest.remainderArguments, @[]);
     

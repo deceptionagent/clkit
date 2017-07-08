@@ -40,18 +40,18 @@
 #pragma mark -
 #pragma mark Building Manifests
 
-- (void)accumulateFreeOption:(NSString *)optionName
+- (void)accumulateFreeOptionNamed:(NSString *)name
 {
-    NSNumber *occurrences = _freeOptions[optionName];
-    _freeOptions[optionName] = @(occurrences.unsignedIntValue + 1);
+    NSNumber *occurrences = _freeOptions[name];
+    _freeOptions[name] = @(occurrences.unsignedIntValue + 1);
 }
 
-- (void)accumulateArgument:(id)argument forOption:(NSString *)optionName
+- (void)accumulateArgument:(id)argument forOptionNamed:(NSString *)name
 {
-    NSMutableArray *arguments = _optionArguments[optionName];
+    NSMutableArray *arguments = _optionArguments[name];
     if (arguments == nil) {
         arguments = [NSMutableArray array];
-        _optionArguments[optionName] = arguments;
+        _optionArguments[name] = arguments;
     }
     
     [arguments addObject:argument];

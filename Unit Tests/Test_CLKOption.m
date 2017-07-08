@@ -17,67 +17,67 @@
 
 - (void)testInitOption
 {
-    CLKOption *option = [CLKOption optionWithLongName:@"flarn" shortName:@"f"];
+    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     XCTAssertNotNil(option);
-    XCTAssertEqualObjects(option.longName, @"flarn");
-    XCTAssertEqualObjects(option.shortName, @"f");
+    XCTAssertEqualObjects(option.name, @"flarn");
+    XCTAssertEqualObjects(option.flag, @"f");
     XCTAssertNil(option.transformer);
     XCTAssertTrue(option.expectsArgument);
 
-    option = [CLKOption optionWithLongName:@"flarn" shortName:@"f" transformer:nil];
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" transformer:nil];
     XCTAssertNotNil(option);
     XCTAssertNil(option.transformer);
     
     CLKArgumentTransformer *transformer = [CLKArgumentTransformer transformer];
-    option = [CLKOption optionWithLongName:@"flarn" shortName:@"f" transformer:transformer];
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" transformer:transformer];
     XCTAssertNotNil(option);
     XCTAssertNotNil(option.transformer);
     XCTAssertEqual(option.transformer, transformer);
     
-    XCTAssertThrows([CLKOption optionWithLongName:@"--flarn" shortName:@"f"]);
-    XCTAssertThrows([CLKOption optionWithLongName:@"flarn" shortName:@"-f"]);
+    XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([CLKOption optionWithLongName:nil shortName:nil]);
-    XCTAssertThrows([CLKOption optionWithLongName:nil shortName:@"x"]);
-    XCTAssertThrows([CLKOption optionWithLongName:@"" shortName:@"x"]);
-    XCTAssertThrows([CLKOption optionWithLongName:@"flarn" shortName:nil]);
-    XCTAssertThrows([CLKOption optionWithLongName:@"flarn" shortName:@""]);
-    XCTAssertThrows([CLKOption optionWithLongName:@"flarn" shortName:@"xx"]);
+    XCTAssertThrows([CLKOption optionWithName:nil flag:nil]);
+    XCTAssertThrows([CLKOption optionWithName:nil flag:@"x"]);
+    XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:nil]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
 #pragma clang diagnostic pop
 }
 
 - (void)testInitFreeOption
 {
-    CLKOption *option = [CLKOption freeOptionWithLongName:@"flarn" shortName:@"f"];
+    CLKOption *option = [CLKOption freeOptionWithName:@"flarn" flag:@"f"];
     XCTAssertNotNil(option);
-    XCTAssertEqualObjects(option.longName, @"flarn");
-    XCTAssertEqualObjects(option.shortName, @"f");
+    XCTAssertEqualObjects(option.name, @"flarn");
+    XCTAssertEqualObjects(option.flag, @"f");
     XCTAssertNil(option.transformer);
     XCTAssertFalse(option.expectsArgument);
 
-    XCTAssertThrows([CLKOption freeOptionWithLongName:@"--flarn" shortName:@"f"]);
-    XCTAssertThrows([CLKOption freeOptionWithLongName:@"flarn" shortName:@"-f"]);
+    XCTAssertThrows([CLKOption freeOptionWithName:@"--flarn" flag:@"f"]);
+    XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@"-f"]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([CLKOption freeOptionWithLongName:nil shortName:nil]);
-    XCTAssertThrows([CLKOption freeOptionWithLongName:nil shortName:@"x"]);
-    XCTAssertThrows([CLKOption freeOptionWithLongName:@"" shortName:@"x"]);
-    XCTAssertThrows([CLKOption freeOptionWithLongName:@"flarn" shortName:nil]);
-    XCTAssertThrows([CLKOption freeOptionWithLongName:@"flarn" shortName:@""]);
-    XCTAssertThrows([CLKOption freeOptionWithLongName:@"flarn" shortName:@"xx"]);
+    XCTAssertThrows([CLKOption freeOptionWithName:nil flag:nil]);
+    XCTAssertThrows([CLKOption freeOptionWithName:nil flag:@"x"]);
+    XCTAssertThrows([CLKOption freeOptionWithName:@"" flag:@"x"]);
+    XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:nil]);
+    XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@""]);
+    XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@"xx"]);
 #pragma clang diagnostic pop
 }
 
 - (void)testEquality
 {
-    // short names are just conveniences -- the canoical identifier of an option is its long name
-    CLKOption *alphaA = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
-    CLKOption *alphaB = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
-    CLKOption *alphaC = [CLKOption optionWithLongName:@"alpha" shortName:@"A"];
-    CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"a"];
+    // flags are just conveniences -- the canoical identifier of an option is its name
+    CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    CLKOption *alphaC = [CLKOption optionWithName:@"alpha" flag:@"A"];
+    CLKOption *bravo = [CLKOption optionWithName:@"bravo" flag:@"a"];
     
     XCTAssertTrue([alphaA isEqual:alphaA]);
     XCTAssertTrue([alphaA isEqual:alphaB]);
@@ -87,11 +87,11 @@
 
 - (void)testCollectionSupport
 {
-    // short names are just conveniences -- the full identity of an option is related only to its long name
-    CLKOption *alphaA = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
-    CLKOption *alphaB = [CLKOption optionWithLongName:@"alpha" shortName:@"a"];
-    CLKOption *alphaC = [CLKOption optionWithLongName:@"alpha" shortName:@"A"];
-    CLKOption *bravo = [CLKOption optionWithLongName:@"bravo" shortName:@"b"];
+    // flags are just conveniences -- the full identity of an option is related only to its name
+    CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    CLKOption *alphaC = [CLKOption optionWithName:@"alpha" flag:@"A"];
+    CLKOption *bravo = [CLKOption optionWithName:@"bravo" flag:@"b"];
     
     NSSet *set = [NSSet setWithObjects:alphaA, alphaB, alphaC, bravo, nil];
     XCTAssertEqual(set.count, 2);
@@ -100,7 +100,7 @@
     
     int alphaCount = 0;
     for (CLKOption *opt in set.allObjects) {
-        if ([opt.longName isEqualToString:@"alpha"]) {
+        if ([opt.name isEqualToString:@"alpha"]) {
             alphaCount++;
         }
     }
