@@ -130,4 +130,14 @@
     XCTAssertEqualObjects(error.userInfo[@"foo"], @"bar");
 }
 
+- (void)testVerbCollisionCheck
+{
+    NSArray *argv = @[ @"/usr/bin/lol", @"flarn" ];
+    CLKVerb *flarnA = [CLKVerb verbWithName:@"flarn" block:^(__unused NSArray *argv_, __unused NSError **outError) { return 0; }];
+    CLKVerb *flarnB = [CLKVerb verbWithName:@"flarn" block:^(__unused NSArray *argv_, __unused NSError **outError) { return 0; }];
+    CLKVerb *flarnC = [CLKVerb verbWithName:@"flArn" block:^(__unused NSArray *argv_, __unused NSError **outError) { return 0; }];
+    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:(@[ flarnA, flarnB ])] autorelease]);
+    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:(@[ flarnA, flarnC ])] autorelease]);
+}
+
 @end

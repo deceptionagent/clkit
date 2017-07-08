@@ -230,7 +230,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([parser parseArguments:nil]);
 }
 
-- (void)testOptionCollisionGuard
+- (void)testOptionCollisionCheck
 {
     // two --ack opts, different short names
     NSArray *options = @[
