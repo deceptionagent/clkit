@@ -1,8 +1,8 @@
 CLKit - nice things for command-line tools
 
 
-The classes in CLKit provide simple ways for command-line to define verbs and options, including how
-input to options is interpreted.
+The classes in CLKit provide simple ways for command-line tools to define verbs and options, as well
+as how input to options is interpreted.
 
 Below is a tour of CLKit's noteworthy pieces.
 
