@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
 		A6527C3A1F0A2D0C00BF6FAE /* CLKArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */; };
 		A6527C3B1F0A2D0C00BF6FAE /* CLKArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */; };
 		A6527C401F0A31E400BF6FAE /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */; };
@@ -47,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAssert.m; sourceTree = "<group>"; };
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
 		A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKVerbDepot.m; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */,
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
+				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -297,6 +300,7 @@
 				A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */,
 				A66A9E101F0421C500456347 /* NSArray+CLKAdditions.m in Sources */,
 				A66A9DFF1F0370DB00456347 /* CLKOptArgManifest.m in Sources */,
+				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A6527C411F0A31E400BF6FAE /* CLKVerbDepot.m in Sources */,
 				A6794E641F0F87E8004FEA4A /* NSError+CLKAdditions.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,

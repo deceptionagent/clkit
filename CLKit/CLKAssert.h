@@ -5,10 +5,10 @@
 #import <Foundation/Foundation.h>
 
 
-#define CLKHardAssert(condition, exception, fmt, ...) \
+#define CLKHardAssert(condition, exception, ...) \
 ({ \
     if (!(condition)) { \
-        NSString *__reason__ = [[[NSString alloc] initWithFormat: fmt, ##__VA_ARGS__] autorelease]; \
+        NSString *__reason__ = [[[NSString alloc] initWithFormat:__VA_ARGS__] autorelease]; \
         [[NSException exceptionWithName:exception reason:__reason__ userInfo:nil] raise]; \
     } \
 })
