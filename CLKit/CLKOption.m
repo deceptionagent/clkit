@@ -5,6 +5,7 @@
 #import "CLKOption.h"
 
 #import "CLKArgumentTransformer.h"
+#import "CLKAssert.h"
 
 
 @interface CLKOption ()
@@ -38,10 +39,10 @@
 
 - (instancetype)_initWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
 {
-    NSParameterAssert(![name hasPrefix:@"-"]);
-    NSParameterAssert(![flag hasPrefix:@"-"]);
-    NSParameterAssert(name.length > 0);
-    NSParameterAssert(flag.length == 1);
+    CLKHardParameterAssert(![name hasPrefix:@"-"]);
+    CLKHardParameterAssert(![flag hasPrefix:@"-"]);
+    CLKHardParameterAssert(name.length > 0);
+    CLKHardParameterAssert(flag.length == 1);
     
     self = [super init];
     if (self != nil) {
