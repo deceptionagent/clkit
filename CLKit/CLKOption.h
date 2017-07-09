@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // there are two basic kinds of options:
 //
-//    1. normal options that expect arguments
-//    2. free options that don't have arguments
+//    1. "payload" options that expect arguments
+//    2. "free" options that don't have arguments
 //
 // names and flags should not include leading dashes.
 
