@@ -4,6 +4,7 @@
 
 #import "CLKVerbDepot.h"
 
+#import "CLKAssert.h"
 #import "CLKVerb.h"
 #import "NSMutableArray+CLKAdditions.h"
 
@@ -15,8 +16,8 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
 
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<CLKVerb *> *)verbs
 {
-    NSParameterAssert(argumentVector.count > 0);
-    NSParameterAssert(verbs.count > 0);
+    CLKHardParameterAssert(argumentVector.count > 0);
+    CLKHardParameterAssert(verbs.count > 0);
     
     self = [super init];
     if (self != nil) {
@@ -24,7 +25,7 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
         _verbs = [[NSMutableDictionary alloc] init];
         for (CLKVerb *verb in verbs) {
             NSString *verbName = verb.name.lowercaseString; // verb lookups are case-insensitive
-            NSAssert((_verbs[verbName] == nil), @"duplicate verb name: '%@'", verb.name);
+            CLKHardAssert((_verbs[verbName] == nil), NSInvalidArgumentException, @"duplicate verb name: '%@'", verb.name);
             _verbs[verbName] = verb;
         }
     }

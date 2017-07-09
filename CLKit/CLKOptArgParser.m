@@ -67,7 +67,7 @@
 
 - (nullable CLKOptArgManifest *)parseArguments:(NSError **)outError
 {
-    NSAssert((_state == CLKOAPStateBegin), @"cannot re-run a parser after use");
+    CLKHardAssert((_state == CLKOAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     
     while (_state != CLKOAPStateEnd) {
         switch (_state) {
