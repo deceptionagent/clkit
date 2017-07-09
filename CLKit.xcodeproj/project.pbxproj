@@ -78,6 +78,7 @@
 		A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+CLKAdditions.m"; sourceTree = "<group>"; };
 		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformers.m; sourceTree = "<group>"; };
 		A6893C2C1F11A49300E15F11 /* CLKAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKAssert.h; sourceTree = "<group>"; };
+		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +128,7 @@
 		A66A9DD61F02294800456347 = {
 			isa = PBXGroup;
 			children = (
+				A6E478C81F123CF20081EB82 /* readme.txt */,
 				A66A9DE11F02294800456347 /* CLKit */,
 				A66A9DF11F02406F00456347 /* Unit Tests */,
 				A66A9DE01F02294800456347 /* Products */,

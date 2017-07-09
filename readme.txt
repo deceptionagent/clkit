@@ -64,7 +64,7 @@ order to translate the input string during parsing. Some useful transformers are
 
 Using a transformer looks like this:
 
-	Option *opt = [Option optionWithName:@"foo" flag:@"f" transformer:[CLKIntegerArgumentTransformer transformer]];
+	[Option optionWithName:@"foo" flag:@"f" transformer:[CLKIntegerArgumentTransformer transformer]];
 
 That's it. After parsing, the "foo" key in the manifest's option arguments dictionary would
 contain an array of NSNumbers instead of NSStrings.
