@@ -1,5 +1,4 @@
 //
-//  Created by mikey on 28/6/17.
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
