@@ -8,7 +8,8 @@ Below is a tour of CLKit's noteworthy pieces.
 
 CLKVerb
 Defines a single verb by name (e.g., the "compare" part of `tmutil compare`) and a block to be
-executed when the user invokes the verb.
+executed when the user invokes the verb. The block recieves a reduced argv that contains only the
+arguments to the right of the verb. You can pass this array directly to a CLKOptArgParser.
 
 CLKVerbDepot
 A very simple class that acts as a lookup table for defined verbs.
