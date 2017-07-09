@@ -75,6 +75,7 @@
 		A6794E611F0F82D8004FEA4A /* NSError+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSError+CLKAdditions.h"; sourceTree = "<group>"; };
 		A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+CLKAdditions.m"; sourceTree = "<group>"; };
 		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformers.m; sourceTree = "<group>"; };
+		A6893C2C1F11A49300E15F11 /* CLKAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKAssert.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +145,7 @@
 			children = (
 				A66A9DE21F02294800456347 /* main.m */,
 				A66A9E0A1F041DBB00456347 /* Categories */,
+				A6893C2D1F11A51E00E15F11 /* Misc */,
 				A6527C471F0A4CFA00BF6FAE /* Options */,
 				A6527C481F0A4D1000BF6FAE /* Verbs */,
 			);
@@ -175,6 +177,14 @@
 				A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */,
 			);
 			name = Categories;
+			sourceTree = "<group>";
+		};
+		A6893C2D1F11A51E00E15F11 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				A6893C2C1F11A49300E15F11 /* CLKAssert.h */,
+			);
+			name = Misc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

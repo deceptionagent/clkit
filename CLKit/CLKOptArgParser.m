@@ -7,6 +7,7 @@
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
 #import "CLKArgumentTransformer.h"
+#import "CLKAssert.h"
 #import "CLKOption.h"
 #import "CLKOptArgManifest.h"
 
@@ -29,8 +30,8 @@
 
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
-    NSParameterAssert(argv != nil);
-    NSParameterAssert(options != nil);
+    CLKHardParameterAssert(argv != nil);
+    CLKHardParameterAssert(options != nil);
     
     self = [super init];
     if (self != nil) {
@@ -40,8 +41,8 @@
         _optionFlagMap = [[NSMutableDictionary alloc] init];
         
         for (CLKOption *opt in options) {
-            NSAssert((_optionNameMap[opt.name] == nil), @"duplicate option '%@'", opt.name);
-            NSAssert((_optionFlagMap[opt.flag] == nil), @"duplicate option '%@'", opt.name);
+            CLKHardAssert((_optionNameMap[opt.name] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
+            CLKHardAssert((_optionFlagMap[opt.flag] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
             _optionNameMap[opt.name] = opt;
             _optionFlagMap[opt.flag] = opt;
         }
