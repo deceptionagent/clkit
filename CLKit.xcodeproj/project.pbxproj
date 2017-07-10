@@ -33,6 +33,15 @@
 		A6794E631F0F82D8004FEA4A /* NSError+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */; };
 		A6794E641F0F87E8004FEA4A /* NSError+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */; };
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
+		A6E478D61F133AB80081EB82 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
+		A6E478D71F133AB80081EB82 /* NSError+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */; };
+		A6E478D81F133AB80081EB82 /* NSMutableArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */; };
+		A6E478D91F133AB80081EB82 /* CLKArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */; };
+		A6E478DA1F133AB80081EB82 /* CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* CLKOption.m */; };
+		A6E478DB1F133AB80081EB82 /* CLKOptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */; };
+		A6E478DC1F133AB80081EB82 /* CLKOptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */; };
+		A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3E1F0A31E300BF6FAE /* CLKVerb.m */; };
+		A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -79,6 +88,7 @@
 		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformers.m; sourceTree = "<group>"; };
 		A6893C2C1F11A49300E15F11 /* CLKAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKAssert.h; sourceTree = "<group>"; };
 		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +100,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A66A9DED1F02406F00456347 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6E478CA1F133A780081EB82 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -140,6 +157,7 @@
 			children = (
 				A66A9DDF1F02294800456347 /* clklab */,
 				A66A9DF01F02406F00456347 /* Unit Tests.xctest */,
+				A6E478CD1F133A780081EB82 /* libCLKit.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,12 +179,12 @@
 			children = (
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
+				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
 				A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */,
 				A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */,
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
-				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -193,6 +211,16 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		A6E478CB1F133A780081EB82 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		A66A9DDE1F02294800456347 /* clklab */ = {
@@ -229,6 +257,23 @@
 			productReference = A66A9DF01F02406F00456347 /* Unit Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A6E478CC1F133A780081EB82 /* CLKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6E478D51F133A780081EB82 /* Build configuration list for PBXNativeTarget "CLKit" */;
+			buildPhases = (
+				A6E478C91F133A780081EB82 /* Sources */,
+				A6E478CA1F133A780081EB82 /* Frameworks */,
+				A6E478CB1F133A780081EB82 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CLKit;
+			productName = CLKit;
+			productReference = A6E478CD1F133A780081EB82 /* libCLKit.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -242,6 +287,9 @@
 						CreatedOnToolsVersion = 9.0;
 					};
 					A66A9DEF1F02406F00456347 = {
+						CreatedOnToolsVersion = 9.0;
+					};
+					A6E478CC1F133A780081EB82 = {
 						CreatedOnToolsVersion = 9.0;
 					};
 				};
@@ -260,6 +308,7 @@
 			targets = (
 				A66A9DDE1F02294800456347 /* clklab */,
 				A66A9DEF1F02406F00456347 /* Unit Tests */,
+				A6E478CC1F133A780081EB82 /* CLKit */,
 			);
 		};
 /* End PBXProject section */
@@ -312,6 +361,22 @@
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKOptArgManifest.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKOptArgParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6E478C91F133A780081EB82 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6E478D61F133AB80081EB82 /* NSArray+CLKAdditions.m in Sources */,
+				A6E478D71F133AB80081EB82 /* NSError+CLKAdditions.m in Sources */,
+				A6E478D81F133AB80081EB82 /* NSMutableArray+CLKAdditions.m in Sources */,
+				A6E478D91F133AB80081EB82 /* CLKArgumentTransformer.m in Sources */,
+				A6E478DA1F133AB80081EB82 /* CLKOption.m in Sources */,
+				A6E478DB1F133AB80081EB82 /* CLKOptArgManifest.m in Sources */,
+				A6E478DC1F133AB80081EB82 /* CLKOptArgParser.m in Sources */,
+				A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */,
+				A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,6 +526,24 @@
 			};
 			name = Release;
 		};
+		A6E478D31F133A780081EB82 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A6E478D41F133A780081EB82 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -490,6 +573,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		A6E478D51F133A780081EB82 /* Build configuration list for PBXNativeTarget "CLKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6E478D31F133A780081EB82 /* Debug */,
+				A6E478D41F133A780081EB82 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
