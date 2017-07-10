@@ -208,6 +208,15 @@
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *argument = [_argumentVector clk_popFirstObject];
     
+    // reject: empty string passed into argv (e.g., --foo "")
+    if (argument.length == 0) {
+        if (outError != nil) {
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"encountered zero-length argument"];
+        }
+        
+        return CLKOAPStateError;
+    }
+
     if (self.currentOption != nil) {
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {

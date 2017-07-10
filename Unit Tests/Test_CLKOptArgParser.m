@@ -172,6 +172,38 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(error.localizedDescription, @"expected argument but encountered option-like token '--bar'");
 }
 
+- (void)testZeroLengthStringsInArgumentVector
+{
+    CLKOption *option = [CLKOption optionWithName:@"foo" flag:@"f"];
+    
+    NSArray *argv = @[ @"--foo", @"", @"what" ];
+    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:@[ option ]];
+    NSError *error = nil;
+    CLKOptArgManifest *manifest = [parser parseArguments:&error];
+    XCTAssertNil(manifest);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, EINVAL);
+    XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
+    
+    argv = @[ @"--foo", @"bar", @"" ];
+    parser = [CLKOptArgParser parserWithArgumentVector:argv options:@[ option ]];
+    error = nil;
+    manifest = [parser parseArguments:&error];
+    XCTAssertNil(manifest);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, EINVAL);
+    XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
+    
+    argv = @[ @"", @"--foo", @"bar" ];
+    parser = [CLKOptArgParser parserWithArgumentVector:argv options:@[ option ]];
+    error = nil;
+    manifest = [parser parseArguments:&error];
+    XCTAssertNil(manifest);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, EINVAL);
+    XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
+}
+
 - (void)testArgumentTransformation
 {
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
