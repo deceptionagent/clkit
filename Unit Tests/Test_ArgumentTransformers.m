@@ -16,7 +16,7 @@
 
 - (void)testIntegerArgumentTransformer
 {
-    CLKIntegerArgumentTransformer *transformer = [CLKIntegerArgumentTransformer transformer];
+    CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
     
     NSError *error = nil;
     NSNumber *num = [transformer transformedArgument:@"0" error:&error];
