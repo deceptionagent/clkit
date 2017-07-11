@@ -208,7 +208,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     
-    CLKIntegerArgumentTransformer *transformer = [CLKIntegerArgumentTransformer transformer];
+    CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
     CLKOption *syn = [CLKOption optionWithName:@"strange" flag:@"s" transformer:transformer];
     CLKOption *ack = [CLKOption optionWithName:@"aeons" flag:@"a" transformer:transformer];
     NSArray *options = @[ syn, ack ];
@@ -232,7 +232,7 @@ NS_ASSUME_NONNULL_END
     NSArray *options = @[
          [CLKOption optionWithName:@"syn" flag:@"s"],
          [CLKOption optionWithName:@"ack" flag:@"a"],
-         [CLKOption optionWithName:@"noise" flag:@"n" transformer:[CLKIntegerArgumentTransformer transformer]],
+         [CLKOption optionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
          [CLKOption optionWithName:@"ghost" flag:@"g"], // not provided in argv
          [CLKOption freeOptionWithName:@"xyzzy" flag:@"x"],
          [CLKOption freeOptionWithName:@"spline" flag:@"p"],
