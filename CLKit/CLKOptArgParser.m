@@ -9,7 +9,21 @@
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
 #import "CLKOption.h"
+#import "CLKOption_Private.h"
 #import "CLKOptArgManifest.h"
+#import "CLKOptArgManifest_Private.h"
+
+
+typedef NS_ENUM(uint32_t, CLKOAPState) {
+    CLKOAPStateBegin = 0,
+    CLKOAPStateReadNextItem,
+    CLKOAPStateParseOptionName,
+    CLKOAPStateParseOptionFlag,
+    CLKOAPStateParseOptionFlagGroup,
+    CLKOAPStateParseArgument,
+    CLKOAPStateError,
+    CLKOAPStateEnd
+};
 
 
 @interface CLKOptArgParser ()
@@ -20,6 +34,14 @@
 
 
 @implementation CLKOptArgParser
+{
+    CLKOAPState _state;
+    CLKOption *_currentOption;
+    NSMutableArray<NSString *> *_argumentVector;
+    NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
+    NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
+    CLKOptArgManifest *_manifest;
+}
 
 @synthesize currentOption = _currentOption;
 

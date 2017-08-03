@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 
 #import "CLKOptArgManifest.h"
+#import "CLKOptArgManifest_Private.h"
 
 
 @interface Test_CLKOptArgManifest : XCTestCase
