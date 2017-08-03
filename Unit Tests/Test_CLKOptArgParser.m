@@ -209,9 +209,9 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     
     CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
-    CLKOption *syn = [CLKOption optionWithName:@"strange" flag:@"s" transformer:transformer];
-    CLKOption *ack = [CLKOption optionWithName:@"aeons" flag:@"a" transformer:transformer];
-    NSArray *options = @[ syn, ack ];
+    CLKOption *strange = [CLKOption optionWithName:@"strange" flag:@"s" transformer:transformer];
+    CLKOption *aeons = [CLKOption optionWithName:@"aeons" flag:@"a" transformer:transformer];
+    NSArray *options = @[ strange, aeons ];
     
     NSDictionary *expectedOptionArguments = @{
         @"strange" : @[ @(7) ],
