@@ -11,10 +11,6 @@ typedef int (^CLKVerbBlock)(NSArray<NSString *> *, NSError **outError);
 
 
 @interface CLKVerb : NSObject
-{
-    NSString *_name;
-    CLKVerbBlock _block;
-}
 
 + (instancetype)verbWithName:(NSString *)name block:(CLKVerbBlock)block;
 

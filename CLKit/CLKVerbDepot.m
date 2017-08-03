@@ -13,6 +13,10 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
 
 
 @implementation CLKVerbDepot
+{
+    NSArray<NSString *> *_argumentVector;
+    NSMutableDictionary<NSString *, CLKVerb *> *_verbs;
+}
 
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<CLKVerb *> *)verbs
 {
