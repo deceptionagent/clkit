@@ -17,6 +17,10 @@ NS_ASSUME_NONNULL_END
 
 
 @implementation CLKVerb
+{
+    NSString *_name;
+    CLKVerbBlock _block;
+}
 
 @synthesize name = _name;
 @synthesize block = _block;
