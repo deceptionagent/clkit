@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
                     options:(NSArray<CLKOption *> *)options
         expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
- expectedRemainderArguments:(NSArray<NSString *> *)expectedRemainderArguments;
+expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments;
 
 @end
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_END
                     options:(NSArray<CLKOption *> *)options
         expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
- expectedRemainderArguments:(NSArray<NSString *> *)expectedRemainderArguments
+expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 {
     CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
     NSError *error = nil;
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertNil(error);
     XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
     XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
-    XCTAssertEqualObjects(manifest.remainderArguments, expectedRemainderArguments);
+    XCTAssertEqualObjects(manifest.positionalArguments, expectedPositionalArguments);
 }
 
 #pragma mark -
@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_END
          [CLKOption optionWithName:@"foo" flag:@"f"],
     ];
     
-    [self performTestWithArgv:@[] options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:@[]];
+    [self performTestWithArgv:@[] options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:@[]];
 }
 
 - (void)testUnrecognizedOption
@@ -104,7 +104,7 @@ NS_ASSUME_NONNULL_END
         @"bar" : @(1)
     };
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedRemainderArguments:@[]];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
 }
 
 - (void)testOptionArguments
@@ -120,10 +120,10 @@ NS_ASSUME_NONNULL_END
         @"bar" : @[ @"charlie" ]
     };
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:@[]];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
 }
 
-- (void)testRemainderArguments
+- (void)testPositionalArguments
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
@@ -134,11 +134,11 @@ NS_ASSUME_NONNULL_END
         @"foo" : @[ @"bar" ]
     };
     
-    NSArray *expectedRemainderArguments = @[ @"/flarn.txt", @"/bort.txt" ];
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
+    NSArray *expectedPositionalArguments = @[ @"/flarn.txt", @"/bort.txt" ];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
 }
 
-- (void)testRemainderArgumentsOnly
+- (void)testPositionalArgumentsOnly
 {
     NSArray *argv = @[ @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
@@ -146,13 +146,13 @@ NS_ASSUME_NONNULL_END
         [CLKOption optionWithName:@"bar" flag:@"b"]
     ];
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:argv];
 }
 
-- (void)testRemainderArgumentsOnly_noParserOptions
+- (void)testPositionalArgumentsOnly_noParserOptions
 {
     NSArray *argv = @[ @"alpha", @"bravo", @"charlie" ];
-    [self performTestWithArgv:argv options:@[] expectedFreeOptions:@{} expectedOptionArguments:@{} expectedRemainderArguments:argv];
+    [self performTestWithArgv:argv options:@[] expectedFreeOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:argv];
 }
 
 - (void)testOptionArgumentNotProvided
@@ -218,8 +218,8 @@ NS_ASSUME_NONNULL_END
         @"aeons" : @[ @(819) ],
     };
     
-    NSArray *expectedRemainderArguments = @[ @"/fatum/iustum/stultorum" ];
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
+    NSArray *expectedPositionalArguments = @[ @"/fatum/iustum/stultorum" ];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
 }
 
 - (void)testComplexMix
@@ -249,8 +249,8 @@ NS_ASSUME_NONNULL_END
         @"noise" : @[ @(819) ]
     };
     
-    NSArray *expectedRemainderArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];
-    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedRemainderArguments:expectedRemainderArguments];
+    NSArray *expectedPositionalArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];
+    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
 }
 
 - (void)testParserReuseNotAllowed
