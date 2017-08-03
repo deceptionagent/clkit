@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 {
     NSMutableDictionary<NSString *, NSNumber *> *_freeOptions; // accumulation count
     NSMutableDictionary<NSString *, NSMutableArray *> *_optionArguments;
-    NSMutableArray<NSString *> *_remainderArguments;
+    NSMutableArray<NSString *> *_positionalArguments;
 }
 
 #pragma mark -
@@ -19,14 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)accumulateFreeOptionNamed:(NSString *)name;
 - (void)accumulateArgument:(id)argument forOptionNamed:(NSString *)name;
-- (void)accumulateRemainderArgument:(NSString *)argument;
+- (void)accumulatePositionalArgument:(NSString *)argument;
 
 #pragma mark -
 #pragma mark Reading Manifests
 
 @property (readonly) NSDictionary<NSString *, NSNumber *> *freeOptions;
 @property (readonly) NSDictionary<NSString *, NSArray *> *optionArguments;
-@property (readonly) NSArray<NSString *> *remainderArguments;
+@property (readonly) NSArray<NSString *> *positionalArguments;
 
 @end
 

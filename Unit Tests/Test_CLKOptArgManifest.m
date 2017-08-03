@@ -18,9 +18,9 @@
 {
     CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
-    // optarg pairs and remainder arguments should not affect free options
+    // optarg pairs and positional arguments should not affect free options
     [manifest accumulateArgument:@"foo" forOptionNamed:@"bar"];
-    [manifest accumulateRemainderArgument:@"barf"];
+    [manifest accumulatePositionalArgument:@"barf"];
     
     XCTAssertNil(manifest.freeOptions[@"flarn"]);
     
@@ -38,9 +38,9 @@
 {
     CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
-    // free options and remainder arguments should not affect optarg pairs
+    // free options and positional arguments should not affect optarg pairs
     [manifest accumulateFreeOptionNamed:@"free"];
-    [manifest accumulateRemainderArgument:@"remainder"];
+    [manifest accumulatePositionalArgument:@"positional"];
     
     XCTAssertNil(manifest.optionArguments[@"lorem"]);
     
@@ -58,20 +58,20 @@
     XCTAssertNil(manifest.optionArguments[@"flarn"]);
 }
 
-- (void)testRemainderArguments
+- (void)testPositionalArguments
 {
     CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
     
-    // free options and optarg pairs should not affect remainder arguments
+    // free options and optarg pairs should not affect positional arguments
     [manifest accumulateArgument:@"foo" forOptionNamed:@"bar"];
     [manifest accumulateFreeOptionNamed:@"flarn"];
     
-    XCTAssertEqualObjects(manifest.remainderArguments, @[]);
+    XCTAssertEqualObjects(manifest.positionalArguments, @[]);
     
-    [manifest accumulateRemainderArgument:@"alpha"];
-    [manifest accumulateRemainderArgument:@"bravo"];
-    [manifest accumulateRemainderArgument:@"alpha"];
-    XCTAssertEqualObjects(manifest.remainderArguments, (@[ @"alpha", @"bravo", @"alpha"]));
+    [manifest accumulatePositionalArgument:@"alpha"];
+    [manifest accumulatePositionalArgument:@"bravo"];
+    [manifest accumulatePositionalArgument:@"alpha"];
+    XCTAssertEqualObjects(manifest.positionalArguments, (@[ @"alpha", @"bravo", @"alpha"]));
 }
 
 @end

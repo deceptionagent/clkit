@@ -9,7 +9,7 @@
 
 @synthesize freeOptions = _freeOptions;
 @synthesize optionArguments = _optionArguments;
-@synthesize remainderArguments = _remainderArguments;
+@synthesize positionalArguments = _positionalArguments;
 
 - (instancetype)init
 {
@@ -17,7 +17,7 @@
     if (self != nil) {
         _freeOptions = [[NSMutableDictionary alloc] init];
         _optionArguments = [[NSMutableDictionary alloc] init];
-        _remainderArguments = [[NSMutableArray alloc] init];
+        _positionalArguments = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -27,14 +27,14 @@
 {
     [_freeOptions release];
     [_optionArguments release];
-    [_remainderArguments release];
+    [_positionalArguments release];
     [super dealloc];
 }
 
 - (NSString *)debugDescription
 {
-    NSString *fmt = @"%@\n\nfree options:\n%@\n\noption arguments:\n%@\n\nremainder arguments:\n%@";
-    return [NSString stringWithFormat:fmt, super.debugDescription, _freeOptions, _optionArguments, _remainderArguments];
+    NSString *fmt = @"%@\n\nfree options:\n%@\n\noption arguments:\n%@\n\npositional arguments:\n%@";
+    return [NSString stringWithFormat:fmt, super.debugDescription, _freeOptions, _optionArguments, _positionalArguments];
 }
 
 #pragma mark -
@@ -57,9 +57,9 @@
     [arguments addObject:argument];
 }
 
-- (void)accumulateRemainderArgument:(NSString *)argument
+- (void)accumulatePositionalArgument:(NSString *)argument
 {
-    [_remainderArguments addObject:argument];
+    [_positionalArguments addObject:argument];
 }
 
 @end

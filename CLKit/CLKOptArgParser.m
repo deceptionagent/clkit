@@ -238,7 +238,7 @@
         [_manifest accumulateArgument:argument forOptionNamed:self.currentOption.name];
         self.currentOption = nil;
     } else {
-        [_manifest accumulateRemainderArgument:argument];
+        [_manifest accumulatePositionalArgument:argument];
     }
     
     return CLKOAPStateReadNextItem;
