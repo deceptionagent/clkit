@@ -3,19 +3,19 @@
 //
 
 #import "CLKOption.h"
+#import "CLKOption_Private.h"
 
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
 
 
-@interface CLKOption ()
-
-- (instancetype)_initWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument NS_DESIGNATED_INITIALIZER;
-
-@end
-
-
 @implementation CLKOption
+{
+    NSString *_name;
+    NSString *_flag;
+    BOOL _expectsArgument;
+    CLKArgumentTransformer *_transformer;
+}
 
 @synthesize name = _name;
 @synthesize flag = _flag;
@@ -29,15 +29,15 @@
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] _initWithName:name flag:flag transformer:transformer expectsArgument:YES] autorelease];
+    return [[[self alloc] initWithName:name flag:flag transformer:transformer expectsArgument:YES] autorelease];
 }
 
 + (instancetype)freeOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] _initWithName:name flag:flag transformer:nil expectsArgument:NO] autorelease];
+    return [[[self alloc] initWithName:name flag:flag transformer:nil expectsArgument:NO] autorelease];
 }
 
-- (instancetype)_initWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
+- (instancetype)initWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
 {
     CLKHardParameterAssert(![name hasPrefix:@"-"]);
     CLKHardParameterAssert(![flag hasPrefix:@"-"]);
@@ -65,7 +65,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expectsArgument: %@ }", super.description, _name, _flag, (_expectsArgument ? @"YES" : @"NO")];
+    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expects argument: %@ }", super.description, _name, _flag, (_expectsArgument ? @"YES" : @"NO")];
 }
 
 - (NSUInteger)hash

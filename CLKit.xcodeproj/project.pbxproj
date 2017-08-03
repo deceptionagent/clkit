@@ -90,6 +90,8 @@
 		A6893C2C1F11A49300E15F11 /* CLKAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKAssert.h; sourceTree = "<group>"; };
 		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption_Private.h; sourceTree = "<group>"; };
+		A6F970B21F3321C300E0BD73 /* CLKOptArgManifest_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgManifest_Private.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,8 +127,10 @@
 				A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */,
 				A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */,
 				A66A9DE91F023CE200456347 /* CLKOption.h */,
+				A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */,
 				A66A9DEA1F023CE200456347 /* CLKOption.m */,
 				A66A9DFC1F02DF4300456347 /* CLKOptArgManifest.h */,
+				A6F970B21F3321C300E0BD73 /* CLKOptArgManifest_Private.h */,
 				A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */,
 				A66A9DF91F0241DB00456347 /* CLKOptArgParser.h */,
 				A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */,
@@ -585,6 +589,7 @@
 				A6E478D41F133A780081EB82 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

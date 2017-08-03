@@ -11,12 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOption : NSObject
-{
-    NSString *_name;
-    NSString *_flag;
-    BOOL _expectsArgument;
-    CLKArgumentTransformer *_transformer;
-}
 
 // there are two basic kinds of options:
 //
@@ -33,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) NSString *name;
 @property (readonly) NSString *flag;
-@property (readonly) BOOL expectsArgument;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
 
 @end

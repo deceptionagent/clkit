@@ -6,6 +6,11 @@
 
 
 @implementation CLKOptArgManifest
+{
+    NSMutableDictionary<NSString *, NSNumber *> *_freeOptions;
+    NSMutableDictionary<NSString *, NSMutableArray *> *_optionArguments;
+    NSMutableArray<NSString *> *_positionalArguments;
+}
 
 @synthesize freeOptions = _freeOptions;
 @synthesize optionArguments = _optionArguments;

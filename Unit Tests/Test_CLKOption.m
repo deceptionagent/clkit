@@ -6,6 +6,7 @@
 
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
+#import "CLKOption_Private.h"
 
 
 @interface Test_CLKOption : XCTestCase
