@@ -93,15 +93,15 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 
 - (void)testFreeOptions
 {
-    NSArray *argv = @[ @"--foo", @"-f", @"-b" ];
+    NSArray *argv = @[ @"--foo", @"-f", @"-bfb" ];
     NSArray *options = @[
         [CLKOption freeOptionWithName:@"foo" flag:@"f"],
         [CLKOption freeOptionWithName:@"bar" flag:@"b"]
     ];
     
     NSDictionary *expectedFreeOptions = @{
-        @"foo" : @(2),
-        @"bar" : @(1)
+        @"foo" : @(3),
+        @"bar" : @(2)
     };
     
     [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
@@ -121,6 +121,36 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     };
     
     [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
+}
+
+- (void)testNoFlag
+{
+    NSArray *argv = @[ @"--alpha", @"bravo", @"--charlie", @"--charlie" ];
+    NSArray *options = @[
+        [CLKOption optionWithName:@"alpha" flag:nil],
+        [CLKOption freeOptionWithName:@"charlie" flag:nil]
+    ];
+    
+    NSDictionary *expectedFreeOptions = @{ @"charlie" : @(2) };
+    NSDictionary *expectedOptionArguments = @{ @"alpha" : @[ @"bravo" ] };
+    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
+}
+
+// very edge-casey
+- (void)testSingleCharacterNames
+{
+    NSArray *argv = @[ @"--a", @"-a", @"--b", @"-aa" ];
+    NSArray *options = @[
+        [CLKOption freeOptionWithName:@"a" flag:@"a"],
+        [CLKOption freeOptionWithName:@"b" flag:nil]
+    ];
+    
+    NSDictionary *expectedFreeOptions = @{
+        @"a" : @(4),
+        @"b" : @(1)
+    };
+    
+    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
 }
 
 - (void)testPositionalArguments
