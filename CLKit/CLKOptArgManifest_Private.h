@@ -5,12 +5,15 @@
 #import "CLKOptArgManifest.h"
 
 
+@class CLKOption;
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOptArgManifest ()
 
-- (void)accumulateFreeOptionNamed:(NSString *)name;
-- (void)accumulateArgument:(id)argument forOptionNamed:(NSString *)name;
+- (void)accumulateFreeOption:(CLKOption *)option;
+- (void)accumulateArgument:(id)argument forOption:(CLKOption *)option;
 - (void)accumulatePositionalArgument:(NSString *)argument;
 
 @end

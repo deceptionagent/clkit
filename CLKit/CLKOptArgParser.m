@@ -189,7 +189,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
         return CLKOAPStateParseArgument;
     }
     
-    [_manifest accumulateFreeOptionNamed:option.name];
+    [_manifest accumulateFreeOption:option];
     return CLKOAPStateReadNextItem;
 }
 
@@ -260,7 +260,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
             }
         }
         
-        [_manifest accumulateArgument:argument forOptionNamed:self.currentOption.name];
+        [_manifest accumulateArgument:argument forOption:self.currentOption];
         self.currentOption = nil;
     } else {
         [_manifest accumulatePositionalArgument:argument];
