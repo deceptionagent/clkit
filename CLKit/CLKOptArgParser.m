@@ -64,9 +64,12 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
         
         for (CLKOption *opt in options) {
             CLKHardAssert((_optionNameMap[opt.name] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
-            CLKHardAssert((_optionFlagMap[opt.flag] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
             _optionNameMap[opt.name] = opt;
-            _optionFlagMap[opt.flag] = opt;
+            
+            if (opt.flag != nil) {
+                CLKHardAssert((_optionFlagMap[opt.flag] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
+                _optionFlagMap[opt.flag] = opt;
+            }
         }
         
         _manifest = [[CLKOptArgManifest alloc] init];

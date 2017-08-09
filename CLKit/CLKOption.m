@@ -42,7 +42,7 @@
     CLKHardParameterAssert(![name hasPrefix:@"-"]);
     CLKHardParameterAssert(![flag hasPrefix:@"-"]);
     CLKHardParameterAssert(name.length > 0);
-    CLKHardParameterAssert(flag.length == 1);
+    CLKHardParameterAssert(flag == nil || flag.length == 1);
     
     self = [super init];
     if (self != nil) {

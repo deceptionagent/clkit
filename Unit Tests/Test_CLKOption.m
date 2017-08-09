@@ -25,6 +25,11 @@
     XCTAssertNil(option.transformer);
     XCTAssertTrue(option.expectsArgument);
 
+    option = [CLKOption optionWithName:@"flarn" flag:nil];
+    XCTAssertNotNil(option);
+    XCTAssertEqualObjects(option.name, @"flarn");
+    XCTAssertNil(option.flag);
+    
     option = [CLKOption optionWithName:@"flarn" flag:@"f" transformer:nil];
     XCTAssertNotNil(option);
     XCTAssertNil(option.transformer);
@@ -43,7 +48,6 @@
     XCTAssertThrows([CLKOption optionWithName:nil flag:nil]);
     XCTAssertThrows([CLKOption optionWithName:nil flag:@"x"]);
     XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:nil]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
 #pragma clang diagnostic pop
@@ -58,6 +62,11 @@
     XCTAssertNil(option.transformer);
     XCTAssertFalse(option.expectsArgument);
 
+    option = [CLKOption freeOptionWithName:@"flarn" flag:nil];
+    XCTAssertNotNil(option);
+    XCTAssertEqualObjects(option.name, @"flarn");
+    XCTAssertNil(option.flag);
+    
     XCTAssertThrows([CLKOption freeOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@"-f"]);
     
@@ -66,7 +75,6 @@
     XCTAssertThrows([CLKOption freeOptionWithName:nil flag:nil]);
     XCTAssertThrows([CLKOption freeOptionWithName:nil flag:@"x"]);
     XCTAssertThrows([CLKOption freeOptionWithName:@"" flag:@"x"]);
-    XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:nil]);
     XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@"xx"]);
 #pragma clang diagnostic pop

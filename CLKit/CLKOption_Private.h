@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOption ()
 
-- (instancetype)initWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) BOOL expectsArgument;
 
