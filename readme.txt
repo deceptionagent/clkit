@@ -16,8 +16,8 @@ A very simple class that acts as a lookup table for defined verbs.
 
 CLKOption
 The model that defines an option (e.g., --foo) for a verb. Options always have a long form (name)
-and a short form (flag). Options can require arguments ("payload options") or be options that do
-not take an argument ("free options"). Payload options are simply referred to as options by APIs.
+and optionally a short form (flag). Options can require arguments ("payload options") or be options
+that do not take an argument ("free options"). Payload options are simply referred to as options.
 
 CLKOptArgParser
 This class does the work of parsing an argument vector and interpreting it using a list of options.

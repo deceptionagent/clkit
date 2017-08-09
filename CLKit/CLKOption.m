@@ -87,4 +87,11 @@
     return [opt.name isEqualToString:_name];
 }
 
+#pragma mark -
+
+- (NSString *)manifestKey
+{
+    return _name;
+}
+
 @end

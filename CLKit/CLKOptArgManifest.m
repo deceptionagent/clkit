@@ -4,6 +4,10 @@
 
 #import "CLKOptArgManifest.h"
 
+#import "CLKAssert.h"
+#import "CLKOption.h"
+#import "CLKOption_Private.h"
+
 
 @implementation CLKOptArgManifest
 {
@@ -45,18 +49,24 @@
 #pragma mark -
 #pragma mark Building Manifests
 
-- (void)accumulateFreeOptionNamed:(NSString *)name
+- (void)accumulateFreeOption:(CLKOption *)option
 {
-    NSNumber *occurrences = _freeOptions[name];
-    _freeOptions[name] = @(occurrences.unsignedIntValue + 1);
+    CLKHardParameterAssert(!option.expectsArgument);
+    
+    NSString *key = option.manifestKey;
+    NSNumber *occurrences = _freeOptions[key];
+    _freeOptions[key] = @(occurrences.unsignedIntValue + 1);
 }
 
-- (void)accumulateArgument:(id)argument forOptionNamed:(NSString *)name
+- (void)accumulateArgument:(id)argument forOption:(CLKOption *)option
 {
-    NSMutableArray *arguments = _optionArguments[name];
+    CLKHardParameterAssert(option.expectsArgument);
+    
+    NSString *key = option.manifestKey;
+    NSMutableArray *arguments = _optionArguments[key];
     if (arguments == nil) {
         arguments = [NSMutableArray array];
-        _optionArguments[name] = arguments;
+        _optionArguments[key] = arguments;
     }
     
     [arguments addObject:argument];
