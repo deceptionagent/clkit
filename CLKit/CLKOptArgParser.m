@@ -90,7 +90,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
 
 #pragma mark -
 
-- (nullable CLKOptArgManifest *)parseArguments:(NSError **)outError
+- (CLKOptArgManifest *)parseArguments:(NSError **)outError
 {
     CLKHardAssert((_state == CLKOAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     
@@ -147,7 +147,9 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     }
     
     // reject meaningless input
-    // [TACK] if we wanted to support overflow arguments, we would remove the "--" guard and add that as a scenario
+    // [TACK] if we wanted to support remainder arguments, we would remove the "--" guard and add that as a scenario.
+    //        (we'd probably just collect them into a separate array on the manifest so the client can pass them through
+    //         to another program or send them through a second parser.)
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
         if (outError != nil) {
             *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unexpected token in argument vector: '%@'", nextItem];
@@ -220,7 +222,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     //
     
     NSRange range = [flagGroup rangeOfString:flagGroup];
-    NSStringEnumerationOptions enumerationOpts = (NSStringEnumerationByComposedCharacterSequences | NSStringEnumerationReverse); // backwards to preserve order when inserting
+    NSStringEnumerationOptions enumerationOpts = (NSStringEnumerationByComposedCharacterSequences | NSStringEnumerationReverse); // backward to preserve order when inserting
     [flagGroup enumerateSubstringsInRange:range options:enumerationOpts usingBlock:^(NSString *flag, __unused NSRange substringRange, __unused NSRange enclosingRange, __unused BOOL *outStop) {
         [_argumentVector insertObject:[@"-" stringByAppendingString:flag] atIndex:0];
     }];
