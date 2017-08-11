@@ -51,7 +51,7 @@
 
 - (void)accumulateFreeOption:(CLKOption *)option
 {
-    CLKHardParameterAssert(!option.expectsArgument);
+    NSParameterAssert(!option.expectsArgument);
     
     NSString *key = option.manifestKey;
     NSNumber *occurrences = _freeOptions[key];
@@ -60,7 +60,7 @@
 
 - (void)accumulateArgument:(id)argument forOption:(CLKOption *)option
 {
-    CLKHardParameterAssert(option.expectsArgument);
+    NSParameterAssert(option.expectsArgument);
     
     NSString *key = option.manifestKey;
     NSMutableArray *arguments = _optionArguments[key];

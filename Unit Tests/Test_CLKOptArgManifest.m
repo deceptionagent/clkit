@@ -82,14 +82,4 @@
     XCTAssertEqualObjects(manifest.positionalArguments, (@[ @"alpha", @"bravo", @"alpha"]));
 }
 
-- (void)testAccumulationGuards
-{
-    CLKOption *payloadOption = [CLKOption optionWithName:@"payload" flag:@"p"];
-    CLKOption *freeOption = [CLKOption freeOptionWithName:@"free" flag:@"f"];
-    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
-    
-    XCTAssertThrowsSpecificNamed([manifest accumulateArgument:@"flarn" forOption:freeOption], NSException, NSInvalidArgumentException);
-    XCTAssertThrowsSpecificNamed([manifest accumulateFreeOption:payloadOption], NSException, NSInvalidArgumentException);
-}
-
 @end
