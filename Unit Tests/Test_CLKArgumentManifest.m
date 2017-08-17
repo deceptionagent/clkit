@@ -4,9 +4,9 @@
 
 #import <XCTest/XCTest.h>
 
-#import "CLKOption.h"
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
+#import "CLKOption.h"
 
 
 @interface Test_CLKArgumentManifest : XCTestCase
