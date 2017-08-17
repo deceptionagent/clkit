@@ -6,12 +6,12 @@
 
 #import <sysexits.h>
 
-#import "NSArray+CLKAdditions.h"
-#import "CLKOption.h"
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentParser.h"
+#import "CLKOption.h"
 #import "CLKVerb.h"
 #import "CLKVerbDepot.h"
+#import "NSArray+CLKAdditions.h"
 
 
 static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)

@@ -121,21 +121,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A6527C471F0A4CFA00BF6FAE /* Options */ = {
+		A6527C471F0A4CFA00BF6FAE /* Arguments */ = {
 			isa = PBXGroup;
 			children = (
-				A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */,
-				A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */,
-				A66A9DE91F023CE200456347 /* CLKOption.h */,
-				A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */,
-				A66A9DEA1F023CE200456347 /* CLKOption.m */,
 				A66A9DFC1F02DF4300456347 /* CLKArgumentManifest.h */,
 				A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */,
 				A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */,
 				A66A9DF91F0241DB00456347 /* CLKArgumentParser.h */,
 				A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */,
+				A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */,
+				A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */,
+				A66A9DE91F023CE200456347 /* CLKOption.h */,
+				A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */,
+				A66A9DEA1F023CE200456347 /* CLKOption.m */,
 			);
-			name = Options;
+			name = Arguments;
 			sourceTree = "<group>";
 		};
 		A6527C481F0A4D1000BF6FAE /* Verbs */ = {
@@ -175,7 +175,7 @@
 				A66A9DE21F02294800456347 /* main.m */,
 				A66A9E0A1F041DBB00456347 /* Categories */,
 				A6893C2D1F11A51E00E15F11 /* Misc */,
-				A6527C471F0A4CFA00BF6FAE /* Options */,
+				A6527C471F0A4CFA00BF6FAE /* Arguments */,
 				A6527C481F0A4D1000BF6FAE /* Verbs */,
 			);
 			path = CLKit;
@@ -186,10 +186,10 @@
 			children = (
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
+				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
+				A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */,
 				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
-				A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */,
-				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);

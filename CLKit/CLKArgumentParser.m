@@ -4,14 +4,14 @@
 
 #import "CLKArgumentParser.h"
 
-#import "NSError+CLKAdditions.h"
-#import "NSMutableArray+CLKAdditions.h"
+#import "CLKArgumentManifest.h"
+#import "CLKArgumentManifest_Private.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
-#import "CLKArgumentManifest.h"
-#import "CLKArgumentManifest_Private.h"
+#import "NSError+CLKAdditions.h"
+#import "NSMutableArray+CLKAdditions.h"
 
 
 typedef NS_ENUM(uint32_t, CLKOAPState) {
