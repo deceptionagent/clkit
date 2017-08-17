@@ -8,8 +8,8 @@
 
 #import "NSArray+CLKAdditions.h"
 #import "CLKOption.h"
-#import "CLKOptArgManifest.h"
-#import "CLKOptArgParser.h"
+#import "CLKArgumentManifest.h"
+#import "CLKArgumentParser.h"
 #import "CLKVerb.h"
 #import "CLKVerbDepot.h"
 
@@ -21,8 +21,8 @@ static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
         [CLKOption optionWithName:@"bravo" flag:@"b"]
     ];
     
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
-    CLKOptArgManifest *manifest = [parser parseArguments:outError];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argvec options:options];
+    CLKArgumentManifest *manifest = [parser parseArguments:outError];
     if (manifest == nil) {
         return 1;
     }
@@ -38,8 +38,8 @@ static int verb_barf(NSArray<NSString *> *argvec, NSError **outError)
         [CLKOption optionWithName:@"delta" flag:@"d"]
     ];
     
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argvec options:options];
-    CLKOptArgManifest *manifest = [parser parseArguments:outError];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argvec options:options];
+    CLKArgumentManifest *manifest = [parser parseArguments:outError];
     if (manifest == nil) {
         return 1;
     }

@@ -2,7 +2,7 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "CLKOptArgManifest.h"
+#import "CLKArgumentManifest.h"
 
 
 @class CLKOption;
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CLKOptArgManifest ()
+@interface CLKArgumentManifest ()
 
 - (void)accumulateFreeOption:(CLKOption *)option;
 - (void)accumulateArgument:(id)argument forOption:(CLKOption *)option;

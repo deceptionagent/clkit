@@ -2,14 +2,14 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "CLKOptArgManifest.h"
+#import "CLKArgumentManifest.h"
 
 #import "CLKAssert.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
 
 
-@implementation CLKOptArgManifest
+@implementation CLKArgumentManifest
 {
     NSMutableDictionary<NSString *, NSNumber *> *_freeOptions;
     NSMutableDictionary<NSString *, NSMutableArray *> *_optionArguments;

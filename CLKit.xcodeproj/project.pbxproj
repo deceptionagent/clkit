@@ -11,8 +11,8 @@
 		A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */; };
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
 		A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DF21F02406F00456347 /* Test_CLKOption.m */; };
-		A66A9E011F037A9400456347 /* Test_CLKOptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */; };
-		A66A9E071F03A14400456347 /* Test_CLKOptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */; };
+		A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */; };
+		A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */; };
 		A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */; };
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 		A6E478D61F133AB80081EB82 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
@@ -20,8 +20,8 @@
 		A6E478D81F133AB80081EB82 /* NSMutableArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */; };
 		A6E478D91F133AB80081EB82 /* CLKArgumentTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */; };
 		A6E478DA1F133AB80081EB82 /* CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* CLKOption.m */; };
-		A6E478DB1F133AB80081EB82 /* CLKOptArgManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */; };
-		A6E478DC1F133AB80081EB82 /* CLKOptArgParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */; };
+		A6E478DB1F133AB80081EB82 /* CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */; };
+		A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */; };
 		A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3E1F0A31E300BF6FAE /* CLKVerb.m */; };
 		A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */; };
 		A6E478FC1F1347530081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
@@ -73,14 +73,14 @@
 		A66A9DF01F02406F00456347 /* Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66A9DF21F02406F00456347 /* Test_CLKOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOption.m; sourceTree = "<group>"; };
 		A66A9DF41F02406F00456347 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A66A9DF91F0241DB00456347 /* CLKOptArgParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgParser.h; sourceTree = "<group>"; };
-		A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOptArgParser.m; sourceTree = "<group>"; };
-		A66A9DFC1F02DF4300456347 /* CLKOptArgManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgManifest.h; sourceTree = "<group>"; };
-		A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOptArgManifest.m; sourceTree = "<group>"; };
-		A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptArgManifest.m; sourceTree = "<group>"; };
+		A66A9DF91F0241DB00456347 /* CLKArgumentParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentParser.h; sourceTree = "<group>"; };
+		A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentParser.m; sourceTree = "<group>"; };
+		A66A9DFC1F02DF4300456347 /* CLKArgumentManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifest.h; sourceTree = "<group>"; };
+		A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentManifest.m; sourceTree = "<group>"; };
+		A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentManifest.m; sourceTree = "<group>"; };
 		A66A9E021F03968A00456347 /* NSMutableArray+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+CLKAdditions.h"; sourceTree = "<group>"; };
 		A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+CLKAdditions.m"; sourceTree = "<group>"; };
-		A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptArgParser.m; sourceTree = "<group>"; };
+		A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentParser.m; sourceTree = "<group>"; };
 		A66A9E0B1F041DE600456347 /* NSArray+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+CLKAdditions.h"; sourceTree = "<group>"; };
 		A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+CLKAdditions.m"; sourceTree = "<group>"; };
 		A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAdditions.m; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption_Private.h; sourceTree = "<group>"; };
-		A6F970B21F3321C300E0BD73 /* CLKOptArgManifest_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptArgManifest_Private.h; sourceTree = "<group>"; };
+		A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifest_Private.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,11 +129,11 @@
 				A66A9DE91F023CE200456347 /* CLKOption.h */,
 				A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */,
 				A66A9DEA1F023CE200456347 /* CLKOption.m */,
-				A66A9DFC1F02DF4300456347 /* CLKOptArgManifest.h */,
-				A6F970B21F3321C300E0BD73 /* CLKOptArgManifest_Private.h */,
-				A66A9DFD1F02DF4300456347 /* CLKOptArgManifest.m */,
-				A66A9DF91F0241DB00456347 /* CLKOptArgParser.h */,
-				A66A9DFA1F0241DB00456347 /* CLKOptArgParser.m */,
+				A66A9DFC1F02DF4300456347 /* CLKArgumentManifest.h */,
+				A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */,
+				A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */,
+				A66A9DF91F0241DB00456347 /* CLKArgumentParser.h */,
+				A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */,
 			);
 			name = Options;
 			sourceTree = "<group>";
@@ -188,8 +188,8 @@
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
 				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
-				A66A9E001F037A9400456347 /* Test_CLKOptArgManifest.m */,
-				A66A9E061F03A14400456347 /* Test_CLKOptArgParser.m */,
+				A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */,
+				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);
@@ -350,8 +350,8 @@
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
 				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
-				A66A9E011F037A9400456347 /* Test_CLKOptArgManifest.m in Sources */,
-				A66A9E071F03A14400456347 /* Test_CLKOptArgParser.m in Sources */,
+				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
+				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,8 +364,8 @@
 				A6E478D81F133AB80081EB82 /* NSMutableArray+CLKAdditions.m in Sources */,
 				A6E478D91F133AB80081EB82 /* CLKArgumentTransformer.m in Sources */,
 				A6E478DA1F133AB80081EB82 /* CLKOption.m in Sources */,
-				A6E478DB1F133AB80081EB82 /* CLKOptArgManifest.m in Sources */,
-				A6E478DC1F133AB80081EB82 /* CLKOptArgParser.m in Sources */,
+				A6E478DB1F133AB80081EB82 /* CLKArgumentManifest.m in Sources */,
+				A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */,
 				A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */,
 				A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */,
 			);

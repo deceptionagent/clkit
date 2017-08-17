@@ -5,23 +5,23 @@
 #import <XCTest/XCTest.h>
 
 #import "CLKOption.h"
-#import "CLKOptArgManifest.h"
-#import "CLKOptArgManifest_Private.h"
+#import "CLKArgumentManifest.h"
+#import "CLKArgumentManifest_Private.h"
 
 
-@interface Test_CLKOptArgManifest : XCTestCase
+@interface Test_CLKArgumentManifest : XCTestCase
 
 @end
 
 
-@implementation Test_CLKOptArgManifest
+@implementation Test_CLKArgumentManifest
 
 - (void)testFreeOptions
 {
     CLKOption *flarn = [CLKOption freeOptionWithName:@"flarn" flag:nil];
     CLKOption *barf = [CLKOption freeOptionWithName:@"barf" flag:@"b"];
     CLKOption *payloadOption = [CLKOption optionWithName:@"payload" flag:@"p"];
-    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
     // payload options and positional arguments should not affect free options
     [manifest accumulateArgument:@"foo" forOption:payloadOption];
@@ -39,15 +39,15 @@
     XCTAssertEqualObjects(manifest.freeOptions[@"barf"], @(1));
 }
 
-- (void)testOptArgPairs
+- (void)testPayloadOptions
 {
     CLKOption *freeOption = [CLKOption freeOptionWithName:@"free" flag:@"f"];
     CLKOption *lorem = [CLKOption optionWithName:@"lorem" flag:@"l"];
     CLKOption *ipsum = [CLKOption optionWithName:@"ipsum" flag:nil];
     CLKOption *solo = [CLKOption optionWithName:@"solo" flag:nil];
-    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
-    // free options and positional arguments should not affect optarg pairs
+    // free options and positional arguments should not affect payload options
     [manifest accumulateFreeOption:freeOption];
     [manifest accumulatePositionalArgument:@"positional"];
     
@@ -68,7 +68,7 @@
 {
     CLKOption *payloadOption = [CLKOption optionWithName:@"payload" flag:@"p"];
     CLKOption *freeOption = [CLKOption freeOptionWithName:@"free" flag:@"f"];
-    CLKOptArgManifest *manifest = [[[CLKOptArgManifest alloc] init] autorelease];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
     // free options and payload options should not affect positional arguments
     [manifest accumulateArgument:@"flarn" forOption:payloadOption];
