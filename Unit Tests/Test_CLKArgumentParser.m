@@ -6,13 +6,13 @@
 
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
-#import "CLKOptArgManifest.h"
-#import "CLKOptArgParser.h"
+#import "CLKArgumentManifest.h"
+#import "CLKArgumentParser.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Test_CLKOptArgParser : XCTestCase
+@interface Test_CLKArgumentParser : XCTestCase
 
 - (void)performTestWithArgv:(NSArray<NSString *> *)argv
                     options:(NSArray<CLKOption *> *)options
@@ -25,7 +25,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments;
 NS_ASSUME_NONNULL_END
 
 
-@implementation Test_CLKOptArgParser
+@implementation Test_CLKArgumentParser
 
 - (void)performTestWithArgv:(NSArray<NSString *> *)argv
                     options:(NSArray<CLKOption *> *)options
@@ -33,9 +33,9 @@ NS_ASSUME_NONNULL_END
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
 expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 {
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     NSError *error = nil;
-    CLKOptArgManifest *manifest = [parser parseArguments:&error];
+    CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNotNil(manifest);
     XCTAssertNil(error);
     XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
@@ -52,15 +52,15 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
          [CLKOption freeOptionWithName:@"barf" flag:@"b"],
     ];
     
-    XCTAssertNotNil([CLKOptArgParser parserWithArgumentVector:argv options:options]);
-    XCTAssertNotNil([CLKOptArgParser parserWithArgumentVector:argv options:@[]]);
-    XCTAssertNotNil([CLKOptArgParser parserWithArgumentVector:argv options:@[]]);
+    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options]);
+    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:@[]]);
+    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:@[]]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:nil options:nil]);
-    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:nil options:options]);
-    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:argv options:nil]);
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:nil options:nil]);
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:nil options:options]);
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:argv options:nil]);
 #pragma clang diagnostic pop
 }
 
@@ -80,10 +80,10 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
          [CLKOption freeOptionWithName:@"bar" flag:@"b"],
     ];
     
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     
     NSError *error = nil;
-    CLKOptArgManifest *manifest = [parser parseArguments:&error];
+    CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, EINVAL);
@@ -193,9 +193,9 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
         [CLKOption optionWithName:@"bar" flag:@"b"]
     ];
     
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:options];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     NSError *error = nil;
-    CLKOptArgManifest *manifest = [parser parseArguments:&error];
+    CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, EINVAL);
@@ -207,16 +207,16 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     CLKOption *option = [CLKOption optionWithName:@"foo" flag:@"f"];
     
     NSArray *argv = @[ @"--foo", @"", @"what" ];
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:argv options:@[ option ]];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ option ]];
     NSError *error = nil;
-    CLKOptArgManifest *manifest = [parser parseArguments:&error];
+    CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
     XCTAssertNotNil(error);
     XCTAssertEqual(error.code, EINVAL);
     XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
     
     argv = @[ @"--foo", @"bar", @"" ];
-    parser = [CLKOptArgParser parserWithArgumentVector:argv options:@[ option ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ option ]];
     error = nil;
     manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
@@ -225,7 +225,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
     
     argv = @[ @"", @"--foo", @"bar" ];
-    parser = [CLKOptArgParser parserWithArgumentVector:argv options:@[ option ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ option ]];
     error = nil;
     manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
@@ -285,8 +285,8 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 
 - (void)testParserReuseNotAllowed
 {
-    CLKOptArgParser *parser = [CLKOptArgParser parserWithArgumentVector:@[] options:@[]];
-    CLKOptArgManifest *manifest = [parser parseArguments:nil];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[]];
+    CLKArgumentManifest *manifest = [parser parseArguments:nil];
     XCTAssertNotNil(manifest);
     XCTAssertThrows([parser parseArguments:nil]);
 }
@@ -300,7 +300,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
          [CLKOption freeOptionWithName:@"ack" flag:@"c"],
     ];
     
-    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:@[] options:options]);
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
     
     // two -x opt flags, different names
     options = @[
@@ -309,7 +309,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
          [CLKOption freeOptionWithName:@"yzzyx" flag:@"x"],
     ];
     
-    XCTAssertThrows([CLKOptArgParser parserWithArgumentVector:@[] options:options]);
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
 }
 
 @end

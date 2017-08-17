@@ -2,7 +2,7 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "CLKOptArgParser.h"
+#import "CLKArgumentParser.h"
 
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
@@ -10,8 +10,8 @@
 #import "CLKAssert.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
-#import "CLKOptArgManifest.h"
-#import "CLKOptArgManifest_Private.h"
+#import "CLKArgumentManifest.h"
+#import "CLKArgumentManifest_Private.h"
 
 
 typedef NS_ENUM(uint32_t, CLKOAPState) {
@@ -26,21 +26,21 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
 };
 
 
-@interface CLKOptArgParser ()
+@interface CLKArgumentParser ()
 
 @property (nullable, retain) CLKOption *currentOption;
 
 @end
 
 
-@implementation CLKOptArgParser
+@implementation CLKArgumentParser
 {
     CLKOAPState _state;
     CLKOption *_currentOption;
     NSMutableArray<NSString *> *_argumentVector;
     NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
     NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
-    CLKOptArgManifest *_manifest;
+    CLKArgumentManifest *_manifest;
 }
 
 @synthesize currentOption = _currentOption;
@@ -72,7 +72,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
             }
         }
         
-        _manifest = [[CLKOptArgManifest alloc] init];
+        _manifest = [[CLKArgumentManifest alloc] init];
     }
     
     return self;
@@ -90,7 +90,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
 
 #pragma mark -
 
-- (CLKOptArgManifest *)parseArguments:(NSError **)outError
+- (CLKArgumentManifest *)parseArguments:(NSError **)outError
 {
     CLKHardAssert((_state == CLKOAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     

@@ -52,7 +52,7 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
     
     // scan the argument vector to find the verb, then pass the remaining arguments to the verb.
     // whatever's to the right of the verb should be the verb's optargs. that's what the verb
-    // will want to pass to an optarg parser.
+    // will want to pass to a parser.
     NSMutableArray *argumentVector = [[_argumentVector mutableCopy] autorelease];
     NSString *arg;
     while ((arg = [argumentVector clk_popFirstObject]) != nil) {
