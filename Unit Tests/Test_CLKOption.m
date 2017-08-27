@@ -16,7 +16,7 @@
 
 @implementation Test_CLKOption
 
-- (void)testInitOption
+- (void)testInitPayloadOption
 {
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     XCTAssertNotNil(option);
