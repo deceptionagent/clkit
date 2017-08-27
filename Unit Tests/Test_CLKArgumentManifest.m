@@ -16,6 +16,17 @@
 
 @implementation Test_CLKArgumentManifest
 
+- (void)testInitDefaults
+{
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
+    XCTAssertNotNil(manifest.freeOptions);
+    XCTAssertEqual(manifest.freeOptions.allKeys.count, 0);
+    XCTAssertNotNil(manifest.optionArguments);
+    XCTAssertEqual(manifest.optionArguments.allKeys.count, 0);
+    XCTAssertNotNil(manifest.positionalArguments);
+    XCTAssertEqual(manifest.positionalArguments.count, 0);
+}
+
 - (void)testFreeOptions
 {
     CLKOption *flarn = [CLKOption freeOptionWithName:@"flarn" flag:nil];
