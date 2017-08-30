@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A609E2B71F540C710088DEDA /* Test_CLKOption_Constraints.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2B61F540C710088DEDA /* Test_CLKOption_Constraints.m */; };
+		A609E2BB1F56A7630088DEDA /* Test_CLKConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2BA1F56A7630088DEDA /* Test_CLKConstraint.m */; };
+		A609E2BC1F56AB650088DEDA /* CLKConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2B81F5693D60088DEDA /* CLKConstraint.m */; };
+		A609E2BE1F56B3040088DEDA /* CLKConstraintTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2BD1F56B3040088DEDA /* CLKConstraintTestCase.m */; };
 		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
 		A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */; };
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
@@ -58,6 +62,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A609E2B51F5394FB0088DEDA /* CLKConstraint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKConstraint.h; sourceTree = "<group>"; };
+		A609E2B61F540C710088DEDA /* Test_CLKOption_Constraints.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOption_Constraints.m; sourceTree = "<group>"; };
+		A609E2B81F5693D60088DEDA /* CLKConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKConstraint.m; sourceTree = "<group>"; };
+		A609E2B91F5699450088DEDA /* CLKConstraintProviding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKConstraintProviding.h; sourceTree = "<group>"; };
+		A609E2BA1F56A7630088DEDA /* Test_CLKConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKConstraint.m; sourceTree = "<group>"; };
+		A609E2BD1F56B3040088DEDA /* CLKConstraintTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKConstraintTestCase.m; sourceTree = "<group>"; };
+		A609E2BF1F56B34A0088DEDA /* CLKConstraintTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKConstraintTestCase.h; sourceTree = "<group>"; };
 		A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAssert.m; sourceTree = "<group>"; };
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
@@ -121,9 +132,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A609E2B41F5394E40088DEDA /* Constraints */ = {
+			isa = PBXGroup;
+			children = (
+				A609E2B51F5394FB0088DEDA /* CLKConstraint.h */,
+				A609E2B81F5693D60088DEDA /* CLKConstraint.m */,
+				A609E2B91F5699450088DEDA /* CLKConstraintProviding.h */,
+			);
+			name = Constraints;
+			sourceTree = "<group>";
+		};
 		A6527C471F0A4CFA00BF6FAE /* Arguments */ = {
 			isa = PBXGroup;
 			children = (
+				A609E2B41F5394E40088DEDA /* Constraints */,
 				A66A9DFC1F02DF4300456347 /* CLKArgumentManifest.h */,
 				A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */,
 				A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */,
@@ -184,12 +206,16 @@
 		A66A9DF11F02406F00456347 /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A609E2BF1F56B34A0088DEDA /* CLKConstraintTestCase.h */,
+				A609E2BD1F56B3040088DEDA /* CLKConstraintTestCase.m */,
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
 				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
 				A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */,
 				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
+				A609E2BA1F56A7630088DEDA /* Test_CLKConstraint.m */,
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
+				A609E2B61F540C710088DEDA /* Test_CLKOption_Constraints.m */,
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);
@@ -345,11 +371,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A609E2B71F540C710088DEDA /* Test_CLKOption_Constraints.m in Sources */,
 				A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */,
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
+				A609E2BB1F56A7630088DEDA /* Test_CLKConstraint.m in Sources */,
 				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
+				A609E2BE1F56B3040088DEDA /* CLKConstraintTestCase.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
 			);
@@ -368,6 +397,7 @@
 				A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */,
 				A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */,
 				A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */,
+				A609E2BC1F56AB650088DEDA /* CLKConstraint.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,7 @@
 
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
+#import "CLKConstraint.h"
 
 
 @implementation CLKOption
@@ -24,20 +25,30 @@
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [self optionWithName:name flag:flag transformer:nil];
+    return [[[self alloc] initWithName:name flag:flag required:NO transformer:nil expectsArgument:YES] autorelease];
+}
+
++ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required
+{
+    return [[[self alloc] initWithName:name flag:flag required:required transformer:nil expectsArgument:YES] autorelease];
 }
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithName:name flag:flag transformer:transformer expectsArgument:YES] autorelease];
+    return [[[self alloc] initWithName:name flag:flag required:NO transformer:transformer expectsArgument:YES] autorelease];
+}
+
++ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
+{
+    return [[[self alloc] initWithName:name flag:flag required:required transformer:transformer expectsArgument:YES] autorelease];
 }
 
 + (instancetype)freeOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithName:name flag:flag transformer:nil expectsArgument:NO] autorelease];
+    return [[[self alloc] initWithName:name flag:flag required:NO transformer:nil expectsArgument:NO] autorelease];
 }
 
-- (instancetype)initWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
+- (instancetype)initWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
 {
     CLKHardParameterAssert(![name hasPrefix:@"-"]);
     CLKHardParameterAssert(![flag hasPrefix:@"-"]);
@@ -48,6 +59,7 @@
     if (self != nil) {
         _name = [name copy];
         _flag = [flag copy];
+        _required = required;
         _transformer = [transformer retain];
         _expectsArgument = expectsArgument;
     }
@@ -92,6 +104,21 @@
 - (NSString *)manifestKey
 {
     return _name;
+}
+
+#pragma mark -
+#pragma mark <CLKConstraintProviding>
+
+- (NSArray<CLKConstraint *> *)constraints
+{
+    NSMutableArray *constraints = [NSMutableArray array];
+    
+    if (self.required) {
+        CLKConstraint *constraint = [CLKConstraint constraintForRequiredOption:self];
+        [constraints addObject:constraint];
+    }
+    
+    return constraints;
 }
 
 @end

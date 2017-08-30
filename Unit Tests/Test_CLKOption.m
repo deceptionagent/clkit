@@ -16,29 +16,41 @@
 
 @implementation Test_CLKOption
 
+- (void)verifyOption:(CLKOption *)option
+                name:(NSString *)name
+                flag:(NSString *)flag
+            required:(BOOL)required
+         transformer:(CLKArgumentTransformer *)transformer
+     expectsArgument:(BOOL)expectsArgument;
+{
+    XCTAssertNotNil(option);
+    XCTAssertEqualObjects(option.name, name);
+    XCTAssertEqualObjects(option.flag, flag);
+    XCTAssert(option.required == required);
+    XCTAssert(option.transformer == transformer);
+    XCTAssert(option.expectsArgument == expectsArgument);
+}
+
 - (void)testInitPayloadOption
 {
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
-    XCTAssertNotNil(option);
-    XCTAssertEqualObjects(option.name, @"flarn");
-    XCTAssertEqualObjects(option.flag, @"f");
-    XCTAssertNil(option.transformer);
-    XCTAssertTrue(option.expectsArgument);
-
-    option = [CLKOption optionWithName:@"flarn" flag:nil];
-    XCTAssertNotNil(option);
-    XCTAssertEqualObjects(option.name, @"flarn");
-    XCTAssertNil(option.flag);
+    [self verifyOption:option name:@"flarn" flag:@"f" required:NO transformer:nil expectsArgument:YES];
     
-    option = [CLKOption optionWithName:@"flarn" flag:@"f" transformer:nil];
-    XCTAssertNotNil(option);
-    XCTAssertNil(option.transformer);
+    option = [CLKOption optionWithName:@"flarn" flag:nil];
+    [self verifyOption:option name:@"flarn" flag:nil required:NO transformer:nil expectsArgument:YES];
+    
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" required:YES];
+    [self verifyOption:option name:@"flarn" flag:@"f" required:YES transformer:nil expectsArgument:YES];
     
     CLKArgumentTransformer *transformer = [CLKArgumentTransformer transformer];
     option = [CLKOption optionWithName:@"flarn" flag:@"f" transformer:transformer];
-    XCTAssertNotNil(option);
-    XCTAssertNotNil(option.transformer);
-    XCTAssertEqual(option.transformer, transformer);
+    [self verifyOption:option name:@"flarn" flag:@"f" required:NO transformer:transformer expectsArgument:YES];
+    
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" transformer:nil];
+    [self verifyOption:option name:@"flarn" flag:@"f" required:NO transformer:nil expectsArgument:YES];
+    
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" required:YES transformer:transformer];
+    [self verifyOption:option name:@"flarn" flag:@"f" required:YES transformer:transformer expectsArgument:YES];
     
     XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
@@ -56,16 +68,10 @@
 - (void)testInitFreeOption
 {
     CLKOption *option = [CLKOption freeOptionWithName:@"flarn" flag:@"f"];
-    XCTAssertNotNil(option);
-    XCTAssertEqualObjects(option.name, @"flarn");
-    XCTAssertEqualObjects(option.flag, @"f");
-    XCTAssertNil(option.transformer);
-    XCTAssertFalse(option.expectsArgument);
+    [self verifyOption:option name:@"flarn" flag:@"f" required:NO transformer:nil expectsArgument:NO];
 
     option = [CLKOption freeOptionWithName:@"flarn" flag:nil];
-    XCTAssertNotNil(option);
-    XCTAssertEqualObjects(option.name, @"flarn");
-    XCTAssertNil(option.flag);
+    [self verifyOption:option name:@"flarn" flag:nil required:NO transformer:nil expectsArgument:NO];
     
     XCTAssertThrows([CLKOption freeOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption freeOptionWithName:@"flarn" flag:@"-f"]);
@@ -92,11 +98,13 @@
     XCTAssertTrue([alphaA isEqual:alphaB]);
     XCTAssertTrue([alphaA isEqual:alphaC]);
     XCTAssertFalse([alphaA isEqual:bravo]);
+    XCTAssertFalse([alphaA isEqual:@"not even an option"]);
+    XCTAssertFalse([alphaA isEqual:nil]);
 }
 
 - (void)testCollectionSupport
 {
-    // flags are just conveniences -- the full identity of an option is related only to its name
+    // flags are just conveniences -- the identity of an option is related only to its name
     CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *alphaC = [CLKOption optionWithName:@"alpha" flag:@"A"];

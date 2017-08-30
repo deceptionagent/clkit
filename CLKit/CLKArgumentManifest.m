@@ -47,6 +47,13 @@
 }
 
 #pragma mark -
+
+- (BOOL)hasOption:(CLKOption *)option
+{
+    return (_freeOptions[option.name] != nil || _optionArguments[option.name] != nil);
+}
+
+#pragma mark -
 #pragma mark Building Manifests
 
 - (void)accumulateFreeOption:(CLKOption *)option
