@@ -20,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 // names and flags should not include leading dashes.
 
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
++ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
++ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer;
 + (instancetype)freeOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -28,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) NSString *name;
 @property (nullable, readonly) NSString *flag;
+@property (readonly) BOOL required;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
 
 @end

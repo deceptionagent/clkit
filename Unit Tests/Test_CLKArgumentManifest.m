@@ -93,4 +93,24 @@
     XCTAssertEqualObjects(manifest.positionalArguments, (@[ @"alpha", @"bravo", @"alpha"]));
 }
 
+- (void)test_hasOption
+{
+    CLKOption *payloadOptionAlpha = [CLKOption optionWithName:@"payloadAlpha" flag:@"p"];
+    CLKOption *payloadOptionBravo = [CLKOption optionWithName:@"payloadBravo" flag:@"a"];
+    CLKOption *freeOptionAlpha = [CLKOption freeOptionWithName:@"freeAlpha" flag:@"f"];
+    CLKOption *freeOptionBravo = [CLKOption freeOptionWithName:@"freeBravo" flag:@"r"];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
+    
+    XCTAssertFalse([manifest hasOption:payloadOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:freeOptionAlpha]);
+    
+    [manifest accumulateArgument:@"flarn" forOption:payloadOptionAlpha];
+    [manifest accumulateFreeOption:freeOptionAlpha];
+    
+    XCTAssertTrue([manifest hasOption:payloadOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:payloadOptionBravo]);
+    XCTAssertTrue([manifest hasOption:freeOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:freeOptionBravo]);
+}
+
 @end
