@@ -8,6 +8,7 @@
 #import "CLKArgumentParser.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
+#import "XCTestCase+CLKAdditions.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -85,10 +86,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     NSError *error = nil;
     CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, EINVAL);
-    XCTAssertEqualObjects(error.domain, NSPOSIXErrorDomain);
-    XCTAssertEqualObjects(error.localizedDescription, @"unrecognized option: 'foo'");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:EINVAL description:@"unrecognized option: 'foo'"];
 }
 
 - (void)testFreeOptions
@@ -197,9 +195,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     NSError *error = nil;
     CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, EINVAL);
-    XCTAssertEqualObjects(error.localizedDescription, @"expected argument but encountered option-like token '--bar'");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:EINVAL description:@"expected argument but encountered option-like token '--bar'"];
 }
 
 - (void)testZeroLengthStringsInArgumentVector
@@ -211,27 +207,21 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     NSError *error = nil;
     CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, EINVAL);
-    XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:EINVAL description:@"encountered zero-length argument"];
     
     argv = @[ @"--foo", @"bar", @"" ];
     parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ option ]];
     error = nil;
     manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, EINVAL);
-    XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:EINVAL description:@"encountered zero-length argument"];
     
     argv = @[ @"", @"--foo", @"bar" ];
     parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ option ]];
     error = nil;
     manifest = [parser parseArguments:&error];
     XCTAssertNil(manifest);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, EINVAL);
-    XCTAssertEqualObjects(error.localizedDescription, @"encountered zero-length argument");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:EINVAL description:@"encountered zero-length argument"];
 }
 
 - (void)testArgumentTransformation
