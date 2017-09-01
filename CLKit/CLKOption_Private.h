@@ -4,15 +4,13 @@
 
 #import "CLKOption.h"
 
-#import "CLKConstraintProviding.h"
-
 
 @class CLKArgumentTransformer;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CLKOption () <CLKConstraintProviding>
+@interface CLKOption ()
 
 - (instancetype)initWithName:(NSString *)name
                         flag:(NSString *)flag

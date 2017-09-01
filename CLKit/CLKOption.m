@@ -7,7 +7,6 @@
 
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
-#import "CLKConstraint.h"
 
 
 @implementation CLKOption
@@ -104,21 +103,6 @@
 - (NSString *)manifestKey
 {
     return _name;
-}
-
-#pragma mark -
-#pragma mark <CLKConstraintProviding>
-
-- (NSArray<CLKConstraint *> *)constraints
-{
-    NSMutableArray *constraints = [NSMutableArray array];
-    
-    if (self.required) {
-        CLKConstraint *constraint = [CLKConstraint constraintForRequiredOption:self];
-        [constraints addObject:constraint];
-    }
-    
-    return constraints;
 }
 
 @end
