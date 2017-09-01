@@ -7,6 +7,7 @@
 #import "NSArray+CLKAdditions.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
+#import "XCTestCase+CLKAdditions.h"
 
 
 @interface Test_NSArray_CLKAdditions : XCTestCase
@@ -48,14 +49,10 @@
 - (void)test_clk_POSIXErrorWithCode_localizedDescription
 {
     NSError *error = [NSError clk_POSIXErrorWithCode:ENOENT localizedDescription:@"404 flarn not found"];
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, ENOENT);
-    XCTAssertEqualObjects(error.localizedDescription, @"404 flarn not found");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT description:@"404 flarn not found"];
     
     error = [NSError clk_POSIXErrorWithCode:ENOENT localizedDescription:@"404 %@ not found", @"flarn"];
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, ENOENT);
-    XCTAssertEqualObjects(error.localizedDescription, @"404 flarn not found");
+    [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT description:@"404 flarn not found"];
 }
 
 @end

@@ -6,6 +6,7 @@
 
 #import "CLKVerb.h"
 #import "CLKVerbDepot.h"
+#import "XCTestCase+CLKAdditions.h"
 
 
 @interface Test_CLKVerbDepot : XCTestCase
@@ -104,10 +105,7 @@
     NSError *error = nil;
     int result = [depot dispatch:&error];;
     XCTAssertEqual(result, 1);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, 404);
-    XCTAssertEqualObjects(error.domain, CLKVerbDepotErrorDomain);
-    XCTAssertEqualObjects(error.localizedDescription, @"verb not found");
+    [self verifyError:error domain:CLKVerbDepotErrorDomain code:404 description:@"verb not found"];
 }
 
 - (void)testVerbBlockOutError
@@ -124,10 +122,7 @@
     NSError *error = nil;
     int result = [depot dispatch:&error];;
     XCTAssertEqual(result, 1);
-    XCTAssertNotNil(error);
-    XCTAssertEqual(error.code, 666);
-    XCTAssertEqualObjects(error.domain, CLKVerbDepotErrorDomain);
-    XCTAssertEqualObjects(error.userInfo[@"foo"], @"bar");
+    [self verifyError:error domain:CLKVerbDepotErrorDomain code:666 userInfo:@{ @"foo" : @"bar" }];
 }
 
 - (void)testVerbCollisionCheck
