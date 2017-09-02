@@ -14,6 +14,7 @@ typedef int (^CLKVerbBlock)(NSArray<NSString *> *, NSError **outError);
 
 + (instancetype)verbWithName:(NSString *)name block:(CLKVerbBlock)block;
 
++ (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly) NSString *name;

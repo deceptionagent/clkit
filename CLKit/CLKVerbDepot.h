@@ -16,6 +16,8 @@ extern NSString * const CLKVerbDepotErrorDomain;
 @interface CLKVerbDepot : NSObject
 
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<CLKVerb *> *)verbs NS_DESIGNATED_INITIALIZER;
++ (instancetype)new NS_UNAVAILABLE;
+
 - (instancetype)init NS_UNAVAILABLE;
 
 - (int)dispatch:(NSError **)outError;
