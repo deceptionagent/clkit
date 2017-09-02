@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
 + (instancetype)freeOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 
++ (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly) NSString *name;
