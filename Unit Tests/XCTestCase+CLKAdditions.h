@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
 
+#import "CLKError.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code;
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description;
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code userInfo:(NSDictionary *)userInfo;
+- (void)verifyCLKError:(NSError *)error code:(CLKError)code description:(NSString *)description;
 
 @end
 

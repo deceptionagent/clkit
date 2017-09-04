@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 
+#import "CLKError.h"
 #import "NSArray+CLKAdditions.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
@@ -46,13 +47,22 @@
 
 @implementation Test_NSError_CLKAdditions
 
-- (void)test_clk_POSIXErrorWithCode_localizedDescription
+- (void)test_clk_POSIXErrorWithCode_description
 {
-    NSError *error = [NSError clk_POSIXErrorWithCode:ENOENT localizedDescription:@"404 flarn not found"];
+    NSError *error = [NSError clk_POSIXErrorWithCode:ENOENT description:@"404 flarn not found"];
     [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT description:@"404 flarn not found"];
     
-    error = [NSError clk_POSIXErrorWithCode:ENOENT localizedDescription:@"404 %@ not found", @"flarn"];
+    error = [NSError clk_POSIXErrorWithCode:ENOENT description:@"404 %@ not found", @"flarn"];
     [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT description:@"404 flarn not found"];
+}
+
+- (void)test_clk_CLKErrorWithCode_description
+{
+    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"404 flarn not found"];
+    [self verifyError:error domain:CLKErrorDomain code:CLKErrorRequiredOptionNotProvided description:@"404 flarn not found"];
+    
+    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"404 %@ not found", @"flarn"];
+    [self verifyError:error domain:CLKErrorDomain code:CLKErrorRequiredOptionNotProvided description:@"404 flarn not found"];
 }
 
 @end

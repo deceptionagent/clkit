@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */; };
+		A609E2C51F5B6D580088DEDA /* CLKArgumentManifestValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = A609E2C31F5B6D570088DEDA /* CLKArgumentManifestValidator.h */; };
+		A609E2C61F5B6D580088DEDA /* CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2C41F5B6D570088DEDA /* CLKArgumentManifestValidator.m */; };
+		A609E2DC1F5D1BAB0088DEDA /* CLKError.h in Headers */ = {isa = PBXBuildFile; fileRef = A609E2DA1F5D1BAB0088DEDA /* CLKError.h */; };
+		A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DB1F5D1BAB0088DEDA /* CLKError.m */; };
+		A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */; };
 		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
 		A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */; };
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
@@ -61,6 +66,11 @@
 /* Begin PBXFileReference section */
 		A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+CLKAdditions.m"; sourceTree = "<group>"; };
 		A609E2C21F5964670088DEDA /* XCTestCase+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+CLKAdditions.h"; sourceTree = "<group>"; };
+		A609E2C31F5B6D570088DEDA /* CLKArgumentManifestValidator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifestValidator.h; sourceTree = "<group>"; };
+		A609E2C41F5B6D570088DEDA /* CLKArgumentManifestValidator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentManifestValidator.m; sourceTree = "<group>"; };
+		A609E2DA1F5D1BAB0088DEDA /* CLKError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKError.h; sourceTree = "<group>"; };
+		A609E2DB1F5D1BAB0088DEDA /* CLKError.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKError.m; sourceTree = "<group>"; };
+		A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentManifestValidator.m; sourceTree = "<group>"; };
 		A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAssert.m; sourceTree = "<group>"; };
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
@@ -130,6 +140,8 @@
 				A66A9DFC1F02DF4300456347 /* CLKArgumentManifest.h */,
 				A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */,
 				A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */,
+				A609E2C31F5B6D570088DEDA /* CLKArgumentManifestValidator.h */,
+				A609E2C41F5B6D570088DEDA /* CLKArgumentManifestValidator.m */,
 				A66A9DF91F0241DB00456347 /* CLKArgumentParser.h */,
 				A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */,
 				A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */,
@@ -191,6 +203,7 @@
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
 				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
 				A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */,
+				A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */,
 				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
 				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
@@ -218,6 +231,8 @@
 			isa = PBXGroup;
 			children = (
 				A6893C2C1F11A49300E15F11 /* CLKAssert.h */,
+				A609E2DA1F5D1BAB0088DEDA /* CLKError.h */,
+				A609E2DB1F5D1BAB0088DEDA /* CLKError.m */,
 			);
 			name = Misc;
 			sourceTree = "<group>";
@@ -229,6 +244,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A609E2DC1F5D1BAB0088DEDA /* CLKError.h in Headers */,
+				A609E2C51F5B6D580088DEDA /* CLKArgumentManifestValidator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +371,7 @@
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
 				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
+				A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */,
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
@@ -368,8 +386,10 @@
 				A6E478D61F133AB80081EB82 /* NSArray+CLKAdditions.m in Sources */,
 				A6E478D71F133AB80081EB82 /* NSError+CLKAdditions.m in Sources */,
 				A6E478D81F133AB80081EB82 /* NSMutableArray+CLKAdditions.m in Sources */,
+				A609E2C61F5B6D580088DEDA /* CLKArgumentManifestValidator.m in Sources */,
 				A6E478D91F133AB80081EB82 /* CLKArgumentTransformer.m in Sources */,
 				A6E478DA1F133AB80081EB82 /* CLKOption.m in Sources */,
+				A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */,
 				A6E478DB1F133AB80081EB82 /* CLKArgumentManifest.m in Sources */,
 				A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */,
 				A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */,

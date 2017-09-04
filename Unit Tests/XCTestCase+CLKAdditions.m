@@ -30,4 +30,9 @@
     XCTAssertEqualObjects(error.userInfo, userInfo);
 }
 
+- (void)verifyCLKError:(NSError *)error code:(CLKError)code description:(NSString *)description
+{
+    [self verifyError:error domain:CLKErrorDomain code:code description:description];
+}
+
 @end
