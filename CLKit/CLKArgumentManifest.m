@@ -20,6 +20,11 @@
 @synthesize optionArguments = _optionArguments;
 @synthesize positionalArguments = _positionalArguments;
 
++ (instancetype)manifest
+{
+    return [[[self alloc] init] autorelease];
+}
+
 - (instancetype)init
 {
     self = [super init];

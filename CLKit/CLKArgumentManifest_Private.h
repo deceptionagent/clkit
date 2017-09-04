@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifest ()
 
++ (instancetype)manifest;
+
 - (BOOL)hasOption:(CLKOption *)option;
 
 - (void)accumulateFreeOption:(CLKOption *)option;

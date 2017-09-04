@@ -7,7 +7,7 @@
 
 @implementation NSError (CLKAdditions)
 
-+ (instancetype)clk_POSIXErrorWithCode:(int)code localizedDescription:(NSString *)fmt, ...
++ (instancetype)clk_POSIXErrorWithCode:(int)code description:(NSString *)fmt, ...
 {
     va_list ap;
     va_start(ap, fmt);
@@ -16,6 +16,17 @@
     
     NSDictionary *info = @{ NSLocalizedDescriptionKey : description };
     return [self errorWithDomain:NSPOSIXErrorDomain code:code userInfo:info];
+}
+
++ (instancetype)clk_CLKErrorWithCode:(CLKError)code description:(NSString *)fmt, ...
+{
+    va_list ap;
+    va_start(ap, fmt);
+    NSString *description = [[[NSString alloc] initWithFormat: fmt arguments: ap] autorelease];
+    va_end(ap);
+    
+    NSDictionary *info = @{ NSLocalizedDescriptionKey : description };
+    return [self errorWithDomain:CLKErrorDomain code:code userInfo:info];
 }
 
 @end

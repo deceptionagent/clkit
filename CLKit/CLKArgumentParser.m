@@ -152,7 +152,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     //         to another program or send them through a second parser.)
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
         if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unexpected token in argument vector: '%@'", nextItem];
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem];
         }
         
         return CLKOAPStateError;
@@ -180,7 +180,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     CLKOption *option = optionMap[identifier];
     if (option == nil) {
         if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"unrecognized option: '%@'", identifier];
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier];
         }
         
         return CLKOAPStateError;
@@ -238,7 +238,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     // reject: empty string passed into argv (e.g., --foo "")
     if (argument.length == 0) {
         if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"encountered zero-length argument"];
+            *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
         }
         
         return CLKOAPStateError;
@@ -250,7 +250,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
             if (outError != nil) {
-                *outError = [NSError clk_POSIXErrorWithCode:EINVAL localizedDescription:@"expected argument but encountered option-like token '%@'", argument];
+                *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument];
             }
             
             return CLKOAPStateError;

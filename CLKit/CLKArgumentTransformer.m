@@ -31,7 +31,7 @@
     long n = strtol(argument.UTF8String, &slop, 10);
     if ((n == 0 && errno != 0) || *slop != '\0') {
         if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:errno localizedDescription:@"couldn't coerce '%@' to an integer value", argument];
+            *outError = [NSError clk_POSIXErrorWithCode:errno description:@"couldn't coerce '%@' to an integer value", argument];
         }
         
         return nil;
@@ -52,7 +52,7 @@
     float f = strtof(argument.UTF8String, &slop);
     if ((f == 0 && errno != 0) || *slop != '\0') {
         if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:errno localizedDescription:@"couldn't coerce '%@' to a floating-point value", argument];
+            *outError = [NSError clk_POSIXErrorWithCode:errno description:@"couldn't coerce '%@' to a floating-point value", argument];
         }
         
         return nil;
