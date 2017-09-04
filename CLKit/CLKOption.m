@@ -76,7 +76,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ { --%@ | -%@ | expects argument: %@ }", super.description, _name, _flag, (_expectsArgument ? @"YES" : @"NO")];
+    NSString * const fmt = @"%@ { --%@ | -%@ | expects argument: %@ | required: %@ }";
+    return [NSString stringWithFormat:fmt, super.description, _name, _flag, (_expectsArgument ? @"YES" : @"NO"), (_required ? @"YES" : @"NO")];
 }
 
 - (NSUInteger)hash

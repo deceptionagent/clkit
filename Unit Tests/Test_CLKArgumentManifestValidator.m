@@ -9,15 +9,56 @@
 #import "CLKArgumentManifestValidator.h"
 #import "CLKError.h"
 #import "CLKOption.h"
+#import "CLKOption_Private.h"
 #import "XCTestCase+CLKAdditions.h"
 
 
 @interface Test_CLKArgumentManifestValidator : XCTestCase
 
+- (void)performValidationWithSuppliedOptions:(nullable NSArray<CLKOption *> *)suppliedOptions missingOptions:(nullable NSArray<CLKOption *> *)missingOptions;
+
 @end
 
 
 @implementation Test_CLKArgumentManifestValidator
+
+- (void)performValidationWithSuppliedOptions:(NSArray<CLKOption *> *)suppliedOptions missingOptions:(NSArray<CLKOption *> *)missingOptions
+{
+    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
+    for (CLKOption *option in suppliedOptions) {
+        if (option.expectsArgument) {
+            [manifest accumulateArgument:@"flarn" forOption:option];
+        } else {
+            [manifest accumulateFreeOption:option];
+        }
+    }
+    
+    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+    
+    for (CLKOption *option in suppliedOptions) {
+        printf("*** validating supplied option: %s\n", option.description.UTF8String);
+        NSError *error = nil;
+        BOOL result = [validator validateOption:option error:&error];
+        XCTAssertTrue(result);
+        XCTAssertNil(error);
+    }
+    
+    for (CLKOption *option in missingOptions) {
+        printf("*** validating missing option: %s\n", option.description.UTF8String);
+        NSError *error = nil;
+        BOOL result = [validator validateOption:option error:&error];
+        if (option.required) {
+            XCTAssertFalse(result);
+            NSString *desc = [NSString stringWithFormat:@"--%@: required option not provided", option.name];
+            [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:desc];
+        } else {
+            XCTAssertTrue(result);
+            XCTAssertNil(error);
+        }
+    }
+}
+
+#pragma mark -
 
 - (void)testInit
 {
@@ -33,73 +74,30 @@
 
 - (void)testValidateOption_emptyManifest
 {
-    CLKOption *optionalOption = [CLKOption optionWithName:@"opt" flag:@"o" required:NO];
-    CLKOption *requiredOption = [CLKOption optionWithName:@"req" flag:@"r" required:YES];
-    CLKOption *freeOption = [CLKOption freeOptionWithName:@"free" flag:@"f"];
+    NSArray *suppliedOptions = @[
+        [CLKOption optionWithName:@"opt" flag:@"o" required:NO],
+        [CLKOption optionWithName:@"req" flag:@"r" required:YES],
+        [CLKOption freeOptionWithName:@"free" flag:@"f"]
+    ];
     
-    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
-    
-    NSError *error = nil;
-    XCTAssertTrue([validator validateOption:optionalOption error:&error]);
-    XCTAssertNil(error);
-    
-    error = nil;
-    XCTAssertFalse([validator validateOption:requiredOption error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--req: required option not provided"];
-    
-    error = nil;
-    XCTAssertTrue([validator validateOption:freeOption error:&error]);
-    XCTAssertNil(error);
+    [self performValidationWithSuppliedOptions:suppliedOptions missingOptions:nil];
 }
 
 - (void)testValidateOption
 {
-    CLKOption *alpha = [CLKOption optionWithName:@"alpha" flag:@"a" required:NO]; // present
-    CLKOption *bravo = [CLKOption optionWithName:@"bravo" flag:@"b" required:NO]; // missing
-    CLKOption *charlie = [CLKOption optionWithName:@"charlie" flag:@"c" required:YES]; // present
-    CLKOption *delta = [CLKOption optionWithName:@"delta" flag:@"d" required:YES]; // missing
-    CLKOption *echo = [CLKOption freeOptionWithName:@"echo" flag:@"e"]; // present
-    CLKOption *foxtrot = [CLKOption freeOptionWithName:@"foxtrot" flag:@"f"]; // missing
+    NSArray *suppliedOptions = @[
+        [CLKOption optionWithName:@"alpha" flag:@"a" required:NO],
+        [CLKOption optionWithName:@"charlie" flag:@"c" required:YES],
+        [CLKOption freeOptionWithName:@"echo" flag:@"e"]
+    ];
     
-    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
-    [manifest accumulateArgument:@"flarn" forOption:alpha];
-    [manifest accumulateArgument:@"flarn" forOption:charlie];
-    [manifest accumulateFreeOption:echo];
+    NSArray *missingOptions = @[
+        [CLKOption optionWithName:@"bravo" flag:@"b" required:NO],
+        [CLKOption optionWithName:@"xxx" flag:@"d" required:YES],
+        [CLKOption freeOptionWithName:@"foxtrot" flag:@"f"]
+    ];
     
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
-    
-    /* not required */
-    
-    NSError *error = nil;
-    XCTAssertTrue([validator validateOption:alpha error:&error]);
-    XCTAssertNil(error);
-
-    error = nil;
-    XCTAssertTrue([validator validateOption:bravo error:&error]);
-    XCTAssertNil(error);
-    
-    /* required */
-    
-    error = nil;
-    XCTAssertTrue([validator validateOption:charlie error:&error]);
-    XCTAssertNil(error);
-    
-    error = nil;
-    XCTAssertFalse([validator validateOption:delta error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--delta: required option not provided"];
-    
-    XCTAssertFalse([validator validateOption:delta error:nil]);
-    
-    /* free (not required) */
-    
-    error = nil;
-    XCTAssertTrue([validator validateOption:echo error:&error]);
-    XCTAssertNil(error);
-    
-    error = nil;
-    XCTAssertTrue([validator validateOption:foxtrot error:&error]);
-    XCTAssertNil(error);
+    [self performValidationWithSuppliedOptions:suppliedOptions missingOptions:missingOptions];
 }
 
 @end

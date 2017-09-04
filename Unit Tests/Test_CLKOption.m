@@ -100,6 +100,9 @@
     XCTAssertFalse([alphaA isEqual:bravo]);
     XCTAssertFalse([alphaA isEqual:@"not even an option"]);
     XCTAssertFalse([alphaA isEqual:nil]);
+    
+    XCTAssertEqual(alphaA.hash, alphaB.hash);
+    XCTAssertEqual(alphaA.hash, alphaC.hash);
 }
 
 - (void)testCollectionSupport
