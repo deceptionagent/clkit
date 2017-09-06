@@ -243,7 +243,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
         
         return CLKOAPStateError;
     }
-
+    
     if (self.currentOption != nil) {
         NSAssert(self.currentOption.expectsArgument, @"attempting to parse an argument for a free option");
         
