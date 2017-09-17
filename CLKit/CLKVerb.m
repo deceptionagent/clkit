@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKVerb ()
 
-- (instancetype)_initWithName:(NSString *)name block:(CLKVerbBlock)block;
+- (instancetype)_initWithName:(NSString *)name block:(CLKVerbBlock)block NS_DESIGNATED_INITIALIZER;
 
 @end
 

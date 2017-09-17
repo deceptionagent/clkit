@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifestValidator : NSObject
 
-- (instancetype)initWithManifest:(CLKArgumentManifest *)manifest;
+- (instancetype)initWithManifest:(CLKArgumentManifest *)manifest NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
