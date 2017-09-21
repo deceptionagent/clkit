@@ -11,12 +11,12 @@
 
 @implementation CLKArgumentManifest
 {
-    NSMutableDictionary<NSString *, NSNumber *> *_freeOptions;
+    NSMutableDictionary<NSString *, NSNumber *> *_switchOptions;
     NSMutableDictionary<NSString *, NSMutableArray *> *_optionArguments;
     NSMutableArray<NSString *> *_positionalArguments;
 }
 
-@synthesize freeOptions = _freeOptions;
+@synthesize switchOptions = _switchOptions;
 @synthesize optionArguments = _optionArguments;
 @synthesize positionalArguments = _positionalArguments;
 
@@ -29,7 +29,7 @@
 {
     self = [super init];
     if (self != nil) {
-        _freeOptions = [[NSMutableDictionary alloc] init];
+        _switchOptions = [[NSMutableDictionary alloc] init];
         _optionArguments = [[NSMutableDictionary alloc] init];
         _positionalArguments = [[NSMutableArray alloc] init];
     }
@@ -39,7 +39,7 @@
 
 - (void)dealloc
 {
-    [_freeOptions release];
+    [_switchOptions release];
     [_optionArguments release];
     [_positionalArguments release];
     [super dealloc];
@@ -47,33 +47,33 @@
 
 - (NSString *)debugDescription
 {
-    NSString *fmt = @"%@\n\nfree options:\n%@\n\noption arguments:\n%@\n\npositional arguments:\n%@";
-    return [NSString stringWithFormat:fmt, super.debugDescription, _freeOptions, _optionArguments, _positionalArguments];
+    NSString *fmt = @"%@\n\nswitch options:\n%@\n\noption arguments:\n%@\n\npositional arguments:\n%@";
+    return [NSString stringWithFormat:fmt, super.debugDescription, _switchOptions, _optionArguments, _positionalArguments];
 }
 
 #pragma mark -
 
 - (BOOL)hasOption:(CLKOption *)option
 {
-    return (_freeOptions[option.name] != nil || _optionArguments[option.name] != nil);
+    return (_switchOptions[option.name] != nil || _optionArguments[option.name] != nil);
 }
 
 #pragma mark -
 #pragma mark Building Manifests
 
-- (void)accumulateFreeOption:(CLKOption *)option
+- (void)accumulateSwitchOption:(CLKOption *)option
 {
-    NSParameterAssert(!option.expectsArgument);
+    NSParameterAssert(option.type == CLKOptionTypeSwitch);
     
     NSString *key = option.manifestKey;
-    NSNumber *occurrences = _freeOptions[key];
-    _freeOptions[key] = @(occurrences.unsignedIntValue + 1);
+    NSNumber *occurrences = _switchOptions[key];
+    _switchOptions[key] = @(occurrences.unsignedIntValue + 1);
 }
 
-- (void)accumulateArgument:(id)argument forOption:(CLKOption *)option
+- (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option
 {
-    NSParameterAssert(option.expectsArgument);
-    
+    NSParameterAssert(option.type == CLKOptionTypeParameter);
+
     NSString *key = option.manifestKey;
     NSMutableArray *arguments = _optionArguments[key];
     if (arguments == nil) {

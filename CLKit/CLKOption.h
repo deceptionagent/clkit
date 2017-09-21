@@ -5,6 +5,12 @@
 #import <Foundation/Foundation.h>
 
 
+typedef NS_ENUM(uint32_t, CLKOptionType) {
+    CLKOptionTypeSwitch = 0,
+    CLKOptionTypeParameter = 1
+};
+
+
 @class CLKArgumentTransformer;
 
 
@@ -12,18 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOption : NSObject
 
-// there are two basic kinds of options:
-//
-//    1. "payload" options that expect arguments
-//    2. "free" options that don't have arguments
-//
-// names and flags should not include leading dashes.
-
+// CLKOptionTypeSwitch
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer;
-+ (instancetype)freeOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
+
+// CLKOptionTypeParameter
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -32,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, readonly) NSString *flag;
 @property (readonly) BOOL required;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
+@property (readonly) CLKOptionType type;
 
 @end
 

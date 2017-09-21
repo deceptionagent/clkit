@@ -26,10 +26,10 @@
 {
     CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
     for (CLKOption *option in suppliedOptions) {
-        if (option.expectsArgument) {
-            [manifest accumulateArgument:@"flarn" forOption:option];
+        if (option.type == CLKOptionTypeParameter) {
+            [manifest accumulateArgument:@"flarn" forParameterOption:option];
         } else {
-            [manifest accumulateFreeOption:option];
+            [manifest accumulateSwitchOption:option];
         }
     }
     
@@ -75,9 +75,9 @@
 - (void)testValidateOption_emptyManifest
 {
     NSArray *suppliedOptions = @[
-        [CLKOption optionWithName:@"opt" flag:@"o" required:NO],
-        [CLKOption optionWithName:@"req" flag:@"r" required:YES],
-        [CLKOption freeOptionWithName:@"free" flag:@"f"]
+        [CLKOption parameterOptionWithName:@"opt" flag:@"o" required:NO],
+        [CLKOption parameterOptionWithName:@"req" flag:@"r" required:YES],
+        [CLKOption optionWithName:@"switch" flag:@"f"]
     ];
     
     [self performValidationWithSuppliedOptions:suppliedOptions missingOptions:nil];
@@ -86,15 +86,15 @@
 - (void)testValidateOption
 {
     NSArray *suppliedOptions = @[
-        [CLKOption optionWithName:@"alpha" flag:@"a" required:NO],
-        [CLKOption optionWithName:@"charlie" flag:@"c" required:YES],
-        [CLKOption freeOptionWithName:@"echo" flag:@"e"]
+        [CLKOption parameterOptionWithName:@"alpha" flag:@"a" required:NO],
+        [CLKOption parameterOptionWithName:@"charlie" flag:@"c" required:YES],
+        [CLKOption optionWithName:@"echo" flag:@"e"]
     ];
     
     NSArray *missingOptions = @[
-        [CLKOption optionWithName:@"bravo" flag:@"b" required:NO],
-        [CLKOption optionWithName:@"xxx" flag:@"d" required:YES],
-        [CLKOption freeOptionWithName:@"foxtrot" flag:@"f"]
+        [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:NO],
+        [CLKOption parameterOptionWithName:@"xxx" flag:@"d" required:YES],
+        [CLKOption optionWithName:@"foxtrot" flag:@"f"]
     ];
     
     [self performValidationWithSuppliedOptions:suppliedOptions missingOptions:missingOptions];

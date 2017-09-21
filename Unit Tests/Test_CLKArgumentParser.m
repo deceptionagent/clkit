@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)performTestWithArgv:(NSArray<NSString *> *)argv
                     options:(NSArray<CLKOption *> *)options
-        expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
+        expectedSwitchOptions:(NSDictionary<NSString *, NSNumber *> *)expectedSwitchOptions
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
 expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments;
 
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)performTestWithArgv:(NSArray<NSString *> *)argv
                     options:(NSArray<CLKOption *> *)options
-        expectedFreeOptions:(NSDictionary<NSString *, NSNumber *> *)expectedFreeOptions
+        expectedSwitchOptions:(NSDictionary<NSString *, NSNumber *> *)expectedSwitchOptions
     expectedOptionArguments:(NSDictionary<NSString *, NSArray *> *)expectedOptionArguments
 expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 {
@@ -39,7 +39,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNotNil(manifest);
     XCTAssertNil(error);
-    XCTAssertEqualObjects(manifest.freeOptions, expectedFreeOptions);
+    XCTAssertEqualObjects(manifest.switchOptions, expectedSwitchOptions);
     XCTAssertEqualObjects(manifest.optionArguments, expectedOptionArguments);
     XCTAssertEqualObjects(manifest.positionalArguments, expectedPositionalArguments);
 }
@@ -50,7 +50,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 {
     NSArray *argv = @[ @"--flarn" ];
     NSArray *options = @[
-         [CLKOption freeOptionWithName:@"barf" flag:@"b"],
+         [CLKOption optionWithName:@"barf" flag:@"b"],
     ];
     
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options]);
@@ -68,17 +68,17 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 - (void)testEmptyArgv
 {
     NSArray *options = @[
-         [CLKOption optionWithName:@"foo" flag:@"f"],
+         [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
     ];
     
-    [self performTestWithArgv:@[] options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:@[]];
+    [self performTestWithArgv:@[] options:options expectedSwitchOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:@[]];
 }
 
 - (void)testUnrecognizedOption
 {
     NSArray *argv = @[ @"--foo", @"flarn" ];
     NSArray *options = @[
-         [CLKOption freeOptionWithName:@"bar" flag:@"b"],
+         [CLKOption optionWithName:@"bar" flag:@"b"],
     ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
@@ -89,28 +89,28 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     [self verifyError:error domain:NSPOSIXErrorDomain code:EINVAL description:@"unrecognized option: 'foo'"];
 }
 
-- (void)testFreeOptions
+- (void)testSwitchOptions
 {
     NSArray *argv = @[ @"--foo", @"-f", @"-bfb" ];
     NSArray *options = @[
-        [CLKOption freeOptionWithName:@"foo" flag:@"f"],
-        [CLKOption freeOptionWithName:@"bar" flag:@"b"]
+        [CLKOption optionWithName:@"foo" flag:@"f"],
+        [CLKOption optionWithName:@"bar" flag:@"b"]
     ];
     
-    NSDictionary *expectedFreeOptions = @{
+    NSDictionary *expectedSwitchOptions = @{
         @"foo" : @(3),
         @"bar" : @(2)
     };
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:expectedSwitchOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
 }
 
 - (void)testOptionArguments
 {
     NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie" ];
     NSArray *options = @[
-        [CLKOption optionWithName:@"foo" flag:@"f"],
-        [CLKOption optionWithName:@"bar" flag:@"b"]
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"bar" flag:@"b"]
     ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -118,20 +118,20 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
         @"bar" : @[ @"charlie" ]
     };
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
 }
 
 - (void)testNoFlag
 {
     NSArray *argv = @[ @"--alpha", @"bravo", @"--charlie", @"--charlie" ];
     NSArray *options = @[
-        [CLKOption optionWithName:@"alpha" flag:nil],
-        [CLKOption freeOptionWithName:@"charlie" flag:nil]
+        [CLKOption parameterOptionWithName:@"alpha" flag:nil],
+        [CLKOption optionWithName:@"charlie" flag:nil]
     ];
     
-    NSDictionary *expectedFreeOptions = @{ @"charlie" : @(2) };
+    NSDictionary *expectedSwitchOptions = @{ @"charlie" : @(2) };
     NSDictionary *expectedOptionArguments = @{ @"alpha" : @[ @"bravo" ] };
-    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:expectedSwitchOptions expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:@[]];
 }
 
 // very edge-casey
@@ -139,23 +139,23 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 {
     NSArray *argv = @[ @"--a", @"-a", @"--b", @"-aa" ];
     NSArray *options = @[
-        [CLKOption freeOptionWithName:@"a" flag:@"a"],
-        [CLKOption freeOptionWithName:@"b" flag:nil]
+        [CLKOption optionWithName:@"a" flag:@"a"],
+        [CLKOption optionWithName:@"b" flag:nil]
     ];
     
-    NSDictionary *expectedFreeOptions = @{
+    NSDictionary *expectedSwitchOptions = @{
         @"a" : @(4),
         @"b" : @(1)
     };
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:expectedSwitchOptions expectedOptionArguments:@{} expectedPositionalArguments:@[]];
 }
 
 - (void)testPositionalArguments
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
-        [CLKOption optionWithName:@"foo" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
     ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -163,32 +163,32 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     };
     
     NSArray *expectedPositionalArguments = @[ @"/flarn.txt", @"/bort.txt" ];
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
 }
 
 - (void)testPositionalArgumentsOnly
 {
     NSArray *argv = @[ @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
-        [CLKOption optionWithName:@"foo" flag:@"f"],
-        [CLKOption optionWithName:@"bar" flag:@"b"]
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"bar" flag:@"b"]
     ];
     
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:argv];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:argv];
 }
 
 - (void)testPositionalArgumentsOnly_noParserOptions
 {
     NSArray *argv = @[ @"alpha", @"bravo", @"charlie" ];
-    [self performTestWithArgv:argv options:@[] expectedFreeOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:argv];
+    [self performTestWithArgv:argv options:@[] expectedSwitchOptions:@{} expectedOptionArguments:@{} expectedPositionalArguments:argv];
 }
 
 - (void)testOptionArgumentNotProvided
 {
     NSArray *argv = @[ @"--foo", @"--bar", @"what" ];
     NSArray *options = @[
-        [CLKOption optionWithName:@"foo" flag:@"f"],
-        [CLKOption optionWithName:@"bar" flag:@"b"]
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"bar" flag:@"b"]
     ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
@@ -200,7 +200,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 
 - (void)testZeroLengthStringsInArgumentVector
 {
-    CLKOption *option = [CLKOption optionWithName:@"foo" flag:@"f"];
+    CLKOption *option = [CLKOption parameterOptionWithName:@"foo" flag:@"f"];
     
     NSArray *argv = @[ @"--foo", @"", @"what" ];
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ option ]];
@@ -229,8 +229,8 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     
     CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
-    CLKOption *strange = [CLKOption optionWithName:@"strange" flag:@"s" transformer:transformer];
-    CLKOption *aeons = [CLKOption optionWithName:@"aeons" flag:@"a" transformer:transformer];
+    CLKOption *strange = [CLKOption parameterOptionWithName:@"strange" flag:@"s" transformer:transformer];
+    CLKOption *aeons = [CLKOption parameterOptionWithName:@"aeons" flag:@"a" transformer:transformer];
     NSArray *options = @[ strange, aeons ];
     
     NSDictionary *expectedOptionArguments = @{
@@ -239,7 +239,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     };
     
     NSArray *expectedPositionalArguments = @[ @"/fatum/iustum/stultorum" ];
-    [self performTestWithArgv:argv options:options expectedFreeOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:@{} expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
 }
 
 - (void)testComplexMix
@@ -250,15 +250,15 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     ];
     
     NSArray *options = @[
-         [CLKOption optionWithName:@"syn" flag:@"s"],
-         [CLKOption optionWithName:@"ack" flag:@"a"],
-         [CLKOption optionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
-         [CLKOption optionWithName:@"ghost" flag:@"g"], // not provided in argv
-         [CLKOption freeOptionWithName:@"xyzzy" flag:@"x"],
-         [CLKOption freeOptionWithName:@"spline" flag:@"p"],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
+         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
+         [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
+         [CLKOption optionWithName:@"xyzzy" flag:@"x"],
+         [CLKOption optionWithName:@"spline" flag:@"p"],
     ];
     
-    NSDictionary *expectedFreeOptions = @{
+    NSDictionary *expectedSwitchOptions = @{
         @"xyzzy" : @(4),
         @"spline" : @(1)
     };
@@ -270,7 +270,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     };
     
     NSArray *expectedPositionalArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];
-    [self performTestWithArgv:argv options:options expectedFreeOptions:expectedFreeOptions expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
+    [self performTestWithArgv:argv options:options expectedSwitchOptions:expectedSwitchOptions expectedOptionArguments:expectedOptionArguments expectedPositionalArguments:expectedPositionalArguments];
 }
 
 - (void)testParserReuseNotAllowed
@@ -285,18 +285,18 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 {
     // two --ack opt names, different flags
     NSArray *options = @[
-         [CLKOption optionWithName:@"ack" flag:@"a"],
-         [CLKOption optionWithName:@"syn" flag:@"s"],
-         [CLKOption freeOptionWithName:@"ack" flag:@"c"],
+         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
+         [CLKOption optionWithName:@"ack" flag:@"c"],
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
     
     // two -x opt flags, different names
     options = @[
-         [CLKOption optionWithName:@"xyzzy" flag:@"x"],
-         [CLKOption freeOptionWithName:@"spline" flag:@"p"],
-         [CLKOption freeOptionWithName:@"yzzyx" flag:@"x"],
+         [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x"],
+         [CLKOption optionWithName:@"spline" flag:@"p"],
+         [CLKOption optionWithName:@"yzzyx" flag:@"x"],
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);

@@ -11,44 +11,45 @@
 
 @implementation CLKOption
 {
+    CLKOptionType _type;
     NSString *_name;
     NSString *_flag;
-    BOOL _expectsArgument;
     CLKArgumentTransformer *_transformer;
 }
 
+@synthesize type = _type;
 @synthesize name = _name;
 @synthesize flag = _flag;
-@synthesize expectsArgument = _expectsArgument;
 @synthesize transformer = _transformer;
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithName:name flag:flag required:NO transformer:nil expectsArgument:YES] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO transformer:nil] autorelease];
 }
 
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithName:name flag:flag required:required transformer:nil expectsArgument:YES] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:nil] autorelease];
 }
 
-+ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required
 {
-    return [[[self alloc] initWithName:name flag:flag required:NO transformer:transformer expectsArgument:YES] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:nil] autorelease];
 }
 
-+ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithName:name flag:flag required:required transformer:transformer expectsArgument:YES] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:transformer] autorelease];
 }
 
-+ (instancetype)freeOptionWithName:(NSString *)name flag:(NSString *)flag
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithName:name flag:flag required:NO transformer:nil expectsArgument:NO] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer] autorelease];
 }
 
-- (instancetype)initWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer expectsArgument:(BOOL)expectsArgument
+- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
 {
+    CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && (required || transformer != nil)));
     CLKHardParameterAssert(![name hasPrefix:@"-"]);
     CLKHardParameterAssert(![flag hasPrefix:@"-"]);
     CLKHardParameterAssert(name.length > 0);
@@ -56,11 +57,11 @@
     
     self = [super init];
     if (self != nil) {
+        _type = type;
         _name = [name copy];
         _flag = [flag copy];
         _required = required;
         _transformer = [transformer retain];
-        _expectsArgument = expectsArgument;
     }
     
     return self;
@@ -76,8 +77,8 @@
 
 - (NSString *)description
 {
-    NSString * const fmt = @"%@ { --%@ | -%@ | expects argument: %@ | required: %@ }";
-    return [NSString stringWithFormat:fmt, super.description, _name, _flag, (_expectsArgument ? @"YES" : @"NO"), (_required ? @"YES" : @"NO")];
+    NSString * const fmt = @"%@ { --%@ | -%@ | required: %@ | type: %d }";
+    return [NSString stringWithFormat:fmt, super.description, _name, _flag, (_required ? @"YES" : @"NO"), _type];
 }
 
 - (NSUInteger)hash
