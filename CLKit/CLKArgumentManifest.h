@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifest : NSObject
 
-@property (readonly) NSDictionary<NSString *, NSNumber *> *freeOptions;
+@property (readonly) NSDictionary<NSString *, NSNumber *> *switchOptions;
 @property (readonly) NSDictionary<NSString *, NSArray *> *optionArguments;
 @property (readonly) NSArray<NSString *> *positionalArguments;
 

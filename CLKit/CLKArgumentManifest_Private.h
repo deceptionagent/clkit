@@ -16,8 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)hasOption:(CLKOption *)option;
 
-- (void)accumulateFreeOption:(CLKOption *)option;
-- (void)accumulateArgument:(id)argument forOption:(CLKOption *)option;
+- (void)accumulateSwitchOption:(CLKOption *)option;
+- (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option;
 - (void)accumulatePositionalArgument:(NSString *)argument;
 
 @end

@@ -19,56 +19,56 @@
 - (void)testInitDefaults
 {
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
-    XCTAssertNotNil(manifest.freeOptions);
-    XCTAssertEqual(manifest.freeOptions.allKeys.count, 0);
+    XCTAssertNotNil(manifest.switchOptions);
+    XCTAssertEqual(manifest.switchOptions.allKeys.count, 0);
     XCTAssertNotNil(manifest.optionArguments);
     XCTAssertEqual(manifest.optionArguments.allKeys.count, 0);
     XCTAssertNotNil(manifest.positionalArguments);
     XCTAssertEqual(manifest.positionalArguments.count, 0);
 }
 
-- (void)testFreeOptions
+- (void)testSwitchOptions
 {
-    CLKOption *flarn = [CLKOption freeOptionWithName:@"flarn" flag:nil];
-    CLKOption *barf = [CLKOption freeOptionWithName:@"barf" flag:@"b"];
-    CLKOption *payloadOption = [CLKOption optionWithName:@"payload" flag:@"p"];
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:nil];
+    CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
+    CLKOption *parameterOption = [CLKOption parameterOptionWithName:@"parameter" flag:@"p"];
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
-    // payload options and positional arguments should not affect free options
-    [manifest accumulateArgument:@"foo" forOption:payloadOption];
+    // parameter options and positional arguments should not affect switch options
+    [manifest accumulateArgument:@"foo" forParameterOption:parameterOption];
     [manifest accumulatePositionalArgument:@"barf"];
     
-    XCTAssertNil(manifest.freeOptions[@"flarn"]);
+    XCTAssertNil(manifest.switchOptions[@"flarn"]);
     
-    [manifest accumulateFreeOption:flarn];
-    XCTAssertEqualObjects(manifest.freeOptions[@"flarn"], @(1));
-    XCTAssertNil(manifest.freeOptions[@"barf"]);
+    [manifest accumulateSwitchOption:flarn];
+    XCTAssertEqualObjects(manifest.switchOptions[@"flarn"], @(1));
+    XCTAssertNil(manifest.switchOptions[@"barf"]);
     
-    [manifest accumulateFreeOption:flarn];
-    [manifest accumulateFreeOption:barf];
-    XCTAssertEqualObjects(manifest.freeOptions[@"flarn"], @(2));
-    XCTAssertEqualObjects(manifest.freeOptions[@"barf"], @(1));
+    [manifest accumulateSwitchOption:flarn];
+    [manifest accumulateSwitchOption:barf];
+    XCTAssertEqualObjects(manifest.switchOptions[@"flarn"], @(2));
+    XCTAssertEqualObjects(manifest.switchOptions[@"barf"], @(1));
 }
 
-- (void)testPayloadOptions
+- (void)testParameterOptions
 {
-    CLKOption *freeOption = [CLKOption freeOptionWithName:@"free" flag:@"f"];
-    CLKOption *lorem = [CLKOption optionWithName:@"lorem" flag:@"l"];
-    CLKOption *ipsum = [CLKOption optionWithName:@"ipsum" flag:nil];
-    CLKOption *solo = [CLKOption optionWithName:@"solo" flag:nil];
+    CLKOption *switchOption = [CLKOption optionWithName:@"switch" flag:@"f"];
+    CLKOption *lorem = [CLKOption parameterOptionWithName:@"lorem" flag:@"l"];
+    CLKOption *ipsum = [CLKOption parameterOptionWithName:@"ipsum" flag:nil];
+    CLKOption *solo = [CLKOption parameterOptionWithName:@"solo" flag:nil];
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
-    // free options and positional arguments should not affect payload options
-    [manifest accumulateFreeOption:freeOption];
+    // switch options and positional arguments should not affect parameter options
+    [manifest accumulateSwitchOption:switchOption];
     [manifest accumulatePositionalArgument:@"positional"];
     
     XCTAssertNil(manifest.optionArguments[@"lorem"]);
     
-    [manifest accumulateArgument:@"alpha" forOption:lorem];
-    [manifest accumulateArgument:@"bravo" forOption:lorem];
-    [manifest accumulateArgument:@"echo" forOption:ipsum];
-    [manifest accumulateArgument:@"echo" forOption:ipsum];
-    [manifest accumulateArgument:@"foxtrot" forOption:solo];
+    [manifest accumulateArgument:@"alpha" forParameterOption:lorem];
+    [manifest accumulateArgument:@"bravo" forParameterOption:lorem];
+    [manifest accumulateArgument:@"echo" forParameterOption:ipsum];
+    [manifest accumulateArgument:@"echo" forParameterOption:ipsum];
+    [manifest accumulateArgument:@"foxtrot" forParameterOption:solo];
     XCTAssertEqualObjects(manifest.optionArguments[@"lorem"], (@[ @"alpha", @"bravo" ]));
     XCTAssertEqualObjects(manifest.optionArguments[@"ipsum"], (@[ @"echo", @"echo" ]));
     XCTAssertEqualObjects(manifest.optionArguments[@"solo"], @[ @"foxtrot" ]);
@@ -77,13 +77,13 @@
 
 - (void)testPositionalArguments
 {
-    CLKOption *payloadOption = [CLKOption optionWithName:@"payload" flag:@"p"];
-    CLKOption *freeOption = [CLKOption freeOptionWithName:@"free" flag:@"f"];
+    CLKOption *parameterOption = [CLKOption parameterOptionWithName:@"parameter" flag:@"p"];
+    CLKOption *switchOption = [CLKOption optionWithName:@"switch" flag:@"f"];
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
-    // free options and payload options should not affect positional arguments
-    [manifest accumulateArgument:@"flarn" forOption:payloadOption];
-    [manifest accumulateFreeOption:freeOption];
+    // switch options and parameter options should not affect positional arguments
+    [manifest accumulateArgument:@"flarn" forParameterOption:parameterOption];
+    [manifest accumulateSwitchOption:switchOption];
     
     XCTAssertEqualObjects(manifest.positionalArguments, @[]);
     
@@ -95,22 +95,22 @@
 
 - (void)test_hasOption
 {
-    CLKOption *payloadOptionAlpha = [CLKOption optionWithName:@"payloadAlpha" flag:@"p"];
-    CLKOption *payloadOptionBravo = [CLKOption optionWithName:@"payloadBravo" flag:@"a"];
-    CLKOption *freeOptionAlpha = [CLKOption freeOptionWithName:@"freeAlpha" flag:@"f"];
-    CLKOption *freeOptionBravo = [CLKOption freeOptionWithName:@"freeBravo" flag:@"r"];
+    CLKOption *parameterOptionAlpha = [CLKOption parameterOptionWithName:@"parameterAlpha" flag:@"p"];
+    CLKOption *parameterOptionBravo = [CLKOption parameterOptionWithName:@"parameterBravo" flag:@"a"];
+    CLKOption *switchOptionAlpha = [CLKOption optionWithName:@"switchAlpha" flag:@"f"];
+    CLKOption *switchOptionBravo = [CLKOption optionWithName:@"switchBravo" flag:@"r"];
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
-    XCTAssertFalse([manifest hasOption:payloadOptionAlpha]);
-    XCTAssertFalse([manifest hasOption:freeOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:parameterOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:switchOptionAlpha]);
     
-    [manifest accumulateArgument:@"flarn" forOption:payloadOptionAlpha];
-    [manifest accumulateFreeOption:freeOptionAlpha];
+    [manifest accumulateArgument:@"flarn" forParameterOption:parameterOptionAlpha];
+    [manifest accumulateSwitchOption:switchOptionAlpha];
     
-    XCTAssertTrue([manifest hasOption:payloadOptionAlpha]);
-    XCTAssertFalse([manifest hasOption:payloadOptionBravo]);
-    XCTAssertTrue([manifest hasOption:freeOptionAlpha]);
-    XCTAssertFalse([manifest hasOption:freeOptionBravo]);
+    XCTAssertTrue([manifest hasOption:parameterOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:parameterOptionBravo]);
+    XCTAssertTrue([manifest hasOption:switchOptionAlpha]);
+    XCTAssertFalse([manifest hasOption:switchOptionBravo]);
 }
 
 @end

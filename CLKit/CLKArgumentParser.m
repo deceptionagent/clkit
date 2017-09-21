@@ -186,12 +186,12 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
         return CLKOAPStateError;
     }
     
-    if (option.expectsArgument) {
+    if (option.type == CLKOptionTypeParameter) {
         self.currentOption = option;
         return CLKOAPStateParseArgument;
     }
     
-    [_manifest accumulateFreeOption:option];
+    [_manifest accumulateSwitchOption:option];
     return CLKOAPStateReadNextItem;
 }
 
@@ -245,7 +245,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     }
     
     if (self.currentOption != nil) {
-        NSAssert(self.currentOption.expectsArgument, @"attempting to parse an argument for a free option");
+        NSAssert((self.currentOption.type == CLKOptionTypeParameter), @"attempting to parse an argument for a non-parameter option");
         
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
@@ -264,7 +264,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
             }
         }
         
-        [_manifest accumulateArgument:argument forOption:self.currentOption];
+        [_manifest accumulateArgument:argument forParameterOption:self.currentOption];
         self.currentOption = nil;
     } else {
         [_manifest accumulatePositionalArgument:argument];
