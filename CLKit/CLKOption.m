@@ -15,45 +15,75 @@
     NSString *_name;
     NSString *_flag;
     CLKArgumentTransformer *_transformer;
+    NSArray<CLKOption *> *_dependencies;
 }
 
 @synthesize type = _type;
 @synthesize name = _name;
 @synthesize flag = _flag;
 @synthesize transformer = _transformer;
+@synthesize dependencies = _dependencies;
+
+#pragma mark -
+#pragma mark Switch Options
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO transformer:nil] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO] autorelease];
 }
+
++ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<CLKOption *> *)dependencies
+{
+    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO transformer:nil dependencies:dependencies] autorelease];
+}
+
+#pragma mark -
+#pragma mark Parameter Options
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:nil] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:nil] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:transformer] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:transformer dependencies:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer dependencies:nil] autorelease];
 }
 
-- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer dependencies:(nullable NSArray<CLKOption *> *)dependencies;
 {
-    CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && (required || transformer != nil)));
-    CLKHardParameterAssert(![name hasPrefix:@"-"]);
-    CLKHardParameterAssert(![flag hasPrefix:@"-"]);
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer dependencies:dependencies] autorelease];
+}
+
+#pragma mark -
+
+- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required
+{
+    return [self initWithType:type name:name flag:flag required:required transformer:nil dependencies:nil];
+}
+
+- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer dependencies:(NSArray<CLKOption *> *)dependencies
+{
+    CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
+    CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
+    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
+    CLKHardParameterAssert(![flag hasPrefix:@"-"], @"option flags should not begin with -- or -");
     CLKHardParameterAssert(name.length > 0);
     CLKHardParameterAssert(flag == nil || flag.length == 1);
+    
+    for (CLKOption *opt in dependencies) {
+        CLKHardParameterAssert((opt.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required");
+    }
     
     self = [super init];
     if (self != nil) {
@@ -62,6 +92,7 @@
         _flag = [flag copy];
         _required = required;
         _transformer = [transformer retain];
+        _dependencies = [dependencies copy];
     }
     
     return self;
@@ -69,6 +100,7 @@
 
 - (void)dealloc
 {
+    [_dependencies release];
     [_transformer release];
     [_flag release];
     [_name release];
@@ -98,6 +130,12 @@
     
     CLKOption *opt = (CLKOption *)obj;
     return [opt.name isEqualToString:_name];
+}
+
+- (id)copyWithZone:(__unused NSZone *)zone
+{
+    // CLKOption is immutable
+    return [self retain];
 }
 
 #pragma mark -

@@ -13,49 +13,57 @@
 #import "XCTestCase+CLKAdditions.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Test_CLKArgumentManifestValidator : XCTestCase
 
-- (void)performValidationWithSuppliedOptions:(nullable NSArray<CLKOption *> *)suppliedOptions missingOptions:(nullable NSArray<CLKOption *> *)missingOptions;
+- (CLKArgumentManifest *)manifestWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, NSArray *> *)parameterOptions;
+- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, id> *)parameterOptions;
+- (void)verifyValidationPassForOption:(CLKOption *)option validator:(CLKArgumentManifestValidator *)validator;
 
 @end
 
+NS_ASSUME_NONNULL_END
+
+
+@interface ManifestValidationSpec : NSObject
+
+
+@end
 
 @implementation Test_CLKArgumentManifestValidator
 
-- (void)performValidationWithSuppliedOptions:(NSArray<CLKOption *> *)suppliedOptions missingOptions:(NSArray<CLKOption *> *)missingOptions
+- (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
 {
     CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
-    for (CLKOption *option in suppliedOptions) {
-        if (option.type == CLKOptionTypeParameter) {
-            [manifest accumulateArgument:@"flarn" forParameterOption:option];
-        } else {
+    
+    [switchOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSNumber *count, __unused BOOL *outStop) {
+        int i;
+        for (i = 0 ; i < count.intValue ; i++) {
             [manifest accumulateSwitchOption:option];
         }
-    }
-    
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
-    
-    for (CLKOption *option in suppliedOptions) {
-        printf("*** validating supplied option: %s\n", option.description.UTF8String);
-        NSError *error = nil;
-        BOOL result = [validator validateOption:option error:&error];
-        XCTAssertTrue(result);
-        XCTAssertNil(error);
-    }
-    
-    for (CLKOption *option in missingOptions) {
-        printf("*** validating missing option: %s\n", option.description.UTF8String);
-        NSError *error = nil;
-        BOOL result = [validator validateOption:option error:&error];
-        if (option.required) {
-            XCTAssertFalse(result);
-            NSString *desc = [NSString stringWithFormat:@"--%@: required option not provided", option.name];
-            [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:desc];
-        } else {
-            XCTAssertTrue(result);
-            XCTAssertNil(error);
+    }];
+
+    [parameterOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSArray *arguments, __unused BOOL *outStop) {
+        for (id argument in arguments) {
+            [manifest accumulateArgument:argument forParameterOption:option];
         }
-    }
+    }];
+    
+    return manifest;
+}
+
+- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
+{
+    CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
+    return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+}
+
+- (void)verifyValidationPassForOption:(CLKOption *)option validator:(CLKArgumentManifestValidator *)validator
+{
+    NSError *error = nil;
+    XCTAssertTrue([validator validateOption:option error:&error]);
+    XCTAssertNil(error);
 }
 
 #pragma mark -
@@ -72,32 +80,80 @@
 #pragma clang diagnostic pop
 }
 
-- (void)testValidateOption_emptyManifest
+- (void)testValidateOptions_mixed_emptyManifest
 {
-    NSArray *suppliedOptions = @[
-        [CLKOption parameterOptionWithName:@"opt" flag:@"o" required:NO],
-        [CLKOption parameterOptionWithName:@"req" flag:@"r" required:YES],
-        [CLKOption optionWithName:@"switch" flag:@"f"]
-    ];
+    CLKOption *optional = [CLKOption parameterOptionWithName:@"opt" flag:@"o" required:NO];
+    CLKOption *required = [CLKOption parameterOptionWithName:@"req" flag:@"r" required:YES];
+    CLKOption *optionalSwitch = [CLKOption optionWithName:@"optionalSwitch" flag:@"s"];
     
-    [self performValidationWithSuppliedOptions:suppliedOptions missingOptions:nil];
+    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
+    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+    
+    [self verifyValidationPassForOption:optional validator:validator];
+    
+    NSError *error = nil;
+    XCTAssertFalse([validator validateOption:required error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--req: required option not provided"];
+    
+    [self verifyValidationPassForOption:optionalSwitch validator:validator];
 }
 
-- (void)testValidateOption
+- (void)testValidateOption_required
 {
-    NSArray *suppliedOptions = @[
-        [CLKOption parameterOptionWithName:@"alpha" flag:@"a" required:NO],
-        [CLKOption parameterOptionWithName:@"charlie" flag:@"c" required:YES],
-        [CLKOption optionWithName:@"echo" flag:@"e"]
-    ];
+    CLKOption *alpha = [CLKOption parameterOptionWithName:@"alpha" flag:@"a" required:NO]; // supplied
+    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:NO]; // missing
+    CLKOption *charlie = [CLKOption parameterOptionWithName:@"charlie" flag:@"c" required:YES]; // supplied
+    CLKOption *delta = [CLKOption parameterOptionWithName:@"delta" flag:@"d" required:YES]; // missing
+    CLKOption *echo = [CLKOption optionWithName:@"echo" flag:@"e"]; // supplied
+    CLKOption *foxtrot = [CLKOption optionWithName:@"foxtrot" flag:@"f"]; // missing
     
-    NSArray *missingOptions = @[
-        [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:NO],
-        [CLKOption parameterOptionWithName:@"xxx" flag:@"d" required:YES],
-        [CLKOption optionWithName:@"foxtrot" flag:@"f"]
-    ];
+    NSDictionary *suppliedParameterOptions = @{
+        alpha : @[ @"flarn" ],
+        charlie : @[ @"barf" ]
+    };
     
-    [self performValidationWithSuppliedOptions:suppliedOptions missingOptions:missingOptions];
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:@{ echo : @(1) } parameterOptions:suppliedParameterOptions];
+    
+    [self verifyValidationPassForOption:alpha validator:validator];
+    
+    [self verifyValidationPassForOption:alpha validator:validator];
+    [self verifyValidationPassForOption:bravo validator:validator];
+    [self verifyValidationPassForOption:charlie validator:validator];
+    
+    NSError *error = nil;
+    XCTAssertFalse([validator validateOption:delta error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--delta: required option not provided"];
+    
+    [self verifyValidationPassForOption:echo validator:validator];
+    [self verifyValidationPassForOption:foxtrot validator:validator];
+}
+
+- (void)testValidateOption_dependencies
+{
+    CLKOption *alpha = [CLKOption parameterOptionWithName:@"alpha" flag:@"a"];
+    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b"];
+    CLKOption *charlie = [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ alpha, bravo ]];
+    
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
+    [self verifyValidationPassForOption:charlie validator:validator];
+
+    validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ alpha : @[ @"flarn" ] }];
+    [self verifyValidationPassForOption:charlie validator:validator];
+
+    validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:nil];
+    NSError *error = nil;
+    XCTAssertFalse([validator validateOption:charlie error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--alpha is required when using --charlie"];
+    
+    validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:@{ alpha : @[ @"flarn" ] }];
+    error = nil;
+    XCTAssertFalse([validator validateOption:charlie error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];
+    
+    validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:@{ bravo : @[ @"flarn" ] }];
+    error = nil;
+    XCTAssertFalse([validator validateOption:charlie error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--alpha is required when using --charlie"];
 }
 
 @end

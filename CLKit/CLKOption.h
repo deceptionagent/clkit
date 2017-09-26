@@ -16,24 +16,32 @@ typedef NS_ENUM(uint32_t, CLKOptionType) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CLKOption : NSObject
-
-// CLKOptionTypeSwitch
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
-
-// CLKOptionTypeParameter
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer;
+@interface CLKOption : NSObject <NSCopying>
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
+#pragma mark -
+#pragma mark Switch Options
+
++ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
++ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<CLKOption *> *)dependencies;
+
+#pragma mark -
+#pragma mark Parameter Options
+
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer dependencies:(nullable NSArray<CLKOption *> *)dependencies;
+
+#pragma mark -
 
 @property (readonly) NSString *name;
 @property (nullable, readonly) NSString *flag;
 @property (readonly) BOOL required;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
+@property (nullable, readonly) NSArray<CLKOption *> *dependencies;
 @property (readonly) CLKOptionType type;
 
 @end

@@ -27,6 +27,8 @@
     XCTAssertNoThrow(CLKHardParameterAssert((1 == 1)));
     XCTAssertThrowsSpecificNamed(CLKHardParameterAssert(1 == 2), NSException, NSInvalidArgumentException);
     XCTAssertThrowsSpecificNamed(CLKHardParameterAssert((1 == 2)), NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed(CLKHardParameterAssert(1 == 2, @"you can't do this"), NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed(CLKHardParameterAssert(1 == 2, @"you can't do this -- %@", @"because reasons"), NSException, NSInvalidArgumentException);
 }
 
 @end

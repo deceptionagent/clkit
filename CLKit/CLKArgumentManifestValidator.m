@@ -6,6 +6,7 @@
 
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
+#import "CLKAssert.h"
 #import "CLKError.h"
 #import "CLKOption.h"
 #import "NSError+CLKAdditions.h"
@@ -18,7 +19,7 @@
 
 - (instancetype)initWithManifest:(CLKArgumentManifest *)manifest
 {
-    NSParameterAssert(manifest != nil);
+    CLKHardParameterAssert(manifest != nil);
     
     self = [super init];
     if (self != nil) {
@@ -46,6 +47,18 @@
         }
         
         return NO;
+    }
+    
+    if ([_manifest hasOption:option]) {
+        for (CLKOption *dependency in option.dependencies) {
+            if (![_manifest hasOption:dependency]) {
+                if (outError != nil) {
+                    *outError = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", dependency.name, option.name];
+                }
+                
+                return NO;
+            }
+        }
     }
     
     return YES;
