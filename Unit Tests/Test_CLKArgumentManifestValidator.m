@@ -113,9 +113,6 @@ NS_ASSUME_NONNULL_END
     };
     
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:@{ echo : @(1) } parameterOptions:suppliedParameterOptions];
-    
-    [self verifyValidationPassForOption:alpha validator:validator];
-    
     [self verifyValidationPassForOption:alpha validator:validator];
     [self verifyValidationPassForOption:bravo validator:validator];
     [self verifyValidationPassForOption:charlie validator:validator];
