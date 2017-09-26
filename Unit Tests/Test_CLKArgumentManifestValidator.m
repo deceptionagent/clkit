@@ -120,6 +120,7 @@ NS_ASSUME_NONNULL_END
     NSError *error = nil;
     XCTAssertFalse([validator validateOption:delta error:&error]);
     [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--delta: required option not provided"];
+    XCTAssertFalse([validator validateOption:delta error:nil]);
     
     [self verifyValidationPassForOption:echo validator:validator];
     [self verifyValidationPassForOption:foxtrot validator:validator];
@@ -133,10 +134,10 @@ NS_ASSUME_NONNULL_END
     
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     [self verifyValidationPassForOption:charlie validator:validator];
-
+    
     validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ alpha : @[ @"flarn" ] }];
     [self verifyValidationPassForOption:charlie validator:validator];
-
+    
     validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:nil];
     NSError *error = nil;
     XCTAssertFalse([validator validateOption:charlie error:&error]);
