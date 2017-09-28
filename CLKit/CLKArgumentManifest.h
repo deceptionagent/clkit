@@ -9,8 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifest : NSObject
 
-@property (readonly) NSDictionary<NSString *, NSNumber *> *switchOptions;
-@property (readonly) NSDictionary<NSString *, NSArray *> *optionArguments;
+- (nullable id)objectForKeyedSubscript:(NSString *)key;
+
 @property (readonly) NSArray<NSString *> *positionalArguments;
 
 @end

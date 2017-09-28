@@ -3,6 +3,7 @@
 //
 
 #import "CLKArgumentManifest.h"
+#import "CLKArgumentManifest_Private.h"
 
 #import "CLKAssert.h"
 #import "CLKOption.h"
@@ -11,13 +12,11 @@
 
 @implementation CLKArgumentManifest
 {
-    NSMutableDictionary<NSString *, NSNumber *> *_switchOptions;
-    NSMutableDictionary<NSString *, NSMutableArray *> *_optionArguments;
+    NSMutableDictionary<NSString *, id> *_optionManifest;
     NSMutableArray<NSString *> *_positionalArguments;
 }
 
-@synthesize switchOptions = _switchOptions;
-@synthesize optionArguments = _optionArguments;
+@synthesize optionManifest = _optionManifest;
 @synthesize positionalArguments = _positionalArguments;
 
 + (instancetype)manifest
@@ -29,8 +28,7 @@
 {
     self = [super init];
     if (self != nil) {
-        _switchOptions = [[NSMutableDictionary alloc] init];
-        _optionArguments = [[NSMutableDictionary alloc] init];
+        _optionManifest = [[NSMutableDictionary alloc] init];
         _positionalArguments = [[NSMutableArray alloc] init];
     }
     
@@ -39,23 +37,27 @@
 
 - (void)dealloc
 {
-    [_switchOptions release];
-    [_optionArguments release];
+    [_optionManifest release];
     [_positionalArguments release];
     [super dealloc];
 }
 
 - (NSString *)debugDescription
 {
-    NSString *fmt = @"%@\n\nswitch options:\n%@\n\noption arguments:\n%@\n\npositional arguments:\n%@";
-    return [NSString stringWithFormat:fmt, super.debugDescription, _switchOptions, _optionArguments, _positionalArguments];
+    NSString *fmt = @"%@\n%@\n\npositional arguments:\n%@";
+    return [NSString stringWithFormat:fmt, super.debugDescription, _optionManifest, _positionalArguments];
 }
 
 #pragma mark -
 
+- (nullable id)objectForKeyedSubscript:(NSString *)key
+{
+    return _optionManifest[key];
+}
+
 - (BOOL)hasOption:(CLKOption *)option
 {
-    return (_switchOptions[option.name] != nil || _optionArguments[option.name] != nil);
+    return (_optionManifest[option.manifestKey] != nil);
 }
 
 #pragma mark -
@@ -66,19 +68,23 @@
     NSParameterAssert(option.type == CLKOptionTypeSwitch);
     
     NSString *key = option.manifestKey;
-    NSNumber *occurrences = _switchOptions[key];
-    _switchOptions[key] = @(occurrences.unsignedIntValue + 1);
+    NSNumber *occurrences = _optionManifest[key];
+    NSAssert2((occurrences == nil || [occurrences isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for switch option key '%@'", NSStringFromClass([occurrences class]), key);
+    
+    _optionManifest[key] = @(occurrences.unsignedIntValue + 1);
 }
 
 - (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option
 {
     NSParameterAssert(option.type == CLKOptionTypeParameter);
-
+    
     NSString *key = option.manifestKey;
-    NSMutableArray *arguments = _optionArguments[key];
+    NSMutableArray *arguments = _optionManifest[key];
+    NSAssert2((arguments == nil || [arguments isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for parameter option key '%@'", NSStringFromClass([arguments class]), key);
+    
     if (arguments == nil) {
         arguments = [NSMutableArray array];
-        _optionArguments[key] = arguments;
+        _optionManifest[key] = arguments;
     }
     
     [arguments addObject:argument];
