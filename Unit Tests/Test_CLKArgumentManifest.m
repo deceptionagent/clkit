@@ -16,17 +16,6 @@
 
 @implementation Test_CLKArgumentManifest
 
-- (void)testInitDefaults
-{
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
-    XCTAssertNotNil(manifest.switchOptions);
-    XCTAssertEqual(manifest.switchOptions.allKeys.count, 0);
-    XCTAssertNotNil(manifest.optionArguments);
-    XCTAssertEqual(manifest.optionArguments.allKeys.count, 0);
-    XCTAssertNotNil(manifest.positionalArguments);
-    XCTAssertEqual(manifest.positionalArguments.count, 0);
-}
-
 - (void)testSwitchOptions
 {
     CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:nil];
@@ -38,16 +27,16 @@
     [manifest accumulateArgument:@"foo" forParameterOption:parameterOption];
     [manifest accumulatePositionalArgument:@"barf"];
     
-    XCTAssertNil(manifest.switchOptions[@"flarn"]);
+    XCTAssertNil(manifest[@"flarn"]);
     
     [manifest accumulateSwitchOption:flarn];
-    XCTAssertEqualObjects(manifest.switchOptions[@"flarn"], @(1));
-    XCTAssertNil(manifest.switchOptions[@"barf"]);
+    XCTAssertEqualObjects(manifest[@"flarn"], @(1));
+    XCTAssertNil(manifest[@"barf"]);
     
     [manifest accumulateSwitchOption:flarn];
     [manifest accumulateSwitchOption:barf];
-    XCTAssertEqualObjects(manifest.switchOptions[@"flarn"], @(2));
-    XCTAssertEqualObjects(manifest.switchOptions[@"barf"], @(1));
+    XCTAssertEqualObjects(manifest[@"flarn"], @(2));
+    XCTAssertEqualObjects(manifest[@"barf"], @(1));
 }
 
 - (void)testParameterOptions
@@ -62,17 +51,17 @@
     [manifest accumulateSwitchOption:switchOption];
     [manifest accumulatePositionalArgument:@"positional"];
     
-    XCTAssertNil(manifest.optionArguments[@"lorem"]);
+    XCTAssertNil(manifest[@"lorem"]);
     
     [manifest accumulateArgument:@"alpha" forParameterOption:lorem];
     [manifest accumulateArgument:@"bravo" forParameterOption:lorem];
     [manifest accumulateArgument:@"echo" forParameterOption:ipsum];
     [manifest accumulateArgument:@"echo" forParameterOption:ipsum];
     [manifest accumulateArgument:@"foxtrot" forParameterOption:solo];
-    XCTAssertEqualObjects(manifest.optionArguments[@"lorem"], (@[ @"alpha", @"bravo" ]));
-    XCTAssertEqualObjects(manifest.optionArguments[@"ipsum"], (@[ @"echo", @"echo" ]));
-    XCTAssertEqualObjects(manifest.optionArguments[@"solo"], @[ @"foxtrot" ]);
-    XCTAssertNil(manifest.optionArguments[@"flarn"]);
+    XCTAssertEqualObjects(manifest[@"lorem"], (@[ @"alpha", @"bravo" ]));
+    XCTAssertEqualObjects(manifest[@"ipsum"], (@[ @"echo", @"echo" ]));
+    XCTAssertEqualObjects(manifest[@"solo"], @[ @"foxtrot" ]);
+    XCTAssertNil(manifest[@"flarn"]);
 }
 
 - (void)testPositionalArguments

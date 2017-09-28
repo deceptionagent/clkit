@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)manifest;
 
+// secret entrance for unit tests
+@property (nonnull, readonly) NSDictionary<NSString *, id> *optionManifest;
+
 - (BOOL)hasOption:(CLKOption *)option;
 
 - (void)accumulateSwitchOption:(CLKOption *)option;
