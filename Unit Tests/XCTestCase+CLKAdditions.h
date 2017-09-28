@@ -8,6 +8,11 @@
 #import "CLKError.h"
 
 
+@class CLKArgumentManifest;
+@class CLKArgumentManifestValidator;
+@class CLKOption;
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XCTestCase (CLKAdditions)
@@ -16,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description;
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code userInfo:(NSDictionary *)userInfo;
 - (void)verifyCLKError:(NSError *)error code:(CLKError)code description:(NSString *)description;
+
+- (CLKArgumentManifest *)manifestWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, NSArray *> *)parameterOptions;
+- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, id> *)parameterOptions;
 
 @end
 

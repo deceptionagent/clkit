@@ -302,4 +302,38 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
 }
 
+- (void)testValidationError_requiredOption
+{
+    NSArray *options = @[
+         [CLKOption optionWithName:@"alpha" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:YES]
+    ];
+    
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:options];
+    XCTAssertFalse([parser parseArguments:nil]);
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[] options:options];
+    NSError *error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--alpha" ] options:options];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];
+}
+
+- (void)testValidationError_optionDependency
+{
+    CLKOption *alpha = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b"];
+    CLKOption *charlie = [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ bravo ]];
+    NSArray *options = @[ alpha, bravo, charlie ];
+    
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--charlie" ] options:options];
+    NSError *error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];
+}
+
 @end

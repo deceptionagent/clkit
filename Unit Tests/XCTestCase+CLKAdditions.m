@@ -4,6 +4,11 @@
 
 #import "XCTestCase+CLKAdditions.h"
 
+#import "CLKArgumentManifest.h"
+#import "CLKArgumentManifest_Private.h"
+#import "CLKArgumentManifestValidator.h"
+#import "CLKOption.h"
+
 
 @implementation XCTestCase (CLKAdditions)
 
@@ -34,5 +39,34 @@
 {
     [self verifyError:error domain:CLKErrorDomain code:code description:description];
 }
+
+#pragma mark -
+
+- (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
+{
+    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
+    
+    [switchOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSNumber *count, __unused BOOL *outStop) {
+        int i;
+        for (i = 0 ; i < count.intValue ; i++) {
+            [manifest accumulateSwitchOption:option];
+        }
+    }];
+
+    [parameterOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSArray *arguments, __unused BOOL *outStop) {
+        for (id argument in arguments) {
+            [manifest accumulateArgument:argument forParameterOption:option];
+        }
+    }];
+    
+    return manifest;
+}
+
+- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
+{
+    CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
+    return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+}
+
 
 @end

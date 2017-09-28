@@ -6,6 +6,7 @@
 
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
+#import "CLKArgumentManifestValidator.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
 #import "CLKOption.h"
@@ -38,6 +39,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     CLKOAPState _state;
     CLKOption *_currentOption;
     NSMutableArray<NSString *> *_argumentVector;
+    NSArray<CLKOption *> *_options;
     NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
     NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
     CLKArgumentManifest *_manifest;
@@ -59,6 +61,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     if (self != nil) {
         _state = CLKOAPStateBegin;
         _argumentVector = [argv mutableCopy];
+        _options = [options copy];
         _optionNameMap = [[NSMutableDictionary alloc] init];
         _optionFlagMap = [[NSMutableDictionary alloc] init];
         
@@ -85,6 +88,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     [_optionFlagMap release];
     [_optionNameMap release];
     [_currentOption release];
+    [_options release];
     [super dealloc];
 }
 
@@ -130,6 +134,12 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
                 break;
         }
     };
+    
+    if (_manifest != nil && ![self _validateManifest:outError]) {
+        [_manifest release];
+        _manifest = nil;
+        return nil;
+    }
     
     return _manifest;
 }
@@ -271,6 +281,22 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     }
     
     return CLKOAPStateReadNextItem;
+}
+
+#pragma mark -
+
+- (BOOL)_validateManifest:(NSError **)outError
+{
+    NSAssert(_manifest != nil, @"attempting validation without a manifest");
+    
+    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
+    for (CLKOption *option in _options) {
+        if (![validator validateOption:option error:outError]) {
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 @end
