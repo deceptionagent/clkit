@@ -9,7 +9,6 @@
 #import "CLKArgumentManifestValidator.h"
 #import "CLKError.h"
 #import "CLKOption.h"
-#import "CLKOption_Private.h"
 #import "XCTestCase+CLKAdditions.h"
 
 
@@ -17,8 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Test_CLKArgumentManifestValidator : XCTestCase
 
-- (CLKArgumentManifest *)manifestWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, NSArray *> *)parameterOptions;
-- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, id> *)parameterOptions;
 - (void)verifyValidationPassForOption:(CLKOption *)option validator:(CLKArgumentManifestValidator *)validator;
 
 @end
@@ -26,38 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 
-@interface ManifestValidationSpec : NSObject
-
-
-@end
-
 @implementation Test_CLKArgumentManifestValidator
-
-- (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
-{
-    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
-    
-    [switchOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSNumber *count, __unused BOOL *outStop) {
-        int i;
-        for (i = 0 ; i < count.intValue ; i++) {
-            [manifest accumulateSwitchOption:option];
-        }
-    }];
-
-    [parameterOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSArray *arguments, __unused BOOL *outStop) {
-        for (id argument in arguments) {
-            [manifest accumulateArgument:argument forParameterOption:option];
-        }
-    }];
-    
-    return manifest;
-}
-
-- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
-{
-    CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
-    return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
-}
 
 - (void)verifyValidationPassForOption:(CLKOption *)option validator:(CLKArgumentManifestValidator *)validator
 {
