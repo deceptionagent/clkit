@@ -89,15 +89,17 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 
 - (void)testSwitchOptions
 {
-    NSArray *argv = @[ @"--foo", @"-f", @"-bfb" ];
+    NSArray *argv = @[ @"--foo", @"-f", @"-bfb", @"-qqq" ];
     NSArray *options = @[
         [CLKOption optionWithName:@"foo" flag:@"f"],
-        [CLKOption optionWithName:@"bar" flag:@"b"]
+        [CLKOption optionWithName:@"bar" flag:@"b"],
+        [CLKOption optionWithName:@"quone" flag:@"q"]
     ];
     
     NSDictionary *expectedOptionManifest = @{
         @"foo" : @(3),
-        @"bar" : @(2)
+        @"bar" : @(2),
+        @"quone" : @(3)
     };
     
     [self performTestWithArgv:argv options:options expectedOptionManifest:expectedOptionManifest expectedPositionalArguments:@[]];
