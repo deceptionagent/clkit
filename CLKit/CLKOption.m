@@ -32,7 +32,7 @@
     return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO] autorelease];
 }
 
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<CLKOption *> *)dependencies
++ (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<CLKOption *> *)dependencies
 {
     return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO transformer:nil dependencies:dependencies] autorelease];
 }
@@ -45,22 +45,22 @@
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required
 {
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer
 {
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:transformer dependencies:nil] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer
 {
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer dependencies:nil] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required transformer:(nullable CLKArgumentTransformer *)transformer dependencies:(nullable NSArray<CLKOption *> *)dependencies;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer dependencies:(NSArray<CLKOption *> *)dependencies;
 {
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer dependencies:dependencies] autorelease];
 }
