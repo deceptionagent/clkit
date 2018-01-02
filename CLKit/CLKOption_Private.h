@@ -12,16 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOption ()
 
-- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
-
 - (instancetype)initWithType:(CLKOptionType)type
                         name:(NSString *)name
                         flag:(nullable NSString *)flag
                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
                  transformer:(nullable CLKArgumentTransformer *)transformer
                 dependencies:(nullable NSArray<CLKOption *> *)dependencies NS_DESIGNATED_INITIALIZER;
-
-@property (readonly) NSString *manifestKey;
 
 @end
 

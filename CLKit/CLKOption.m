@@ -14,6 +14,8 @@
     CLKOptionType _type;
     NSString *_name;
     NSString *_flag;
+    BOOL _required;
+    BOOL _recurrent;
     CLKArgumentTransformer *_transformer;
     NSArray<CLKOption *> *_dependencies;
 }
@@ -21,6 +23,8 @@
 @synthesize type = _type;
 @synthesize name = _name;
 @synthesize flag = _flag;
+@synthesize required = _required;
+@synthesize recurrent = _recurrent;
 @synthesize transformer = _transformer;
 @synthesize dependencies = _dependencies;
 
@@ -29,12 +33,12 @@
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES transformer:nil dependencies:nil] autorelease];
 }
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<CLKOption *> *)dependencies
 {
-    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO transformer:nil dependencies:dependencies] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES transformer:nil dependencies:dependencies] autorelease];
 }
 
 #pragma mark -
@@ -42,37 +46,32 @@
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO transformer:nil dependencies:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:NO transformer:nil dependencies:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO transformer:transformer dependencies:nil] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO transformer:transformer dependencies:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer dependencies:nil] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:NO transformer:transformer dependencies:nil] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer dependencies:(NSArray<CLKOption *> *)dependencies;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required recurrent:(BOOL)recurrent transformer:(nullable CLKArgumentTransformer *)transformer dependencies:(nullable NSArray<CLKOption *> *)dependencies
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required transformer:transformer dependencies:dependencies] autorelease];
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent transformer:transformer dependencies:dependencies] autorelease];
 }
 
 #pragma mark -
 
-- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required
-{
-    return [self initWithType:type name:name flag:flag required:required transformer:nil dependencies:nil];
-}
-
-- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required transformer:(CLKArgumentTransformer *)transformer dependencies:(NSArray<CLKOption *> *)dependencies
+- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required recurrent:(BOOL)recurrent transformer:(CLKArgumentTransformer *)transformer dependencies:(NSArray<CLKOption *> *)dependencies
 {
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
@@ -91,6 +90,7 @@
         _name = [name copy];
         _flag = [flag copy];
         _required = required;
+        _recurrent = recurrent;
         _transformer = [transformer retain];
         _dependencies = [dependencies copy];
     }
@@ -136,13 +136,6 @@
 {
     // CLKOption is immutable
     return [self retain];
-}
-
-#pragma mark -
-
-- (NSString *)manifestKey
-{
-    return _name;
 }
 
 @end
