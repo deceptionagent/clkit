@@ -57,7 +57,7 @@
 
 - (BOOL)hasOption:(CLKOption *)option
 {
-    return (_optionManifest[option.manifestKey] != nil);
+    return (_optionManifest[option.name] != nil);
 }
 
 #pragma mark -
@@ -67,7 +67,7 @@
 {
     NSParameterAssert(option.type == CLKOptionTypeSwitch);
     
-    NSString *key = option.manifestKey;
+    NSString *key = option.name;
     NSNumber *occurrences = _optionManifest[key];
     NSAssert2((occurrences == nil || [occurrences isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for switch option key '%@'", NSStringFromClass([occurrences class]), key);
     
@@ -78,7 +78,7 @@
 {
     NSParameterAssert(option.type == CLKOptionTypeParameter);
     
-    NSString *key = option.manifestKey;
+    NSString *key = option.name;
     NSMutableArray *arguments = _optionManifest[key];
     NSAssert2((arguments == nil || [arguments isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for parameter option key '%@'", NSStringFromClass([arguments class]), key);
     

@@ -18,7 +18,14 @@
 
 - (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required
 {
-    [self verifyOption:option type:type name:name flag:flag required:required transformer:nil dependencies:nil];
+    // switch options are always recurrent
+    [self verifyOption:option type:type name:name flag:flag required:required recurrent:(type == CLKOptionTypeSwitch) transformer:nil dependencies:nil];
+}
+
+- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<CLKOption *> *)dependencies
+{
+    // switch options are always recurrent
+    [self verifyOption:option type:type name:name flag:flag required:NO recurrent:(type == CLKOptionTypeSwitch) transformer:nil dependencies:dependencies];
 }
 
 - (void)verifyOption:(CLKOption *)option
@@ -28,7 +35,8 @@
             required:(BOOL)required
          transformer:(CLKArgumentTransformer *)transformer
 {
-    [self verifyOption:option type:type name:name flag:flag required:required transformer:transformer dependencies:nil];
+    // switch options are always recurrent
+    [self verifyOption:option type:type name:name flag:flag required:required recurrent:(type == CLKOptionTypeSwitch) transformer:transformer dependencies:nil];
 }
 
 - (void)verifyOption:(CLKOption *)option
@@ -36,6 +44,7 @@
                 name:(NSString *)name
                 flag:(NSString *)flag
             required:(BOOL)required
+           recurrent:(BOOL)recurrent
          transformer:(CLKArgumentTransformer *)transformer
         dependencies:(NSArray<CLKOption *> *)dependencies
 {
@@ -44,7 +53,8 @@
     XCTAssertEqualObjects(option.name, name);
     XCTAssertEqualObjects(option.flag, flag);
     XCTAssertEqual(option.required, required);
-    XCTAssert(option.transformer == transformer);
+    XCTAssertEqual(option.recurrent, recurrent);
+    XCTAssertEqual(option.transformer, transformer);
     XCTAssertEqualObjects(option.dependencies, dependencies);
 }
 
@@ -68,8 +78,8 @@
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:nil];
     [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO];
     
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES transformer:transformer dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:YES transformer:transformer];
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:nil];
+    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:nil];
     
     XCTAssertThrows([CLKOption parameterOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-f"]);
@@ -88,7 +98,7 @@
 {
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO];
-
+    
     option = [CLKOption optionWithName:@"flarn" flag:nil];
     [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:nil required:NO];
     
@@ -102,8 +112,7 @@
     XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
-    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:YES] autorelease]);
-    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO transformer:[CLKArgumentTransformer transformer] dependencies:nil] autorelease]);
+    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:[CLKArgumentTransformer transformer] dependencies:nil] autorelease]);
 #pragma clang diagnostic pop
 }
 
@@ -115,10 +124,10 @@
     ];
     
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO transformer:nil dependencies:nil];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:nil];
     
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:dependencies];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO transformer:nil dependencies:dependencies];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:dependencies];
     
     // switches can't be required
     NSArray *invalidDependencies = @[
