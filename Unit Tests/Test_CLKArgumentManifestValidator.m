@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testInit
 {
-    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
     XCTAssertNotNil(validator);
     
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_END
     CLKOption *required = [CLKOption parameterOptionWithName:@"req" flag:@"r" required:YES];
     CLKOption *optionalSwitch = [CLKOption optionWithName:@"optionalSwitch" flag:@"s"];
     
-    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
     
     [self verifyValidationPassForOption:optional validator:validator];
@@ -118,6 +118,23 @@ NS_ASSUME_NONNULL_END
     error = nil;
     XCTAssertFalse([validator validateOption:charlie error:&error]);
     [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--alpha is required when using --charlie"];
+}
+
+- (void)testValidateOption_recurrency
+{
+    CLKOption *alpha = [CLKOption parameterOptionWithName:@"alpha" flag:@"a"];
+    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:NO recurrent:YES transformer:nil dependencies:nil];
+    
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
+    [self verifyValidationPassForOption:bravo validator:validator];
+    
+    validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ alpha : @[ @"flarn", @"barf" ] }];
+    NSError *error = nil;
+    XCTAssertFalse([validator validateOption:alpha error:&error]);
+    [self verifyCLKError:error code:CLKErrorTooManyOccurrencesOfOption description:@"--alpha may not be provided more than once"];
+    
+    validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ bravo : @[ @"flarn", @"barf" ] }];
+    [self verifyValidationPassForOption:bravo validator:validator];
 }
 
 @end

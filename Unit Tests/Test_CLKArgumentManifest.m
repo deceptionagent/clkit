@@ -102,4 +102,27 @@
     XCTAssertFalse([manifest hasOption:switchOptionBravo]);
 }
 
+- (void)test_occurrencesOfOption
+{
+    CLKOption *parameterOptionAlpha = [CLKOption parameterOptionWithName:@"parameterAlpha" flag:@"p"];
+    CLKOption *parameterOptionBravo = [CLKOption parameterOptionWithName:@"parameterBravo" flag:@"a"];
+    CLKOption *switchOptionAlpha = [CLKOption optionWithName:@"switchAlpha" flag:@"f"];
+    CLKOption *switchOptionBravo = [CLKOption optionWithName:@"switchBravo" flag:@"r"];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
+    
+    XCTAssertEqual([manifest occurrencesOfOption:parameterOptionAlpha], 0);
+    XCTAssertEqual([manifest occurrencesOfOption:switchOptionAlpha], 0);
+    
+    [manifest accumulateArgument:@"flarn" forParameterOption:parameterOptionAlpha];
+    [manifest accumulateArgument:@"flarn" forParameterOption:parameterOptionAlpha];
+    [manifest accumulateSwitchOption:switchOptionAlpha];
+    [manifest accumulateSwitchOption:switchOptionAlpha];
+    [manifest accumulateSwitchOption:switchOptionAlpha];
+
+    XCTAssertEqual([manifest occurrencesOfOption:parameterOptionAlpha], 2);
+    XCTAssertEqual([manifest occurrencesOfOption:parameterOptionBravo], 0);
+    XCTAssertEqual([manifest occurrencesOfOption:switchOptionAlpha], 3);
+    XCTAssertEqual([manifest occurrencesOfOption:switchOptionBravo], 0);
+}
+
 @end

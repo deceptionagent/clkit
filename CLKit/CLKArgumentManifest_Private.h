@@ -12,12 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifest ()
 
-+ (instancetype)manifest;
-
-// secret entrance for unit tests
-@property (nonnull, readonly) NSDictionary<NSString *, id> *optionManifest;
+@property (nonnull, readonly) NSDictionary<CLKOption *, id> *optionManifest;
+@property (nonnull, readonly) NSDictionary<NSString *, id> *optionManifestKeyedByName;
 
 - (BOOL)hasOption:(CLKOption *)option;
+- (NSUInteger)occurrencesOfOption:(CLKOption *)option;
 
 - (void)accumulateSwitchOption:(CLKOption *)option;
 - (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option;

@@ -10,24 +10,32 @@
 #import "CLKOption_Private.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface CLKArgumentManifest ()
+
+- (void)_registerOption:(CLKOption *)option;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+
 @implementation CLKArgumentManifest
 {
-    NSMutableDictionary<NSString *, id> *_optionManifest;
+    NSMutableDictionary<NSString *, CLKOption *> *_optionNameRegistry;
+    NSMutableDictionary<CLKOption *, id> *_optionManifest;
     NSMutableArray<NSString *> *_positionalArguments;
 }
 
 @synthesize optionManifest = _optionManifest;
 @synthesize positionalArguments = _positionalArguments;
 
-+ (instancetype)manifest
-{
-    return [[[self alloc] init] autorelease];
-}
-
 - (instancetype)init
 {
     self = [super init];
     if (self != nil) {
+        _optionNameRegistry = [[NSMutableDictionary alloc] init];
         _optionManifest = [[NSMutableDictionary alloc] init];
         _positionalArguments = [[NSMutableArray alloc] init];
     }
@@ -37,6 +45,7 @@
 
 - (void)dealloc
 {
+    [_optionNameRegistry release];
     [_optionManifest release];
     [_positionalArguments release];
     [super dealloc];
@@ -49,15 +58,47 @@
 }
 
 #pragma mark -
+#pragma mark Reading Manifests
 
-- (nullable id)objectForKeyedSubscript:(NSString *)key
+- (nullable id)objectForKeyedSubscript:(NSString *)optionName
 {
-    return _optionManifest[key];
+    CLKOption *option = _optionNameRegistry[optionName];
+    return (option == nil ? nil : _optionManifest[option]);
 }
 
 - (BOOL)hasOption:(CLKOption *)option
 {
-    return (_optionManifest[option.name] != nil);
+    return (_optionManifest[option] != nil);
+}
+
+- (NSUInteger)occurrencesOfOption:(CLKOption *)option
+{
+    NSUInteger occurrences = 0;
+    
+    id value = _optionManifest[option];
+    switch (option.type) {
+        case CLKOptionTypeSwitch:
+            NSAssert2((value == nil || [value isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([value class]), option);
+            occurrences = ((NSNumber *)value).unsignedIntegerValue;
+            break;
+        case CLKOptionTypeParameter:
+            NSAssert2((value == nil || [value isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([value class]), option);
+            occurrences = ((NSMutableArray *)value).count;
+            break;
+    }
+    
+    return occurrences;
+}
+
+- (NSDictionary<NSString *, id> *)optionManifestKeyedByName
+{
+    NSMutableDictionary *manifestKeyedByName = [[[NSMutableDictionary alloc] initWithCapacity:_optionManifest.count] autorelease];
+    
+    [_optionManifest enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, id arguments, __unused BOOL *outStop) {
+        manifestKeyedByName[option.name] = arguments;
+    }];
+    
+    return manifestKeyedByName;
 }
 
 #pragma mark -
@@ -66,28 +107,32 @@
 - (void)accumulateSwitchOption:(CLKOption *)option
 {
     NSParameterAssert(option.type == CLKOptionTypeSwitch);
-    
-    NSString *key = option.name;
-    NSNumber *occurrences = _optionManifest[key];
-    NSAssert2((occurrences == nil || [occurrences isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for switch option key '%@'", NSStringFromClass([occurrences class]), key);
-    
-    _optionManifest[key] = @(occurrences.unsignedIntValue + 1);
+    [self _registerOption:option];
+    NSUInteger occurrences = [self occurrencesOfOption:option];
+    _optionManifest[option] = @(occurrences + 1);
 }
 
 - (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option
 {
     NSParameterAssert(option.type == CLKOptionTypeParameter);
     
-    NSString *key = option.name;
-    NSMutableArray *arguments = _optionManifest[key];
-    NSAssert2((arguments == nil || [arguments isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for parameter option key '%@'", NSStringFromClass([arguments class]), key);
+    [self _registerOption:option];
+    NSMutableArray *arguments = _optionManifest[option];
+    NSAssert2((arguments == nil || [arguments isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([arguments class]), option);
     
     if (arguments == nil) {
         arguments = [NSMutableArray array];
-        _optionManifest[key] = arguments;
+        _optionManifest[option] = arguments;
     }
     
     [arguments addObject:argument];
+}
+
+- (void)_registerOption:(CLKOption *)option
+{
+    if (_optionNameRegistry[option.name] == nil) {
+        _optionNameRegistry[option.name] = option;
+    }
 }
 
 - (void)accumulatePositionalArgument:(NSString *)argument
