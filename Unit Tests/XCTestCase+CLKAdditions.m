@@ -44,7 +44,7 @@
 
 - (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
 {
-    CLKArgumentManifest *manifest = [CLKArgumentManifest manifest];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
     [switchOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSNumber *count, __unused BOOL *outStop) {
         int i;

@@ -9,5 +9,6 @@ extern NSString * const CLKErrorDomain;
 
 
 typedef NS_ERROR_ENUM(CLKErrorDomain, CLKError) {
-    CLKErrorRequiredOptionNotProvided = 1
+    CLKErrorRequiredOptionNotProvided = 1,
+    CLKErrorTooManyOccurrencesOfOption = 2
 };

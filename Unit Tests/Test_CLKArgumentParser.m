@@ -38,7 +38,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     CLKArgumentManifest *manifest = [parser parseArguments:&error];
     XCTAssertNotNil(manifest);
     XCTAssertNil(error);
-    XCTAssertEqualObjects(manifest.optionManifest, expectedOptionManifest);
+    XCTAssertEqualObjects(manifest.optionManifestKeyedByName, expectedOptionManifest);
     XCTAssertEqualObjects(manifest.positionalArguments, expectedPositionalArguments);
 }
 
@@ -105,11 +105,11 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     [self performTestWithArgv:argv options:options expectedOptionManifest:expectedOptionManifest expectedPositionalArguments:@[]];
 }
 
-- (void)testOptionArguments
+- (void)testParameterOptions
 {
     NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie" ];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES transformer:nil dependencies:nil],
         [CLKOption parameterOptionWithName:@"bar" flag:@"b"]
     ];
     
@@ -253,10 +253,10 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     ];
     
     NSArray *options = @[
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
          [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES transformer:nil dependencies:nil],
          [CLKOption optionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],
     ];
