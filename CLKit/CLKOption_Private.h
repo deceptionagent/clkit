@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString *CLKStringForOptionType(CLKOptionType type);
+
 @interface CLKOption ()
 
 - (instancetype)initWithType:(CLKOptionType)type
