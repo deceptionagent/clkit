@@ -214,4 +214,17 @@
     XCTAssertEqualObjects(dict[bravo], @"what");
 }
 
+- (void)testDescription
+{
+    CLKOption *switchA = [CLKOption optionWithName:@"switchA" flag:@"a"];
+    CLKOption *switchB = [CLKOption optionWithName:@"switchB" flag:nil];
+    CLKOption *paramA = [CLKOption parameterOptionWithName:@"paramA" flag:@"p" required:NO recurrent:NO transformer:nil dependencies:nil];
+    CLKOption *paramB = [CLKOption parameterOptionWithName:@"paramB" flag:@"P" required:YES recurrent:YES transformer:nil dependencies:nil];
+    
+    XCTAssertEqualObjects(switchA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchA | -a | switch, recurrent }", switchA]));
+    XCTAssertEqualObjects(switchB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchB | -(null) | switch, recurrent }", switchB]));
+    XCTAssertEqualObjects(paramA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramA | -p | parameter }", paramA]));
+    XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -P | parameter, required, recurrent }", paramB]));
+}
+
 @end

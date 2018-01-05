@@ -9,6 +9,22 @@
 #import "CLKAssert.h"
 
 
+NSString *CLKStringForOptionType(CLKOptionType type)
+{
+    switch (type) {
+        case CLKOptionTypeSwitch:
+            return @"switch";
+            break;
+        
+        case CLKOptionTypeParameter:
+            return @"parameter";
+            break;
+    }
+    
+    return @"unknown";
+}
+
+
 @implementation CLKOption
 {
     CLKOptionType _type;
@@ -109,8 +125,20 @@
 
 - (NSString *)description
 {
-    NSString * const fmt = @"%@ { --%@ | -%@ | required: %@ | type: %d }";
-    return [NSString stringWithFormat:fmt, super.description, _name, _flag, (_required ? @"YES" : @"NO"), _type];
+    NSMutableArray *attrs = [NSMutableArray array];
+    [attrs addObject:CLKStringForOptionType(_type)];
+    
+    if (_required) {
+        [attrs addObject:@"required"];
+    }
+    
+    if (_recurrent) {
+        [attrs addObject:@"recurrent"];
+    }
+    
+    NSString *attrDesc = [attrs componentsJoinedByString:@", "];
+    NSString * const fmt = @"%@ { --%@ | -%@ | %@ }";
+    return [NSString stringWithFormat:fmt, super.description, _name, _flag, attrDesc];
 }
 
 - (NSUInteger)hash
