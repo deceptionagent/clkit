@@ -81,7 +81,7 @@
     CLKHardParameterAssert(flag == nil || flag.length == 1);
     
     for (CLKOption *opt in dependencies) {
-        CLKHardParameterAssert((opt.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required");
+        CLKHardParameterAssert((opt.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required (option: '--%@' -> dependency: '--%@'", name, opt.name);
     }
     
     self = [super init];
