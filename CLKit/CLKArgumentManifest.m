@@ -63,7 +63,30 @@ NS_ASSUME_NONNULL_END
 - (nullable id)objectForKeyedSubscript:(NSString *)optionName
 {
     CLKOption *option = _optionNameRegistry[optionName];
-    return (option == nil ? nil : _optionManifest[option]);
+    
+    // option not accumulated
+    if (option == nil) {
+        return nil;
+    }
+    
+    id object = _optionManifest[option];
+    switch (option.type) {
+        case CLKOptionTypeSwitch:
+            break;
+        
+        case CLKOptionTypeParameter:
+            // for non-recurrent parameter options, return the argument directly.
+            // don't assert multiple occurrences of non-recurrent options here.
+            // that is a usage error and the validator will handle it in order
+            // to provide a good message to the user at parsing time.
+            if (!option.recurrent) {
+                object = ((NSArray *)object).firstObject;
+            }
+            
+            break;
+    }
+    
+    return object;
 }
 
 - (BOOL)hasOption:(CLKOption *)option
@@ -78,11 +101,10 @@ NS_ASSUME_NONNULL_END
     id value = _optionManifest[option];
     switch (option.type) {
         case CLKOptionTypeSwitch:
-            NSAssert2((value == nil || [value isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([value class]), option);
             occurrences = ((NSNumber *)value).unsignedIntegerValue;
             break;
+        
         case CLKOptionTypeParameter:
-            NSAssert2((value == nil || [value isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([value class]), option);
             occurrences = ((NSMutableArray *)value).count;
             break;
     }
@@ -119,11 +141,14 @@ NS_ASSUME_NONNULL_END
     [self _registerOption:option];
     NSMutableArray *arguments = _optionManifest[option];
     NSAssert2((arguments == nil || [arguments isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([arguments class]), option);
-    
     if (arguments == nil) {
         arguments = [NSMutableArray array];
         _optionManifest[option] = arguments;
     }
+    
+    // don't assert multiple occurrences of non-recurrent options here.
+    // that is a usage error and the validator will handle it in order
+    // to provide a good message to the user.
     
     [arguments addObject:argument];
 }

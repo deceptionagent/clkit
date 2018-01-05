@@ -42,9 +42,10 @@
 - (void)testParameterOptions
 {
     CLKOption *switchOption = [CLKOption optionWithName:@"switch" flag:@"f"];
-    CLKOption *lorem = [CLKOption parameterOptionWithName:@"lorem" flag:@"l"];
-    CLKOption *ipsum = [CLKOption parameterOptionWithName:@"ipsum" flag:nil];
-    CLKOption *solo = [CLKOption parameterOptionWithName:@"solo" flag:nil];
+    CLKOption *lorem = [CLKOption parameterOptionWithName:@"lorem" flag:@"l" required:NO recurrent:YES transformer:nil dependencies:nil];
+    CLKOption *ipsum = [CLKOption parameterOptionWithName:@"ipsum" flag:@"i" required:NO recurrent:YES transformer:nil dependencies:nil];
+    CLKOption *solo = [CLKOption parameterOptionWithName:@"solo" flag:@"s" required:NO recurrent:YES transformer:nil dependencies:nil];
+    CLKOption *oneshot = [CLKOption parameterOptionWithName:@"oneshot" flag:nil];
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
     // switch options and positional arguments should not affect parameter options
@@ -58,9 +59,11 @@
     [manifest accumulateArgument:@"echo" forParameterOption:ipsum];
     [manifest accumulateArgument:@"echo" forParameterOption:ipsum];
     [manifest accumulateArgument:@"foxtrot" forParameterOption:solo];
+    [manifest accumulateArgument:@"bang" forParameterOption:oneshot];
     XCTAssertEqualObjects(manifest[@"lorem"], (@[ @"alpha", @"bravo" ]));
     XCTAssertEqualObjects(manifest[@"ipsum"], (@[ @"echo", @"echo" ]));
     XCTAssertEqualObjects(manifest[@"solo"], @[ @"foxtrot" ]);
+    XCTAssertEqualObjects(manifest[@"oneshot"], @"bang");
     XCTAssertNil(manifest[@"flarn"]);
 }
 
