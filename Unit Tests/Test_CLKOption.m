@@ -118,31 +118,30 @@
 
 - (void)testInitWithDependencies
 {
+    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:nil];
+    
     NSArray *dependencies = @[
         [CLKOption parameterOptionWithName:@"alpha" flag:@"a"],
         [CLKOption parameterOptionWithName:@"bravo" flag:@"b"]
     ];
     
-    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:nil];
-    
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:dependencies];
     [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:dependencies];
     
-    // switches can't be required
-    NSArray *invalidDependencies = @[
-        [CLKOption parameterOptionWithName:@"alpha" flag:@"a"], // OK
-        [CLKOption optionWithName:@"bravo" flag:@"b"] // NOT OK
+    // switches can't be required -- dependency implies requirement
+    dependencies = @[
+        [CLKOption optionWithName:@"bravo" flag:@"b"]
     ];
     
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:invalidDependencies]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:dependencies]);
 }
 
 - (void)testCopying
 {
     CLKOption *alphaA = [CLKOption optionWithName:@"flarn" flag:@"f"];
-    CLKOption *alphaB = [alphaA copy];
-    XCTAssertEqual(alphaA, alphaB); // CLKOption is immutable; -copy returns the receiver retained
+    CLKOption *alphaB = [[alphaA copy] autorelease];
+    XCTAssertEqual(alphaA, alphaB); // CLKOption is immutable; -copy should return the receiver retained
 }
 
 - (void)testEquality
