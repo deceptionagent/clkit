@@ -27,11 +27,19 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
 };
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface CLKArgumentParser ()
+
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv
+                               options:(NSArray<CLKOption *> *)options
+                          optionGroups:(nullable NSArray<CLKOptionGroup *> *)groups NS_DESIGNATED_INITIALIZER;
 
 @property (nullable, retain) CLKOption *currentOption;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 
 @implementation CLKArgumentParser
@@ -42,6 +50,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
     NSArray<CLKOption *> *_options;
     NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
     NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
+    NSArray<CLKOptionGroup *> *_optionGroups;
     CLKArgumentManifest *_manifest;
 }
 
@@ -49,10 +58,15 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
-    return [[[self alloc] initWithArgumentVector:argv options:options] autorelease];
+    return [[[self alloc] initWithArgumentVector:argv options:options optionGroups:nil] autorelease];
 }
 
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
++ (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
+{
+    return [[[self alloc] initWithArgumentVector:argv options:options optionGroups:groups] autorelease];
+}
+
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
 {
     CLKHardParameterAssert(argv != nil);
     CLKHardParameterAssert(options != nil);
@@ -75,6 +89,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
             }
         }
         
+        _optionGroups = [groups copy];
         _manifest = [[CLKArgumentManifest alloc] init];
     }
     
@@ -84,6 +99,7 @@ typedef NS_ENUM(uint32_t, CLKOAPState) {
 - (void)dealloc
 {
     [_manifest release];
+    [_optionGroups release];
     [_argumentVector release];
     [_optionFlagMap release];
     [_optionNameMap release];
