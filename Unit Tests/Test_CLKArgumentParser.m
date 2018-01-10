@@ -9,6 +9,7 @@
 #import "CLKArgumentParser.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
+#import "CLKOptionGroup.h"
 #import "XCTestCase+CLKAdditions.h"
 
 
@@ -53,7 +54,12 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options]);
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:@[]]);
-    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:@[]]);
+    
+    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:nil]);
+    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[]]);
+    
+    CLKOptionGroup *group = [CLKOptionGroup groupWithOptions:options required:NO];
+    XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[ group ]]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
