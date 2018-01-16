@@ -4,7 +4,6 @@
 
 #import "CLKOptionGroup.h"
 
-#import "CLKAssert.h"
 #import "CLKOption.h"
 
 

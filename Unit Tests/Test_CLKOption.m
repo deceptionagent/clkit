@@ -202,12 +202,14 @@
 {
     // flags are just conveniences -- the identity of an option is related only to its name
     CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    CLKOption *alphaA_alt = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"A"];
     CLKOption *bravo = [CLKOption optionWithName:@"bravo" flag:@"a"];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[alphaA] = @"flarn";
     XCTAssertEqualObjects(dict[alphaA], @"flarn");
+    XCTAssertEqualObjects(dict[alphaA_alt], @"flarn");
     dict[alphaB] = @"barf";
     XCTAssertEqualObjects(dict[alphaA], @"barf"); // alphaA and alphaB should behave the same here
     dict[bravo] = @"what";

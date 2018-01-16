@@ -4,6 +4,7 @@
 
 #import "CLKArgumentTransformer.h"
 
+#import "CLKError_Private.h"
 #import "NSError+CLKAdditions.h"
 
 
@@ -30,10 +31,7 @@
     char *slop = NULL;
     long n = strtol(argument.UTF8String, &slop, 10);
     if ((n == 0 && errno != 0) || *slop != '\0') {
-        if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:errno description:@"couldn't coerce '%@' to an integer value", argument];
-        }
-        
+        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:errno description:@"couldn't coerce '%@' to an integer value", argument]));
         return nil;
     }
     
@@ -51,10 +49,7 @@
     char *slop = NULL;
     float f = strtof(argument.UTF8String, &slop);
     if ((f == 0 && errno != 0) || *slop != '\0') {
-        if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:errno description:@"couldn't coerce '%@' to a floating-point value", argument];
-        }
-        
+        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:errno description:@"couldn't coerce '%@' to a floating-point value", argument]));
         return nil;
     }
     

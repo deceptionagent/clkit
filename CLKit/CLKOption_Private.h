@@ -5,6 +5,7 @@
 #import "CLKOption.h"
 
 
+@class CLKArgumentManifestConstraint;
 @class CLKArgumentTransformer;
 
 
@@ -18,9 +19,11 @@ NSString *CLKStringForOptionType(CLKOptionType type);
                         name:(NSString *)name
                         flag:(nullable NSString *)flag
                     required:(BOOL)required
-                    recurrent:(BOOL)recurrent
+                   recurrent:(BOOL)recurrent
                  transformer:(nullable CLKArgumentTransformer *)transformer
                 dependencies:(nullable NSArray<CLKOption *> *)dependencies NS_DESIGNATED_INITIALIZER;
+
+@property (readonly) NSArray<CLKArgumentManifestConstraint *> *constraints;
 
 @end
 

@@ -94,6 +94,11 @@ NS_ASSUME_NONNULL_END
     return (_optionManifest[option] != nil);
 }
 
+- (BOOL)hasOptionNamed:(NSString *)optionName
+{
+    return (_optionNameRegistry[optionName] != nil);
+}
+
 - (NSUInteger)occurrencesOfOption:(CLKOption *)option
 {
     NSUInteger occurrences = 0;
@@ -110,6 +115,18 @@ NS_ASSUME_NONNULL_END
     }
     
     return occurrences;
+}
+
+- (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName
+{
+    CLKOption *option = _optionNameRegistry[optionName];
+    
+    // option not accumulated
+    if (option == nil) {
+        return 0;
+    }
+    
+    return [self occurrencesOfOption:option];
 }
 
 - (NSDictionary<NSString *, id> *)optionManifestKeyedByName

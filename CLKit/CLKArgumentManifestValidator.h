@@ -6,6 +6,7 @@
 
 
 @class CLKArgumentManifest;
+@class CLKArgumentManifestConstraint;
 @class CLKOption;
 
 
@@ -18,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (BOOL)validateOption:(CLKOption *)option error:(NSError **)outError;
+- (BOOL)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints error:(NSError **)outError;
 
 @end
 

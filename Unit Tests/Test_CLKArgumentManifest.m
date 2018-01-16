@@ -94,15 +94,21 @@
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
     XCTAssertFalse([manifest hasOption:parameterOptionAlpha]);
+    XCTAssertFalse([manifest hasOptionNamed:parameterOptionAlpha.name]);
     XCTAssertFalse([manifest hasOption:switchOptionAlpha]);
+    XCTAssertFalse([manifest hasOptionNamed:switchOptionAlpha.name]);
     
     [manifest accumulateArgument:@"flarn" forParameterOption:parameterOptionAlpha];
     [manifest accumulateSwitchOption:switchOptionAlpha];
     
     XCTAssertTrue([manifest hasOption:parameterOptionAlpha]);
+    XCTAssertTrue([manifest hasOptionNamed:parameterOptionAlpha.name]);
     XCTAssertFalse([manifest hasOption:parameterOptionBravo]);
+    XCTAssertFalse([manifest hasOptionNamed:parameterOptionBravo.name]);
     XCTAssertTrue([manifest hasOption:switchOptionAlpha]);
+    XCTAssertTrue([manifest hasOptionNamed:switchOptionAlpha.name]);
     XCTAssertFalse([manifest hasOption:switchOptionBravo]);
+    XCTAssertFalse([manifest hasOptionNamed:switchOptionBravo.name]);
 }
 
 - (void)test_occurrencesOfOption
@@ -114,8 +120,10 @@
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
     
     XCTAssertEqual([manifest occurrencesOfOption:parameterOptionAlpha], 0);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 0);
     XCTAssertEqual([manifest occurrencesOfOption:switchOptionAlpha], 0);
-    
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 0);
+
     [manifest accumulateArgument:@"flarn" forParameterOption:parameterOptionAlpha];
     [manifest accumulateArgument:@"flarn" forParameterOption:parameterOptionAlpha];
     [manifest accumulateSwitchOption:switchOptionAlpha];
@@ -123,9 +131,13 @@
     [manifest accumulateSwitchOption:switchOptionAlpha];
 
     XCTAssertEqual([manifest occurrencesOfOption:parameterOptionAlpha], 2);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 2);
     XCTAssertEqual([manifest occurrencesOfOption:parameterOptionBravo], 0);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionBravo.name], 0);
     XCTAssertEqual([manifest occurrencesOfOption:switchOptionAlpha], 3);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 3);
     XCTAssertEqual([manifest occurrencesOfOption:switchOptionBravo], 0);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionBravo.name], 0);
 }
 
 @end

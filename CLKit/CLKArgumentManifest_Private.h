@@ -16,7 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonnull, readonly) NSDictionary<NSString *, id> *optionManifestKeyedByName;
 
 - (BOOL)hasOption:(CLKOption *)option;
+- (BOOL)hasOptionNamed:(NSString *)optionName;
 - (NSUInteger)occurrencesOfOption:(CLKOption *)option;
+- (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName;
 
 - (void)accumulateSwitchOption:(CLKOption *)option;
 - (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option;
