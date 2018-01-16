@@ -5,6 +5,7 @@
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
 
+#import "CLKArgumentManifestConstraint.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
 
@@ -21,6 +22,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
             break;
     }
     
+    NSCAssert(YES, @"unknown option type: %d", type);
     return @"unknown";
 }
 
@@ -164,6 +166,31 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 {
     // CLKOption is immutable
     return [self retain];
+}
+
+#pragma mark -
+
+#warning needs test
+- (NSArray<CLKArgumentManifestConstraint *> *)constraints
+{
+    NSMutableArray *constraints = [NSMutableArray array];
+    
+    if (_required) {
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:self.name];
+        [constraints addObject:constraint];
+    }
+    
+    if (!_recurrent) {
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:self.name];
+        [constraints addObject:constraint];
+    }
+    
+    for (CLKOption *dependency in _dependencies) {
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:dependency.name associatedOption:self.name];
+        [constraints addObject:constraint];
+    }
+    
+    return constraints;
 }
 
 @end

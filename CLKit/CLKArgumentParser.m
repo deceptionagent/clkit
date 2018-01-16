@@ -9,6 +9,7 @@
 #import "CLKArgumentManifestValidator.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
+#import "CLKError_Private.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
 #import "NSError+CLKAdditions.h"
@@ -31,11 +32,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentParser ()
 
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv
+- (instancetype)_initWithArgumentVector:(NSArray<NSString *> *)argv
                                options:(NSArray<CLKOption *> *)options
                           optionGroups:(nullable NSArray<CLKOptionGroup *> *)groups NS_DESIGNATED_INITIALIZER;
 
 @property (nullable, retain) CLKOption *currentOption;
+
+- (CLKOAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError;
 
 @end
 
@@ -58,15 +61,15 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
-    return [[[self alloc] initWithArgumentVector:argv options:options optionGroups:nil] autorelease];
+    return [[[self alloc] _initWithArgumentVector:argv options:options optionGroups:nil] autorelease];
 }
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
 {
-    return [[[self alloc] initWithArgumentVector:argv options:options optionGroups:groups] autorelease];
+    return [[[self alloc] _initWithArgumentVector:argv options:options optionGroups:groups] autorelease];
 }
 
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
+- (instancetype)_initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
 {
     CLKHardParameterAssert(argv != nil);
     CLKHardParameterAssert(options != nil);
@@ -177,10 +180,7 @@ NS_ASSUME_NONNULL_END
     //        (we'd probably just collect them into a separate array on the manifest so the client can pass them through
     //         to another program or send them through a second parser.)
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
-        if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem];
-        }
-        
+        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem]));
         return CLKOAPStateError;
     }
     
@@ -205,10 +205,7 @@ NS_ASSUME_NONNULL_END
 {
     CLKOption *option = optionMap[identifier];
     if (option == nil) {
-        if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier];
-        }
-        
+        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier]));
         return CLKOAPStateError;
     }
     
@@ -263,10 +260,7 @@ NS_ASSUME_NONNULL_END
     
     // reject: empty string passed into argv (e.g., --foo "")
     if (argument.length == 0) {
-        if (outError != nil) {
-            *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
-        }
-        
+        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]));
         return CLKOAPStateError;
     }
     
@@ -275,10 +269,7 @@ NS_ASSUME_NONNULL_END
         
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
-            if (outError != nil) {
-                *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument];
-            }
-            
+            CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument]));
             return CLKOAPStateError;
         }
         
@@ -305,14 +296,13 @@ NS_ASSUME_NONNULL_END
 {
     NSAssert(_manifest != nil, @"attempting validation without a manifest");
     
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
+    NSMutableArray *constraints = [NSMutableArray array];
     for (CLKOption *option in _options) {
-        if (![validator validateOption:option error:outError]) {
-            return NO;
-        }
+        [constraints addObjectsFromArray:option.constraints];
     }
     
-    return YES;
+    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
+    return [validator validateConstraints:constraints error:outError];
 }
 
 @end

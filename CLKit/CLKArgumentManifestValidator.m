@@ -6,9 +6,10 @@
 
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
+#import "CLKArgumentManifestConstraint.h"
 #import "CLKAssert.h"
 #import "CLKError.h"
-#import "CLKOption.h"
+#import "CLKError_Private.h"
 #import "NSError+CLKAdditions.h"
 
 
@@ -16,9 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifestValidator ()
 
-- (BOOL)_validateStrictRequirementForOption:(CLKOption *)option error:(NSError **)outError;
-- (BOOL)_validateDependenciesForOption:(CLKOption *)option error:(NSError **)outError;
-- (BOOL)_validateRecurrencyForOption:(CLKOption *)option error:(NSError **)outError;
+- (BOOL)_validateConstraint:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
+- (BOOL)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
+- (BOOL)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
+- (BOOL)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
+- (BOOL)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
+- (BOOL)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
 
 @end
 
@@ -50,63 +54,77 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (BOOL)validateOption:(CLKOption *)option error:(NSError **)outError
+- (BOOL)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints error:(NSError **)outError
 {
-    NSParameterAssert(option != nil);
-    
-    if (![self _validateStrictRequirementForOption:option error:outError]) {
-        return NO;
-    }
-    
-    if (![self _validateDependenciesForOption:option error:outError]) {
-        return NO;
-    }
-    
-    if (![self _validateRecurrencyForOption:option error:outError]) {
-        return NO;
-    }
-    
-    return YES;
-}
-
-- (BOOL)_validateStrictRequirementForOption:(CLKOption *)option error:(NSError **)outError
-{
-    if (option.required && ![_manifest hasOption:option]) {
-        if (outError != nil) {
-            *outError = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", option.name];
-        }
-        
-        return NO;
-    }
-    
-    return YES;
-}
-
-- (BOOL)_validateDependenciesForOption:(CLKOption *)option error:(NSError **)outError
-{
-    if ([_manifest hasOption:option]) {
-        for (CLKOption *dependency in option.dependencies) {
-            if (![_manifest hasOption:dependency]) {
-                if (outError != nil) {
-                    *outError = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", dependency.name, option.name];
-                }
-                
-                return NO;
-            }
+    for (CLKArgumentManifestConstraint *constraint in constraints) {
+        if (![self _validateConstraint:constraint error:outError]) {
+            return NO;
         }
     }
     
     return YES;
 }
 
-- (BOOL)_validateRecurrencyForOption:(CLKOption *)option error:(NSError **)outError
+#warning this method should unpack constraints into semantically meaningful variables and individual validators should take those as parameters
+- (BOOL)_validateConstraint:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
 {
-    if (!option.recurrent && [_manifest occurrencesOfOption:option] > 1) {
-        if (outError != nil) {
-            *outError = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", option.name];
-        }
-        
+    BOOL result;
+    
+    switch (constraint.type) {
+        case CLKConstraintTypeRequired:
+            result = [self _validateStrictRequirement:constraint error:outError];
+            break;
+        case CLKConstraintTypeConditionallyRequired:
+            result = [self _validateConditionalRequirement:constraint error:outError];
+            break;
+        case CLKConstraintTypeRepresentativeRequired:
+            result = [self _validateRepresentativeRequirement:constraint error:outError];
+            break;
+        case CLKConstraintTypeMutuallyExclusive:
+            result = [self _validateMutualExclusion:constraint error:outError];
+            break;
+        case CLKConstraintTypeOccurrencesRestricted:
+            result = [self _validateOccurrenceRestriction:constraint error:outError];
+            break;
+    }
+    
+    return result;
+}
+
+- (BOOL)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+{
+    if (![_manifest hasOptionNamed:constraint.option]) {
+        CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", constraint.option]));
         return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+{
+    if ([_manifest hasOptionNamed:constraint.associatedOption] && ![_manifest hasOptionNamed:constraint.option]) {
+        CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", constraint.option, constraint.associatedOption]));
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (BOOL)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+{
+    return YES;
+}
+
+- (BOOL)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+{
+    return YES;
+}
+
+- (BOOL)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+{
+    if ([_manifest occurrencesOfOptionNamed:constraint.option] > 1) {
+        CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", constraint.option]));
     }
     
     return YES;
