@@ -125,6 +125,7 @@ NS_ASSUME_NONNULL_END
 {
     if ([_manifest occurrencesOfOptionNamed:constraint.option] > 1) {
         CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", constraint.option]));
+        return NO;
     }
     
     return YES;

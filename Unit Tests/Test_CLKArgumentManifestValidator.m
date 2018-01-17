@@ -6,33 +6,19 @@
 
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
+#import "CLKArgumentManifestConstraint.h"
 #import "CLKArgumentManifestValidator.h"
 #import "CLKError.h"
 #import "CLKOption.h"
 #import "XCTestCase+CLKAdditions.h"
 
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface Test_CLKArgumentManifestValidator : XCTestCase
-
-- (void)verifyValidationPassForOption:(CLKOption *)option validator:(CLKArgumentManifestValidator *)validator;
 
 @end
 
-NS_ASSUME_NONNULL_END
-
 
 @implementation Test_CLKArgumentManifestValidator
-
-- (void)verifyValidationPassForOption:(CLKOption *)option validator:(CLKArgumentManifestValidator *)validator
-{
-    NSError *error = nil;
-    XCTAssertTrue([validator validateOption:option error:&error]);
-    XCTAssertNil(error);
-}
-
-#pragma mark -
 
 - (void)testInit
 {
@@ -46,95 +32,98 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic pop
 }
 
-- (void)testValidateOptions_mixed_emptyManifest
+- (void)testValidateConstraint_required
 {
-    CLKOption *optional = [CLKOption parameterOptionWithName:@"opt" flag:@"o" required:NO];
-    CLKOption *required = [CLKOption parameterOptionWithName:@"req" flag:@"r" required:YES];
-    CLKOption *optionalSwitch = [CLKOption optionWithName:@"optionalSwitch" flag:@"s"];
-    
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
-    
-    [self verifyValidationPassForOption:optional validator:validator];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES];
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ flarn : @[ @"quone" ] }];
     
     NSError *error = nil;
-    XCTAssertFalse([validator validateOption:required error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--req: required option not provided"];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
     
-    [self verifyValidationPassForOption:optionalSwitch validator:validator];
+    constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"];
+    XCTAssertFalse([validator validateConstraints:@[ constraint ] error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
 }
 
-- (void)testValidateOption_required
+- (void)testValidateConstraint_conditionallyRequired
 {
-    CLKOption *alpha = [CLKOption parameterOptionWithName:@"alpha" flag:@"a" required:NO]; // supplied
-    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:NO]; // missing
-    CLKOption *charlie = [CLKOption parameterOptionWithName:@"charlie" flag:@"c" required:YES]; // supplied
-    CLKOption *delta = [CLKOption parameterOptionWithName:@"delta" flag:@"d" required:YES]; // missing
-    CLKOption *echo = [CLKOption optionWithName:@"echo" flag:@"e"]; // supplied
-    CLKOption *foxtrot = [CLKOption optionWithName:@"foxtrot" flag:@"f"]; // missing
+    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
     
-    NSDictionary *suppliedParameterOptions = @{
-        alpha : @[ @"flarn" ],
-        charlie : @[ @"barf" ]
+    NSDictionary *parameterContents = @{
+        flarn : @[ @"confound" ],
+        barf : @[ @"delivery" ]
     };
     
-    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:@{ echo : @(1) } parameterOptions:suppliedParameterOptions];
-    [self verifyValidationPassForOption:alpha validator:validator];
-    [self verifyValidationPassForOption:bravo validator:validator];
-    [self verifyValidationPassForOption:charlie validator:validator];
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:@{ quone : @(1) } parameterOptions:parameterContents];
     
     NSError *error = nil;
-    XCTAssertFalse([validator validateOption:delta error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--delta: required option not provided"];
-    XCTAssertFalse([validator validateOption:delta error:nil]);
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
     
-    [self verifyValidationPassForOption:echo validator:validator];
-    [self verifyValidationPassForOption:foxtrot validator:validator];
+    error = nil;
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
+    
+    error = nil;
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"xyzzy" associatedOption:@"quone"];
+    XCTAssertFalse([validator validateConstraints:@[ constraint ] error:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--xyzzy is required when using --quone"];
+    
+    error = nil;
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"ack" associatedOption:@"syn"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
 }
 
-- (void)testValidateOption_dependencies
+- (void)testValidateConstraint_occurrencesRestricted
 {
-    CLKOption *alpha = [CLKOption parameterOptionWithName:@"alpha" flag:@"a"];
-    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b"];
-    CLKOption *charlie = [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ alpha, bravo ]];
+    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
+    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
     
-    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
-    [self verifyValidationPassForOption:charlie validator:validator];
+    NSDictionary *switchContents = @{
+        quone : @(1),
+        xyzzy : @(2)
+    };
     
-    validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ alpha : @[ @"flarn" ] }];
-    [self verifyValidationPassForOption:charlie validator:validator];
+    NSDictionary *parameterContents = @{
+        barf : @[ @"thrud" ],
+        flarn : @[ @"confound", @"delivery" ]
+    };
     
-    validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:nil];
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchContents parameterOptions:parameterContents];
+    
     NSError *error = nil;
-    XCTAssertFalse([validator validateOption:charlie error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--alpha is required when using --charlie"];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"barf"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
     
-    validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:@{ alpha : @[ @"flarn" ] }];
     error = nil;
-    XCTAssertFalse([validator validateOption:charlie error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];
+    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
+    XCTAssertFalse([validator validateConstraints:@[ constraint ] error:&error]);
+    [self verifyCLKError:error code:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
     
-    validator = [self validatorWithSwitchOptions:@{ charlie : @(1) } parameterOptions:@{ bravo : @[ @"flarn" ] }];
     error = nil;
-    XCTAssertFalse([validator validateOption:charlie error:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--alpha is required when using --charlie"];
-}
-
-- (void)testValidateOption_recurrency
-{
-    CLKOption *alpha = [CLKOption parameterOptionWithName:@"alpha" flag:@"a"];
-    CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:NO recurrent:YES transformer:nil dependencies:nil];
+    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
     
-    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
-    [self verifyValidationPassForOption:bravo validator:validator];
+    error = nil;
+    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"xyzzy"];
+    XCTAssertFalse([validator validateConstraints:@[ constraint ] error:&error]);
+    [self verifyCLKError:error code:CLKErrorTooManyOccurrencesOfOption description:@"--xyzzy may not be provided more than once"];
     
-    validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ alpha : @[ @"flarn", @"barf" ] }];
-    NSError *error = nil;
-    XCTAssertFalse([validator validateOption:alpha error:&error]);
-    [self verifyCLKError:error code:CLKErrorTooManyOccurrencesOfOption description:@"--alpha may not be provided more than once"];
-    
-    validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ bravo : @[ @"flarn", @"barf" ] }];
-    [self verifyValidationPassForOption:bravo validator:validator];
+    error = nil;
+    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"aeon"];
+    XCTAssertTrue([validator validateConstraints:@[ constraint ] error:&error]);
+    XCTAssertNil(error);
 }
 
 @end
