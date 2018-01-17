@@ -5,6 +5,26 @@
 #import "CLKArgumentManifestConstraint.h"
 
 
+NSString *CLKStringForConstraintType(CLKConstraintType type)
+{
+    switch (type) {
+        case CLKConstraintTypeRequired:
+            return @"required";
+        case CLKConstraintTypeConditionallyRequired:
+            return @"conditionally required";
+        case CLKConstraintTypeRepresentativeRequired:
+            return @"representative required";
+        case CLKConstraintTypeMutuallyExclusive:
+            return @"mutually exclusive";
+        case CLKConstraintTypeOccurrencesRestricted:
+            return @"occurrences restricted";
+    }
+    
+    NSCAssert(YES, @"unknown constraint type: %d", type);
+    return @"unknown";
+}
+
+
 @interface CLKArgumentManifestConstraint ()
 
 - (nonnull instancetype)initWithType:(CLKConstraintType)type
@@ -80,7 +100,11 @@
     [super dealloc];
 }
 
-#warning implement -description
+- (NSString *)description
+{
+    NSString * const fmt = @"%@ { %@ | option: %@ | associated: %@ | linked: [ %@ ] }";
+    return [NSString stringWithFormat:fmt, super.description, CLKStringForConstraintType(_type), _option, _associatedOption, [_linkedOptions componentsJoinedByString:@", "]];
+}
 
 - (BOOL)isEqual:(id)obj
 {
