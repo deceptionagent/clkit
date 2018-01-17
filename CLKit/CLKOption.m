@@ -15,11 +15,8 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     switch (type) {
         case CLKOptionTypeSwitch:
             return @"switch";
-            break;
-        
         case CLKOptionTypeParameter:
             return @"parameter";
-            break;
     }
     
     NSCAssert(YES, @"unknown option type: %d", type);
