@@ -9,10 +9,10 @@
 
 @interface CLKOptionGroup ()
 
-- (nonnull instancetype)initWithOptions:(nullable NSArray<CLKOption *> *)options
-                              subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
-                                mutexed:(BOOL)mutexed
-                               required:(BOOL)required NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)_initWithOptions:(nullable NSArray<CLKOption *> *)options
+                               subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
+                                 mutexed:(BOOL)mutexed
+                                required:(BOOL)required NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -32,20 +32,20 @@
 
 + (instancetype)groupWithOptions:(NSArray<CLKOption *> *)options required:(BOOL)required
 {
-    return [[[self alloc] initWithOptions:options subgroups:nil mutexed:NO required:required] autorelease];
+    return [[[self alloc] _initWithOptions:options subgroups:nil mutexed:NO required:required] autorelease];
 }
 
 + (instancetype)mutexedGroupWithOptions:(NSArray<CLKOption *> *)options required:(BOOL)required
 {
-    return [[[self alloc] initWithOptions:options subgroups:nil mutexed:YES required:required] autorelease];
+    return [[[self alloc] _initWithOptions:options subgroups:nil mutexed:YES required:required] autorelease];
 }
 
 + (instancetype)mutexedGroupWithOptions:(NSArray<CLKOption *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required
 {
-    return [[[self alloc] initWithOptions:options subgroups:subgroups mutexed:YES required:required] autorelease];
+    return [[[self alloc] _initWithOptions:options subgroups:subgroups mutexed:YES required:required] autorelease];
 }
 
-- (instancetype)initWithOptions:(NSArray<CLKOption *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups mutexed:(BOOL)mutexed required:(BOOL)required
+- (instancetype)_initWithOptions:(NSArray<CLKOption *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups mutexed:(BOOL)mutexed required:(BOOL)required
 {
     self = [super init];
     if (self != nil) {
