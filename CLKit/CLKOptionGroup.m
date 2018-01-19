@@ -4,17 +4,25 @@
 
 #import "CLKOptionGroup.h"
 
+#import "CLKArgumentManifestConstraint.h"
 #import "CLKOption.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface CLKOptionGroup ()
 
-- (nonnull instancetype)_initWithOptions:(nullable NSArray<CLKOption *> *)options
-                               subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
-                                 mutexed:(BOOL)mutexed
-                                required:(BOOL)required NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithOptions:(nullable NSArray<CLKOption *> *)options
+                       subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
+                         mutexed:(BOOL)mutexed
+                        required:(BOOL)required NS_DESIGNATED_INITIALIZER;
+
+- (CLKArgumentManifestConstraint *)_requiredConstraint;
+- (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 
 @implementation CLKOptionGroup
@@ -64,5 +72,54 @@
     [_options release];
     [super dealloc];
 }
+
+#pragma mark -
+#pragma mark Constraints
+
+- (NSArray<CLKArgumentManifestConstraint *> *)constraints
+{
+    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
+    
+    if (_required) {
+        [constraints addObject:[self _requiredConstraint]];
+    }
+    
+    if (_mutexed) {
+        [constraints addObjectsFromArray:[self _mutexConstraints]];
+    }
+    
+    return constraints;
+}
+
+- (CLKArgumentManifestConstraint *)_requiredConstraint
+{
+    NSMutableArray<NSString *> *allOptions = [NSMutableArray array];
+    if (_options != nil) {
+        [allOptions addObjectsFromArray:[_options valueForKeyPath:@"@unionOfObjects.name"]];
+    }
+    
+    if (_subgroups != nil) {
+        NSArray *allSubgroupOptions = [_subgroups valueForKeyPath:@"@unionOfArrays.options"];
+        [allOptions addObjectsFromArray:allSubgroupOptions];
+    }
+    
+    return [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:allOptions];
+}
+
+- (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints
+{
+    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
+    
+    if (_options != nil) {
+        NSArray<NSString *> *optionNames = [_options valueForKeyPath:@"@unionOfObjects.name"];
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:optionNames];
+        [constraints addObject:constraint];
+    }
+    
+#warning ...
+
+    return constraints;
+}
+
 
 @end
