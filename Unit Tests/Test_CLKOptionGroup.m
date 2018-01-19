@@ -4,8 +4,10 @@
 
 #import <XCTest/XCTest.h>
 
+#import "CLKArgumentManifestConstraint.h"
 #import "CLKOption.h"
 #import "CLKOptionGroup.h"
+#import "CLKOptionGroup_Private.h"
 
 
 @interface Test_CLKOptionGroup : XCTestCase
@@ -55,6 +57,49 @@
     
     group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:subgroups required:YES];
     [self verifyGroup:group options:nil subgroups:subgroups required:YES mutexed:YES];
+}
+
+- (void)testConstraints_boringGroup
+{
+    CLKOption *barf  = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    
+    CLKOptionGroup *group = [CLKOptionGroup groupWithOptions:@[ barf, flarn ] required:NO];
+    XCTAssertEqualObjects(group.constraints, @[]);
+    
+    group = [CLKOptionGroup groupWithOptions:@[ barf, flarn ] required:YES];
+    NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]]
+    ];
+    
+    XCTAssertEqualObjects(group.constraints, expectedConstraints);
+}
+
+- (void)testConstraints_mutexedGroup
+{
+    CLKOption *barf  = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] required:NO];
+    NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]]
+    ];
+    
+    XCTAssertEqualObjects(group.constraints, expectedConstraints);
+    
+    group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] required:YES];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]],
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]]
+    ];
+    
+    XCTAssertEqualObjects(group.constraints, expectedConstraints);
+    
+#warning test subgroups
+//    CLKOption *quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q"];
+//    CLKOption *xyzzy = [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x"];
+//    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c"];
+//    CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"c"];
 }
 
 @end

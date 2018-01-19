@@ -87,6 +87,7 @@
     CLKArgumentManifestConstraint *requiredAlpha = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredBravo = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredCharlie = [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"];
+    XCTAssertTrue([requiredAlpha isEqual:requiredAlpha]);
     XCTAssertTrue([requiredAlpha isEqual:requiredBravo]);
     XCTAssertFalse([requiredAlpha isEqual:requiredCharlie]);
     
@@ -94,6 +95,7 @@
     CLKArgumentManifestConstraint *conditionallyRequiredBravo = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
     CLKArgumentManifestConstraint *conditionallyRequiredCharlie = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"barf"];
     CLKArgumentManifestConstraint *conditionallyRequiredDelta = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"xyzzy"];
+    XCTAssertTrue([conditionallyRequiredAlpha isEqual:conditionallyRequiredAlpha]);
     XCTAssertTrue([conditionallyRequiredAlpha isEqual:conditionallyRequiredBravo]);
     XCTAssertFalse([conditionallyRequiredAlpha isEqual:conditionallyRequiredCharlie]);
     XCTAssertFalse([conditionallyRequiredCharlie isEqual:conditionallyRequiredDelta]);
@@ -101,18 +103,21 @@
     CLKArgumentManifestConstraint *representativeRequiredAlpha = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *representativeRequiredBravo = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *representativeRequiredCharlie = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"quone" ]];
+    XCTAssertTrue([representativeRequiredAlpha isEqual:representativeRequiredAlpha]);
     XCTAssertTrue([representativeRequiredAlpha isEqual:representativeRequiredBravo]);
     XCTAssertFalse([representativeRequiredAlpha isEqual:representativeRequiredCharlie]);
     
     CLKArgumentManifestConstraint *mutexedAlpha = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *mutexedBravo = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *mutexedCharlie = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"quone" ]];
+    XCTAssertTrue([mutexedAlpha isEqual:mutexedAlpha]);
     XCTAssertTrue([mutexedAlpha isEqual:mutexedBravo]);
     XCTAssertFalse([mutexedAlpha isEqual:mutexedCharlie]);
     
     CLKArgumentManifestConstraint *restrictedAlpha = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
     CLKArgumentManifestConstraint *restrictedBravo = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
     CLKArgumentManifestConstraint *restrictedCharlie = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"barf"];
+    XCTAssertTrue([restrictedAlpha isEqual:restrictedAlpha]);
     XCTAssertTrue([restrictedAlpha isEqual:restrictedBravo]);
     XCTAssertFalse([restrictedAlpha isEqual:restrictedCharlie]);
     
@@ -133,6 +138,10 @@
             XCTAssertNotEqualObjects(constraint, otherConstraint);
         }
     }
+    
+    /* misc */
+    
+    XCTAssertFalse([requiredAlpha isEqual:@"not a constraint"]);
 }
 
 @end
