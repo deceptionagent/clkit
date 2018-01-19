@@ -14,6 +14,29 @@
 
 @implementation Test_CLKArgumentManifestConstraint
 
+- (void)testDescription
+{
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
+    NSString *expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { required | option: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+    
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { conditionally required | option: flarn | associated: barf | linked: [ (null) ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | option: (null) | associated: (null) | linked: [ flarn, barf ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf", @"quone" ]];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | option: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+
+    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences restricted | option: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+}
+
 - (void)testRequired
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];

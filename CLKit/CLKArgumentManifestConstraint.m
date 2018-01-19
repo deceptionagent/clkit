@@ -27,7 +27,7 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
 
 @interface CLKArgumentManifestConstraint ()
 
-- (nonnull instancetype)initWithType:(CLKConstraintType)type
+- (nonnull instancetype)_initWithType:(CLKConstraintType)type
                               option:(nullable NSString *)option
                     associatedOption:(nullable NSString *)associatedOption
                        linkedOptions:(nullable NSArray<NSString *> *)linkedOptions NS_DESIGNATED_INITIALIZER;
@@ -51,35 +51,35 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
 + (instancetype)constraintForRequiredOption:(NSString *)option
 {
     NSParameterAssert(option != nil);
-    return [[[self alloc] initWithType:CLKConstraintTypeRequired option:option associatedOption:nil linkedOptions:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKConstraintTypeRequired option:option associatedOption:nil linkedOptions:nil] autorelease];
 }
 
 + (instancetype)constraintForConditionallyRequiredOption:(NSString *)option associatedOption:(NSString *)associatedOption
 {
     NSParameterAssert(option != nil);
     NSParameterAssert(associatedOption != nil);
-    return [[[self alloc] initWithType:CLKConstraintTypeConditionallyRequired option:option associatedOption:associatedOption linkedOptions:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKConstraintTypeConditionallyRequired option:option associatedOption:associatedOption linkedOptions:nil] autorelease];
 }
 
 + (instancetype)constraintRequiringRepresentativeForOptions:(NSArray<NSString *> *)options
 {
     NSParameterAssert(options.count > 1);
-    return [[[self alloc] initWithType:CLKConstraintTypeRepresentativeRequired option:nil associatedOption:nil linkedOptions:options] autorelease];
+    return [[[self alloc] _initWithType:CLKConstraintTypeRepresentativeRequired option:nil associatedOption:nil linkedOptions:options] autorelease];
 }
 
 + (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options
 {
     NSParameterAssert(options.count > 1);
-    return [[[self alloc] initWithType:CLKConstraintTypeMutuallyExclusive option:nil associatedOption:nil linkedOptions:options] autorelease];
+    return [[[self alloc] _initWithType:CLKConstraintTypeMutuallyExclusive option:nil associatedOption:nil linkedOptions:options] autorelease];
 }
 
 + (instancetype)constraintRestrictingOccurrencesForOption:(NSString *)option
 {
     NSParameterAssert(option != nil);
-    return [[[self alloc] initWithType:CLKConstraintTypeOccurrencesRestricted option:option associatedOption:nil linkedOptions:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKConstraintTypeOccurrencesRestricted option:option associatedOption:nil linkedOptions:nil] autorelease];
 }
 
-- (instancetype)initWithType:(CLKConstraintType)type option:(NSString *)option associatedOption:(NSString *)associatedOption linkedOptions:(NSArray<NSString *> *)linkedOptions
+- (instancetype)_initWithType:(CLKConstraintType)type option:(NSString *)option associatedOption:(NSString *)associatedOption linkedOptions:(NSArray<NSString *> *)linkedOptions
 {
     self = [super init];
     if (self != nil) {
