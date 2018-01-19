@@ -167,7 +167,6 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 #pragma mark -
 
-#warning needs test
 - (NSArray<CLKArgumentManifestConstraint *> *)constraints
 {
     NSMutableArray *constraints = [NSMutableArray array];
