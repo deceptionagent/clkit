@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 
+#import "CLKArgumentManifestConstraint.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
@@ -227,6 +228,58 @@
     XCTAssertEqualObjects(switchB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchB | -(null) | switch, recurrent }", switchB]));
     XCTAssertEqualObjects(paramA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramA | -p | parameter }", paramA]));
     XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -P | parameter, required, recurrent }", paramB]));
+}
+
+- (void)testConstraints
+{
+    CLKOption *barf  = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    
+    /* switch options */
+    
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ barf ]];
+    NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ barf, flarn ]];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    /* parameter options */
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:YES transformer:nil dependencies:nil];
+    XCTAssertEqualObjects(quone.constraints, @[]);
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:nil dependencies:nil];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:nil dependencies:nil];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:YES transformer:nil dependencies:@[ barf, flarn]];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
 }
 
 @end
