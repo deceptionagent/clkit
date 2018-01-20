@@ -93,6 +93,8 @@ NS_ASSUME_NONNULL_END
 
 - (CLKArgumentManifestConstraint *)_requiredConstraint
 {
+    NSAssert(_required, @"constructing required constraint for non-required group");
+    
     NSMutableArray<NSString *> *allOptions = [NSMutableArray array];
     
     for (CLKOption *option in _options) {
@@ -110,6 +112,8 @@ NS_ASSUME_NONNULL_END
 
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints
 {
+    NSAssert(_mutexed, @"constructing mutex constraints for non-mutexed group");
+    
     NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     
     if (_options != nil) {
