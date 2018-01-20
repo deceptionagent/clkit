@@ -94,13 +94,15 @@ NS_ASSUME_NONNULL_END
 - (CLKArgumentManifestConstraint *)_requiredConstraint
 {
     NSMutableArray<NSString *> *allOptions = [NSMutableArray array];
-    if (_options != nil) {
-        [allOptions addObjectsFromArray:[_options valueForKeyPath:@"@unionOfObjects.name"]];
+    
+    for (CLKOption *option in _options) {
+        [allOptions addObject:option.name];
     }
     
-    if (_subgroups != nil) {
-        NSArray *allSubgroupOptions = [_subgroups valueForKeyPath:@"@unionOfArrays.options"];
-        [allOptions addObjectsFromArray:allSubgroupOptions];
+    for (CLKOptionGroup *subgroup in _subgroups) {
+        for (CLKOption *option in subgroup.options) {
+            [allOptions addObject:option.name];
+        }
     }
     
     return [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:allOptions];
@@ -111,7 +113,11 @@ NS_ASSUME_NONNULL_END
     NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     
     if (_options != nil) {
-        NSArray<NSString *> *optionNames = [_options valueForKeyPath:@"@unionOfObjects.name"];
+        NSMutableArray<NSString *> *optionNames = [NSMutableArray array];
+        for (CLKOption *option in _options) {
+            [optionNames addObject:option.name];
+        }
+        
         CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:optionNames];
         [constraints addObject:constraint];
     }
@@ -120,6 +126,5 @@ NS_ASSUME_NONNULL_END
 
     return constraints;
 }
-
 
 @end
