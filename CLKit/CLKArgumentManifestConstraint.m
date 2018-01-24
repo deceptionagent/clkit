@@ -102,7 +102,7 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
 
 - (NSString *)description
 {
-    NSString * const fmt = @"%@ { %@ | option: %@ | associated: %@ | linked: [ %@ ] }";
+    NSString * const fmt = @"%@ { %@ | primary: %@ | associated: %@ | linked: [ %@ ] }";
     return [NSString stringWithFormat:fmt, super.description, CLKStringForConstraintType(_type), _option, _associatedOption, [_linkedOptions componentsJoinedByString:@", "]];
 }
 
