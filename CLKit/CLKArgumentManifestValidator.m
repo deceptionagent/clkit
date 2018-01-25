@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_END
     return YES;
 }
 
-#warning this method should unpack constraints into semantically meaningful variables and individual validators should take those as parameters
+#warning consider: this method should unpack constraints into semantically meaningful variables and individual validators should take those as parameters
 - (BOOL)_validateConstraint:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
 {
     BOOL result;
