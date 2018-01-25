@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifest *_manifest;
 }
 
+@synthesize optionGroups = _optionGroups;
 @synthesize currentOption = _currentOption;
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
@@ -91,6 +92,8 @@ NS_ASSUME_NONNULL_END
                 _optionFlagMap[opt.flag] = opt;
             }
         }
+        
+#warning validate groups contain registered options?
         
         _optionGroups = [groups copy];
         _manifest = [[CLKArgumentManifest alloc] init];
