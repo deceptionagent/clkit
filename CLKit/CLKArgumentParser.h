@@ -20,9 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-#warning is this necessary? where is -options?
-@property (nullable, readonly) NSArray<CLKOptionGroup *> *optionGroups;
-
 - (nullable CLKArgumentManifest *)parseArguments:(NSError **)outError;
 
 @end
