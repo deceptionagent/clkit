@@ -113,8 +113,20 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
 {
-#warning implement me
-    return YES;
+    BOOL hit = NO;
+    for (NSString *option in constraint.linkedOptions) {
+        if ([_manifest hasOptionNamed:option]) {
+            hit = YES;
+            break;
+        }
+    }
+    
+    if (!hit && outError != nil) {
+        NSString *desc = [constraint.linkedOptions componentsJoinedByString:@", --"];
+        *outError = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", desc];
+    }
+    
+    return hit;
 }
 
 - (BOOL)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError

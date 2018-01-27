@@ -308,7 +308,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
 }
 
-- (void)testValidationError_requiredOption
+- (void)testValidationFailure_required
 {
     NSArray *options = @[
          [CLKOption optionWithName:@"alpha" flag:@"a"],
@@ -329,7 +329,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];
 }
 
-- (void)testValidationError_optionDependency
+- (void)testValidationFailure_dependencies
 {
     CLKOption *alpha = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b"];
@@ -341,5 +341,18 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertFalse([parser parseArguments:&error]);
     [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];
 }
+
+- (void)testValidationFailure_recurrent
+{
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"barf", @"--flarn", @"barf" ] options:@[ flarn ]];
+    NSError *error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
+}
+
+#warning add mutex group test
+
+#warning add rep-req test
 
 @end

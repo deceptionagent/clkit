@@ -12,6 +12,8 @@
 #import "CLKError_Private.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
+#import "CLKOptionGroup.h"
+#import "CLKOptionGroup_Private.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
 
@@ -57,7 +59,6 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifest *_manifest;
 }
 
-@synthesize optionGroups = _optionGroups;
 @synthesize currentOption = _currentOption;
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
@@ -302,6 +303,10 @@ NS_ASSUME_NONNULL_END
     NSMutableArray *constraints = [NSMutableArray array];
     for (CLKOption *option in _options) {
         [constraints addObjectsFromArray:option.constraints];
+    }
+    
+    for (CLKOptionGroup *group in _optionGroups) {
+        [constraints addObjectsFromArray:group.constraints];
     }
     
     CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
