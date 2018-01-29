@@ -124,7 +124,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 - (NSString *)description
 {
-    NSMutableArray *attrs = [NSMutableArray array];
+    NSMutableArray<NSString *> *attrs = [NSMutableArray array];
     [attrs addObject:CLKStringForOptionType(_type)];
     
     if (_required) {
@@ -169,7 +169,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 - (NSArray<CLKArgumentManifestConstraint *> *)constraints
 {
-    NSMutableArray *constraints = [NSMutableArray array];
+    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     
     if (_required) {
         CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:self.name];

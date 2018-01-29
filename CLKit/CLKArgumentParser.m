@@ -300,7 +300,7 @@ NS_ASSUME_NONNULL_END
 {
     NSAssert(_manifest != nil, @"attempting validation without a manifest");
     
-    NSMutableArray *constraints = [NSMutableArray array];
+    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     for (CLKOption *option in _options) {
         [constraints addObjectsFromArray:option.constraints];
     }
