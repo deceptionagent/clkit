@@ -308,7 +308,18 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
 }
 
-- (void)testValidationFailure_required
+/*
+    the primary goal of validation tests involving the parser is verifying the parser:
+ 
+        - invokes the validator
+        - passes constraints to the validator
+        - correctly handles the validator's result
+ 
+    CLKOption and CLKArgumentManifestValidator have comprehensive tests for constraints,
+    but while we're here we cover some full-stack examples.
+*/
+
+- (void)testValidation_required
 {
     NSArray *options = @[
          [CLKOption optionWithName:@"alpha" flag:@"a"],
@@ -350,7 +361,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertNil(error);
 }
 
-- (void)testValidationFailure_recurrent
+- (void)testValidation_recurrent
 {
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     NSArray *argv = @[ @"--flarn", @"barf", @"--flarn", @"barf" ];
@@ -364,18 +375,80 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     [self verifyCLKError:error code:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
 }
 
-#warning add mutex group test
-//- (void)testValidation_mutualExclusionGroup
-//{
-//    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
-//    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
-//    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
-//    CLKOptionGroup *mutex_twoOptions = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] required:NO];
-//    CLKOptionGroup *mutex_twoOptions_required = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] required:YES];
-//    CLKOptionGroup *mutex_threeOptions = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf, xyzzy ] required:NO];
-//}
+- (void)testValidation_mutualExclusionGroup
+{
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
+    CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
+    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
+    NSArray *options = @[ flarn, barf, quone, xyzzy ];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] required:NO];
+    CLKOptionGroup *requiredGroup = [CLKOptionGroup mutexedGroupWithOptions:@[ quone, xyzzy ] required:YES];
 
-- (void)testValidation_requiredGroup
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--quone", @"--flarn", @"--barf" ] options:options optionGroups:@[ group, requiredGroup ]];
+    NSError *error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn" ] options:options optionGroups:@[ group, requiredGroup ]];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone, --xyzzy"];
+}
+
+- (void)testValidation_mutualExclusionGroupWithSubgroups
+{
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
+    CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
+    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
+    CLKOption *syn = [CLKOption optionWithName:@"syn" flag:@"s"];
+    CLKOption *ack = [CLKOption optionWithName:@"ack" flag:@"a"];
+    CLKOption *what = [CLKOption optionWithName:@"what" flag:@"w"];
+    NSArray *options = @[ flarn, barf, quone, xyzzy, syn, ack, what ];
+    CLKOptionGroup *subgroupQuoneXyzzy = [CLKOptionGroup groupWithOptions:@[ quone, xyzzy ] required:NO];
+    CLKOptionGroup *subgroupSynAck = [CLKOptionGroup groupWithOptions:@[ syn, ack ] required:NO];
+    CLKOptionGroup *mutexGroup = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] subgroups:@[ subgroupQuoneXyzzy, subgroupSynAck ] required:NO];
+    
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ mutexGroup ]];
+    NSError *error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];
+
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--quone" ] options:options optionGroups:@[ mutexGroup ]];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --quone: mutually exclusive options encountered"];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--quone", @"--ack" ] options:options optionGroups:@[ mutexGroup ]];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--ack", @"--quone" ] options:options optionGroups:@[ mutexGroup ]];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--syn", @"--ack" ] options:options optionGroups:@[ mutexGroup ]];
+    error = nil;
+    XCTAssertTrue([parser parseArguments:&error]);
+    XCTAssertNil(error);
+    
+    // the validator will bail on the first error encountered, so we won't get an error about --syn
+    // [TACK] this would change for multi-issue support
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--barf", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexGroup ]];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --xyzzy: mutually exclusive options encountered"];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--what", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexGroup ]];
+    error = nil;
+    XCTAssertFalse([parser parseArguments:&error]);
+    [self verifyCLKError:error code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"];
+}
+
+- (void)testValidation_boringRequiredGroup
 {
     CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
     CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
