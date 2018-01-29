@@ -53,7 +53,7 @@ NSString * const CLKVerbDepotErrorDomain = @"CLKVerbDepotErrorDomain";
     // scan the argument vector to find the verb, then pass the remaining arguments to the verb.
     // whatever's to the right of the verb should be the verb's optargs. that's what the verb
     // will want to pass to a parser.
-    NSMutableArray *argumentVector = [[_argumentVector mutableCopy] autorelease];
+    NSMutableArray<NSString *> *argumentVector = [[_argumentVector mutableCopy] autorelease];
     NSString *arg;
     while ((arg = [argumentVector clk_popFirstObject]) != nil) {
         verb = _verbs[arg.lowercaseString]; // verb lookups are case-insensitive

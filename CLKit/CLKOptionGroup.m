@@ -132,7 +132,7 @@ NS_ASSUME_NONNULL_END
     /* subgroups are mutually exclusive with each other */
     
     if (_subgroups.count > 1) {
-        NSMutableArray *remainingSubgroups = [[_subgroups mutableCopy] autorelease];
+        NSMutableArray<CLKOptionGroup *> *remainingSubgroups = [[_subgroups mutableCopy] autorelease];
         CLKOptionGroup *currentSubgroup;
         while ((currentSubgroup = [remainingSubgroups clk_popFirstObject]) != nil) {
             for (CLKOption *currentSubgroupOption in currentSubgroup.options) {
