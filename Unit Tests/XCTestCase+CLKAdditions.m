@@ -14,14 +14,21 @@
 
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code
 {
-    XCTAssertNotNil(error);
+    if (error == nil) {
+        return;
+    }
+    
     XCTAssertEqualObjects(error.domain, domain);
     XCTAssertEqual(error.code, code);
 }
 
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description
 {
-    XCTAssertNotNil(error);
+    XCTAssertNotNil(error, @"[description: %@]", description);
+    if (error == nil) {
+        return;
+    }
+    
     XCTAssertEqualObjects(error.domain, domain);
     XCTAssertEqual(error.code, code);
     XCTAssertEqualObjects(error.localizedDescription, description);
@@ -29,7 +36,11 @@
 
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code userInfo:(NSDictionary *)userInfo
 {
-    XCTAssertNotNil(error);
+    XCTAssertNotNil(error, @"[userInfo: %@]", userInfo);
+    if (error == nil) {
+        return;
+    }
+    
     XCTAssertEqualObjects(error.domain, domain);
     XCTAssertEqual(error.code, code);
     XCTAssertEqualObjects(error.userInfo, userInfo);
