@@ -365,6 +365,15 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
 }
 
 #warning add mutex group test
+//- (void)testValidation_mutualExclusionGroup
+//{
+//    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
+//    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+//    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
+//    CLKOptionGroup *mutex_twoOptions = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] required:NO];
+//    CLKOptionGroup *mutex_twoOptions_required = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] required:YES];
+//    CLKOptionGroup *mutex_threeOptions = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf, xyzzy ] required:NO];
+//}
 
 - (void)testValidation_requiredGroup
 {

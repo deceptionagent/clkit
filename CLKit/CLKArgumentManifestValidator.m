@@ -65,7 +65,6 @@ NS_ASSUME_NONNULL_END
     return YES;
 }
 
-#warning consider: this method should unpack constraints into semantically meaningful variables and individual validators should take those as parameters
 - (BOOL)_validateConstraint:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
 {
     BOOL result;
@@ -131,7 +130,29 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
 {
-#warning implement me
+    NSMutableArray *hits = nil;
+    
+    for (NSString *option in constraint.linkedOptions) {
+        if ([_manifest hasOptionNamed:option]) {
+            // we can skip array allocation if no linked options are present
+            // [TACK] still not great -- we could create and destroy a lot of arrays that contain only one option
+            if (hits == nil) {
+                hits = [NSMutableArray array];
+            }
+            
+            [hits addObject:option];
+        }
+    }
+    
+    if (hits != nil && hits.count > 1) {
+        if (outError != nil) {
+            NSString *desc = [hits componentsJoinedByString:@" --"];
+            *outError = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@: mutually exclusive options encountered", desc];
+        }
+        
+        return NO;
+    }
+    
     return YES;
 }
 

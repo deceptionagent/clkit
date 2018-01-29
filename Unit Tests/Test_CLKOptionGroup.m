@@ -121,6 +121,7 @@
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
+    // above constraints + rep-req constraint
     group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] subgroups:@[ confound ] required:YES];
     CLKArgumentManifestConstraint *requiredConstraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[
         @"barf", @"flarn", @"syn", @"ack"
@@ -152,6 +153,7 @@
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
+    // above constraints + rep-req constraint
     group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] subgroups:@[ confound, delivery ] required:YES];
     requiredConstraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[
         @"barf", @"flarn", @"syn", @"ack", @"quone", @"xyzzy"
@@ -159,7 +161,7 @@
     
     expectedConstraints = [@[ requiredConstraint ] arrayByAddingObjectsFromArray:expectedConstraints];
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-
+    
     group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:@[ confound ] required:NO];
     XCTAssertEqualObjects(group.constraints, @[]);
     
@@ -173,7 +175,8 @@
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-
+    
+    // above constraints + rep-req constraint
     group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:@[ confound, delivery ] required:YES];
     requiredConstraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[
         @"syn", @"ack", @"quone", @"xyzzy"

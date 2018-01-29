@@ -186,4 +186,54 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationFaliureForConstraint:constraint validator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn, --ack, --what"];
 }
 
+- (void)testValidateConstraint_mutuallyExclusive
+{
+    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
+    
+    NSDictionary *switchContents = @{
+        quone : @(1)
+    };
+    
+    NSDictionary *parameterContents = @{
+        barf : @[ @"xyzzy" ],
+        flarn : @[ @"confound", @"delivery" ]
+    };
+    
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchContents parameterOptions:parameterContents];
+    CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
+    
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"syn", @"ack" ]];
+    [self verifyValidationPassForConstraint:constraint validator:validator];
+    [self verifyValidationPassForConstraint:constraint validator:emptyValidator];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"syn", @"ack", @"what" ]];
+    [self verifyValidationPassForConstraint:constraint validator:validator];
+    [self verifyValidationPassForConstraint:constraint validator:emptyValidator];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"xyzzy" ]];
+    [self verifyValidationPassForConstraint:constraint validator:validator];
+    [self verifyValidationPassForConstraint:constraint validator:emptyValidator];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"xyzzy" ]];
+    [self verifyValidationPassForConstraint:constraint validator:validator];
+    [self verifyValidationPassForConstraint:constraint validator:emptyValidator];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"barf" ]];
+    [self verifyValidationFaliureForConstraint:constraint validator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --barf: mutually exclusive options encountered"];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"flarn" ]];
+    [self verifyValidationFaliureForConstraint:constraint validator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --flarn: mutually exclusive options encountered"];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]];
+    [self verifyValidationFaliureForConstraint:constraint validator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --flarn: mutually exclusive options encountered"];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"barf", @"flarn" ]];
+    [self verifyValidationFaliureForConstraint:constraint validator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --barf --flarn: mutually exclusive options encountered"];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn", @"xyzzy" ]];
+    [self verifyValidationFaliureForConstraint:constraint validator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --flarn: mutually exclusive options encountered"];
+}
+
 @end
