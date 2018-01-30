@@ -58,7 +58,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:nil]);
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[]]);
     
-    CLKOptionGroup *group = [CLKOptionGroup groupWithOptions:options required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:options required:NO];
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[ group ]]);
     
 #pragma clang diagnostic push
@@ -382,8 +382,8 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
     CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
     NSArray *options = @[ flarn, barf, quone, xyzzy ];
-    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] required:NO];
-    CLKOptionGroup *requiredGroup = [CLKOptionGroup mutexedGroupWithOptions:@[ quone, xyzzy ] required:YES];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ] required:NO];
+    CLKOptionGroup *requiredGroup = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:YES];
 
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--quone", @"--flarn", @"--barf" ] options:options optionGroups:@[ group, requiredGroup ]];
     NSError *error = nil;
@@ -406,9 +406,9 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     CLKOption *ack = [CLKOption optionWithName:@"ack" flag:@"a"];
     CLKOption *what = [CLKOption optionWithName:@"what" flag:@"w"];
     NSArray *options = @[ flarn, barf, quone, xyzzy, syn, ack, what ];
-    CLKOptionGroup *subgroupQuoneXyzzy = [CLKOptionGroup groupWithOptions:@[ quone, xyzzy ] required:NO];
-    CLKOptionGroup *subgroupSynAck = [CLKOptionGroup groupWithOptions:@[ syn, ack ] required:NO];
-    CLKOptionGroup *mutexGroup = [CLKOptionGroup mutexedGroupWithOptions:@[ flarn, barf ] subgroups:@[ subgroupQuoneXyzzy, subgroupSynAck ] required:NO];
+    CLKOptionGroup *subgroupQuoneXyzzy = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:NO];
+    CLKOptionGroup *subgroupSynAck = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ] required:NO];
+    CLKOptionGroup *mutexGroup = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ] subgroups:@[ subgroupQuoneXyzzy, subgroupSynAck ] required:NO];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ mutexGroup ]];
     NSError *error = nil;
@@ -453,7 +453,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
     CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
     CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
-    CLKOptionGroup *group = [CLKOptionGroup groupWithOptions:@[ flarn, barf ] required:YES];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"flarn", @"barf" ] required:YES];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[ flarn, barf, xyzzy ] optionGroups:@[ group ]];
     XCTAssertFalse([parser parseArguments:nil]);

@@ -17,7 +17,7 @@
 
 @implementation Test_CLKOptionGroup
 
-- (void)verifyGroup:(CLKOptionGroup *)group options:(NSArray<CLKOption *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required mutexed:(BOOL)mutexed
+- (void)verifyGroup:(CLKOptionGroup *)group options:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required mutexed:(BOOL)mutexed
 {
     XCTAssertNotNil(group);
     XCTAssertEqualObjects(group.options, options);
@@ -28,46 +28,40 @@
 
 - (void)testInit
 {
-    NSArray *options = @[
-        [CLKOption optionWithName:@"flarn" flag:@"f"],
-        [CLKOption optionWithName:@"barf" flag:@"b"],
-    ];
+    NSArray *options = @[ @"flarn", @"barf" ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupWithOptions:options required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:options required:NO];
     [self verifyGroup:group options:options subgroups:nil required:NO mutexed:NO];
 
-    group = [CLKOptionGroup groupWithOptions:options required:YES];
+    group = [CLKOptionGroup groupForOptionsNamed:options required:YES];
     [self verifyGroup:group options:options subgroups:nil required:YES mutexed:NO];
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:options required:NO];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:options required:NO];
     [self verifyGroup:group options:options subgroups:nil required:NO mutexed:YES];
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:options required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:options required:YES];
     [self verifyGroup:group options:options subgroups:nil required:YES mutexed:YES];
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:options subgroups:nil required:NO];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:options subgroups:nil required:NO];
     [self verifyGroup:group options:options subgroups:nil required:NO mutexed:YES];
     
-    CLKOptionGroup *subgroupAlpha = [CLKOptionGroup groupWithOptions:options required:NO];
-    CLKOptionGroup *subgroupBravo = [CLKOptionGroup groupWithOptions:options required:NO];
+    CLKOptionGroup *subgroupAlpha = [CLKOptionGroup groupForOptionsNamed:options required:NO];
+    CLKOptionGroup *subgroupBravo = [CLKOptionGroup groupForOptionsNamed:options required:NO];
     NSArray *subgroups = @[ subgroupAlpha, subgroupBravo ];
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:options subgroups:subgroups required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:options subgroups:subgroups required:YES];
     [self verifyGroup:group options:options subgroups:subgroups required:YES mutexed:YES];
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:subgroups required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:nil subgroups:subgroups required:YES];
     [self verifyGroup:group options:nil subgroups:subgroups required:YES mutexed:YES];
 }
 
 - (void)testConstraints_boringGroup
 {
-    CLKOption *barf  = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    
-    CLKOptionGroup *group = [CLKOptionGroup groupWithOptions:@[ barf, flarn ] required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf", @"flarn" ] required:NO];
     XCTAssertEqualObjects(group.constraints, @[]);
     
-    group = [CLKOptionGroup groupWithOptions:@[ barf, flarn ] required:YES];
+    group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf", @"flarn" ] required:YES];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]]
     ];
@@ -77,18 +71,14 @@
 
 - (void)testConstraints_mutexedGroup
 {
-    CLKOption *barf  = [CLKOption optionWithName:@"barf" flag:@"b"];
-    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
-    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
-
-    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn, quone ] required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"flarn", @"quone" ] required:NO];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn", @"quone" ]]
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"flarn" ] required:YES];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]]
@@ -99,16 +89,10 @@
 
 - (void)testConstraints_mutexedGroup_subgroups
 {
-    CLKOption *barf  = [CLKOption optionWithName:@"barf" flag:@"b"];
-    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
-    CLKOption *syn  = [CLKOption optionWithName:@"syn" flag:@"s"];
-    CLKOption *ack = [CLKOption optionWithName:@"ack" flag:@"a"];
-    CLKOption *quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q"];
-    CLKOption *xyzzy = [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x"];
-    CLKOptionGroup *confound = [CLKOptionGroup groupWithOptions:@[ syn, ack ] required:NO];
-    CLKOptionGroup *delivery = [CLKOptionGroup groupWithOptions:@[ quone, xyzzy ] required:NO];
+    CLKOptionGroup *confound = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ] required:NO];
+    CLKOptionGroup *delivery = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:NO];
     
-    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] subgroups:@[ confound ] required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"flarn" ] subgroups:@[ confound ] required:NO];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]],
         
@@ -122,7 +106,7 @@
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
     // above constraints + rep-req constraint
-    group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] subgroups:@[ confound ] required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"flarn" ] subgroups:@[ confound ] required:YES];
     CLKArgumentManifestConstraint *requiredConstraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[
         @"barf", @"flarn", @"syn", @"ack"
     ]];
@@ -130,7 +114,7 @@
     expectedConstraints = [@[ requiredConstraint ] arrayByAddingObjectsFromArray:expectedConstraints];
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] subgroups:@[ confound, delivery ] required:NO];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"flarn" ] subgroups:@[ confound, delivery ] required:NO];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]],
         
@@ -154,7 +138,7 @@
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
     // above constraints + rep-req constraint
-    group = [CLKOptionGroup mutexedGroupWithOptions:@[ barf, flarn ] subgroups:@[ confound, delivery ] required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"flarn" ] subgroups:@[ confound, delivery ] required:YES];
     requiredConstraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[
         @"barf", @"flarn", @"syn", @"ack", @"quone", @"xyzzy"
     ]];
@@ -162,10 +146,10 @@
     expectedConstraints = [@[ requiredConstraint ] arrayByAddingObjectsFromArray:expectedConstraints];
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:@[ confound ] required:NO];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:nil subgroups:@[ confound ] required:NO];
     XCTAssertEqualObjects(group.constraints, @[]);
     
-    group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:@[ confound, delivery ] required:NO];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:nil subgroups:@[ confound, delivery ] required:NO];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"syn", @"quone" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"syn", @"xyzzy" ]],
@@ -177,7 +161,7 @@
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     
     // above constraints + rep-req constraint
-    group = [CLKOptionGroup mutexedGroupWithOptions:nil subgroups:@[ confound, delivery ] required:YES];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:nil subgroups:@[ confound, delivery ] required:YES];
     requiredConstraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[
         @"syn", @"ack", @"quone", @"xyzzy"
     ]];
