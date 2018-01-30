@@ -89,12 +89,17 @@ NS_ASSUME_NONNULL_END
             _optionNameMap[opt.name] = opt;
             
             if (opt.flag != nil) {
-                CLKHardAssert((_optionFlagMap[opt.flag] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
+                CLKOption *collision = _optionFlagMap[opt.flag];
+                CLKHardAssert((collision == nil), NSInvalidArgumentException, @"colliding flag '%@' found for options '%@' and '%@'", opt.flag, opt.name, collision.name);
                 _optionFlagMap[opt.flag] = opt;
             }
         }
         
-#warning validate groups contain registered options?
+        for (CLKOptionGroup *group in groups) {
+            for (NSString *optionName in group.allOptions) {
+                CLKHardAssert((_optionNameMap[optionName] != nil), NSInvalidArgumentException, @"unregistered option found in option group: '--%@'", optionName);
+            }
+        }
         
         _optionGroups = [groups copy];
         _manifest = [[CLKArgumentManifest alloc] init];
