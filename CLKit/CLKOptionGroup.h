@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOptionGroup : NSObject
 
++ (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required;
++ (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required;
 + (instancetype)mutexedGroupForOptionsNamed:(nullable NSArray<NSString *> *)options subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required;
 

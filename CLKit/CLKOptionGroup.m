@@ -39,9 +39,19 @@ NS_ASSUME_NONNULL_END
 @synthesize mutexed = _mutexed;
 @synthesize required = _required;
 
++ (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options
+{
+    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:NO required:NO] autorelease];
+}
+
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required
 {
     return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:NO required:required] autorelease];
+}
+
++ (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options
+{
+    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:YES required:NO] autorelease];
 }
 
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required
