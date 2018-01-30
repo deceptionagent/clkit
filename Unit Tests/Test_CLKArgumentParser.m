@@ -58,7 +58,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:nil]);
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[]]);
     
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:options required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ] required:NO];
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[ group ]]);
     
 #pragma clang diagnostic push
@@ -302,10 +302,22 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     options = @[
          [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],
-         [CLKOption optionWithName:@"yzzyx" flag:@"x"],
+         [CLKOption optionWithName:@"xylo" flag:@"x"],
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
+}
+
+- (void)testUnregisteredGroupOptions
+{
+    NSArray *options = @[
+         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
+    ];
+    
+    CLKOptionGroup *subgroup = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ] required:NO];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"syn" ] subgroups:@[ subgroup ] required:NO];
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
 /*

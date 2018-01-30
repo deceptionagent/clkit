@@ -45,8 +45,8 @@
     group = [CLKOptionGroup mutexedGroupForOptionsNamed:options subgroups:nil required:NO];
     [self verifyGroup:group options:options subgroups:nil required:NO mutexed:YES];
     
-    CLKOptionGroup *subgroupAlpha = [CLKOptionGroup groupForOptionsNamed:options required:NO];
-    CLKOptionGroup *subgroupBravo = [CLKOptionGroup groupForOptionsNamed:options required:NO];
+    CLKOptionGroup *subgroupAlpha = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:NO];
+    CLKOptionGroup *subgroupBravo = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ] required:NO];
     NSArray *subgroups = @[ subgroupAlpha, subgroupBravo ];
     
     group = [CLKOptionGroup mutexedGroupForOptionsNamed:options subgroups:subgroups required:YES];
@@ -54,6 +54,15 @@
     
     group = [CLKOptionGroup mutexedGroupForOptionsNamed:nil subgroups:subgroups required:YES];
     [self verifyGroup:group options:nil subgroups:subgroups required:YES mutexed:YES];
+}
+
+- (void)test_allOptions
+{
+    CLKOptionGroup *subgroupAlpha = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:NO];
+    CLKOptionGroup *subgroupBravo = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ] required:NO];
+    NSArray *subgroups = @[ subgroupAlpha, subgroupBravo ];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ] subgroups:subgroups required:NO];
+    XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf", @"quone", @"xyzzy", @"syn", @"ack", ]));
 }
 
 - (void)testConstraints_boringGroup

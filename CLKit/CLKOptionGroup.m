@@ -75,6 +75,30 @@ NS_ASSUME_NONNULL_END
 }
 
 #pragma mark -
+
+- (NSArray<NSString *> *)allOptions
+{
+    NSMutableArray *allOptions = [NSMutableArray arrayWithArray:_options];
+    [allOptions addObjectsFromArray:[self _allSubgroupOptions]];
+    return allOptions;
+}
+
+- (NSArray<NSString *> *)_allSubgroupOptions
+{
+    if (_subgroups == nil) {
+        return nil;
+    }
+    
+    NSMutableArray<NSString *> *allSubgroupOptions = [NSMutableArray array];
+    
+    for (CLKOptionGroup *subgroup in _subgroups) {
+        [allSubgroupOptions addObjectsFromArray:subgroup.options];
+    }
+    
+    return allSubgroupOptions;
+}
+
+#pragma mark -
 #pragma mark Constraints
 
 - (NSArray<CLKArgumentManifestConstraint *> *)constraints
@@ -95,10 +119,7 @@ NS_ASSUME_NONNULL_END
 - (CLKArgumentManifestConstraint *)_requiredConstraint
 {
     NSAssert(_required, @"constructing required constraint for non-required group");
-    
-    NSMutableArray *allOptions = [NSMutableArray arrayWithArray:_options];
-    [allOptions addObjectsFromArray:[self _allSubgroupOptions]];
-    return [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:allOptions];
+    return [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:self.allOptions];
 }
 
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints
@@ -146,21 +167,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return constraints;
-}
-
-- (NSArray<NSString *> *)_allSubgroupOptions
-{
-    if (_subgroups == nil) {
-        return nil;
-    }
-    
-    NSMutableArray<NSString *> *allSubgroupOptions = [NSMutableArray array];
-    
-    for (CLKOptionGroup *subgroup in _subgroups) {
-        [allSubgroupOptions addObjectsFromArray:subgroup.options];
-    }
-    
-    return allSubgroupOptions;
 }
 
 @end
