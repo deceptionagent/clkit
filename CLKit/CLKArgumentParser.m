@@ -39,8 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
                           optionGroups:(nullable NSArray<CLKOptionGroup *> *)groups NS_DESIGNATED_INITIALIZER;
 
 @property (nullable, retain) CLKOption *currentOption;
+@property (readonly) NSArray<NSError *> *errors;
 
-- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError;
+- (void)_accumulateError:(NSError *)error;
+
+- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap;
 
 @end
 
@@ -57,6 +60,7 @@ NS_ASSUME_NONNULL_END
     NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
     NSArray<CLKOptionGroup *> *_optionGroups;
     CLKArgumentManifest *_manifest;
+    NSMutableArray<NSError *> *_errors;
 }
 
 @synthesize currentOption = _currentOption;
@@ -110,6 +114,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)dealloc
 {
+    [_errors release];
     [_manifest release];
     [_optionGroups release];
     [_argumentVector release];
@@ -126,8 +131,6 @@ NS_ASSUME_NONNULL_END
 {
     CLKHardAssert((_state == CLKAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     
-    NSError *error = nil;
-    
     while (_state != CLKAPStateEnd) {
         @autoreleasepool {
             switch (_state) {
@@ -136,26 +139,27 @@ NS_ASSUME_NONNULL_END
                     break;
                 
                 case CLKAPStateReadNextItem:
-                    _state = [self _readNextItem:&error];
+                    _state = [self _readNextItem];
                     break;
                 
                 case CLKAPStateParseOptionName:
-                    _state = [self _parseOptionName:&error];
+                    _state = [self _parseOptionName];
                     break;
                 
                 case CLKAPStateParseOptionFlag:
-                    _state = [self _parseOptionFlag:&error];
+                    _state = [self _parseOptionFlag];
                     break;
                 
                 case CLKAPStateParseOptionFlagGroup:
-                    _state = [self _parseOptionFlagGroup:&error];
+                    _state = [self _parseOptionFlagGroup];
                     break;
                 
                 case CLKAPStateParseArgument:
-                    _state = [self _parseArgument:&error];
+                    _state = [self _parseArgument];
                     break;
                 
                 case CLKAPStateError:
+                    NSAssert((self.errors.count > 0), @"expected at least one error on CLKAPStateError");
                     _state = CLKAPStateEnd;
                     [_manifest release];
                     _manifest = nil;
@@ -164,25 +168,22 @@ NS_ASSUME_NONNULL_END
                 case CLKAPStateEnd:
                     break;
             }
-            
-            // when transitioning to CLKAPStateError, hoist the error out of this autorelease pool.
-            // we will not transition through CLKAPStateError more than once.
-            if (_state == CLKAPStateError) {
-                [error retain];
-            }
         } // autorelease pool
     }; // state machine loop
     
     if (_manifest == nil) {
+        NSError *error = self.errors.firstObject;
         NSAssert(error != nil, @"expected an error when manifest is nil");
-        [error autorelease];
         CLKSetOutError(outError, error);
         return nil;
     }
     
-    NSAssert(error == nil, @"expected nil error when manifest is non-nil");
+    NSAssert(self.errors == nil, @"expected no errors when manifest is non-nil");
     
-    if (![self _validateManifest:outError]) {
+    if (![self _validateManifest]) {
+        NSError *error = self.errors.firstObject;
+        NSAssert(error != nil, @"expected an error on validation failure");
+        CLKSetOutError(outError, error);
         [_manifest release];
         _manifest = nil;
         return nil;
@@ -191,10 +192,45 @@ NS_ASSUME_NONNULL_END
     return _manifest;
 }
 
+- (BOOL)_validateManifest
+{
+    NSAssert(_manifest != nil, @"attempting validation without a manifest");
+    
+    @autoreleasepool {
+        NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
+        for (CLKOption *option in _options) {
+            [constraints addObjectsFromArray:option.constraints];
+        }
+        
+        for (CLKOptionGroup *group in _optionGroups) {
+            [constraints addObjectsFromArray:group.constraints];
+        }
+        
+        CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
+        
+        NSError *error;
+        if (![validator validateConstraints:constraints error:&error]) {
+            [self _accumulateError:error];
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
+- (void)_accumulateError:(NSError *)error
+{
+    if (_errors == nil) {
+        _errors = [[NSMutableArray alloc] init];
+    }
+    
+    [_errors addObject:error];
+}
+
 #pragma mark -
 #pragma mark State Steps
 
-- (CLKAPState)_readNextItem:(NSError **)outError
+- (CLKAPState)_readNextItem
 {
     NSString *nextItem = _argumentVector.firstObject;
     
@@ -208,7 +244,8 @@ NS_ASSUME_NONNULL_END
     //        (we'd probably just collect them into a separate array on the manifest so the client can pass them through
     //         to another program or send them through a second parser.)
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
-        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem]));
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem];
+        [self _accumulateError:error];
         return CLKAPStateError;
     }
     
@@ -229,11 +266,12 @@ NS_ASSUME_NONNULL_END
     return CLKAPStateParseArgument;
 }
 
-- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError
+- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap
 {
     CLKOption *option = optionMap[identifier];
     if (option == nil) {
-        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier]));
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier];
+        [self _accumulateError:error];
         return CLKAPStateError;
     }
     
@@ -246,21 +284,21 @@ NS_ASSUME_NONNULL_END
     return CLKAPStateReadNextItem;
 }
 
-- (CLKAPState)_parseOptionName:(NSError **)outError
+- (CLKAPState)_parseOptionName
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *name = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
-    return [self _processOptionIdentifier:name usingMap:_optionNameMap error:outError];
+    return [self _processOptionIdentifier:name usingMap:_optionNameMap];
 }
 
-- (CLKAPState)_parseOptionFlag:(NSError **)outError
+- (CLKAPState)_parseOptionFlag
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *flag = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
-    return [self _processOptionIdentifier:flag usingMap:_optionFlagMap error:outError];
+    return [self _processOptionIdentifier:flag usingMap:_optionFlagMap];
 }
 
-- (CLKAPState)_parseOptionFlagGroup:(__unused NSError **)outError
+- (CLKAPState)_parseOptionFlagGroup
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *flagGroup = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
@@ -281,14 +319,15 @@ NS_ASSUME_NONNULL_END
     return CLKAPStateReadNextItem;
 }
 
-- (CLKAPState)_parseArgument:(NSError **)outError
+- (CLKAPState)_parseArgument
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *argument = [_argumentVector clk_popFirstObject];
     
     // reject: empty string passed into argv (e.g., --foo "")
     if (argument.length == 0) {
-        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]));
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
+        [self _accumulateError:error];
         return CLKAPStateError;
     }
     
@@ -297,14 +336,17 @@ NS_ASSUME_NONNULL_END
         
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
-            CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument]));
+            NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument];
+            [self _accumulateError:error];
             return CLKAPStateError;
         }
         
         CLKArgumentTransformer *transformer = self.currentOption.transformer;
         if (transformer != nil) {
-            argument = [transformer transformedArgument:argument error:outError];
+            NSError *error;
+            argument = [transformer transformedArgument:argument error:&error];
             if (argument == nil) {
+                [self _accumulateError:error];
                 return CLKAPStateError;
             }
         }
@@ -316,35 +358,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return CLKAPStateReadNextItem;
-}
-
-#pragma mark -
-
-- (BOOL)_validateManifest:(NSError **)outError
-{
-    NSAssert(_manifest != nil, @"attempting validation without a manifest");
-    
-    BOOL result = YES;
-    NSError *error = nil;
-    
-    @autoreleasepool {
-        NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
-        for (CLKOption *option in _options) {
-            [constraints addObjectsFromArray:option.constraints];
-        }
-        
-        for (CLKOptionGroup *group in _optionGroups) {
-            [constraints addObjectsFromArray:group.constraints];
-        }
-        
-        CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
-        result = [validator validateConstraints:constraints error:&error];
-        [error retain];
-    }
-    
-    [error autorelease];
-    CLKSetOutError(outError, error);
-    return result;
 }
 
 @end
