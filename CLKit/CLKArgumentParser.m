@@ -18,15 +18,15 @@
 #import "NSMutableArray+CLKAdditions.h"
 
 
-typedef NS_ENUM(uint32_t, CLKOAPState) {
-    CLKOAPStateBegin = 0,
-    CLKOAPStateReadNextItem,
-    CLKOAPStateParseOptionName,
-    CLKOAPStateParseOptionFlag,
-    CLKOAPStateParseOptionFlagGroup,
-    CLKOAPStateParseArgument,
-    CLKOAPStateError,
-    CLKOAPStateEnd
+typedef NS_ENUM(uint32_t, CLKAPState) {
+    CLKAPStateBegin = 0,
+    CLKAPStateReadNextItem,
+    CLKAPStateParseOptionName,
+    CLKAPStateParseOptionFlag,
+    CLKAPStateParseOptionFlagGroup,
+    CLKAPStateParseArgument,
+    CLKAPStateError,
+    CLKAPStateEnd
 };
 
 
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, retain) CLKOption *currentOption;
 
-- (CLKOAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError;
+- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError;
 
 @end
 
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_END
 
 @implementation CLKArgumentParser
 {
-    CLKOAPState _state;
+    CLKAPState _state;
     CLKOption *_currentOption;
     NSMutableArray<NSString *> *_argumentVector;
     NSArray<CLKOption *> *_options;
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_END
     
     self = [super init];
     if (self != nil) {
-        _state = CLKOAPStateBegin;
+        _state = CLKAPStateBegin;
         _argumentVector = [argv mutableCopy];
         _options = [options copy];
         _optionNameMap = [[NSMutableDictionary alloc] init];
@@ -124,50 +124,50 @@ NS_ASSUME_NONNULL_END
 
 - (CLKArgumentManifest *)parseArguments:(NSError **)outError
 {
-    CLKHardAssert((_state == CLKOAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
+    CLKHardAssert((_state == CLKAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     
     NSError *error = nil;
     
-    while (_state != CLKOAPStateEnd) {
+    while (_state != CLKAPStateEnd) {
         @autoreleasepool {
             switch (_state) {
-                case CLKOAPStateBegin:
-                    _state = CLKOAPStateReadNextItem;
+                case CLKAPStateBegin:
+                    _state = CLKAPStateReadNextItem;
                     break;
                 
-                case CLKOAPStateReadNextItem:
+                case CLKAPStateReadNextItem:
                     _state = [self _readNextItem:&error];
                     break;
                 
-                case CLKOAPStateParseOptionName:
+                case CLKAPStateParseOptionName:
                     _state = [self _parseOptionName:&error];
                     break;
                 
-                case CLKOAPStateParseOptionFlag:
+                case CLKAPStateParseOptionFlag:
                     _state = [self _parseOptionFlag:&error];
                     break;
                 
-                case CLKOAPStateParseOptionFlagGroup:
+                case CLKAPStateParseOptionFlagGroup:
                     _state = [self _parseOptionFlagGroup:&error];
                     break;
                 
-                case CLKOAPStateParseArgument:
+                case CLKAPStateParseArgument:
                     _state = [self _parseArgument:&error];
                     break;
                 
-                case CLKOAPStateError:
-                    _state = CLKOAPStateEnd;
+                case CLKAPStateError:
+                    _state = CLKAPStateEnd;
                     [_manifest release];
                     _manifest = nil;
                     break;
                 
-                case CLKOAPStateEnd:
+                case CLKAPStateEnd:
                     break;
             }
             
-            // when transitioning to CLKOAPStateError, hoist the error out of this autorelease pool.
-            // we will not transition through CLKOAPStateError more than once.
-            if (_state == CLKOAPStateError) {
+            // when transitioning to CLKAPStateError, hoist the error out of this autorelease pool.
+            // we will not transition through CLKAPStateError more than once.
+            if (_state == CLKAPStateError) {
                 [error retain];
             }
         } // autorelease pool
@@ -194,13 +194,13 @@ NS_ASSUME_NONNULL_END
 #pragma mark -
 #pragma mark State Steps
 
-- (CLKOAPState)_readNextItem:(NSError **)outError
+- (CLKAPState)_readNextItem:(NSError **)outError
 {
     NSString *nextItem = _argumentVector.firstObject;
     
     // if we're reached the end of the arg vector, we've parsed everything
     if (nextItem == nil) {
-        return CLKOAPStateEnd;
+        return CLKAPStateEnd;
     }
     
     // reject meaningless input
@@ -209,58 +209,58 @@ NS_ASSUME_NONNULL_END
     //         to another program or send them through a second parser.)
     if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
         CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem]));
-        return CLKOAPStateError;
+        return CLKAPStateError;
     }
     
     if ([nextItem hasPrefix:@"--"]) {
-        return CLKOAPStateParseOptionName;
+        return CLKAPStateParseOptionName;
     }
     
     if ([nextItem hasPrefix:@"-"]) {
         if (nextItem.length == 2) {
-            return CLKOAPStateParseOptionFlag;
+            return CLKAPStateParseOptionFlag;
         }
         
         if (nextItem.length > 2) {
-            return CLKOAPStateParseOptionFlagGroup;
+            return CLKAPStateParseOptionFlagGroup;
         }
     }
     
-    return CLKOAPStateParseArgument;
+    return CLKAPStateParseArgument;
 }
 
-- (CLKOAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError
+- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap error:(NSError **)outError
 {
     CLKOption *option = optionMap[identifier];
     if (option == nil) {
         CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier]));
-        return CLKOAPStateError;
+        return CLKAPStateError;
     }
     
     if (option.type == CLKOptionTypeParameter) {
         self.currentOption = option;
-        return CLKOAPStateParseArgument;
+        return CLKAPStateParseArgument;
     }
     
     [_manifest accumulateSwitchOption:option];
-    return CLKOAPStateReadNextItem;
+    return CLKAPStateReadNextItem;
 }
 
-- (CLKOAPState)_parseOptionName:(NSError **)outError
+- (CLKAPState)_parseOptionName:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *name = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
     return [self _processOptionIdentifier:name usingMap:_optionNameMap error:outError];
 }
 
-- (CLKOAPState)_parseOptionFlag:(NSError **)outError
+- (CLKAPState)_parseOptionFlag:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *flag = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
     return [self _processOptionIdentifier:flag usingMap:_optionFlagMap error:outError];
 }
 
-- (CLKOAPState)_parseOptionFlagGroup:(__unused NSError **)outError
+- (CLKAPState)_parseOptionFlagGroup:(__unused NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *flagGroup = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
@@ -278,10 +278,10 @@ NS_ASSUME_NONNULL_END
         [_argumentVector insertObject:[@"-" stringByAppendingString:flag] atIndex:0];
     }];
     
-    return CLKOAPStateReadNextItem;
+    return CLKAPStateReadNextItem;
 }
 
-- (CLKOAPState)_parseArgument:(NSError **)outError
+- (CLKAPState)_parseArgument:(NSError **)outError
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     NSString *argument = [_argumentVector clk_popFirstObject];
@@ -289,7 +289,7 @@ NS_ASSUME_NONNULL_END
     // reject: empty string passed into argv (e.g., --foo "")
     if (argument.length == 0) {
         CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]));
-        return CLKOAPStateError;
+        return CLKAPStateError;
     }
     
     if (self.currentOption != nil) {
@@ -298,14 +298,14 @@ NS_ASSUME_NONNULL_END
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
             CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument]));
-            return CLKOAPStateError;
+            return CLKAPStateError;
         }
         
         CLKArgumentTransformer *transformer = self.currentOption.transformer;
         if (transformer != nil) {
             argument = [transformer transformedArgument:argument error:outError];
             if (argument == nil) {
-                return CLKOAPStateError;
+                return CLKAPStateError;
             }
         }
         
@@ -315,7 +315,7 @@ NS_ASSUME_NONNULL_END
         [_manifest accumulatePositionalArgument:argument];
     }
     
-    return CLKOAPStateReadNextItem;
+    return CLKAPStateReadNextItem;
 }
 
 #pragma mark -
