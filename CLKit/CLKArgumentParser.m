@@ -126,44 +126,63 @@ NS_ASSUME_NONNULL_END
 {
     CLKHardAssert((_state == CLKOAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     
-    while (_state != CLKOAPStateEnd) {
-        switch (_state) {
-            case CLKOAPStateBegin:
-                _state = CLKOAPStateReadNextItem;
-                break;
-            
-            case CLKOAPStateReadNextItem:
-                _state = [self _readNextItem:outError];
-                break;
-            
-            case CLKOAPStateParseOptionName:
-                _state = [self _parseOptionName:outError];
-                break;
-            
-            case CLKOAPStateParseOptionFlag:
-                _state = [self _parseOptionFlag:outError];
-                break;
-            
-            case CLKOAPStateParseOptionFlagGroup:
-                _state = [self _parseOptionFlagGroup:outError];
-                break;
-            
-            case CLKOAPStateParseArgument:
-                _state = [self _parseArgument:outError];
-                break;
-            
-            case CLKOAPStateError:
-                _state = CLKOAPStateEnd;
-                [_manifest release];
-                _manifest = nil;
-                break;
-            
-            case CLKOAPStateEnd:
-                break;
-        }
-    };
+    NSError *error = nil;
     
-    if (_manifest != nil && ![self _validateManifest:outError]) {
+    while (_state != CLKOAPStateEnd) {
+        @autoreleasepool {
+            switch (_state) {
+                case CLKOAPStateBegin:
+                    _state = CLKOAPStateReadNextItem;
+                    break;
+                
+                case CLKOAPStateReadNextItem:
+                    _state = [self _readNextItem:&error];
+                    break;
+                
+                case CLKOAPStateParseOptionName:
+                    _state = [self _parseOptionName:&error];
+                    break;
+                
+                case CLKOAPStateParseOptionFlag:
+                    _state = [self _parseOptionFlag:&error];
+                    break;
+                
+                case CLKOAPStateParseOptionFlagGroup:
+                    _state = [self _parseOptionFlagGroup:&error];
+                    break;
+                
+                case CLKOAPStateParseArgument:
+                    _state = [self _parseArgument:&error];
+                    break;
+                
+                case CLKOAPStateError:
+                    _state = CLKOAPStateEnd;
+                    [_manifest release];
+                    _manifest = nil;
+                    break;
+                
+                case CLKOAPStateEnd:
+                    break;
+            }
+            
+            // when transitioning to CLKOAPStateError, hoist the error out of this autorelease pool.
+            // we will not transition through CLKOAPStateError more than once.
+            if (_state == CLKOAPStateError) {
+                [error retain];
+            }
+        } // autorelease pool
+    }; // state machine loop
+    
+    if (_manifest == nil) {
+        NSAssert(error != nil, @"expected an error when manifest is nil");
+        [error autorelease];
+        CLKSetOutError(outError, error);
+        return nil;
+    }
+    
+    NSAssert(error == nil, @"expected nil error when manifest is non-nil");
+    
+    if (![self _validateManifest:outError]) {
         [_manifest release];
         _manifest = nil;
         return nil;
@@ -305,17 +324,27 @@ NS_ASSUME_NONNULL_END
 {
     NSAssert(_manifest != nil, @"attempting validation without a manifest");
     
-    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
-    for (CLKOption *option in _options) {
-        [constraints addObjectsFromArray:option.constraints];
+    BOOL result = YES;
+    NSError *error = nil;
+    
+    @autoreleasepool {
+        NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
+        for (CLKOption *option in _options) {
+            [constraints addObjectsFromArray:option.constraints];
+        }
+        
+        for (CLKOptionGroup *group in _optionGroups) {
+            [constraints addObjectsFromArray:group.constraints];
+        }
+        
+        CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
+        result = [validator validateConstraints:constraints error:&error];
+        [error retain];
     }
     
-    for (CLKOptionGroup *group in _optionGroups) {
-        [constraints addObjectsFromArray:group.constraints];
-    }
-    
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
-    return [validator validateConstraints:constraints error:outError];
+    [error autorelease];
+    CLKSetOutError(outError, error);
+    return result;
 }
 
 @end
