@@ -17,12 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifestValidator ()
 
-- (BOOL)_validateConstraint:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
-- (BOOL)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
-- (BOOL)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
-- (BOOL)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
-- (BOOL)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
-- (BOOL)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError;
+- (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 
 @end
 
@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_END
 {
     CLKArgumentManifest *_manifest;
 }
+
+@synthesize manifest = _manifest;
 
 - (instancetype)initWithManifest:(CLKArgumentManifest *)manifest
 {
@@ -54,81 +56,64 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (BOOL)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints error:(NSError **)outError
+- (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     for (CLKArgumentManifestConstraint *constraint in constraints) {
-        if (![self _validateConstraint:constraint error:outError]) {
-            return NO;
-        }
+        [self _validateConstraint:constraint issueHandler:issueHandler];
     }
-    
-    return YES;
 }
 
-- (BOOL)_validateConstraint:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+- (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
-    BOOL result;
-    
     switch (constraint.type) {
         case CLKConstraintTypeRequired:
-            result = [self _validateStrictRequirement:constraint error:outError];
+            [self _validateStrictRequirement:constraint issueHandler:issueHandler];
             break;
         case CLKConstraintTypeConditionallyRequired:
-            result = [self _validateConditionalRequirement:constraint error:outError];
+            [self _validateConditionalRequirement:constraint issueHandler:issueHandler];
             break;
         case CLKConstraintTypeRepresentativeRequired:
-            result = [self _validateRepresentativeRequirement:constraint error:outError];
+            [self _validateRepresentativeRequirement:constraint issueHandler:issueHandler];
             break;
         case CLKConstraintTypeMutuallyExclusive:
-            result = [self _validateMutualExclusion:constraint error:outError];
+            [self _validateMutualExclusion:constraint issueHandler:issueHandler];
             break;
         case CLKConstraintTypeOccurrencesRestricted:
-            result = [self _validateOccurrenceRestriction:constraint error:outError];
+            [self _validateOccurrenceRestriction:constraint issueHandler:issueHandler];
             break;
     }
-    
-    return result;
 }
 
-- (BOOL)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+- (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     if (![_manifest hasOptionNamed:constraint.option]) {
-        CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", constraint.option]));
-        return NO;
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", constraint.option];
+        issueHandler(error);
     }
-    
-    return YES;
 }
 
-- (BOOL)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     if ([_manifest hasOptionNamed:constraint.associatedOption] && ![_manifest hasOptionNamed:constraint.option]) {
-        CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", constraint.option, constraint.associatedOption]));
-        return NO;
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", constraint.option, constraint.associatedOption];
+        issueHandler(error);
     }
-    
-    return YES;
 }
 
-- (BOOL)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+- (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
-    BOOL hit = NO;
     for (NSString *option in constraint.linkedOptions) {
         if ([_manifest hasOptionNamed:option]) {
-            hit = YES;
-            break;
+            return;
         }
     }
     
-    if (!hit && outError != nil) {
-        NSString *desc = [constraint.linkedOptions componentsJoinedByString:@", --"];
-        *outError = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", desc];
-    }
-    
-    return hit;
+    NSString *desc = [constraint.linkedOptions componentsJoinedByString:@" --"];
+    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", desc];
+    issueHandler(error);
 }
 
-- (BOOL)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+- (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     NSMutableArray *hits = nil;
     
@@ -145,25 +130,18 @@ NS_ASSUME_NONNULL_END
     }
     
     if (hits != nil && hits.count > 1) {
-        if (outError != nil) {
-            NSString *desc = [hits componentsJoinedByString:@" --"];
-            *outError = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@: mutually exclusive options encountered", desc];
-        }
-        
-        return NO;
+        NSString *desc = [hits componentsJoinedByString:@" --"];
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@: mutually exclusive options encountered", desc];
+        issueHandler(error);
     }
-    
-    return YES;
 }
 
-- (BOOL)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint error:(NSError **)outError
+- (void)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     if ([_manifest occurrencesOfOptionNamed:constraint.option] > 1) {
-        CLKSetOutError(outError, ([NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", constraint.option]));
-        return NO;
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", constraint.option];
+        issueHandler(error);
     }
-    
-    return YES;
 }
 
 @end
