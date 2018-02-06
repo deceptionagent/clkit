@@ -172,6 +172,7 @@ NS_ASSUME_NONNULL_END
     }; // state machine loop
     
     if (_manifest == nil) {
+        #warning implement multi-error support
         NSError *error = self.errors.firstObject;
         NSAssert(error != nil, @"expected an error when manifest is nil");
         CLKSetOutError(outError, error);
@@ -181,6 +182,7 @@ NS_ASSUME_NONNULL_END
     NSAssert(self.errors == nil, @"expected no errors when manifest is non-nil");
     
     if (![self _validateManifest]) {
+        #warning implement multi-error support
         NSError *error = self.errors.firstObject;
         NSAssert(error != nil, @"expected an error on validation failure");
         CLKSetOutError(outError, error);
@@ -196,6 +198,8 @@ NS_ASSUME_NONNULL_END
 {
     NSAssert(_manifest != nil, @"attempting validation without a manifest");
     
+    __block BOOL result = YES;
+    
     @autoreleasepool {
         NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
         for (CLKOption *option in _options) {
@@ -207,15 +211,13 @@ NS_ASSUME_NONNULL_END
         }
         
         CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
-        
-        NSError *error;
-        if (![validator validateConstraints:constraints error:&error]) {
+        [validator validateConstraints:constraints issueHandler:^(NSError *error) {
+            result = NO;
             [self _accumulateError:error];
-            return NO;
-        }
+        }];
     }
     
-    return YES;
+    return result;
 }
 
 - (void)_accumulateError:(NSError *)error

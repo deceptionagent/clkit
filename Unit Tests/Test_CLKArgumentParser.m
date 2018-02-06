@@ -405,7 +405,7 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn" ] options:options optionGroups:@[ group, requiredGroup ]];
     error = nil;
     XCTAssertFalse([parser parseArguments:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone, --xyzzy"];
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"];
 }
 
 - (void)testValidation_mutualExclusionGroupWithSubgroups
@@ -473,12 +473,12 @@ expectedPositionalArguments:(NSArray<NSString *> *)expectedPositionalArguments
     NSError *error = nil;
     parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[ flarn, barf, xyzzy ] optionGroups:@[ group ]];
     XCTAssertFalse([parser parseArguments:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn, --barf"];
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
     
     error = nil;
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--xyzzy" ] options:@[ flarn, barf, xyzzy ] optionGroups:@[ group ]];
     XCTAssertFalse([parser parseArguments:&error]);
-    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn, --barf"];
+    [self verifyCLKError:error code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
     
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--xyzzy" ] options:@[ flarn, barf, xyzzy ] optionGroups:@[ group ]];
     error = nil;

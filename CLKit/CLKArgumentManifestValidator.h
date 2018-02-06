@@ -12,6 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^CLKAMVIssueHandler)(NSError *error);
+
 @interface CLKArgumentManifestValidator : NSObject
 
 - (instancetype)initWithManifest:(CLKArgumentManifest *)manifest NS_DESIGNATED_INITIALIZER;
@@ -19,7 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (BOOL)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints error:(NSError **)outError;
+@property (nonnull, readonly) CLKArgumentManifest *manifest;
+
+- (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler;
 
 @end
 
