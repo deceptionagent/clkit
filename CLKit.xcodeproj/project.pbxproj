@@ -222,6 +222,8 @@
 		A66A9DF11F02406F00456347 /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
+				A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */,
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
 				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
@@ -235,8 +237,6 @@
 				A609E2C21F5964670088DEDA /* XCTestCase+CLKAdditions.h */,
 				A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
-				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
-				A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
