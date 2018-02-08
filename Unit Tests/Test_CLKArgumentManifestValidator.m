@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)verifyValidationPassForConstraint:(CLKArgumentManifestConstraint *)constraint validator:(CLKArgumentManifestValidator *)validator;
 - (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint validator:(CLKArgumentManifestValidator *)validator code:(NSUInteger)code description:(NSString *)description;
+- (void)evaluateSpec:(ConstraintValidationSpec *)spec validator:(CLKArgumentManifestValidator *)validator;
 
 @end
 
@@ -32,17 +33,17 @@ NS_ASSUME_NONNULL_END
 - (void)verifyValidationPassForConstraint:(CLKArgumentManifestConstraint *)constraint validator:(CLKArgumentManifestValidator *)validator
 {
     ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:@[ constraint ] errors:nil];
-    [self evaluateValidationSpec:spec validator:validator];
+    [self evaluateSpec:spec validator:validator];
 }
 
 - (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint validator:(CLKArgumentManifestValidator *)validator code:(NSUInteger)code description:(NSString *)description
 {
     NSError *error = [NSError clk_CLKErrorWithCode:code description:@"%@", description];
     ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:@[ constraint ] errors:@[ error ]];
-    [self evaluateValidationSpec:spec validator:validator];
+    [self evaluateSpec:spec validator:validator];
 }
 
-- (void)evaluateValidationSpec:(ConstraintValidationSpec *)spec validator:(CLKArgumentManifestValidator *)validator
+- (void)evaluateSpec:(ConstraintValidationSpec *)spec validator:(CLKArgumentManifestValidator *)validator
 {
     NSMutableArray<NSError *> *errors = [NSMutableArray array];
     [validator validateConstraints:spec.constraints issueHandler:^(NSError *error) {
