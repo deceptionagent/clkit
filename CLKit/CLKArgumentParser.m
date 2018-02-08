@@ -39,7 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
                           optionGroups:(nullable NSArray<CLKOptionGroup *> *)groups NS_DESIGNATED_INITIALIZER;
 
 @property (nullable, retain) CLKOption *currentOption;
-@property (readonly) NSArray<NSError *> *errors;
 
 - (void)_accumulateError:(NSError *)error;
 
@@ -127,7 +126,7 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (CLKArgumentManifest *)parseArguments:(NSError **)outError
+- (CLKArgumentManifest *)parseArguments
 {
     CLKHardAssert((_state == CLKAPStateBegin), NSGenericException, @"cannot re-run a parser after use");
     
@@ -172,20 +171,14 @@ NS_ASSUME_NONNULL_END
     }; // state machine loop
     
     if (_manifest == nil) {
-        #warning implement multi-error support
-        NSError *error = self.errors.firstObject;
-        NSAssert(error != nil, @"expected an error when manifest is nil");
-        CLKSetOutError(outError, error);
+        NSAssert((self.errors.count > 0), @"expected one or more errors when manifest is nil");
         return nil;
     }
     
-    NSAssert(self.errors == nil, @"expected no errors when manifest is non-nil");
+    NSAssert(self.errors == nil, @"self.errors should be nil when manifest is non-nil");
     
     if (![self _validateManifest]) {
-        #warning implement multi-error support
-        NSError *error = self.errors.firstObject;
-        NSAssert(error != nil, @"expected an error on validation failure");
-        CLKSetOutError(outError, error);
+        NSAssert((self.errors.count > 0), @"expected one or more errors on validation failure");
         [_manifest release];
         _manifest = nil;
         return nil;

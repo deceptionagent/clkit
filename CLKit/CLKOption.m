@@ -155,6 +155,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
         return NO;
     }
     
+    // [TACK] this is kind of a lie for the purposes of collection support
     CLKOption *opt = (CLKOption *)obj;
     return [opt.name isEqualToString:_name];
 }

@@ -13,6 +13,9 @@
     NSArray<NSError *> *_errors;
 }
 
+@synthesize constraints = _constraints;
+@synthesize errors = _errors;
+
 + (instancetype)specWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(NSArray<NSError *> *)errors
 {
     return [[[self alloc] initWithConstraints:constraints errors:errors] autorelease];
