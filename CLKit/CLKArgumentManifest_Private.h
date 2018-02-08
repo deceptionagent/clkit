@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifest ()
 
-@property (nonnull, readonly) NSDictionary<CLKOption *, id> *optionManifest;
-@property (nonnull, readonly) NSDictionary<NSString *, id> *optionManifestKeyedByName;
+@property (readonly) NSDictionary<CLKOption *, id> *optionManifest;
+@property (readonly) NSDictionary<NSString *, id> *optionManifestKeyedByName;
 
 - (BOOL)hasOption:(CLKOption *)option;
 - (BOOL)hasOptionNamed:(NSString *)optionName;

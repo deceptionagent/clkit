@@ -29,6 +29,7 @@
 		A6CFEAA1200CB1350009B8D2 /* CLKArgumentManifestConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEA9F200CB1350009B8D2 /* CLKArgumentManifestConstraint.m */; };
 		A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEAA2200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m */; };
 		A6CFEAA5200D39910009B8D2 /* Test_CLKOptionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEAA4200D39910009B8D2 /* Test_CLKOptionGroup.m */; };
+		A6E34F6B202C59E900CE22E1 /* ArgumentParserSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E34F6A202C59E900CE22E1 /* ArgumentParserSpec.m */; };
 		A6E478D61F133AB80081EB82 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
 		A6E478D71F133AB80081EB82 /* NSError+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */; };
 		A6E478D81F133AB80081EB82 /* NSMutableArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E031F03968A00456347 /* NSMutableArray+CLKAdditions.m */; };
@@ -119,6 +120,8 @@
 		A6CFEA9F200CB1350009B8D2 /* CLKArgumentManifestConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentManifestConstraint.m; sourceTree = "<group>"; };
 		A6CFEAA2200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentManifestConstraint.m; sourceTree = "<group>"; };
 		A6CFEAA4200D39910009B8D2 /* Test_CLKOptionGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptionGroup.m; sourceTree = "<group>"; };
+		A6E34F69202C59E900CE22E1 /* ArgumentParserSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentParserSpec.h; sourceTree = "<group>"; };
+		A6E34F6A202C59E900CE22E1 /* ArgumentParserSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgumentParserSpec.m; sourceTree = "<group>"; };
 		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption_Private.h; sourceTree = "<group>"; };
@@ -222,6 +225,8 @@
 		A66A9DF11F02406F00456347 /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A6E34F69202C59E900CE22E1 /* ArgumentParserSpec.h */,
+				A6E34F6A202C59E900CE22E1 /* ArgumentParserSpec.m */,
 				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
 				A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */,
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
@@ -398,6 +403,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6E34F6B202C59E900CE22E1 /* ArgumentParserSpec.m in Sources */,
 				A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */,
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,

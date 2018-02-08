@@ -20,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (nullable CLKArgumentManifest *)parseArguments:(NSError **)outError;
+- (nullable CLKArgumentManifest *)parseArguments;
+
+@property (nullable, readonly) NSArray<NSError *> *errors;
 
 @end
 
