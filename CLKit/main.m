@@ -14,16 +14,17 @@
 #import "NSArray+CLKAdditions.h"
 
 
-static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
+static int verb_flarn(NSArray<NSString *> *argvec)
 {
     NSArray *options = @[
         [CLKOption optionWithName:@"alpha" flag:@"a"],
-        [CLKOption parameterOptionWithName:@"bravo" flag:@"b"]
+        [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:YES]
     ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argvec options:options];
-    CLKArgumentManifest *manifest = [parser parseArguments:outError];
+    CLKArgumentManifest *manifest = [parser parseArguments];
     if (manifest == nil) {
+        fprintf(stderr, "%s\n", parser.errors.description.UTF8String);
         return 1;
     }
     
@@ -31,7 +32,7 @@ static int verb_flarn(NSArray<NSString *> *argvec, NSError **outError)
     return 0;
 }
 
-static int verb_barf(NSArray<NSString *> *argvec, NSError **outError)
+static int verb_barf(NSArray<NSString *> *argvec)
 {
     NSArray *options = @[
         [CLKOption optionWithName:@"charlie" flag:@"c"],
@@ -39,7 +40,7 @@ static int verb_barf(NSArray<NSString *> *argvec, NSError **outError)
     ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argvec options:options];
-    CLKArgumentManifest *manifest = [parser parseArguments:outError];
+    CLKArgumentManifest *manifest = [parser parseArguments];
     if (manifest == nil) {
         return 1;
     }
@@ -55,11 +56,21 @@ int main(int argc, const char *argv[])
     @autoreleasepool
     {
         CLKVerb *flarn = [CLKVerb verbWithName:@"flarn" block:^(NSArray<NSString *> *argvec, NSError **outError) {
-            return verb_flarn(argvec, outError);
+            int status_ = verb_flarn(argvec);
+            if (status_ != 0) {
+                *outError = [NSError errorWithDomain:@"clklab-error" code:status_ userInfo:nil];
+            }
+            
+            return status_;
         }];
         
         CLKVerb *barf = [CLKVerb verbWithName:@"barf" block:^(NSArray<NSString *> *argvec, NSError **outError) {
-            return verb_barf(argvec, outError);
+            int status_ = verb_barf(argvec);
+            if (status_ != 0) {
+                *outError = [NSError errorWithDomain:@"clklab-error" code:status_ userInfo:nil];
+            }
+            
+            return status_;
         }];
         
         NSArray *verbs = @[ flarn, barf ];
