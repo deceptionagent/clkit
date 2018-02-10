@@ -7,7 +7,7 @@
 
 @implementation NSArray (CLKAdditions)
 
-+ (NSArray *)clk_arrayWithArgv:(const char *[])argv argc:(int)argc
++ (NSArray<NSString *> *)clk_arrayWithArgv:(const char *[])argv argc:(int)argc
 {
     NSMutableArray *array = [NSMutableArray array];
     
