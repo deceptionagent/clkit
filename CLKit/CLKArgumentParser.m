@@ -86,26 +86,36 @@ NS_ASSUME_NONNULL_END
         _options = [options copy];
         _optionNameMap = [[NSMutableDictionary alloc] init];
         _optionFlagMap = [[NSMutableDictionary alloc] init];
-        
-        for (CLKOption *opt in options) {
-            CLKHardAssert((_optionNameMap[opt.name] == nil), NSInvalidArgumentException, @"duplicate option '%@'", opt.name);
-            _optionNameMap[opt.name] = opt;
-            
-            if (opt.flag != nil) {
-                CLKOption *collision = _optionFlagMap[opt.flag];
-                CLKHardAssert((collision == nil), NSInvalidArgumentException, @"colliding flag '%@' found for options '%@' and '%@'", opt.flag, opt.name, collision.name);
-                _optionFlagMap[opt.flag] = opt;
-            }
-        }
-        
-        for (CLKOptionGroup *group in groups) {
-            for (NSString *optionName in group.allOptions) {
-                CLKHardAssert((_optionNameMap[optionName] != nil), NSInvalidArgumentException, @"unregistered option found in option group: '--%@'", optionName);
-            }
-        }
-        
         _optionGroups = [groups copy];
         _manifest = [[CLKArgumentManifest alloc] init];
+        
+        // build the option name map and do some sanity checks along the way
+        for (CLKOption *option in options) {
+            CLKHardAssert((_optionNameMap[option.name] == nil), NSInvalidArgumentException, @"duplicate option '%@'", option.name);
+            _optionNameMap[option.name] = option;
+            
+            if (option.flag != nil) {
+                CLKOption *collision = _optionFlagMap[option.flag];
+                CLKHardAssert((collision == nil), NSInvalidArgumentException, @"colliding flag '%@' found for options '%@' and '%@'", option.flag, option.name, collision.name);
+                _optionFlagMap[option.flag] = option;
+            }
+        }
+        
+        // sanity-check dependencies
+        for (CLKOption *option in options) {
+            for (NSString *dependencyName in option.dependencies) {
+                CLKOption *dependency = _optionNameMap[dependencyName];
+                CLKHardAssert((dependency != nil), @"unregistered option '%@' found in dependency list for option '%@'", dependencyName, option.name);
+                CLKHardAssert((dependency.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required (option: '%@' -> dependency: '%@'", option.name, dependencyName);
+            }
+        }
+        
+        // sanity-check groups
+        for (CLKOptionGroup *group in groups) {
+            for (NSString *optionName in group.allOptions) {
+                CLKHardAssert((_optionNameMap[optionName] != nil), NSInvalidArgumentException, @"unregistered option '%@' found in option group", optionName);
+            }
+        }
     }
     
     return self;

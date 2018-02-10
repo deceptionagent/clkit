@@ -21,7 +21,7 @@ NSString *CLKStringForOptionType(CLKOptionType type);
                     required:(BOOL)required
                    recurrent:(BOOL)recurrent
                  transformer:(nullable CLKArgumentTransformer *)transformer
-                dependencies:(nullable NSArray<CLKOption *> *)dependencies NS_DESIGNATED_INITIALIZER;
+                dependencies:(nullable NSArray<NSString *> *)dependencies NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) NSArray<CLKArgumentManifestConstraint *> *constraints;
 

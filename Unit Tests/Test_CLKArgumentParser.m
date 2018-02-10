@@ -270,7 +270,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[
         @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx",
-        @"--syn", @"cathedra", @"--noise", @"819", @"confound", @"delivery"
+        @"--syn", @"cathedra", @"--noise", @"819", @"--quone", @"confound", @"delivery"
     ];
     
     NSArray *options = @[
@@ -278,6 +278,7 @@ NS_ASSUME_NONNULL_END
          [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
          [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES transformer:nil dependencies:nil],
+         [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
          [CLKOption optionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],
     ];
@@ -287,7 +288,8 @@ NS_ASSUME_NONNULL_END
         @"spline" : @(1),
         @"syn" : @[ @"aeons", @"cathedra" ],
         @"ack" : @[ @"hack" ],
-        @"noise" : @[ @(819) ]
+        @"noise" : @[ @(819) ],
+        @"quone" : @(1)
     };
     
     NSArray *expectedPositionalArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];
@@ -345,6 +347,28 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
+- (void)testInvalidDependencies
+{
+    // dependencies can't reference unregistered options
+    NSArray *options = @[
+         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:@[ @"flarn" ]]
+    ];
+    
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
+    
+    // switches can't be dependencies
+    options = @[
+         [CLKOption optionWithName:@"ack" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:@[ @"ack" ]]
+    ];
+    
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
+}
+
+#pragma mark -
+#pragma mark Validation
+
 /*
     the primary goal of validation tests involving the parser is verifying the parser:
  
@@ -378,7 +402,7 @@ NS_ASSUME_NONNULL_END
 {
     CLKOption *alpha = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *bravo = [CLKOption parameterOptionWithName:@"bravo" flag:@"b"];
-    CLKOption *charlie = [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ bravo ]];
+    CLKOption *charlie = [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ @"bravo" ]];
     NSArray *options = @[ alpha, bravo, charlie ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--charlie" ] options:options];

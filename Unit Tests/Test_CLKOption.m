@@ -10,9 +10,32 @@
 #import "CLKOption_Private.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Test_CLKOption : XCTestCase
 
+- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
+- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
+
+- (void)verifyOption:(CLKOption *)option
+                type:(CLKOptionType)type
+                name:(NSString *)name
+                flag:(nullable NSString *)flag
+            required:(BOOL)required
+         transformer:(nullable CLKArgumentTransformer *)transformer;
+
+- (void)verifyOption:(CLKOption *)option
+                type:(CLKOptionType)type
+                name:(NSString *)name
+                flag:(nullable NSString *)flag
+            required:(BOOL)required
+           recurrent:(BOOL)recurrent
+         transformer:(nullable CLKArgumentTransformer *)transformer
+        dependencies:(nullable NSArray<NSString *> *)dependencies;
+
 @end
+
+NS_ASSUME_NONNULL_END
 
 
 @implementation Test_CLKOption
@@ -23,7 +46,7 @@
     [self verifyOption:option type:type name:name flag:flag required:required recurrent:(type == CLKOptionTypeSwitch) transformer:nil dependencies:nil];
 }
 
-- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<CLKOption *> *)dependencies
+- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<NSString *> *)dependencies
 {
     // switch options are always recurrent
     [self verifyOption:option type:type name:name flag:flag required:NO recurrent:(type == CLKOptionTypeSwitch) transformer:nil dependencies:dependencies];
@@ -47,7 +70,7 @@
             required:(BOOL)required
            recurrent:(BOOL)recurrent
          transformer:(CLKArgumentTransformer *)transformer
-        dependencies:(NSArray<CLKOption *> *)dependencies
+        dependencies:(NSArray<NSString *> *)dependencies
 {
     XCTAssertNotNil(option);
     XCTAssertEqual(option.type, type);
@@ -103,8 +126,15 @@
     option = [CLKOption optionWithName:@"flarn" flag:nil];
     [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:nil required:NO];
     
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:nil];
+    
+    option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
+    
     XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
@@ -115,27 +145,6 @@
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
     XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:[CLKArgumentTransformer transformer] dependencies:nil] autorelease]);
 #pragma clang diagnostic pop
-}
-
-- (void)testInitWithDependencies
-{
-    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:nil];
-    
-    NSArray *dependencies = @[
-        [CLKOption parameterOptionWithName:@"alpha" flag:@"a"],
-        [CLKOption parameterOptionWithName:@"bravo" flag:@"b"]
-    ];
-    
-    option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:dependencies];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:dependencies];
-    
-    // switches can't be required -- dependency implies requirement
-    dependencies = @[
-        [CLKOption optionWithName:@"bravo" flag:@"b"]
-    ];
-    
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:dependencies]);
 }
 
 - (void)testCopying
@@ -230,21 +239,18 @@
     XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -P | parameter, required, recurrent }", paramB]));
 }
 
-- (void)testConstraints
+- (void)testConstraints_switchOptions
 {
-    CLKOption *barf  = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    
     /* switch options */
     
-    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ barf ]];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"barf" ]];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
     
-    quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ barf, flarn ]];
+    quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"barf", @"flarn" ]];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
@@ -272,7 +278,37 @@
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
     
-    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:YES transformer:nil dependencies:@[ barf, flarn]];
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:YES transformer:nil dependencies:@[ @"barf", @"flarn"]];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+}
+
+- (void)testConstraints_parameterOptions
+{
+    CLKOption *quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:YES transformer:nil dependencies:nil];
+    XCTAssertEqualObjects(quone.constraints, @[]);
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:nil dependencies:nil];
+    NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:nil dependencies:nil];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:YES transformer:nil dependencies:@[ @"barf", @"flarn"]];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],

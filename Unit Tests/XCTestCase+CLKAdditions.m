@@ -79,5 +79,4 @@
     return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
 }
 
-
 @end

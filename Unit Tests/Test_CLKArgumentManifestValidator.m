@@ -264,7 +264,7 @@ NS_ASSUME_NONNULL_END
     CLKOption *delivery_alt = [CLKOption optionWithName:@"delivery_alt" flag:nil];
     CLKOption *acme = [CLKOption optionWithName:@"acme" flag:nil];
     
-    NSDictionary *switchOptions = @{
+    NSDictionary<CLKOption *, NSNumber *> *switchOptions = @{
         thrud_alt : @(2),
         ack_alt : @(1),
         delivery : @(7),
@@ -272,14 +272,14 @@ NS_ASSUME_NONNULL_END
         acme : @(7)
     };
     
-    NSDictionary *parameterOptions = @{
+    NSDictionary<CLKOption *, NSArray *> *parameterOptions = @{
         thrud : @[ @"#", @"#"],
         ack : @[ @"!" ],
         confound : @[ @"?" ],
         confound_alt : @[ @"?" ]
     };
     
-    NSArray *constraints = @[
+    NSArray<CLKArgumentManifestConstraint *> *constraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"thrud_alt"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
@@ -293,7 +293,7 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
     ];
     
-    NSArray *errors = @[
+    NSArray<NSError *> *errors = @[
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn: required option not provided"],
         [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud_alt may not be provided more than once"],
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn is required when using --ack"],

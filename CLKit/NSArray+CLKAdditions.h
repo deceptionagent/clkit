@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray (CLKAdditions)
 
-+ (NSArray *)clk_arrayWithArgv:(const char *_Nonnull [_Nonnull])argv argc:(int)argc;
++ (NSArray<NSString *> *)clk_arrayWithArgv:(const char *_Nonnull [_Nonnull])argv argc:(int)argc;
 
 @end
 

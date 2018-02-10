@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_END
     /* each primary option is mutually exclusive with every subgroup */
     
     if (_options.count > 0) {
-        NSArray *allSubgroupOptions = [self _allSubgroupOptions];
+        NSArray<NSString *> *allSubgroupOptions = [self _allSubgroupOptions];
         if (allSubgroupOptions.count > 0) {
             for (NSString *option in _options) {
                 for (NSString *subgroupOption in allSubgroupOptions) {
