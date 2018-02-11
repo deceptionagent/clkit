@@ -394,15 +394,23 @@ NS_ASSUME_NONNULL_END
          [CLKOption optionWithName:@"alpha" flag:@"a"],
          [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:YES]
     ];
-
+    
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:options];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
-
+    
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--alpha" ] options:options];
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    NSDictionary *expectedOptionManifest = @{
+        @"bravo" : @[ @"flarn" ]
+    };
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--bravo", @"flarn" ] options:options];
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
@@ -418,9 +426,14 @@ NS_ASSUME_NONNULL_END
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
+    NSDictionary *expectedOptionManifest = @{
+        @"charlie" : @(1),
+        @"bravo" : @[ @"flarn" ]
+    };
+    
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--charlie", @"--bravo", @"flarn" ] options:options];
-    XCTAssertNotNil([parser parseArguments]);
-    XCTAssertNil(parser.errors);
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
+    [self evaluateSpec:spec usingParser:parser];
 }
 
 - (void)testValidation_recurrent
@@ -431,6 +444,15 @@ NS_ASSUME_NONNULL_END
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ flarn ]];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];;
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES transformer:nil dependencies:nil];
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @[ @"barf", @"barf" ]
+    };
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[ flarn ] optionGroups:nil];
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
@@ -452,6 +474,15 @@ NS_ASSUME_NONNULL_END
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn" ] options:options optionGroups:@[ group, requiredGroup ]];
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"];;
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @(1),
+        @"quone" : @(1)
+    };
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--quone" ] options:options optionGroups:@[ group, requiredGroup ]];
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
@@ -489,9 +520,14 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
+    NSDictionary *expectedOptionManifest = @{
+        @"syn" : @(1),
+        @"ack" : @(1)
+    };
+    
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--syn", @"--ack" ] options:options optionGroups:@[ mutexGroup ]];
-    XCTAssertNotNil([parser parseArguments]);
-    XCTAssertNil(parser.errors);
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
+    [self evaluateSpec:spec usingParser:parser];
     
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--barf", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexGroup ]];
     NSArray *errors = @[
@@ -526,9 +562,14 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @(1),
+        @"xyzzy" : @(1)
+    };
+    
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--xyzzy" ] options:@[ flarn, barf, xyzzy ] optionGroups:@[ group ]];
-    XCTAssertNotNil([parser parseArguments]);
-    XCTAssertNil(parser.errors);
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
+    [self evaluateSpec:spec usingParser:parser];
 }
 
 @end
