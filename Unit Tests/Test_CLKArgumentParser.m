@@ -96,17 +96,21 @@ NS_ASSUME_NONNULL_END
 
 - (void)testSwitchOptions
 {
-    NSArray *argv = @[ @"--foo", @"-f", @"-bfb", @"-qqq" ];
+    NSArray *argv = @[ @"--foo", @"-f", @"-bfb", @"-qqq",  @"--syn-ack", @"--ack--syn" ];
     NSArray *options = @[
         [CLKOption optionWithName:@"foo" flag:@"f"],
         [CLKOption optionWithName:@"bar" flag:@"b"],
-        [CLKOption optionWithName:@"quone" flag:@"q"]
+        [CLKOption optionWithName:@"quone" flag:@"q"],
+        [CLKOption optionWithName:@"syn-ack" flag:@"s"],
+        [CLKOption optionWithName:@"ack--syn" flag:@"a"]
     ];
     
     NSDictionary *expectedOptionManifest = @{
         @"foo" : @(3),
         @"bar" : @(2),
-        @"quone" : @(3)
+        @"quone" : @(3),
+        @"syn-ack" : @(1),
+        @"ack--syn" : @(1)
     };
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
@@ -116,15 +120,19 @@ NS_ASSUME_NONNULL_END
 
 - (void)testParameterOptions
 {
-    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie" ];
+    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie", @"--syn-ack", @"quone", @"--ack--syn", @"xyzzy" ];
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES transformer:nil dependencies:nil],
-        [CLKOption parameterOptionWithName:@"bar" flag:@"b"]
+        [CLKOption parameterOptionWithName:@"bar" flag:@"b"],
+        [CLKOption parameterOptionWithName:@"syn-ack" flag:@"s"],
+        [CLKOption parameterOptionWithName:@"ack--syn" flag:@"a"]
     ];
     
     NSDictionary *expectedOptionManifest = @{
         @"foo" : @[ @"alpha", @"bravo" ],
-        @"bar" : @[ @"charlie" ]
+        @"bar" : @[ @"charlie" ],
+        @"syn-ack" : @[ @"quone" ],
+        @"ack--syn" : @[ @"xyzzy" ]
     };
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
