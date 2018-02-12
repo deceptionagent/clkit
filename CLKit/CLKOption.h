@@ -45,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, readonly) NSArray<NSString *> *dependencies;
 @property (readonly) CLKOptionType type;
 
+- (BOOL)isEqualToOption:(CLKOption *)option;
+
 @end
 
 NS_ASSUME_NONNULL_END

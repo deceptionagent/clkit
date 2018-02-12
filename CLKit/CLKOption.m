@@ -155,9 +155,14 @@ NSString *CLKStringForOptionType(CLKOptionType type)
         return NO;
     }
     
-    // [TACK] this is kind of a lie for the purposes of collection support
-    CLKOption *opt = (CLKOption *)obj;
-    return [opt.name isEqualToString:_name];
+    return [self isEqualToOption:(CLKOption *)obj];
+}
+
+- (BOOL)isEqualToOption:(CLKOption *)option
+{
+    // [TACK] this is a lie for very rudimentary collection support. it should probably be an exhaustive equality test.
+    //        other parts of CLKit need to be audited to make sure that won't break something.
+    return [_name isEqualToString:option.name];
 }
 
 - (id)copyWithZone:(__unused NSZone *)zone

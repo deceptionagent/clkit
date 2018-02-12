@@ -116,7 +116,11 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
         return NO;
     }
     
-    CLKArgumentManifestConstraint *constraint = obj;
+    return [self isEqualToConstraint:(CLKArgumentManifestConstraint *)obj];
+}
+
+- (BOOL)isEqualToConstraint:(CLKArgumentManifestConstraint *)constraint
+{
     if (_type != constraint.type) {
         return NO;
     }

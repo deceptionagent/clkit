@@ -156,20 +156,28 @@ NS_ASSUME_NONNULL_END
 
 - (void)testEquality
 {
-    // flags are just conveniences -- the canoical identifier of an option is its name
+    #define ASSERT_EQUAL_OPTIONS(o1, o2) \
+        XCTAssertEqualObjects(o1, o2); \
+        XCTAssertTrue([o1 isEqualToOption:o2]);
+    
+    #define ASSERT_NOT_EQUAL_OPTIONS(o1, o2) \
+        XCTAssertNotEqualObjects(o1, o2); \
+        XCTAssertFalse([o1 isEqualToOption:o2]);
+    
+    // flags are just conveniences -- the canonical identifier of an option is its name
     CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"a"];
     CLKOption *alphaC = [CLKOption optionWithName:@"alpha" flag:@"A"];
     CLKOption *bravoA = [CLKOption optionWithName:@"bravo" flag:@"a"];
     CLKOption *bravoB = [CLKOption parameterOptionWithName:@"bravo" flag:@"a"];
-
-    XCTAssertTrue([alphaA isEqual:alphaA]);
-    XCTAssertTrue([alphaA isEqual:alphaB]);
-    XCTAssertTrue([alphaA isEqual:alphaC]);
-    XCTAssertFalse([alphaA isEqual:bravoA]);
-    XCTAssertTrue([bravoA isEqual:bravoB]);
-    XCTAssertFalse([alphaA isEqual:@"not even an option"]);
-    XCTAssertFalse([alphaA isEqual:nil]);
+    
+    ASSERT_EQUAL_OPTIONS(alphaA, alphaA);
+    ASSERT_EQUAL_OPTIONS(alphaA, alphaB);
+    ASSERT_EQUAL_OPTIONS(alphaA, alphaC);
+    ASSERT_NOT_EQUAL_OPTIONS(alphaA, bravoA);
+    ASSERT_EQUAL_OPTIONS(bravoA, bravoB);
+    XCTAssertNotEqualObjects(alphaA, @"not even an option");
+    XCTAssertNotEqualObjects(alphaA, nil);
     
     XCTAssertEqual(alphaA.hash, alphaB.hash);
     XCTAssertEqual(alphaA.hash, alphaC.hash);
