@@ -84,42 +84,50 @@
 
 - (void)testEquality
 {
+    #define ASSERT_EQUAL_CONSTRAINTS(c1, c2) \
+        XCTAssertEqualObjects(c1, c2); \
+        XCTAssertTrue([c1 isEqualToConstraint:c2]);
+    
+    #define ASSERT_NOT_EQUAL_CONSTRAINTS(c1, c2) \
+        XCTAssertNotEqualObjects(c1, c2); \
+        XCTAssertFalse([c1 isEqualToConstraint:c2]);
+    
     CLKArgumentManifestConstraint *requiredAlpha = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredBravo = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredCharlie = [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"];
-    XCTAssertTrue([requiredAlpha isEqual:requiredAlpha]);
-    XCTAssertTrue([requiredAlpha isEqual:requiredBravo]);
-    XCTAssertFalse([requiredAlpha isEqual:requiredCharlie]);
+    ASSERT_EQUAL_CONSTRAINTS(requiredAlpha, requiredAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(requiredAlpha, requiredBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(requiredAlpha, requiredCharlie);
     
     CLKArgumentManifestConstraint *conditionallyRequiredAlpha = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
     CLKArgumentManifestConstraint *conditionallyRequiredBravo = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
     CLKArgumentManifestConstraint *conditionallyRequiredCharlie = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"barf"];
     CLKArgumentManifestConstraint *conditionallyRequiredDelta = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"xyzzy"];
-    XCTAssertTrue([conditionallyRequiredAlpha isEqual:conditionallyRequiredAlpha]);
-    XCTAssertTrue([conditionallyRequiredAlpha isEqual:conditionallyRequiredBravo]);
-    XCTAssertFalse([conditionallyRequiredAlpha isEqual:conditionallyRequiredCharlie]);
-    XCTAssertFalse([conditionallyRequiredCharlie isEqual:conditionallyRequiredDelta]);
+    ASSERT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredCharlie);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(conditionallyRequiredCharlie, conditionallyRequiredDelta);
     
     CLKArgumentManifestConstraint *representativeRequiredAlpha = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *representativeRequiredBravo = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *representativeRequiredCharlie = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"quone" ]];
-    XCTAssertTrue([representativeRequiredAlpha isEqual:representativeRequiredAlpha]);
-    XCTAssertTrue([representativeRequiredAlpha isEqual:representativeRequiredBravo]);
-    XCTAssertFalse([representativeRequiredAlpha isEqual:representativeRequiredCharlie]);
+    ASSERT_EQUAL_CONSTRAINTS(representativeRequiredAlpha, representativeRequiredAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(representativeRequiredAlpha, representativeRequiredBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(representativeRequiredAlpha, representativeRequiredCharlie);
     
     CLKArgumentManifestConstraint *mutexedAlpha = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *mutexedBravo = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *mutexedCharlie = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"quone" ]];
-    XCTAssertTrue([mutexedAlpha isEqual:mutexedAlpha]);
-    XCTAssertTrue([mutexedAlpha isEqual:mutexedBravo]);
-    XCTAssertFalse([mutexedAlpha isEqual:mutexedCharlie]);
+    ASSERT_EQUAL_CONSTRAINTS(mutexedAlpha, mutexedAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(mutexedAlpha, mutexedBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(mutexedAlpha, mutexedCharlie);
     
     CLKArgumentManifestConstraint *restrictedAlpha = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
     CLKArgumentManifestConstraint *restrictedBravo = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
     CLKArgumentManifestConstraint *restrictedCharlie = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"barf"];
-    XCTAssertTrue([restrictedAlpha isEqual:restrictedAlpha]);
-    XCTAssertTrue([restrictedAlpha isEqual:restrictedBravo]);
-    XCTAssertFalse([restrictedAlpha isEqual:restrictedCharlie]);
+    ASSERT_EQUAL_CONSTRAINTS(restrictedAlpha, restrictedAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(restrictedAlpha, restrictedBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(restrictedAlpha, restrictedCharlie);
     
     /* cross-type tests */
     
@@ -135,13 +143,14 @@
         NSMutableSet *otherConstraints = [[constraints mutableCopy] autorelease];
         [otherConstraints removeObject:constraint];
         for (CLKArgumentManifestConstraint *otherConstraint in otherConstraints) {
-            XCTAssertNotEqualObjects(constraint, otherConstraint);
+            ASSERT_NOT_EQUAL_CONSTRAINTS(constraint, otherConstraint);
         }
     }
     
     /* misc */
     
-    XCTAssertFalse([requiredAlpha isEqual:@"not a constraint"]);
+    XCTAssertNotEqualObjects(requiredAlpha, nil);
+    XCTAssertNotEqualObjects(requiredAlpha, @"not a constraint");
 }
 
 @end

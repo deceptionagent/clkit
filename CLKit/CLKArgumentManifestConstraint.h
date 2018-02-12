@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, readonly) NSString *associatedOption;
 @property (nullable, readonly) NSArray<NSString *> *linkedOptions;
 
+- (BOOL)isEqualToConstraint:(CLKArgumentManifestConstraint *)constraint;
+
 @end
 
 NS_ASSUME_NONNULL_END
