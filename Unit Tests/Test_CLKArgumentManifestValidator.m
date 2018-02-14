@@ -10,6 +10,7 @@
 #import "CLKArgumentManifestValidator.h"
 #import "CLKError.h"
 #import "CLKOption.h"
+#import "CLKOptionRegistry.h"
 #import "ConstraintValidationSpec.h"
 #import "NSError+CLKAdditions.h"
 #import "XCTestCase+CLKAdditions.h"
@@ -61,9 +62,11 @@ NS_ASSUME_NONNULL_END
 
 - (void)testInit
 {
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] init] autorelease];
+    CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:@[]];
+    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
     CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
     XCTAssertNotNil(validator);
+    XCTAssertEqual(validator.manifest, manifest);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"

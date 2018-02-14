@@ -6,22 +6,22 @@
 
 
 @class CLKOption;
+@class CLKOptionRegistry;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifest ()
 
-@property (readonly) NSDictionary<CLKOption *, id> *optionManifest;
-@property (readonly) NSDictionary<NSString *, id> *optionManifestKeyedByName;
+- (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry NS_DESIGNATED_INITIALIZER;
 
-- (BOOL)hasOption:(CLKOption *)option;
+@property (readonly) NSDictionary<NSString *, id> *optionManifest; /* option name : NSNumber (switch) or NSArray (parameter) */
+
 - (BOOL)hasOptionNamed:(NSString *)optionName;
-- (NSUInteger)occurrencesOfOption:(CLKOption *)option;
 - (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName;
 
-- (void)accumulateSwitchOption:(CLKOption *)option;
-- (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option;
+- (void)accumulateSwitchOptionNamed:(NSString *)optionName;
+- (void)accumulateArgument:(id)argument forParameterOptionNamed:(NSString *)optionName;
 - (void)accumulatePositionalArgument:(NSString *)argument;
 
 @end

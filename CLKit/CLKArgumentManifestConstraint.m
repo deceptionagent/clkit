@@ -119,25 +119,26 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
     return [self isEqualToConstraint:(CLKArgumentManifestConstraint *)obj];
 }
 
+#warning audit test coverage
 - (BOOL)isEqualToConstraint:(CLKArgumentManifestConstraint *)constraint
 {
     if (_type != constraint.type) {
         return NO;
     }
     
-    if (!(_option == nil && constraint.option == nil)) {
+    if (_option != nil || constraint.option != nil) {
         if (![_option isEqualToString:constraint.option]) {
             return NO;
         }
     }
     
-    if (!(_associatedOption == nil && constraint.associatedOption == nil)) {
+    if (_associatedOption != nil || constraint.associatedOption != nil) {
         if (![_associatedOption isEqualToString:constraint.associatedOption]) {
             return NO;
         }
     }
     
-    if (!(_linkedOptions == nil && constraint.linkedOptions == nil)) {
+    if (_linkedOptions != nil || constraint.linkedOptions != nil) {
         if (![_linkedOptions isEqual:constraint.linkedOptions]) {
             return NO;
         }

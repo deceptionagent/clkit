@@ -8,34 +8,26 @@
 #import "CLKAssert.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
-
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface CLKArgumentManifest ()
-
-- (void)_registerOption:(CLKOption *)option;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#import "CLKOptionRegistry.h"
 
 
 @implementation CLKArgumentManifest
 {
-    NSMutableDictionary<NSString *, CLKOption *> *_optionNameRegistry;
-    NSMutableDictionary<CLKOption *, id> *_optionManifest;
+    CLKOptionRegistry *_optionRegistry;
+    NSMutableDictionary<NSString *, id> *_optionManifest; /* option name : NSNumber or NSArray */
     NSMutableArray<NSString *> *_positionalArguments;
 }
 
 @synthesize optionManifest = _optionManifest;
 @synthesize positionalArguments = _positionalArguments;
 
-- (instancetype)init
+- (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry;
 {
+    NSParameterAssert(optionRegistry != nil);
+    
     self = [super init];
     if (self != nil) {
-        _optionNameRegistry = [[NSMutableDictionary alloc] init];
+        _optionRegistry = [optionRegistry retain];
         _optionManifest = [[NSMutableDictionary alloc] init];
         _positionalArguments = [[NSMutableArray alloc] init];
     }
@@ -45,7 +37,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)dealloc
 {
-    [_optionNameRegistry release];
+    [_optionRegistry release];
     [_optionManifest release];
     [_positionalArguments release];
     [super dealloc];
@@ -62,14 +54,18 @@ NS_ASSUME_NONNULL_END
 
 - (nullable id)objectForKeyedSubscript:(NSString *)optionName
 {
-    CLKOption *option = _optionNameRegistry[optionName];
-    
-    // option not accumulated
+    // it's reasonable to query the manifest for an unregistered option.
+    // this makes it easier to write tools with varying configurations, special factoring, etc.
+    CLKOption *option = [_optionRegistry optionNamed:optionName];
     if (option == nil) {
         return nil;
     }
     
-    id object = _optionManifest[option];
+    id object = _optionManifest[optionName];
+    if (object == nil) {
+        return nil;
+    }
+    
     switch (option.type) {
         case CLKOptionTypeSwitch:
             break;
@@ -89,27 +85,28 @@ NS_ASSUME_NONNULL_END
     return object;
 }
 
-- (BOOL)hasOption:(CLKOption *)option
-{
-    return (_optionManifest[option] != nil);
-}
-
 - (BOOL)hasOptionNamed:(NSString *)optionName
 {
-    return (_optionNameRegistry[optionName] != nil);
+    return (_optionManifest[optionName] != nil);
 }
 
-- (NSUInteger)occurrencesOfOption:(CLKOption *)option
+- (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName
 {
-    NSUInteger occurrences = 0;
+    CLKOption *option = [_optionRegistry optionNamed:optionName];
+    id value = _optionManifest[optionName];
+    if (value == nil) {
+        return 0;
+    }
     
-    id value = _optionManifest[option];
+    NSUInteger occurrences = 0;
     switch (option.type) {
         case CLKOptionTypeSwitch:
+            NSAssert2(([value isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for option named: %@", NSStringFromClass([value class]), optionName);
             occurrences = ((NSNumber *)value).unsignedIntegerValue;
             break;
         
         case CLKOptionTypeParameter:
+            NSAssert2(([value isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option named: %@", NSStringFromClass([value class]), optionName);
             occurrences = ((NSMutableArray *)value).count;
             break;
     }
@@ -117,50 +114,26 @@ NS_ASSUME_NONNULL_END
     return occurrences;
 }
 
-- (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName
-{
-    CLKOption *option = _optionNameRegistry[optionName];
-    
-    // option not accumulated
-    if (option == nil) {
-        return 0;
-    }
-    
-    return [self occurrencesOfOption:option];
-}
-
-- (NSDictionary<NSString *, id> *)optionManifestKeyedByName
-{
-    NSMutableDictionary *manifestKeyedByName = [[[NSMutableDictionary alloc] initWithCapacity:_optionManifest.count] autorelease];
-    
-    [_optionManifest enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, id arguments, __unused BOOL *outStop) {
-        manifestKeyedByName[option.name] = arguments;
-    }];
-    
-    return manifestKeyedByName;
-}
-
 #pragma mark -
 #pragma mark Building Manifests
 
-- (void)accumulateSwitchOption:(CLKOption *)option
+- (void)accumulateSwitchOptionNamed:(NSString *)optionName
 {
-    NSParameterAssert(option.type == CLKOptionTypeSwitch);
-    [self _registerOption:option];
-    NSUInteger occurrences = [self occurrencesOfOption:option];
-    _optionManifest[option] = @(occurrences + 1);
+    CLKParameterAssert([_optionRegistry hasOptionNamed:optionName], @"attempting to accumulate unregistered option named '%@'", optionName);
+    CLKParameterAssert(([_optionRegistry optionNamed:optionName].type == CLKOptionTypeSwitch), @"attempting to accumulate switch occurrence for parameter option named '%@'", optionName);
+    NSUInteger occurrences = [self occurrencesOfOptionNamed:optionName];
+    _optionManifest[optionName] = @(occurrences + 1);
 }
 
-- (void)accumulateArgument:(id)argument forParameterOption:(CLKOption *)option
+- (void)accumulateArgument:(id)argument forParameterOptionNamed:(NSString *)optionName
 {
-    NSParameterAssert(option.type == CLKOptionTypeParameter);
+    CLKParameterAssert([_optionRegistry hasOptionNamed:optionName], @"attempting to accumulate unregistered option named '%@'", optionName);
+    CLKParameterAssert(([_optionRegistry optionNamed:optionName].type == CLKOptionTypeParameter), @"attempting to accumulate argument for switch option named '%@'", optionName);
     
-    [self _registerOption:option];
-    NSMutableArray *arguments = _optionManifest[option];
-    NSAssert2((arguments == nil || [arguments isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option: %@", NSStringFromClass([arguments class]), option);
+    NSMutableArray *arguments = _optionManifest[optionName];
     if (arguments == nil) {
         arguments = [NSMutableArray array];
-        _optionManifest[option] = arguments;
+        _optionManifest[optionName] = arguments;
     }
     
     // don't assert multiple occurrences of non-recurrent options here.
@@ -168,13 +141,6 @@ NS_ASSUME_NONNULL_END
     // to provide a good message to the user.
     
     [arguments addObject:argument];
-}
-
-- (void)_registerOption:(CLKOption *)option
-{
-    if (_optionNameRegistry[option.name] == nil) {
-        _optionNameRegistry[option.name] = option;
-    }
 }
 
 - (void)accumulatePositionalArgument:(NSString *)argument

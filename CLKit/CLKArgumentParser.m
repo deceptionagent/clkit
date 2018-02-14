@@ -14,6 +14,7 @@
 #import "CLKOption_Private.h"
 #import "CLKOptionGroup.h"
 #import "CLKOptionGroup_Private.h"
+#import "CLKOptionRegistry.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
 
@@ -42,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_accumulateError:(NSError *)error;
 
-- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap;
+- (CLKAPState)_processParsedOption:(CLKOption *)option;
 
 @end
 
@@ -55,9 +56,8 @@ NS_ASSUME_NONNULL_END
     CLKOption *_currentOption;
     NSMutableArray<NSString *> *_argumentVector;
     NSArray<CLKOption *> *_options;
-    NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
-    NSMutableDictionary<NSString *, CLKOption *> *_optionFlagMap;
     NSArray<CLKOptionGroup *> *_optionGroups;
+    CLKOptionRegistry *_optionRegistry;
     CLKArgumentManifest *_manifest;
     NSMutableArray<NSError *> *_errors;
 }
@@ -84,27 +84,14 @@ NS_ASSUME_NONNULL_END
         _state = CLKAPStateBegin;
         _argumentVector = [argv mutableCopy];
         _options = [options copy];
-        _optionNameMap = [[NSMutableDictionary alloc] init];
-        _optionFlagMap = [[NSMutableDictionary alloc] init];
         _optionGroups = [groups copy];
-        _manifest = [[CLKArgumentManifest alloc] init];
-        
-        // build the option name map and do some sanity checks along the way
-        for (CLKOption *option in options) {
-            CLKHardAssert((_optionNameMap[option.name] == nil), NSInvalidArgumentException, @"duplicate option '%@'", option.name);
-            _optionNameMap[option.name] = option;
-            
-            if (option.flag != nil) {
-                CLKOption *collision = _optionFlagMap[option.flag];
-                CLKHardAssert((collision == nil), NSInvalidArgumentException, @"colliding flag '%@' found for options '%@' and '%@'", option.flag, option.name, collision.name);
-                _optionFlagMap[option.flag] = option;
-            }
-        }
+        _optionRegistry = [[CLKOptionRegistry alloc] initWithOptions:options];
+        _manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:_optionRegistry];
         
         // sanity-check dependencies
         for (CLKOption *option in options) {
             for (NSString *dependencyName in option.dependencies) {
-                CLKOption *dependency = _optionNameMap[dependencyName];
+                CLKOption *dependency = [_optionRegistry optionNamed:dependencyName];
                 CLKHardAssert((dependency != nil), @"unregistered option '%@' found in dependency list for option '%@'", dependencyName, option.name);
                 CLKHardAssert((dependency.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required (option: '%@' -> dependency: '%@'", option.name, dependencyName);
             }
@@ -113,7 +100,7 @@ NS_ASSUME_NONNULL_END
         // sanity-check groups
         for (CLKOptionGroup *group in groups) {
             for (NSString *optionName in group.allOptions) {
-                CLKHardAssert((_optionNameMap[optionName] != nil), NSInvalidArgumentException, @"unregistered option '%@' found in option group", optionName);
+                CLKHardAssert([_optionRegistry hasOptionNamed:optionName], NSInvalidArgumentException, @"unregistered option '%@' found in option group", optionName);
             }
         }
     }
@@ -125,10 +112,9 @@ NS_ASSUME_NONNULL_END
 {
     [_errors release];
     [_manifest release];
+    [_optionRegistry release];
     [_optionGroups release];
     [_argumentVector release];
-    [_optionFlagMap release];
-    [_optionNameMap release];
     [_currentOption release];
     [_options release];
     [super dealloc];
@@ -271,36 +257,47 @@ NS_ASSUME_NONNULL_END
     return CLKAPStateParseArgument;
 }
 
-- (CLKAPState)_processOptionIdentifier:(NSString *)identifier usingMap:(NSDictionary<NSString *, CLKOption *> *)optionMap
+- (CLKAPState)_parseOptionName
 {
-    CLKOption *option = optionMap[identifier];
+    NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
+    
+    NSString *name = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
+    CLKOption *option = [_optionRegistry optionNamed:name];
     if (option == nil) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", identifier];
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--%@'", name];
         [self _accumulateError:error];
         return CLKAPStateError;
     }
+    
+    return [self _processParsedOption:option];
+}
+
+- (CLKAPState)_parseOptionFlag
+{
+    NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
+    
+    NSString *flag = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
+    CLKOption *option = [_optionRegistry optionForFlag:flag];
+    if (option == nil) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-%@'", flag];
+        [self _accumulateError:error];
+        return CLKAPStateError;
+    }
+    
+    return [self _processParsedOption:option];
+}
+
+- (CLKAPState)_processParsedOption:(CLKOption *)option
+{
+    NSAssert(self.currentOption == nil, @"currentOption unexpectedly set when processing parsed option");
     
     if (option.type == CLKOptionTypeParameter) {
         self.currentOption = option;
         return CLKAPStateParseArgument;
     }
     
-    [_manifest accumulateSwitchOption:option];
+    [_manifest accumulateSwitchOptionNamed:option.name];
     return CLKAPStateReadNextItem;
-}
-
-- (CLKAPState)_parseOptionName
-{
-    NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *name = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
-    return [self _processOptionIdentifier:name usingMap:_optionNameMap];
-}
-
-- (CLKAPState)_parseOptionFlag
-{
-    NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *flag = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
-    return [self _processOptionIdentifier:flag usingMap:_optionFlagMap];
 }
 
 - (CLKAPState)_parseOptionFlagGroup
@@ -356,7 +353,7 @@ NS_ASSUME_NONNULL_END
             }
         }
         
-        [_manifest accumulateArgument:argument forParameterOption:self.currentOption];
+        [_manifest accumulateArgument:argument forParameterOptionNamed:self.currentOption.name];
         self.currentOption = nil;
     } else {
         [_manifest accumulatePositionalArgument:argument];
