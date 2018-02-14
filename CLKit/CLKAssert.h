@@ -25,3 +25,10 @@
         [[NSException exceptionWithName:NSInvalidArgumentException reason:__reason__ userInfo:nil] raise]; \
     } \
 })
+
+#if NS_BLOCK_ASSERTIONS
+    #define CLKParameterAssert(parameterCondition, ...) do {} while (0)
+#else
+    #define CLKParameterAssert(parameterCondition, ...) CLKHardParameterAssert(parameterCondition, __VA_ARGS__)
+#endif
+

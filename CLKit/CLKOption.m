@@ -160,9 +160,27 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 - (BOOL)isEqualToOption:(CLKOption *)option
 {
-    // [TACK] this is a lie for very rudimentary collection support. it should probably be an exhaustive equality test.
-    //        other parts of CLKit need to be audited to make sure that won't break something.
-    return [_name isEqualToString:option.name];
+    if (_type != option.type
+        || _required != option.required
+        || _recurrent != option.recurrent
+        || ![_name isEqualToString:option.name]) // name can never be nil
+    {
+        return NO;
+    }
+
+    if (_flag != nil || option.flag != nil) {
+        if (![_flag isEqualToString:option.flag]) {
+            return NO;
+        }
+    }
+
+    if (_dependencies != nil || option.dependencies != nil) {
+        if (![_dependencies isEqualToArray:option.dependencies]) {
+            return NO;
+        }
+    }
+
+    return YES;
 }
 
 - (id)copyWithZone:(__unused NSZone *)zone

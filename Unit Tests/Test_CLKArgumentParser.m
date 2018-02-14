@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_END
     if (spec.parserShouldSucceed) {
         XCTAssertNotNil(manifest);
         XCTAssertNil(parser.errors);
-        XCTAssertEqualObjects(manifest.optionManifestKeyedByName, spec.optionManifest);
+        XCTAssertEqualObjects(manifest.optionManifest, spec.optionManifest);
         XCTAssertEqualObjects(manifest.positionalArguments, spec.positionalArguments);
     } else {
         XCTAssertNil(manifest);
@@ -83,14 +83,27 @@ NS_ASSUME_NONNULL_END
 
 - (void)testUnrecognizedOption
 {
-    NSArray *argv = @[ @"--foo", @"flarn" ];
     NSArray *options = @[
          [CLKOption optionWithName:@"bar" flag:@"b"],
     ];
     
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: 'foo'"];
-    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    NSError *longError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--foo'"];
+    NSError *shortError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-f'"];
+    
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--foo", @"flarn" ] options:options];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ longError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--bar", @"--foo", @"flarn" ] options:options];
+    spec = [ArgumentParserSpec specWithErrors:@[ longError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"-f", @"flarn" ] options:options];
+    spec = [ArgumentParserSpec specWithErrors:@[ shortError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"-b", @"-f", @"flarn" ] options:options];
+    spec = [ArgumentParserSpec specWithErrors:@[ shortError ]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
@@ -320,27 +333,6 @@ NS_ASSUME_NONNULL_END
     XCTAssertNil(manifest);
     XCTAssertNotNil(parser.errors);
     XCTAssertThrows([parser parseArguments]);
-}
-
-- (void)testOptionCollisionCheck
-{
-    // two --ack opt names, different flags
-    NSArray *options = @[
-         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
-         [CLKOption optionWithName:@"ack" flag:@"c"],
-    ];
-    
-    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
-    
-    // two -x opt flags, different names
-    options = @[
-         [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x"],
-         [CLKOption optionWithName:@"spline" flag:@"p"],
-         [CLKOption optionWithName:@"xylo" flag:@"x"],
-    ];
-    
-    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options]);
 }
 
 - (void)testUnregisteredGroupOptions
