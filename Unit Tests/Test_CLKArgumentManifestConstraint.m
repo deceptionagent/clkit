@@ -86,11 +86,11 @@
 {
     #define ASSERT_EQUAL_CONSTRAINTS(c1, c2) \
         XCTAssertEqualObjects(c1, c2); \
-        XCTAssertTrue([c1 isEqualToConstraint:c2]);
+        XCTAssertTrue([c1 isEqualToConstraint:c2], @"%@ :: %@", c1, c2);
     
     #define ASSERT_NOT_EQUAL_CONSTRAINTS(c1, c2) \
         XCTAssertNotEqualObjects(c1, c2); \
-        XCTAssertFalse([c1 isEqualToConstraint:c2]);
+        XCTAssertFalse([c1 isEqualToConstraint:c2], @"%@ :: %@", c1, c2);
     
     CLKArgumentManifestConstraint *requiredAlpha = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredBravo = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
@@ -131,19 +131,19 @@
     
     /* cross-type tests */
     
-    NSSet *constraints = [NSSet setWithArray:@[
+    NSArray *constraints = @[
         requiredAlpha,
         conditionallyRequiredAlpha,
         representativeRequiredAlpha,
         mutexedAlpha,
         restrictedAlpha
-    ]];
+    ];
     
-    for (CLKArgumentManifestConstraint *constraint in constraints) {
-        NSMutableSet *otherConstraints = [[constraints mutableCopy] autorelease];
-        [otherConstraints removeObject:constraint];
-        for (CLKArgumentManifestConstraint *otherConstraint in otherConstraints) {
-            ASSERT_NOT_EQUAL_CONSTRAINTS(constraint, otherConstraint);
+    for (NSUInteger i = 0 ; i < constraints.count ; i++) {
+        CLKArgumentManifestConstraint *alpha = constraints[i];
+        for (NSUInteger r = i + 1 ; r < constraints.count ; r++) {
+            CLKArgumentManifestConstraint *bravo = constraints[r];
+            XCTAssertFalse([alpha isEqualToConstraint:bravo], @"%@ :: %@", alpha, bravo);
         }
     }
     

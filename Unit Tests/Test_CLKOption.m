@@ -8,11 +8,19 @@
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
+#import "CombinationEngine.h"
+#import "XCTestCase+CLKAdditions.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Test_CLKOption : XCTestCase
+
+@property (readonly) NSDictionary<NSString *, id> *standardSwitchOptionPrototype;
+@property (readonly) NSDictionary<NSString *, id> *standardParameterOptionPrototype;
+
+- (CLKOption *)switchOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation;
+- (CLKOption *)parameterOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation;
 
 - (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
 - (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
@@ -39,6 +47,44 @@ NS_ASSUME_NONNULL_END
 
 
 @implementation Test_CLKOption
+
+- (NSDictionary<NSString *, id> *)standardSwitchOptionPrototype
+{
+    return @{
+        @"name" : @[ @"flarn", @"barf" ],
+        @"flag" : @[ CEPrototypeNoValue, @"a", @"b" ],
+        @"dependencies" : @[ CEPrototypeNoValue, @[ @"confound" ], @[ @"delivery" ] ]
+    };
+}
+
+- (NSDictionary<NSString *, id> *)standardParameterOptionPrototype
+{
+    return @{
+        @"name" : @[ @"flarn", @"barf" ],
+        @"flag" : @[ CEPrototypeNoValue, @"a", @"b" ],
+        @"required" : @[ @(NO), @(YES) ],
+        @"recurrent" : @[ @(NO), @(YES) ],
+        @"dependencies" : @[ CEPrototypeNoValue, @[ @"confound" ], @[ @"delivery" ] ]
+    };
+}
+
+- (CLKOption *)switchOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation
+{
+    NSString *name = representation[@"name"];
+    NSString *flag = representation[@"flag"];
+    NSArray<NSString *> *dependencies = representation[@"dependencies"];
+    return [CLKOption optionWithName:name flag:flag dependencies:dependencies];
+}
+
+- (CLKOption *)parameterOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation
+{
+    NSString *name = representation[@"name"];
+    NSString *flag = representation[@"flag"];
+    BOOL required = [representation[@"required"] boolValue];
+    BOOL recurrent = [representation[@"recurrent"] boolValue];
+    NSArray<NSString *> *dependencies = representation[@"dependencies"];
+    return [CLKOption parameterOptionWithName:name flag:flag required:required recurrent:recurrent transformer:nil dependencies:dependencies];
+}
 
 - (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required
 {
@@ -78,7 +124,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(option.flag, flag);
     XCTAssertEqual(option.required, required);
     XCTAssertEqual(option.recurrent, recurrent);
-    XCTAssertEqual(option.transformer, transformer);
+    XCTAssertEqual(option.transformer, transformer); // transformers don't support equality
     XCTAssertEqualObjects(option.dependencies, dependencies);
 }
 
@@ -154,97 +200,156 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqual(alphaA, alphaB); // CLKOption is immutable; -copy should return the receiver retained
 }
 
-- (void)testEquality
+- (void)testEquality_switchOptions_equal
 {
-    #define ASSERT_EQUAL_OPTIONS(o1, o2) \
-        XCTAssertEqualObjects(o1, o2); \
-        XCTAssertTrue([o1 isEqualToOption:o2]);
+    NSArray<CLKOption *> *optionsA = [self generateObjectsFromPrototype:self.standardSwitchOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
+        return [self switchOptionFromDictionaryRepresentation:combination];
+    }];
     
-    #define ASSERT_NOT_EQUAL_OPTIONS(o1, o2) \
-        XCTAssertNotEqualObjects(o1, o2); \
-        XCTAssertFalse([o1 isEqualToOption:o2]);
+    NSArray<CLKOption *> *optionsB = [self generateObjectsFromPrototype:self.standardSwitchOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
+        return [self switchOptionFromDictionaryRepresentation:combination];
+    }];
     
-    // flags are just conveniences -- the canonical identifier of an option is its name
-    CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    CLKOption *alphaC = [CLKOption optionWithName:@"alpha" flag:@"A"];
-    CLKOption *bravoA = [CLKOption optionWithName:@"bravo" flag:@"a"];
-    CLKOption *bravoB = [CLKOption parameterOptionWithName:@"bravo" flag:@"a"];
+    for (NSUInteger i = 0 ; i < optionsA.count ; i++) {
+        CLKOption *alpha = optionsA[i];
+        CLKOption *bravo = optionsB[i];
+        XCTAssertTrue([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+        XCTAssertEqual(alpha.hash, bravo.hash);
+    }
+}
+
+- (void)testEquality_switchOptions_notEqual
+{
+    NSArray<CLKOption *> *options = [self generateObjectsFromPrototype:self.standardSwitchOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
+        return [self switchOptionFromDictionaryRepresentation:combination];
+    }];
     
-    ASSERT_EQUAL_OPTIONS(alphaA, alphaA);
-    ASSERT_EQUAL_OPTIONS(alphaA, alphaB);
-    ASSERT_EQUAL_OPTIONS(alphaA, alphaC);
-    ASSERT_NOT_EQUAL_OPTIONS(alphaA, bravoA);
-    ASSERT_EQUAL_OPTIONS(bravoA, bravoB);
-    XCTAssertNotEqualObjects(alphaA, @"not even an option");
-    XCTAssertNotEqualObjects(alphaA, nil);
+    for (NSUInteger i = 0 ; i < options.count ; i++) {
+        CLKOption *alpha = options[i];
+        for (NSUInteger r = i + 1 ; r < options.count ; r++) {
+            CLKOption *bravo = options[r];
+            XCTAssertFalse([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+        }
+    }
+}
+
+- (void)testEquality_parameterOptions_equal
+{
+    NSArray<CLKOption *> *optionsA = [self generateObjectsFromPrototype:self.standardParameterOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
+        return [self parameterOptionFromDictionaryRepresentation:combination];
+    }];
     
-    XCTAssertEqual(alphaA.hash, alphaB.hash);
-    XCTAssertEqual(alphaA.hash, alphaC.hash);
-    XCTAssertNotEqual(alphaA.hash, bravoA.hash);
-    XCTAssertEqual(bravoA.hash, bravoB.hash);
+    NSArray<CLKOption *> *optionsB = [self generateObjectsFromPrototype:self.standardParameterOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
+        return [self parameterOptionFromDictionaryRepresentation:combination];
+    }];
+    
+    for (NSUInteger i = 0 ; i < optionsA.count ; i++) {
+        CLKOption *alpha = optionsA[i];
+        CLKOption *bravo = optionsB[i];
+        XCTAssertTrue([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+        XCTAssertEqual(alpha.hash, bravo.hash);
+    }
+}
+
+- (void)testEquality_parameterOptions_notEqual
+{
+    NSArray<CLKOption *> *options = [self generateObjectsFromPrototype:self.standardParameterOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
+        return [self parameterOptionFromDictionaryRepresentation:combination];
+    }];
+    
+    for (NSUInteger i = 0 ; i < options.count ; i++) {
+        CLKOption *alpha = options[i];
+        for (NSUInteger r = i + 1 ; r < options.count ; r++) {
+            CLKOption *bravo = options[r];
+            XCTAssertFalse([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+        }
+    }
+}
+
+- (void)testEqualty_differentTypes
+{
+    CLKOption *switchOption = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
+    CLKOption *parameterOption = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    XCTAssertNotEqualObjects(switchOption, parameterOption);
+}
+
+- (void)testEquality_misc
+{
+    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
+    XCTAssertNotEqualObjects(option, nil);
+    XCTAssertNotEqualObjects(option, @"not an option");
 }
 
 - (void)testCollectionSupport_set
 {
-    // flags are just conveniences -- the identity of an option is related only to its name
-    CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    CLKOption *alphaC = [CLKOption optionWithName:@"alpha" flag:@"A"];
-    CLKOption *bravoA = [CLKOption optionWithName:@"bravo" flag:@"a"];
-    CLKOption *bravoB = [CLKOption parameterOptionWithName:@"bravo" flag:@"a"];
-
-    NSSet *set = [NSSet setWithObjects:alphaA, alphaB, alphaC, bravoA, bravoB, nil];
-    XCTAssertEqual(set.count, 2);
-    XCTAssertTrue([set containsObject:alphaA]);
-    XCTAssertTrue([set containsObject:alphaB]);
-    XCTAssertTrue([set containsObject:alphaC]);
-    XCTAssertTrue([set containsObject:bravoA]);
-    XCTAssertTrue([set containsObject:bravoB]);
+    __block NSMutableArray *options = [NSMutableArray array];
     
-    int alphaCount = 0;
-    int bravoCount = 0;
-    for (CLKOption *opt in set.allObjects) {
-        if ([opt.name isEqualToString:@"alpha"]) {
-            alphaCount++;
-        } else if ([opt.name isEqualToString:@"bravo"]) {
-            bravoCount++;
-        }
+    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        CLKOption *option = [self switchOptionFromDictionaryRepresentation:combination];
+        [options addObject:option];
+    }];
+    
+    engine = [[[CombinationEngine alloc] initWithPrototype:self.standardParameterOptionPrototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        CLKOption *option = [self parameterOptionFromDictionaryRepresentation:combination];
+        [options addObject:option];
+    }];
+    
+    NSSet *optionSet = [NSSet setWithArray:options];
+    XCTAssertEqual(optionSet.count, options.count);
+    for (CLKOption *option in options) {
+        XCTAssertTrue([optionSet containsObject:option]);
     }
-    
-    XCTAssertEqual(alphaCount, 1, @"expected only one --alpha option, found: %@", set);
-    XCTAssertEqual(bravoCount, 1, @"expected only one --bravo option, found: %@", set);
 }
 
 - (void)testCollectionSupport_dictionaryKeys
 {
-    // flags are just conveniences -- the identity of an option is related only to its name
-    CLKOption *alphaA = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    CLKOption *alphaA_alt = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    CLKOption *alphaB = [CLKOption optionWithName:@"alpha" flag:@"A"];
-    CLKOption *bravo = [CLKOption optionWithName:@"bravo" flag:@"a"];
+    __block NSMutableArray<CLKOption *> *options = [NSMutableArray array];
     
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    dict[alphaA] = @"flarn";
-    XCTAssertEqualObjects(dict[alphaA], @"flarn");
-    XCTAssertEqualObjects(dict[alphaA_alt], @"flarn");
-    dict[alphaB] = @"barf";
-    XCTAssertEqualObjects(dict[alphaA], @"barf"); // alphaA and alphaB should behave the same here
-    dict[bravo] = @"what";
-    XCTAssertEqualObjects(dict[bravo], @"what");
+    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        CLKOption *option = [self switchOptionFromDictionaryRepresentation:combination];
+        [options addObject:option];
+    }];
+    
+    engine = [[[CombinationEngine alloc] initWithPrototype:self.standardParameterOptionPrototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        CLKOption *option = [self parameterOptionFromDictionaryRepresentation:combination];
+        [options addObject:option];
+    }];
+    
+    NSMutableDictionary<CLKOption *, NSNumber *> *dict = [NSMutableDictionary dictionary];
+    NSUInteger assignedRecord = 1;
+    for (CLKOption *option in options) {
+        dict[option] = @(assignedRecord);
+        assignedRecord++;
+    }
+    
+    XCTAssertEqual(dict.count, options.count);
+    NSUInteger expectedRecord = 1;
+    for (CLKOption *option in options) {
+        NSUInteger record = [dict[option] unsignedIntegerValue];
+        XCTAssertEqual(record, expectedRecord);
+        expectedRecord++;
+    }
 }
 
 - (void)testDescription
 {
     CLKOption *switchA = [CLKOption optionWithName:@"switchA" flag:@"a"];
     CLKOption *switchB = [CLKOption optionWithName:@"switchB" flag:nil];
+    CLKOption *switchC = [CLKOption optionWithName:@"switchC" flag:@"a" dependencies:@[ @"flarn", @"barf" ]];
     CLKOption *paramA = [CLKOption parameterOptionWithName:@"paramA" flag:@"p" required:NO recurrent:NO transformer:nil dependencies:nil];
-    CLKOption *paramB = [CLKOption parameterOptionWithName:@"paramB" flag:@"P" required:YES recurrent:YES transformer:nil dependencies:nil];
+    CLKOption *paramB = [CLKOption parameterOptionWithName:@"paramB" flag:nil required:YES recurrent:YES transformer:nil dependencies:nil];
+    CLKOption *paramC = [CLKOption parameterOptionWithName:@"paramC" flag:@"p" required:YES recurrent:YES transformer:nil dependencies:@[ @"flarn", @"barf" ]];
     
-    XCTAssertEqualObjects(switchA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchA | -a | switch, recurrent }", switchA]));
-    XCTAssertEqualObjects(switchB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchB | -(null) | switch, recurrent }", switchB]));
-    XCTAssertEqualObjects(paramA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramA | -p | parameter }", paramA]));
-    XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -P | parameter, required, recurrent }", paramB]));
+    XCTAssertEqualObjects(switchA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchA | -a | switch, recurrent | dependencies: (null) }", switchA]));
+    XCTAssertEqualObjects(switchB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchB | -(null) | switch, recurrent | dependencies: (null) }", switchB]));
+    XCTAssertEqualObjects(switchC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchC | -a | switch, recurrent | dependencies: flarn, barf }", switchC]));
+    XCTAssertEqualObjects(paramA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramA | -p | parameter | dependencies: (null) }", paramA]));
+    XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -(null) | parameter, required, recurrent | dependencies: (null) }", paramB]));
+    XCTAssertEqualObjects(paramC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramC | -p | parameter, required, recurrent | dependencies: flarn, barf }", paramC]));
 }
 
 - (void)testConstraints_switchOptions

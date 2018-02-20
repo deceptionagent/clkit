@@ -9,6 +9,7 @@
 #import "CLKArgumentManifestValidator.h"
 #import "CLKOption.h"
 #import "CLKOptionRegistry.h"
+#import "CombinationEngine.h"
 
 
 @implementation XCTestCase (CLKAdditions)
@@ -82,6 +83,19 @@
 {
     CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+}
+
+#pragma mark -
+
+- (NSArray *)generateObjectsFromPrototype:(NSDictionary<NSString *, NSArray *> *)prototype block:(id (^)(NSDictionary<NSString *, id> *))generatorBlock
+{
+    __block NSMutableArray *objects = [NSMutableArray array];
+    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:prototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        [objects addObject:generatorBlock(combination)];
+    }];
+    
+    return objects;
 }
 
 @end

@@ -119,7 +119,6 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
     return [self isEqualToConstraint:(CLKArgumentManifestConstraint *)obj];
 }
 
-#warning audit test coverage
 - (BOOL)isEqualToConstraint:(CLKArgumentManifestConstraint *)constraint
 {
     if (_type != constraint.type) {

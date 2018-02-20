@@ -136,13 +136,14 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     }
     
     NSString *attrDesc = [attrs componentsJoinedByString:@", "];
-    NSString * const fmt = @"%@ { --%@ | -%@ | %@ }";
-    return [NSString stringWithFormat:fmt, super.description, _name, _flag, attrDesc];
+    NSString *dependenciesDesc = [_dependencies componentsJoinedByString:@", "];
+    NSString * const fmt = @"%@ { --%@ | -%@ | %@ | dependencies: %@ }";
+    return [NSString stringWithFormat:fmt, super.description, _name, _flag, attrDesc, dependenciesDesc];
 }
 
 - (NSUInteger)hash
 {
-    return _name.hash;
+    return _name.hash ^ _flag.hash;
 }
 
 - (BOOL)isEqual:(id)obj
@@ -167,13 +168,13 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     {
         return NO;
     }
-
+    
     if (_flag != nil || option.flag != nil) {
         if (![_flag isEqualToString:option.flag]) {
             return NO;
         }
     }
-
+    
     if (_dependencies != nil || option.dependencies != nil) {
         if (![_dependencies isEqualToArray:option.dependencies]) {
             return NO;

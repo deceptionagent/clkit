@@ -11,6 +11,7 @@
 @class CLKArgumentManifest;
 @class CLKArgumentManifestValidator;
 @class CLKOption;
+@class CombinationEngine;
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -24,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CLKArgumentManifest *)manifestWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, NSArray *> *)parameterOptions;
 - (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, id> *)parameterOptions;
+
+- (NSArray *)generateObjectsFromPrototype:(NSDictionary<NSString *, NSArray *> *)prototype block:(id (^)(NSDictionary<NSString *, id> *))generatorBlock;
 
 @end
 
