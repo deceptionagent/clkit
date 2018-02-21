@@ -69,6 +69,11 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:NO transformer:nil dependencies:nil] autorelease];
 }
 
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies
+{
+    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO transformer:nil dependencies:dependencies] autorelease];
+}
+
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer
 {
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO transformer:transformer dependencies:nil] autorelease];
@@ -98,6 +103,9 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     for (NSString *dependency in dependencies) {
         CLKHardParameterAssert(![dependency isEqualToString:name], @"options cannot list themselves as dependencies");
     }
+    
+    NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
+    CLKHardParameterAssert(uniqueDependencyCount == dependencies.count, @"option dependency lists cannot contain duplicate references");
     
     self = [super init];
     if (self != nil) {
