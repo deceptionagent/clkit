@@ -141,6 +141,9 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES];
     [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:YES];
     
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
+    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
+
     CLKArgumentTransformer *transformer = [CLKArgumentTransformer transformer];
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:transformer];
     [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO transformer:transformer];
@@ -161,6 +164,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption parameterOptionWithName:@"" flag:@"x"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"xx"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
 #pragma clang diagnostic pop
 }
 
@@ -189,6 +193,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
     XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:[CLKArgumentTransformer transformer] dependencies:nil] autorelease]);
 #pragma clang diagnostic pop
 }
