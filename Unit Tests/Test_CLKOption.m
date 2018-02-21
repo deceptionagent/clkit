@@ -202,20 +202,13 @@ NS_ASSUME_NONNULL_END
 
 - (void)testEquality_switchOptions_equal
 {
-    NSArray<CLKOption *> *optionsA = [self generateObjectsFromPrototype:self.standardSwitchOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
-        return [self switchOptionFromDictionaryRepresentation:combination];
-    }];
-    
-    NSArray<CLKOption *> *optionsB = [self generateObjectsFromPrototype:self.standardSwitchOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
-        return [self switchOptionFromDictionaryRepresentation:combination];
-    }];
-    
-    for (NSUInteger i = 0 ; i < optionsA.count ; i++) {
-        CLKOption *alpha = optionsA[i];
-        CLKOption *bravo = optionsB[i];
-        XCTAssertTrue([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        CLKOption *alpha = [self switchOptionFromDictionaryRepresentation:combination];
+        CLKOption *bravo = [self switchOptionFromDictionaryRepresentation:combination];
+        XCTAssertEqualObjects(alpha, bravo);
         XCTAssertEqual(alpha.hash, bravo.hash);
-    }
+    }];
 }
 
 - (void)testEquality_switchOptions_notEqual
@@ -228,27 +221,20 @@ NS_ASSUME_NONNULL_END
         CLKOption *alpha = options[i];
         for (NSUInteger r = i + 1 ; r < options.count ; r++) {
             CLKOption *bravo = options[r];
-            XCTAssertFalse([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+            XCTAssertNotEqualObjects(alpha, bravo);
         }
     }
 }
 
 - (void)testEquality_parameterOptions_equal
 {
-    NSArray<CLKOption *> *optionsA = [self generateObjectsFromPrototype:self.standardParameterOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
-        return [self parameterOptionFromDictionaryRepresentation:combination];
-    }];
-    
-    NSArray<CLKOption *> *optionsB = [self generateObjectsFromPrototype:self.standardParameterOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
-        return [self parameterOptionFromDictionaryRepresentation:combination];
-    }];
-    
-    for (NSUInteger i = 0 ; i < optionsA.count ; i++) {
-        CLKOption *alpha = optionsA[i];
-        CLKOption *bravo = optionsB[i];
-        XCTAssertTrue([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
+    [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
+        CLKOption *alpha = [self parameterOptionFromDictionaryRepresentation:combination];
+        CLKOption *bravo = [self parameterOptionFromDictionaryRepresentation:combination];
+        XCTAssertEqualObjects(alpha, bravo);
         XCTAssertEqual(alpha.hash, bravo.hash);
-    }
+    }];
 }
 
 - (void)testEquality_parameterOptions_notEqual
@@ -261,7 +247,7 @@ NS_ASSUME_NONNULL_END
         CLKOption *alpha = options[i];
         for (NSUInteger r = i + 1 ; r < options.count ; r++) {
             CLKOption *bravo = options[r];
-            XCTAssertFalse([alpha isEqualToOption:bravo], @"%@ :: %@", alpha, bravo);
+            XCTAssertNotEqualObjects(alpha, bravo);
         }
     }
 }
@@ -283,40 +269,53 @@ NS_ASSUME_NONNULL_END
 - (void)testCollectionSupport_set
 {
     __block NSMutableArray *options = [NSMutableArray array];
+    __block NSMutableArray<CLKOption *> *optionClones = [NSMutableArray array]; // verify lookup works for identical instances
     
     CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
     [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
         CLKOption *option = [self switchOptionFromDictionaryRepresentation:combination];
         [options addObject:option];
+        CLKOption *clone = [self switchOptionFromDictionaryRepresentation:combination];
+        [optionClones addObject:clone];
     }];
     
     engine = [[[CombinationEngine alloc] initWithPrototype:self.standardParameterOptionPrototype] autorelease];
     [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
         CLKOption *option = [self parameterOptionFromDictionaryRepresentation:combination];
         [options addObject:option];
+        CLKOption *clone = [self parameterOptionFromDictionaryRepresentation:combination];
+        [optionClones addObject:clone];
     }];
     
     NSSet *optionSet = [NSSet setWithArray:options];
     XCTAssertEqual(optionSet.count, options.count);
-    for (CLKOption *option in options) {
+    for (NSUInteger i = 0 ; i < options.count ; i++) {
+        CLKOption *option = options[i];
+        CLKOption *clone = optionClones[i];
         XCTAssertTrue([optionSet containsObject:option]);
+        XCTAssertTrue([optionSet containsObject:clone]);
     }
 }
 
 - (void)testCollectionSupport_dictionaryKeys
 {
     __block NSMutableArray<CLKOption *> *options = [NSMutableArray array];
+    __block NSMutableArray<CLKOption *> *optionClones = [NSMutableArray array]; // verify lookup works for identical instances
     
     CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
     [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
         CLKOption *option = [self switchOptionFromDictionaryRepresentation:combination];
         [options addObject:option];
+        CLKOption *clone = [self switchOptionFromDictionaryRepresentation:combination];
+        [optionClones addObject:clone];
     }];
     
     engine = [[[CombinationEngine alloc] initWithPrototype:self.standardParameterOptionPrototype] autorelease];
     [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
         CLKOption *option = [self parameterOptionFromDictionaryRepresentation:combination];
         [options addObject:option];
+        CLKOption *clone = [self parameterOptionFromDictionaryRepresentation:combination];
+        [optionClones addObject:clone];
     }];
     
     NSMutableDictionary<CLKOption *, NSNumber *> *dict = [NSMutableDictionary dictionary];
@@ -328,8 +327,12 @@ NS_ASSUME_NONNULL_END
     
     XCTAssertEqual(dict.count, options.count);
     NSUInteger expectedRecord = 1;
-    for (CLKOption *option in options) {
+    for (NSUInteger i = 0 ; i < options.count ; i++) {
+        CLKOption *option = options[i];
+        CLKOption *clone = optionClones[i];
         NSUInteger record = [dict[option] unsignedIntegerValue];
+        XCTAssertEqual(record, expectedRecord);
+        record = [dict[clone] unsignedIntegerValue];
         XCTAssertEqual(record, expectedRecord);
         expectedRecord++;
     }
