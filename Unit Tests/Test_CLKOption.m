@@ -141,6 +141,9 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES];
     [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:YES];
     
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:nil];
+    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" dependencies:nil];
+    
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
     [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
 
