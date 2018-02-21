@@ -58,9 +58,13 @@ NS_ASSUME_NONNULL_END
 
 - (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler
 {
-    for (CLKArgumentManifestConstraint *constraint in constraints) {
+    NSOrderedSet<CLKArgumentManifestConstraint *> *uniqueConstraints = [[NSOrderedSet alloc] initWithArray:constraints];
+    
+    for (CLKArgumentManifestConstraint *constraint in uniqueConstraints) {
         [self _validateConstraint:constraint issueHandler:issueHandler];
     }
+    
+    [uniqueConstraints release];
 }
 
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler

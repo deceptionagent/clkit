@@ -296,6 +296,9 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
     ];
     
+    // verify redundant constraints are deduplicated
+    constraints = [constraints arrayByAddingObjectsFromArray:constraints];
+    
     NSArray<NSError *> *errors = @[
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn: required option not provided"],
         [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud_alt may not be provided more than once"],
