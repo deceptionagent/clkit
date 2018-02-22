@@ -58,6 +58,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler
 {
+    // eliminate redundant errors by deduplicating identical constraints
     NSOrderedSet<CLKArgumentManifestConstraint *> *uniqueConstraints = [[NSOrderedSet alloc] initWithArray:constraints];
     
     for (CLKArgumentManifestConstraint *constraint in uniqueConstraints) {
