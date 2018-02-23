@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Test_CLKArgumentManifestValidator : XCTestCase
 
 - (void)verifyValidationPassForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator;
-- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator code:(NSUInteger)code description:(NSString *)description;
+- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator code:(CLKError)code description:(NSString *)description;
 - (void)evaluateSpec:(ConstraintValidationSpec *)spec usingValidator:(CLKArgumentManifestValidator *)validator;
 
 @end
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingValidator:validator];
 }
 
-- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator code:(NSUInteger)code description:(NSString *)description
+- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator code:(CLKError)code description:(NSString *)description
 {
     NSError *error = [NSError clk_CLKErrorWithCode:code description:@"%@", description];
     ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:@[ constraint ] errors:@[ error ]];
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_END
     }];
     
     if (spec.shouldPass) {
-        XCTAssertEqual(errors.count, 0, @"unexpected validation failure for constraints:\n%@\n\n*** errors:\n%@\n\n*** manifest:\n%@\n", spec.constraints, errors, validator.manifest.debugDescription);
+        XCTAssertEqual(errors.count, 0UL, @"unexpected validation failure for constraints:\n%@\n\n*** errors:\n%@\n\n*** manifest:\n%@\n", spec.constraints, errors, validator.manifest.debugDescription);
     } else {
         XCTAssertEqualObjects(spec.errors, errors, @"unsatisfied error match for constraints:\n%@\n\n*** manifest:\n%@\n", spec.constraints, validator.manifest.debugDescription);
     }

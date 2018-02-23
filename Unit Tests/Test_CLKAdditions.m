@@ -31,7 +31,7 @@
     const char *argvCharlie[] = {};
     NSArray *charlie = [NSArray clk_arrayWithArgv:argvCharlie argc:0];
     XCTAssertNotNil(charlie);
-    XCTAssertEqual(charlie.count, 0);
+    XCTAssertEqual(charlie.count, 0UL);
 }
 
 @end
@@ -82,7 +82,7 @@
 {
     NSMutableArray *alpha = [[@[ @"alpha" ] mutableCopy] autorelease];
     XCTAssertEqualObjects([alpha clk_popFirstObject], @"alpha");
-    XCTAssertEqual(alpha.count, 0);
+    XCTAssertEqual(alpha.count, 0UL);
     
     NSMutableArray *bravo = [[@[ @"alpha", @"bravo" ] mutableCopy] autorelease];
     XCTAssertEqualObjects([bravo clk_popFirstObject], @"alpha");
@@ -90,7 +90,7 @@
     
     NSMutableArray *charlie = [NSMutableArray array];
     XCTAssertNil([charlie clk_popFirstObject]);
-    XCTAssertEqual(charlie.count, 0);
+    XCTAssertEqual(charlie.count, 0UL);
 }
 
 @end
