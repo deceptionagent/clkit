@@ -63,6 +63,7 @@ NS_ASSUME_NONNULL_END
 }
 
 @synthesize currentOption = _currentOption;
+@synthesize errors = _errors;
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {

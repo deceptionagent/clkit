@@ -140,20 +140,20 @@ NS_ASSUME_NONNULL_END
     NSArray *options = @[ parameterOptionAlpha, parameterOptionBravo, switchOptionAlpha, switchOptionBravo ];
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:options];
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
-
-    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 0);
-    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 0);
-
+    
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 0UL);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 0UL);
+    
     [manifest accumulateArgument:@"flarn" forParameterOptionNamed:parameterOptionAlpha.name];
     [manifest accumulateArgument:@"flarn" forParameterOptionNamed:parameterOptionAlpha.name];
     [manifest accumulateSwitchOptionNamed:switchOptionAlpha.name];
     [manifest accumulateSwitchOptionNamed:switchOptionAlpha.name];
     [manifest accumulateSwitchOptionNamed:switchOptionAlpha.name];
-
-    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 2);
-    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionBravo.name], 0);
-    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 3);
-    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionBravo.name], 0);
+    
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 2UL);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionBravo.name], 0UL);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 3UL);
+    XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionBravo.name], 0UL);
 }
 
 @end
