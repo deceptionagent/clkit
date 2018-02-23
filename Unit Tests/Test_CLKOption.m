@@ -389,7 +389,7 @@ NS_ASSUME_NONNULL_END
     
     quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:nil dependencies:nil];
     expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
@@ -397,7 +397,7 @@ NS_ASSUME_NONNULL_END
     quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:nil dependencies:nil];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
@@ -419,7 +419,7 @@ NS_ASSUME_NONNULL_END
     
     quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:nil dependencies:nil];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
@@ -427,7 +427,7 @@ NS_ASSUME_NONNULL_END
     quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:nil dependencies:nil];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);

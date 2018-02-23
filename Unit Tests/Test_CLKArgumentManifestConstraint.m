@@ -32,8 +32,8 @@
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | primary: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 
-    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences restricted | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences limited | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 }
 
@@ -73,10 +73,10 @@
     XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"flarn", @"barf" ]));
 }
 
-- (void)testOccurrencesRestricted
+- (void)testOccurrencesLimited
 {
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
-    XCTAssertEqual(constraint.type, CLKConstraintTypeOccurrencesRestricted);
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
+    XCTAssertEqual(constraint.type, CLKConstraintTypeOccurrencesLimited);
     XCTAssertEqualObjects(constraint.option, @"flarn");
     XCTAssertNil(constraint.associatedOption);
     XCTAssertNil(constraint.linkedOptions);
@@ -122,12 +122,12 @@
     ASSERT_EQUAL_CONSTRAINTS(mutexedAlpha, mutexedBravo);
     ASSERT_NOT_EQUAL_CONSTRAINTS(mutexedAlpha, mutexedCharlie);
     
-    CLKArgumentManifestConstraint *restrictedAlpha = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
-    CLKArgumentManifestConstraint *restrictedBravo = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
-    CLKArgumentManifestConstraint *restrictedCharlie = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"barf"];
-    ASSERT_EQUAL_CONSTRAINTS(restrictedAlpha, restrictedAlpha);
-    ASSERT_EQUAL_CONSTRAINTS(restrictedAlpha, restrictedBravo);
-    ASSERT_NOT_EQUAL_CONSTRAINTS(restrictedAlpha, restrictedCharlie);
+    CLKArgumentManifestConstraint *limitedAlpha = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
+    CLKArgumentManifestConstraint *limitedBravo = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
+    CLKArgumentManifestConstraint *limitedCharlie = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"barf"];
+    ASSERT_EQUAL_CONSTRAINTS(limitedAlpha, limitedAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(limitedAlpha, limitedBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(limitedAlpha, limitedCharlie);
     
     /* cross-type tests */
     
@@ -136,7 +136,7 @@
         conditionallyRequiredAlpha,
         representativeRequiredAlpha,
         mutexedAlpha,
-        restrictedAlpha
+        limitedAlpha
     ];
     
     for (NSUInteger i = 0 ; i < constraints.count ; i++) {

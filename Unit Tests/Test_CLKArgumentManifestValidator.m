@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
 }
 
-- (void)testValidateConstraint_occurrencesRestricted
+- (void)testValidateConstraint_occurrencesLimited
 {
     CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
@@ -145,20 +145,20 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"barf"];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"barf"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
 
-    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"flarn"];
+    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
     
-    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"quone"];
+    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"xyzzy"];
+    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"xyzzy"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption description:@"--xyzzy may not be provided more than once"];
     
     // not present in the manifest
-    constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"aeon"];
+    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"aeon"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
 }
@@ -284,7 +284,7 @@ NS_ASSUME_NONNULL_END
     
     NSArray<CLKArgumentManifestConstraint *> *constraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
-        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"thrud_alt"],
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
         [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
@@ -292,7 +292,7 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
-        [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:@"thrud"],
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
     ];
     

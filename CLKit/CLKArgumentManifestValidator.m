@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 
 @end
 
@@ -83,8 +83,8 @@ NS_ASSUME_NONNULL_END
         case CLKConstraintTypeMutuallyExclusive:
             [self _validateMutualExclusion:constraint issueHandler:issueHandler];
             break;
-        case CLKConstraintTypeOccurrencesRestricted:
-            [self _validateOccurrenceRestriction:constraint issueHandler:issueHandler];
+        case CLKConstraintTypeOccurrencesLimited:
+            [self _validateOccurrenceLimit:constraint issueHandler:issueHandler];
             break;
     }
 }
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateOccurrenceRestriction:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     if ([_manifest occurrencesOfOptionNamed:constraint.option] > 1) {
         NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", constraint.option];
