@@ -210,7 +210,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     }
     
     if (!_recurrent) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRestrictingOccurrencesForOption:self.name];
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:self.name];
         [constraints addObject:constraint];
     }
     

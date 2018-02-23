@@ -16,8 +16,8 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
             return @"representative required";
         case CLKConstraintTypeMutuallyExclusive:
             return @"mutually exclusive";
-        case CLKConstraintTypeOccurrencesRestricted:
-            return @"occurrences restricted";
+        case CLKConstraintTypeOccurrencesLimited:
+            return @"occurrences limited";
     }
     
     NSCAssert(YES, @"unknown constraint type: %d", type);
@@ -73,10 +73,10 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
     return [[[self alloc] _initWithType:CLKConstraintTypeMutuallyExclusive option:nil associatedOption:nil linkedOptions:options] autorelease];
 }
 
-+ (instancetype)constraintRestrictingOccurrencesForOption:(NSString *)option
++ (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option
 {
     NSParameterAssert(option != nil);
-    return [[[self alloc] _initWithType:CLKConstraintTypeOccurrencesRestricted option:option associatedOption:nil linkedOptions:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKConstraintTypeOccurrencesLimited option:option associatedOption:nil linkedOptions:nil] autorelease];
 }
 
 - (instancetype)_initWithType:(CLKConstraintType)type option:(NSString *)option associatedOption:(NSString *)associatedOption linkedOptions:(NSArray<NSString *> *)linkedOptions
