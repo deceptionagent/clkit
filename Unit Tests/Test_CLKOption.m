@@ -22,15 +22,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (CLKOption *)switchOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation;
 - (CLKOption *)parameterOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation;
 
-- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
-- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
+- (void)verifyParameterOption:(CLKOption *)option
+                         name:(NSString *)name
+                         flag:(nullable NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                   restricted:(BOOL)restricted
+                  transformer:(nullable CLKArgumentTransformer *)transformer
+                 dependencies:(nullable NSArray<NSString *> *)dependencies;
 
-- (void)verifyOption:(CLKOption *)option
-                type:(CLKOptionType)type
-                name:(NSString *)name
-                flag:(nullable NSString *)flag
-            required:(BOOL)required
-         transformer:(nullable CLKArgumentTransformer *)transformer;
+- (void)verifySwitchOption:(CLKOption *)option
+                      name:(NSString *)name
+                      flag:(nullable NSString *)flag
+                restricted:(BOOL)restricted
+              dependencies:(nullable NSArray<NSString *> *)dependencies;
 
 - (void)verifyOption:(CLKOption *)option
                 type:(CLKOptionType)type
@@ -38,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
                 flag:(nullable NSString *)flag
             required:(BOOL)required
            recurrent:(BOOL)recurrent
+          restricted:(BOOL)restricted
          transformer:(nullable CLKArgumentTransformer *)transformer
         dependencies:(nullable NSArray<NSString *> *)dependencies;
 
@@ -47,6 +53,8 @@ NS_ASSUME_NONNULL_END
 
 
 @implementation Test_CLKOption
+
+#warning combinatorial tests need restriction support
 
 - (NSDictionary<NSString *, id> *)standardSwitchOptionPrototype
 {
@@ -86,27 +94,29 @@ NS_ASSUME_NONNULL_END
     return [CLKOption parameterOptionWithName:name flag:flag required:required recurrent:recurrent transformer:nil dependencies:dependencies];
 }
 
-- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required
+- (void)verifyParameterOption:(CLKOption *)option
+                         name:(NSString *)name
+                         flag:(NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                   restricted:(BOOL)restricted
+                  transformer:(CLKArgumentTransformer *)transformer
+                 dependencies:(NSArray<NSString *> *)dependencies
 {
-    // switch options are always recurrent
-    [self verifyOption:option type:type name:name flag:flag required:required recurrent:(type == CLKOptionTypeSwitch) transformer:nil dependencies:nil];
+    [self verifyOption:option type:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent restricted:restricted transformer:transformer dependencies:dependencies];
 }
 
-- (void)verifyOption:(CLKOption *)option type:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<NSString *> *)dependencies
+- (void)verifySwitchOption:(CLKOption *)option
+                      name:(NSString *)name
+                      flag:(NSString *)flag
+                restricted:(BOOL)restricted
+              dependencies:(NSArray<NSString *> *)dependencies
 {
-    // switch options are always recurrent
-    [self verifyOption:option type:type name:name flag:flag required:NO recurrent:(type == CLKOptionTypeSwitch) transformer:nil dependencies:dependencies];
-}
-
-- (void)verifyOption:(CLKOption *)option
-                type:(CLKOptionType)type
-                name:(NSString *)name
-                flag:(NSString *)flag
-            required:(BOOL)required
-         transformer:(CLKArgumentTransformer *)transformer
-{
-    // switch options are always recurrent
-    [self verifyOption:option type:type name:name flag:flag required:required recurrent:(type == CLKOptionTypeSwitch) transformer:transformer dependencies:nil];
+    // switch options:
+    //    - are always recurrent
+    //    - are never required
+    //    - do not support transformers
+    [self verifyOption:option type:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES restricted:restricted transformer:nil dependencies:dependencies];
 }
 
 - (void)verifyOption:(CLKOption *)option
@@ -115,6 +125,7 @@ NS_ASSUME_NONNULL_END
                 flag:(NSString *)flag
             required:(BOOL)required
            recurrent:(BOOL)recurrent
+          restricted:(BOOL)restricted
          transformer:(CLKArgumentTransformer *)transformer
         dependencies:(NSArray<NSString *> *)dependencies
 {
@@ -124,6 +135,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(option.flag, flag);
     XCTAssertEqual(option.required, required);
     XCTAssertEqual(option.recurrent, recurrent);
+    XCTAssertEqual(option.restricted, restricted);
     XCTAssertEqual(option.transformer, transformer); // transformers don't support equality
     XCTAssertEqualObjects(option.dependencies, dependencies);
 }
@@ -133,29 +145,38 @@ NS_ASSUME_NONNULL_END
 - (void)testInitParameterOption
 {
     CLKOption *option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:NO transformer:nil dependencies:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:nil];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:nil required:NO];
+    [self verifyParameterOption:option name:@"flarn" flag:nil required:NO recurrent:NO restricted:NO transformer:nil dependencies:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:YES];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:NO restricted:NO transformer:nil dependencies:nil];
+    
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" restricted:YES];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:NO restricted:YES transformer:nil dependencies:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" dependencies:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:NO transformer:nil dependencies:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
-
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:NO transformer:nil dependencies:@[ @"barf" ]];
+    
     CLKArgumentTransformer *transformer = [CLKArgumentTransformer transformer];
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:transformer];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO transformer:transformer];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:NO transformer:transformer dependencies:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:nil];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:NO transformer:nil dependencies:nil];
+    
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" recurrent:YES restricted:YES transformer:transformer];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:YES restricted:YES transformer:transformer dependencies:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES restricted:NO transformer:transformer dependencies:nil];
+    
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:@[ @"barf" ]];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES restricted:NO transformer:transformer dependencies:@[ @"barf" ]];
     
     XCTAssertThrows([CLKOption parameterOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-f"]);
@@ -174,16 +195,19 @@ NS_ASSUME_NONNULL_END
 - (void)testInitSwitchOption
 {
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO];
+    [self verifySwitchOption:option name:@"flarn" flag:@"f" restricted:NO dependencies:nil];
     
     option = [CLKOption optionWithName:@"flarn" flag:nil];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:nil required:NO];
+    [self verifySwitchOption:option name:@"flarn" flag:nil restricted:NO dependencies:nil];
+    
+    option = [CLKOption optionWithName:@"flarn" flag:nil restricted:YES];
+    [self verifySwitchOption:option name:@"flarn" flag:nil restricted:YES dependencies:nil];
     
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:nil];
+    [self verifySwitchOption:option name:@"flarn" flag:@"f" restricted:NO dependencies:nil];
     
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
-    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
+    [self verifySwitchOption:option name:@"flarn" flag:@"f" restricted:NO dependencies:@[ @"alpha", @"bravo" ]];
     
     XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
@@ -197,7 +221,12 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
-    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:[CLKArgumentTransformer transformer] dependencies:nil] autorelease]);
+    
+    // switch options do not support transformers
+    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:NO transformer:[CLKArgumentTransformer transformer] dependencies:nil] autorelease]);
+    
+    // restricted options can't have dependencies
+    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO restricted:YES transformer:nil dependencies:@[ @"barf" ]] autorelease]);
 #pragma clang diagnostic pop
 }
 
@@ -208,21 +237,17 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqual(alphaA, alphaB); // CLKOption is immutable; -copy should return the receiver retained
 }
 
-- (void)testEquality_switchOptions_equal
+- (void)testEquality_switchOptions
 {
+    __block NSMutableArray *options = [NSMutableArray array];
+    
     CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
     [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
-        CLKOption *alpha = [self switchOptionFromDictionaryRepresentation:combination];
-        CLKOption *bravo = [self switchOptionFromDictionaryRepresentation:combination];
-        XCTAssertEqualObjects(alpha, bravo);
-        XCTAssertEqual(alpha.hash, bravo.hash);
-    }];
-}
-
-- (void)testEquality_switchOptions_notEqual
-{
-    NSArray<CLKOption *> *options = [self generateObjectsFromPrototype:self.standardSwitchOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
-        return [self switchOptionFromDictionaryRepresentation:combination];
+        CLKOption *option = [self switchOptionFromDictionaryRepresentation:combination];
+        CLKOption *clone = [self switchOptionFromDictionaryRepresentation:combination];
+        XCTAssertEqualObjects(option, clone);
+        XCTAssertEqual(option.hash, clone.hash);
+        [options addObject:option];
     }];
     
     for (NSUInteger i = 0 ; i < options.count ; i++) {
@@ -234,21 +259,17 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)testEquality_parameterOptions_equal
+- (void)testEquality_parameterOptions
 {
-    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardSwitchOptionPrototype] autorelease];
+    __block NSMutableArray *options = [NSMutableArray array];
+    
+    CombinationEngine *engine = [[[CombinationEngine alloc] initWithPrototype:self.standardParameterOptionPrototype] autorelease];
     [engine enumerateCombinations:^(NSDictionary<NSString *, id> *combination) {
-        CLKOption *alpha = [self parameterOptionFromDictionaryRepresentation:combination];
-        CLKOption *bravo = [self parameterOptionFromDictionaryRepresentation:combination];
-        XCTAssertEqualObjects(alpha, bravo);
-        XCTAssertEqual(alpha.hash, bravo.hash);
-    }];
-}
-
-- (void)testEquality_parameterOptions_notEqual
-{
-    NSArray<CLKOption *> *options = [self generateObjectsFromPrototype:self.standardParameterOptionPrototype block:^(NSDictionary<NSString *, id> *combination) {
-        return [self parameterOptionFromDictionaryRepresentation:combination];
+        CLKOption *option = [self parameterOptionFromDictionaryRepresentation:combination];
+        CLKOption *clone = [self parameterOptionFromDictionaryRepresentation:combination];
+        XCTAssertEqualObjects(option, clone);
+        XCTAssertEqual(option.hash, clone.hash);
+        [options addObject:option];
     }];
     
     for (NSUInteger i = 0 ; i < options.count ; i++) {
@@ -262,14 +283,14 @@ NS_ASSUME_NONNULL_END
 
 - (void)testEqualty_differentTypes
 {
-    CLKOption *switchOption = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
+    CLKOption *switchOption = [CLKOption optionWithName:@"flarn" flag:@"f"];
     CLKOption *parameterOption = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     XCTAssertNotEqualObjects(switchOption, parameterOption);
 }
 
 - (void)testEquality_misc
 {
-    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:nil];
+    CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     XCTAssertNotEqualObjects(option, nil);
     XCTAssertNotEqualObjects(option, @"not an option");
 }
@@ -348,6 +369,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)testDescription
 {
+    #warning add restricted
+    
     CLKOption *switchA = [CLKOption optionWithName:@"switchA" flag:@"a"];
     CLKOption *switchB = [CLKOption optionWithName:@"switchB" flag:nil];
     CLKOption *switchC = [CLKOption optionWithName:@"switchC" flag:@"a" dependencies:@[ @"flarn", @"barf" ]];
@@ -362,6 +385,8 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -(null) | parameter, required, recurrent | dependencies: (null) }", paramB]));
     XCTAssertEqualObjects(paramC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramC | -p | parameter, required, recurrent | dependencies: flarn, barf }", paramC]));
 }
+
+#warning add restricted to testConstraints_*
 
 - (void)testConstraints_switchOptions
 {
@@ -382,6 +407,7 @@ NS_ASSUME_NONNULL_END
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
     
+    # warning i think this was moved to testConstraints_parameterOptions
     /* parameter options */
     
     quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:YES transformer:nil dependencies:nil];

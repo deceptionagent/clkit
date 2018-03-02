@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required;
-+ (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options restricted:(BOOL)restricted;
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required;
 + (instancetype)mutexedGroupForOptionsNamed:(nullable NSArray<NSString *> *)options subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required;
@@ -26,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, readonly) NSArray<CLKOptionGroup *> *subgroups;
 @property (readonly) BOOL mutexed;
 @property (readonly) BOOL required; // at least one member of this group is required
-@property (readonly) BOOL restricted;
 
 @end
 

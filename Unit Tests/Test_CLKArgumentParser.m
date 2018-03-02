@@ -289,9 +289,19 @@ NS_ASSUME_NONNULL_END
 
 - (void)testComplexMix
 {
+    // organized by how they should be interpreted by the parser
     NSArray *argv = @[
-        @"acme", @"--syn", @"aeons", @"--xyzzy", @"thrud", @"-a", @"hack", @"-x", @"-xpx",
-        @"--syn", @"cathedra", @"--noise", @"819", @"--quone", @"confound", @"delivery"
+        @"acme",
+        @"--syn", @"aeons",
+        @"--xyzzy",
+        @"thrud",
+        @"-a", @"hack",
+        @"-x",
+        @"-xpx",
+        @"--syn", @"cathedra",
+        @"--noise", @"819",
+        @"--quone",
+        @"confound", @"delivery"
     ];
     
     NSArray *options = @[
@@ -447,6 +457,8 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
     [self evaluateSpec:spec usingParser:parser];
 }
+
+#warning add testValidation_recurrent
 
 - (void)testValidation_mutualExclusionGroup
 {

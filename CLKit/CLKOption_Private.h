@@ -20,6 +20,7 @@ NSString *CLKStringForOptionType(CLKOptionType type);
                         flag:(nullable NSString *)flag
                     required:(BOOL)required
                    recurrent:(BOOL)recurrent
+                  restricted:(BOOL)restricted
                  transformer:(nullable CLKArgumentTransformer *)transformer
                 dependencies:(nullable NSArray<NSString *> *)dependencies NS_DESIGNATED_INITIALIZER;
 
