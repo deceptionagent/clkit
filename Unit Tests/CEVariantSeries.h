@@ -5,14 +5,14 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol CombinationTumblerDelegate;
+@protocol CEVariantSeriesDelegate;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CombinationTumbler : NSObject
+@interface CEVariantSeries : NSObject
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CombinationTumblerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSeriesDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString *identifier;
 @property (readonly) id currentValue;
 
-- (void)turn;
+- (void)advance;
 
 @end
 
@@ -29,11 +29,11 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol CombinationTumblerDelegate
+@protocol CEVariantSeriesDelegate
 
 @required
 
-- (void)tumblerDidTurnOver:(CombinationTumbler *)tumbler;
+- (void)variantSeriesDidAdvanceToInitialPosition:(CEVariantSeries *)series;
 
 @end
 

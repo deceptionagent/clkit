@@ -133,6 +133,12 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     [super dealloc];
 }
 
+- (id)copyWithZone:(__unused NSZone *)zone
+{
+    // CLKOption is immutable
+    return [self retain];
+}
+
 - (NSString *)description
 {
     NSMutableArray<NSString *> *attrs = [NSMutableArray array];
@@ -198,12 +204,6 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     }
 
     return YES;
-}
-
-- (id)copyWithZone:(__unused NSZone *)zone
-{
-    // CLKOption is immutable
-    return [self retain];
 }
 
 #pragma mark -

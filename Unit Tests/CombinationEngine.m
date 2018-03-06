@@ -4,7 +4,8 @@
 
 #import "CombinationEngine.h"
 
-#import "CombinationTumbler.h"
+#import "CEVariantSeries.h"
+#import "CombinationEngineContext.h"
 
 
 id CEPrototypeNoValue;
@@ -13,20 +14,62 @@ id CEPrototypeNoValue;
 __attribute__((constructor))
 static void _init(void)
 {
-    CEPrototypeNoValue = [[NSUUID alloc] init];
+    CEPrototypeNoValue = [[NSObject alloc] init];
 }
 
 
-@interface CombinationEngine () <CombinationTumblerDelegate>
+NS_ASSUME_NONNULL_BEGIN
+
+@interface _CombinationVariant : NSObject
+{
+    NSArray<CEVariantSeries *> *_tumblers;
+}
+
+- (instancetype)initWithTumblers:(NSArray<CEVariantSeries *> *)tumblers;
+
+@property (readonly) NSArray<CEVariantSeries *> *tumblers;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+
+@implementation _CombinationVariant
+
+@synthesize tumblers = _tumblers;
+
+- (instancetype)initWithTumblers:(NSArray<CEVariantSeries *> *)tumblers
+{
+    self = [super init];
+    if (self != nil) {
+        _tumblers = [tumblers copy];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [_tumblers release];
+    [super dealloc];
+}
+
+@end
+
+
+#pragma mark -
+
+
+@interface CombinationEngine () <CEVariantSeriesDelegate>
 
 @end
 
 
 @implementation CombinationEngine
 {
-    NSMutableArray<CombinationTumbler *> *_tumblers;
-    NSMapTable<CombinationTumbler *, CombinationTumbler *> *_tumblerOrderSiblings; // tumbler -> next highest order tumbler
-    BOOL _exhausted;
+    NSMutableArray<CEVariantSeries *> *_baseTumblers;
+    NSMutableArray<_CombinationVariant *> *_variants;
+    CombinationEngineContext *_currentCombinationContext;
 }
 
 - (instancetype)initWithPrototype:(NSDictionary<NSString *, NSArray *> *)prototype
@@ -35,17 +78,12 @@ static void _init(void)
     
     self = [super init];
     if (self != nil) {
-        _tumblers = [[NSMutableArray alloc] init];
+        _baseTumblers = [[NSMutableArray alloc] init];
         for (NSString *key in prototype) {
             id values = prototype[key];
-            CombinationTumbler *tumbler = [[CombinationTumbler alloc] initWithIdentifier:key values:values delegate:self];
-            [_tumblers addObject:tumbler];
+            CEVariantSeries *tumbler = [[CEVariantSeries alloc] initWithIdentifier:key values:values delegate:self];
+            [_baseTumblers addObject:tumbler];
             [tumbler release];
-        }
-        
-        _tumblerOrderSiblings = [[NSMapTable weakToWeakObjectsMapTable] retain];
-        for (NSUInteger i = 0, j = 1 ; j < _tumblers.count ; i++, j++) {
-            [_tumblerOrderSiblings setObject:_tumblers[j] forKey:_tumblers[i]];
         }
     }
     
@@ -54,48 +92,79 @@ static void _init(void)
 
 - (void)dealloc
 {
-    [_tumblerOrderSiblings release];
-    [_tumblers release];
+    [_currentCombinationContext release];
+    [_variants release];
+    [_baseTumblers release];
     [super dealloc];
 }
 
 - (void)enumerateCombinations:(void (^)(NSDictionary<NSString *, id> *))combinationBlock
 {
-    NSAssert(!_exhausted, @"attempting to re-run an engine");
+    // ...
+}
+
+- (void)_enumerateCombinations:(void (^)(NSDictionary<NSString *, id> *))combinationBlock
+{
+    NSAssert(_currentCombinationContext != nil, @"no context set");
+    NSAssert(!_currentCombinationContext.exhausted, @"attempting to reuse an exhausted context");
     
-    do {
+    while (!_currentCombinationContext.exhausted) {
         @autoreleasepool {
-            // build a combination
-            NSMutableDictionary *combination = [[NSMutableDictionary alloc] init];
-            for (CombinationTumbler *tumbler in _tumblers) {
-                if (tumbler.currentValue == CEPrototypeNoValue) {
-                    // skip this tumbler
-                    continue;
-                }
-                
-                combination[tumbler.identifier] = tumbler.currentValue;
-            }
-            
-            // dispatch the combination to the client and advance the machine
+            // build a combination, dispatch it to the caller, then advance the machine
+            NSDictionary *combination = [self _combinationFromCurrentContext];
             combinationBlock(combination);
-            [_tumblers[0] turn];
-            [combination release];
+            [_currentCombinationContext.tumblers[0] advance];
         }
-    } while (!_exhausted);
+    }
+}
+
+- (NSDictionary<NSString *, id> *)_combinationFromCurrentContext
+{
+    NSMutableDictionary *combination = [[[NSMutableDictionary alloc] init] autorelease];
+    for (CEVariantSeries *tumbler in _currentCombinationContext.tumblers) {
+        if (tumbler.currentValue == CEPrototypeNoValue) {
+            // skip this tumbler
+            continue;
+        }
+        
+        combination[tumbler.identifier] = tumbler.currentValue;
+    }
+    
+    return combination;
+}
+
+- (void)addVariantPrototype:(NSDictionary<NSString *, NSArray *> *)prototype
+{
+    NSMutableArray *tumblers = [[NSMutableArray alloc] init];
+    for (NSString *identifier in prototype) {
+        id values = prototype[identifier];
+        CEVariantSeries *tumbler = [[CEVariantSeries alloc] initWithIdentifier:identifier values:values delegate:self];
+        [tumblers addObject:tumbler];
+        [tumbler release];
+    }
+    
+    _CombinationVariant *variant = [[_CombinationVariant alloc] initWithTumblers:tumblers];
+    
+    if (_variants == nil) {
+        _variants = [[NSMutableArray alloc] init];
+    }
+    
+    [_variants addObject:variant];
+    [variant release];
+    [tumblers release];
 }
 
 #pragma mark -
-#pragma mark <CombinationTumblerDelegate>
+#pragma mark <CEVariantSeriesDelegate>
 
-- (void)tumblerDidTurnOver:(CombinationTumbler *)tumbler
+- (void)variantSeriesDidAdvanceToInitialPosition:(CEVariantSeries *)series
 {
-    CombinationTumbler *nextTumbler = [_tumblerOrderSiblings objectForKey:tumbler];
-    if (nextTumbler == nil) {
-        _exhausted = YES;
-        return;
-    } else {
-        [nextTumbler turn];
-    }
+//    CEVariantSeries *nextTumbler = [_currentCombinationContext tumblerSuperiorToTumbler:tumbler];
+//    if (nextTumbler != nil) {
+//        [nextTumbler turn];
+//    } else {
+//        [_currentCombinationContext setExhausted];
+//    }
 }
 
 @end
