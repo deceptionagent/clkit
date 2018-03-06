@@ -2,20 +2,20 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "CEVariantSeries.h"
+#import "CEVariantSource.h"
 
 
-@implementation CEVariantSeries
+@implementation CEVariantSource
 {
     NSString *_identifier;
     NSArray *_values;
-    id<CEVariantSeriesDelegate> _delegate;
+    id<CEVariantSourceDelegate> _delegate;
     NSUInteger _currentPosition;
 }
 
 @synthesize identifier = _identifier;
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSeriesDelegate>)delegate
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSourceDelegate>)delegate
 {
     NSParameterAssert(identifier.length > 0);
     NSParameterAssert(values.count > 0);
@@ -49,12 +49,12 @@
     return _values[_currentPosition];
 }
 
-- (void)advance
+- (void)advanceToNextValue
 {
     _currentPosition++;
     if (_currentPosition >= _values.count) {
         _currentPosition = 0;
-        [_delegate variantSeriesDidAdvanceToInitialPosition:self];
+        [_delegate variantSourceDidAdvanceToInitialValue:self];
     }
 }
 

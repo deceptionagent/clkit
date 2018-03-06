@@ -4,7 +4,7 @@
 
 #import "CombinationEngine.h"
 
-#import "CEVariantSeries.h"
+#import "CEVariantSource.h"
 #import "CombinationEngineContext.h"
 
 
@@ -22,12 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _CombinationVariant : NSObject
 {
-    NSArray<CEVariantSeries *> *_tumblers;
+    NSArray<CEVariantSource *> *_tumblers;
 }
 
-- (instancetype)initWithTumblers:(NSArray<CEVariantSeries *> *)tumblers;
+- (instancetype)initWithTumblers:(NSArray<CEVariantSource *> *)tumblers;
 
-@property (readonly) NSArray<CEVariantSeries *> *tumblers;
+@property (readonly) NSArray<CEVariantSource *> *tumblers;
 
 @end
 
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_END
 
 @synthesize tumblers = _tumblers;
 
-- (instancetype)initWithTumblers:(NSArray<CEVariantSeries *> *)tumblers
+- (instancetype)initWithTumblers:(NSArray<CEVariantSource *> *)tumblers
 {
     self = [super init];
     if (self != nil) {
@@ -60,14 +60,14 @@ NS_ASSUME_NONNULL_END
 #pragma mark -
 
 
-@interface CombinationEngine () <CEVariantSeriesDelegate>
+@interface CombinationEngine () <CEVariantSourceDelegate>
 
 @end
 
 
 @implementation CombinationEngine
 {
-    NSMutableArray<CEVariantSeries *> *_baseTumblers;
+    NSMutableArray<CEVariantSource *> *_baseTumblers;
     NSMutableArray<_CombinationVariant *> *_variants;
     CombinationEngineContext *_currentCombinationContext;
 }
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_END
         _baseTumblers = [[NSMutableArray alloc] init];
         for (NSString *key in prototype) {
             id values = prototype[key];
-            CEVariantSeries *tumbler = [[CEVariantSeries alloc] initWithIdentifier:key values:values delegate:self];
+            CEVariantSource *tumbler = [[CEVariantSource alloc] initWithIdentifier:key values:values delegate:self];
             [_baseTumblers addObject:tumbler];
             [tumbler release];
         }
@@ -113,7 +113,7 @@ NS_ASSUME_NONNULL_END
             // build a combination, dispatch it to the caller, then advance the machine
             NSDictionary *combination = [self _combinationFromCurrentContext];
             combinationBlock(combination);
-            [_currentCombinationContext.tumblers[0] advance];
+            [_currentCombinationContext.tumblers[0] advanceToNextValue];
         }
     }
 }
@@ -121,7 +121,7 @@ NS_ASSUME_NONNULL_END
 - (NSDictionary<NSString *, id> *)_combinationFromCurrentContext
 {
     NSMutableDictionary *combination = [[[NSMutableDictionary alloc] init] autorelease];
-    for (CEVariantSeries *tumbler in _currentCombinationContext.tumblers) {
+    for (CEVariantSource *tumbler in _currentCombinationContext.tumblers) {
         if (tumbler.currentValue == CEPrototypeNoValue) {
             // skip this tumbler
             continue;
@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_END
     NSMutableArray *tumblers = [[NSMutableArray alloc] init];
     for (NSString *identifier in prototype) {
         id values = prototype[identifier];
-        CEVariantSeries *tumbler = [[CEVariantSeries alloc] initWithIdentifier:identifier values:values delegate:self];
+        CEVariantSource *tumbler = [[CEVariantSource alloc] initWithIdentifier:identifier values:values delegate:self];
         [tumblers addObject:tumbler];
         [tumbler release];
     }
@@ -155,9 +155,9 @@ NS_ASSUME_NONNULL_END
 }
 
 #pragma mark -
-#pragma mark <CEVariantSeriesDelegate>
+#pragma mark <CEVariantSourceDelegate>
 
-- (void)variantSeriesDidAdvanceToInitialPosition:(CEVariantSeries *)series
+- (void)variantSourceDidAdvanceToInitialValue:(CEVariantSource *)series
 {
 //    CEVariantSeries *nextTumbler = [_currentCombinationContext tumblerSuperiorToTumbler:tumbler];
 //    if (nextTumbler != nil) {

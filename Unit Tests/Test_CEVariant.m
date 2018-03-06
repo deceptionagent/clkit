@@ -5,20 +5,20 @@
 #import <XCTest/XCTest.h>
 
 #import "CEVariant.h"
-#import "CEVariantSeries.h"
+#import "CEVariantSource.h"
 #import "CEVariantTag.h"
 
 
-@interface Test_CEVariant : XCTestCase <CEVariantSeriesDelegate>
+@interface Test_CEVariant : XCTestCase <CEVariantSourceDelegate>
 
 @end
 
 
 @implementation Test_CEVariant
 
-#pragma mark <CEVariantSeriesDelegate>
+#pragma mark <CEVariantSourceDelegate>
 
-- (void)variantSeriesDidAdvanceToInitialPosition:(__unused CEVariantSeries *)series
+- (void)variantSourceDidAdvanceToInitialValue:(__unused CEVariantSource *)source
 {
     // protocol compliance only
 }
@@ -28,10 +28,32 @@
 - (void)testInit
 {
     CEVariantTag *tag = [CEVariantTag tag];
-    CEVariantSeries *series = [[[CEVariantSeries alloc] initWithIdentifier:@"flarn" values:@[ @"barf" ] delegate:self] autorelease];
-    CEVariant *variant = [[[CEVariant alloc] initWithSeries:series tag:tag] autorelease];
+    CEVariantSource *source = [[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"barf" ] delegate:self] autorelease];
+    CEVariant *variant = [[[CEVariant alloc] initWithTag:tag rootSource:source] autorelease];
     XCTAssertNotNil(variant);
-    XCTAssertEqual(variant.series, series);
+    XCTAssertEqualObjects(variant.sources, [NSSet setWithObject: source]);
+}
+
+- (void)testVariantSourceToolbox
+{
+    CEVariantTag *tag = [CEVariantTag tag];
+    CEVariantSource *alpha = [[[CEVariantSource alloc] initWithIdentifier:@"alpha" values:@[ @"barf" ] delegate:self] autorelease];
+    CEVariantSource *bravo = [[[CEVariantSource alloc] initWithIdentifier:@"bravo" values:@[ @"barf" ] delegate:self] autorelease];
+    CEVariantSource *charlie = [[[CEVariantSource alloc] initWithIdentifier:@"charlie" values:@[ @"barf" ] delegate:self] autorelease];
+    
+    CEVariant *variant = [[[CEVariant alloc] initWithTag:tag rootSource:alpha] autorelease];
+    XCTAssertNil([variant sourceSuperiorToSource:alpha]);
+    
+    [variant addSource:bravo superiorToSource:alpha];
+    XCTAssertEqual([variant sourceSuperiorToSource:alpha], bravo);
+    XCTAssertNil([variant sourceSuperiorToSource:bravo]);
+    
+    [variant addSource:charlie superiorToSource:bravo];
+    XCTAssertEqual([variant sourceSuperiorToSource:alpha], bravo);
+    XCTAssertEqual([variant sourceSuperiorToSource:bravo], charlie);
+    XCTAssertNil([variant sourceSuperiorToSource:charlie]);
+    
+    XCTAssertEqualObjects(variant.sources, ([NSSet setWithArray:@[ alpha, bravo, charlie]]));
 }
 
 @end

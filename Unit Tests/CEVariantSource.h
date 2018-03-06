@@ -5,14 +5,14 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol CEVariantSeriesDelegate;
+@protocol CEVariantSourceDelegate;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CEVariantSeries : NSObject
+@interface CEVariantSource : NSObject
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSeriesDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSourceDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString *identifier;
 @property (readonly) id currentValue;
 
-- (void)advance;
+- (void)advanceToNextValue;
 
 @end
 
@@ -29,11 +29,11 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol CEVariantSeriesDelegate
+@protocol CEVariantSourceDelegate
 
 @required
 
-- (void)variantSeriesDidAdvanceToInitialPosition:(CEVariantSeries *)series;
+- (void)variantSourceDidAdvanceToInitialValue:(CEVariantSource *)source;
 
 @end
 
