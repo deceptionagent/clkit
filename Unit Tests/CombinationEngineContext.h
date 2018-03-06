@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class CEVariantSeries;
+@class CEVariantSource;
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,11 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 #warning add tests
 @interface CombinationEngineContext : NSObject
 
-- (instancetype)initWithTumblers:(NSArray<CEVariantSeries *> *)tumblers;
+- (instancetype)initWithTumblers:(NSArray<CEVariantSource *> *)tumblers;
 
-@property (readonly) NSArray<CEVariantSeries *> *tumblers;
+@property (readonly) NSArray<CEVariantSource *> *tumblers;
 
-- (nullable CEVariantSeries *)tumblerSuperiorToTumbler:(CEVariantSeries *)tumbler;
+- (nullable CEVariantSource *)tumblerSuperiorToTumbler:(CEVariantSource *)tumbler;
 
 @property (readonly) BOOL exhausted;
 - (void)setExhausted;

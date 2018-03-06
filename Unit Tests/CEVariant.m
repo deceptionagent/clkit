@@ -7,19 +7,21 @@
 
 @implementation CEVariant
 {
-    CEVariantSeries *_series;
     CEVariantTag *_tag;
+    NSMutableSet *_sources;
+    NSMapTable<CEVariantSource *, CEVariantSource *> *_taxonomyMap; // inferior : superior
 }
 
-@synthesize series = _series;
 @synthesize tag = _tag;
+@synthesize sources = _sources;
 
-- (instancetype)initWithSeries:(CEVariantSeries *)series tag:(CEVariantTag *)tag
+- (instancetype)initWithTag:(CEVariantTag *)tag rootSource:(CEVariantSource *)source
 {
     self = [super init];
     if (self != nil) {
-        _series = [series retain];
         _tag = [tag retain];
+        _sources = [[NSMutableSet setWithObject:source] retain];
+        _taxonomyMap = [[NSMapTable strongToStrongObjectsMapTable] retain];
     }
     
     return self;
@@ -27,9 +29,25 @@
 
 - (void)dealloc
 {
-    [_series release];
     [_tag release];
+    [_taxonomyMap release];
     [super dealloc];
+}
+
+#pragma mark -
+
+- (void)addSource:(CEVariantSource *)superiorSource superiorToSource:(CEVariantSource *)inferiorSource
+{
+    NSAssert([_sources containsObject:inferiorSource], @"inferior source not registered: %@", inferiorSource);
+    NSAssert(![_sources containsObject:superiorSource], @"superior source already registered: %@", superiorSource);
+    NSAssert(([_taxonomyMap objectForKey:inferiorSource] == nil), @"inferior source already mapped: %@", inferiorSource);
+    [_sources addObject:superiorSource];
+    [_taxonomyMap setObject:superiorSource forKey:inferiorSource];
+}
+
+- (CEVariantSource *)sourceSuperiorToSource:(CEVariantSource *)source
+{
+    return [_taxonomyMap objectForKey:source];
 }
 
 @end

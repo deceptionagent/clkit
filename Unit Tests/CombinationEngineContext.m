@@ -4,20 +4,20 @@
 
 #import "CombinationEngineContext.h"
 
-#import "CEVariantSeries.h"
+#import "CEVariantSource.h"
 
 
 @implementation CombinationEngineContext
 {
-    NSArray<CEVariantSeries *> *_tumblers;
-    NSMapTable<CEVariantSeries *, CEVariantSeries *> *_taxonomyMap; // (inferior) tumbler -> (superior) next highest order tumbler
+    NSArray<CEVariantSource *> *_tumblers;
+    NSMapTable<CEVariantSource *, CEVariantSource *> *_taxonomyMap; // (inferior) tumbler -> (superior) next highest order tumbler
     BOOL _exhausted;
 }
 
 @synthesize tumblers = _tumblers;
 @synthesize exhausted = _exhausted;
 
-- (instancetype)initWithTumblers:(NSArray<CEVariantSeries *> *)tumblers
+- (instancetype)initWithTumblers:(NSArray<CEVariantSource *> *)tumblers
 {
     self = [super init];
     if (self != nil) {
@@ -41,7 +41,7 @@
 
 #pragma mark -
 
-- (nullable CEVariantSeries *)tumblerSuperiorToTumbler:(CEVariantSeries *)tumbler
+- (nullable CEVariantSource *)tumblerSuperiorToTumbler:(CEVariantSource *)tumbler
 {
     return [_taxonomyMap objectForKey:tumbler];
 }

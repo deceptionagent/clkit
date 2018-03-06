@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 
 
-@class CEVariantSeries;
+@class CEVariantSource;
 @class CEVariantTag;
 
 
@@ -13,15 +13,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariant : NSObject
 
-#warning supposed to be array<series>?
-- (instancetype)initWithSeries:(CEVariantSeries *)series tag:(CEVariantTag *)tag NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTag:(CEVariantTag *)tag rootSource:(CEVariantSource *)source NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-#warning supposed to be array<series>?
-@property (readonly) CEVariantSeries *series;
 @property (readonly) CEVariantTag *tag;
+@property (readonly) NSSet<CEVariantSource *> *sources;
+
+- (void)addSource:(CEVariantSource *)superiorSource superiorToSource:(CEVariantSource *)inferiorSource;
+- (nullable CEVariantSource *)sourceSuperiorToSource:(CEVariantSource *)source;
 
 @end
 

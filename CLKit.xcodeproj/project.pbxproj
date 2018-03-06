@@ -57,8 +57,8 @@
 		A6E478FC1F1347530081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E478FF1F13475B0081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E9BC22203A173E001B7095 /* CombinationEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC20203A173E001B7095 /* CombinationEngine.m */; };
-		A6E9BC23203A173E001B7095 /* CEVariantSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC21203A173E001B7095 /* CEVariantSeries.m */; };
-		A6E9BC27203A17AE001B7095 /* Test_CEVariantSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC25203A17AE001B7095 /* Test_CEVariantSeries.m */; };
+		A6E9BC23203A173E001B7095 /* CEVariantSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC21203A173E001B7095 /* CEVariantSource.m */; };
+		A6E9BC27203A17AE001B7095 /* Test_CEVariantSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -164,11 +164,11 @@
 		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6E9BC1E203A173E001B7095 /* CombinationEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinationEngine.h; sourceTree = "<group>"; };
-		A6E9BC1F203A173E001B7095 /* CEVariantSeries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEVariantSeries.h; sourceTree = "<group>"; };
+		A6E9BC1F203A173E001B7095 /* CEVariantSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEVariantSource.h; sourceTree = "<group>"; };
 		A6E9BC20203A173E001B7095 /* CombinationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CombinationEngine.m; sourceTree = "<group>"; };
-		A6E9BC21203A173E001B7095 /* CEVariantSeries.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEVariantSeries.m; sourceTree = "<group>"; };
+		A6E9BC21203A173E001B7095 /* CEVariantSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEVariantSource.m; sourceTree = "<group>"; };
 		A6E9BC24203A17AE001B7095 /* Test_CombinationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CombinationEngine.m; sourceTree = "<group>"; };
-		A6E9BC25203A17AE001B7095 /* Test_CEVariantSeries.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantSeries.m; sourceTree = "<group>"; };
+		A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantSource.m; sourceTree = "<group>"; };
 		A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption_Private.h; sourceTree = "<group>"; };
 		A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifest_Private.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -217,8 +217,8 @@
 				A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */,
 				A634BCE2204C0F9600E2BA10 /* CEVariant.h */,
 				A634BCE3204C0F9600E2BA10 /* CEVariant.m */,
-				A6E9BC1F203A173E001B7095 /* CEVariantSeries.h */,
-				A6E9BC21203A173E001B7095 /* CEVariantSeries.m */,
+				A6E9BC1F203A173E001B7095 /* CEVariantSource.h */,
+				A6E9BC21203A173E001B7095 /* CEVariantSource.m */,
 				A634BCD2204BDD1200E2BA10 /* CEVariantTag.h */,
 				A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */,
 			);
@@ -233,7 +233,7 @@
 				A634BCE0204C074700E2BA10 /* Test_CETemplate.m */,
 				A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */,
 				A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */,
-				A6E9BC25203A17AE001B7095 /* Test_CEVariantSeries.m */,
+				A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */,
 				A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */,
 			);
 			name = Tests;
@@ -509,7 +509,7 @@
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
 				A634BCD4204BDD1200E2BA10 /* CEVariantTag.m in Sources */,
-				A6E9BC27203A17AE001B7095 /* Test_CEVariantSeries.m in Sources */,
+				A6E9BC27203A17AE001B7095 /* Test_CEVariantSource.m in Sources */,
 				A634BCD7204BDF8E00E2BA10 /* Test_CEVariantTag.m in Sources */,
 				A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */,
 				A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */,
@@ -523,7 +523,7 @@
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
 				A634BCE4204C0F9600E2BA10 /* CEVariant.m in Sources */,
-				A6E9BC23203A173E001B7095 /* CEVariantSeries.m in Sources */,
+				A6E9BC23203A173E001B7095 /* CEVariantSource.m in Sources */,
 				A634BCDF204C047E00E2BA10 /* CETemplate.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
 				A62AAB2C20495D57003910B0 /* CombinationEngineContext.m in Sources */,
