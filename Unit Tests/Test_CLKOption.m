@@ -237,6 +237,8 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqual(alphaA, alphaB); // CLKOption is immutable; -copy should return the receiver retained
 }
 
+#warning add restricted
+
 - (void)testEquality_switchOptions
 {
     __block NSMutableArray *options = [NSMutableArray array];
@@ -326,7 +328,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)testCollectionSupport_dictionaryKeys
+- (void)testCollectionSupport_dictionaryKey
 {
     __block NSMutableArray<CLKOption *> *options = [NSMutableArray array];
     __block NSMutableArray<CLKOption *> *optionClones = [NSMutableArray array]; // verify lookup works for identical instances

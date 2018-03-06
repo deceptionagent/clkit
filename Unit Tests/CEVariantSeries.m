@@ -2,20 +2,20 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "CombinationTumbler.h"
+#import "CEVariantSeries.h"
 
 
-@implementation CombinationTumbler
+@implementation CEVariantSeries
 {
     NSString *_identifier;
     NSArray *_values;
-    id<CombinationTumblerDelegate> _delegate;
+    id<CEVariantSeriesDelegate> _delegate;
     NSUInteger _currentPosition;
 }
 
 @synthesize identifier = _identifier;
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CombinationTumblerDelegate>)delegate
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSeriesDelegate>)delegate
 {
     NSParameterAssert(identifier.length > 0);
     NSParameterAssert(values.count > 0);
@@ -49,12 +49,12 @@
     return _values[_currentPosition];
 }
 
-- (void)turn
+- (void)advance
 {
     _currentPosition++;
     if (_currentPosition >= _values.count) {
         _currentPosition = 0;
-        [_delegate tumblerDidTurnOver:self];
+        [_delegate variantSeriesDidAdvanceToInitialPosition:self];
     }
 }
 

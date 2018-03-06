@@ -14,7 +14,18 @@
 		A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DB1F5D1BAB0088DEDA /* CLKError.m */; };
 		A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */; };
 		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
+		A62AAB2C20495D57003910B0 /* CombinationEngineContext.m in Sources */ = {isa = PBXBuildFile; fileRef = A62AAB2B20495D57003910B0 /* CombinationEngineContext.m */; };
 		A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */; };
+		A634BCD4204BDD1200E2BA10 /* CEVariantTag.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */; };
+		A634BCD7204BDF8E00E2BA10 /* Test_CEVariantTag.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */; };
+		A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */; };
+		A634BCDC204C00A800E2BA10 /* Test_CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */; };
+		A634BCDF204C047E00E2BA10 /* CETemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDE204C047E00E2BA10 /* CETemplate.m */; };
+		A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE0204C074700E2BA10 /* Test_CETemplate.m */; };
+		A634BCE4204C0F9600E2BA10 /* CEVariant.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE3204C0F9600E2BA10 /* CEVariant.m */; };
+		A634BCE6204C10E400E2BA10 /* Test_CEVariant.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */; };
+		A634BCE9204C13C500E2BA10 /* CECombination.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE8204C13C500E2BA10 /* CECombination.m */; };
+		A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCEB204C174F00E2BA10 /* Test_CECombination.m */; };
 		A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */; };
 		A6602118203A754D004C17FB /* Test_CombinationEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC24203A17AE001B7095 /* Test_CombinationEngine.m */; };
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
@@ -46,8 +57,8 @@
 		A6E478FC1F1347530081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E478FF1F13475B0081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E9BC22203A173E001B7095 /* CombinationEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC20203A173E001B7095 /* CombinationEngine.m */; };
-		A6E9BC23203A173E001B7095 /* CombinationTumbler.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC21203A173E001B7095 /* CombinationTumbler.m */; };
-		A6E9BC27203A17AE001B7095 /* Test_CombinationTumbler.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC25203A17AE001B7095 /* Test_CombinationTumbler.m */; };
+		A6E9BC23203A173E001B7095 /* CEVariantSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC21203A173E001B7095 /* CEVariantSeries.m */; };
+		A6E9BC27203A17AE001B7095 /* Test_CEVariantSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC25203A17AE001B7095 /* Test_CEVariantSeries.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,8 +99,26 @@
 		A609E2DB1F5D1BAB0088DEDA /* CLKError.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKError.m; sourceTree = "<group>"; };
 		A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentManifestValidator.m; sourceTree = "<group>"; };
 		A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAssert.m; sourceTree = "<group>"; };
+		A62AAB2A20495D57003910B0 /* CombinationEngineContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CombinationEngineContext.h; sourceTree = "<group>"; };
+		A62AAB2B20495D57003910B0 /* CombinationEngineContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CombinationEngineContext.m; sourceTree = "<group>"; };
 		A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstraintValidationSpec.h; sourceTree = "<group>"; };
 		A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConstraintValidationSpec.m; sourceTree = "<group>"; };
+		A634BCD2204BDD1200E2BA10 /* CEVariantTag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariantTag.h; sourceTree = "<group>"; };
+		A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariantTag.m; sourceTree = "<group>"; };
+		A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantTag.m; sourceTree = "<group>"; };
+		A634BCD8204BF96800E2BA10 /* CETemplateSeries.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETemplateSeries.h; sourceTree = "<group>"; };
+		A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CETemplateSeries.m; sourceTree = "<group>"; };
+		A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CETemplateSeries.m; sourceTree = "<group>"; };
+		A634BCDD204C047E00E2BA10 /* CETemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETemplate.h; sourceTree = "<group>"; };
+		A634BCDE204C047E00E2BA10 /* CETemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CETemplate.m; sourceTree = "<group>"; };
+		A634BCE0204C074700E2BA10 /* Test_CETemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CETemplate.m; sourceTree = "<group>"; };
+		A634BCE2204C0F9600E2BA10 /* CEVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariant.h; sourceTree = "<group>"; };
+		A634BCE3204C0F9600E2BA10 /* CEVariant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariant.m; sourceTree = "<group>"; };
+		A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariant.m; sourceTree = "<group>"; };
+		A634BCE7204C13C500E2BA10 /* CECombination.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CECombination.h; sourceTree = "<group>"; };
+		A634BCE8204C13C500E2BA10 /* CECombination.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CECombination.m; sourceTree = "<group>"; };
+		A634BCEA204C16D500E2BA10 /* CECombination_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CECombination_Private.h; sourceTree = "<group>"; };
+		A634BCEB204C174F00E2BA10 /* Test_CECombination.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CECombination.m; sourceTree = "<group>"; };
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
 		A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKVerbDepot.m; sourceTree = "<group>"; };
@@ -135,11 +164,11 @@
 		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6E9BC1E203A173E001B7095 /* CombinationEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinationEngine.h; sourceTree = "<group>"; };
-		A6E9BC1F203A173E001B7095 /* CombinationTumbler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinationTumbler.h; sourceTree = "<group>"; };
+		A6E9BC1F203A173E001B7095 /* CEVariantSeries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEVariantSeries.h; sourceTree = "<group>"; };
 		A6E9BC20203A173E001B7095 /* CombinationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CombinationEngine.m; sourceTree = "<group>"; };
-		A6E9BC21203A173E001B7095 /* CombinationTumbler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CombinationTumbler.m; sourceTree = "<group>"; };
+		A6E9BC21203A173E001B7095 /* CEVariantSeries.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEVariantSeries.m; sourceTree = "<group>"; };
 		A6E9BC24203A17AE001B7095 /* Test_CombinationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CombinationEngine.m; sourceTree = "<group>"; };
-		A6E9BC25203A17AE001B7095 /* Test_CombinationTumbler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CombinationTumbler.m; sourceTree = "<group>"; };
+		A6E9BC25203A17AE001B7095 /* Test_CEVariantSeries.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantSeries.m; sourceTree = "<group>"; };
 		A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption_Private.h; sourceTree = "<group>"; };
 		A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifest_Private.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -171,6 +200,45 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A634BCD1204BDC9900E2BA10 /* Combination Engine */ = {
+			isa = PBXGroup;
+			children = (
+				A634BCD5204BDF6B00E2BA10 /* Tests */,
+				A6E9BC1E203A173E001B7095 /* CombinationEngine.h */,
+				A6E9BC20203A173E001B7095 /* CombinationEngine.m */,
+				A62AAB2A20495D57003910B0 /* CombinationEngineContext.h */,
+				A62AAB2B20495D57003910B0 /* CombinationEngineContext.m */,
+				A634BCE7204C13C500E2BA10 /* CECombination.h */,
+				A634BCEA204C16D500E2BA10 /* CECombination_Private.h */,
+				A634BCE8204C13C500E2BA10 /* CECombination.m */,
+				A634BCDD204C047E00E2BA10 /* CETemplate.h */,
+				A634BCDE204C047E00E2BA10 /* CETemplate.m */,
+				A634BCD8204BF96800E2BA10 /* CETemplateSeries.h */,
+				A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */,
+				A634BCE2204C0F9600E2BA10 /* CEVariant.h */,
+				A634BCE3204C0F9600E2BA10 /* CEVariant.m */,
+				A6E9BC1F203A173E001B7095 /* CEVariantSeries.h */,
+				A6E9BC21203A173E001B7095 /* CEVariantSeries.m */,
+				A634BCD2204BDD1200E2BA10 /* CEVariantTag.h */,
+				A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */,
+			);
+			name = "Combination Engine";
+			sourceTree = "<group>";
+		};
+		A634BCD5204BDF6B00E2BA10 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A6E9BC24203A17AE001B7095 /* Test_CombinationEngine.m */,
+				A634BCEB204C174F00E2BA10 /* Test_CECombination.m */,
+				A634BCE0204C074700E2BA10 /* Test_CETemplate.m */,
+				A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */,
+				A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */,
+				A6E9BC25203A17AE001B7095 /* Test_CEVariantSeries.m */,
+				A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 		A6527C471F0A4CFA00BF6FAE /* Arguments */ = {
 			isa = PBXGroup;
 			children = (
@@ -244,8 +312,6 @@
 			isa = PBXGroup;
 			children = (
 				A6E9BC1D203A165B001B7095 /* Testing Support */,
-				A6E9BC24203A17AE001B7095 /* Test_CombinationEngine.m */,
-				A6E9BC25203A17AE001B7095 /* Test_CombinationTumbler.m */,
 				A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */,
 				A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */,
 				A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */,
@@ -289,12 +355,9 @@
 		A6E9BC1D203A165B001B7095 /* Testing Support */ = {
 			isa = PBXGroup;
 			children = (
+				A634BCD1204BDC9900E2BA10 /* Combination Engine */,
 				A6E34F69202C59E900CE22E1 /* ArgumentParserSpec.h */,
 				A6E34F6A202C59E900CE22E1 /* ArgumentParserSpec.m */,
-				A6E9BC1E203A173E001B7095 /* CombinationEngine.h */,
-				A6E9BC20203A173E001B7095 /* CombinationEngine.m */,
-				A6E9BC1F203A173E001B7095 /* CombinationTumbler.h */,
-				A6E9BC21203A173E001B7095 /* CombinationTumbler.m */,
 				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
 				A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */,
 				A609E2C21F5964670088DEDA /* XCTestCase+CLKAdditions.h */,
@@ -440,20 +503,31 @@
 				A6BB1B402033F74A00927BD9 /* Test_CLKOptionRegistry.m in Sources */,
 				A6E9BC22203A173E001B7095 /* CombinationEngine.m in Sources */,
 				A6E34F6B202C59E900CE22E1 /* ArgumentParserSpec.m in Sources */,
+				A634BCE6204C10E400E2BA10 /* Test_CEVariant.m in Sources */,
 				A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */,
+				A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */,
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
-				A6E9BC27203A17AE001B7095 /* Test_CombinationTumbler.m in Sources */,
+				A634BCD4204BDD1200E2BA10 /* CEVariantTag.m in Sources */,
+				A6E9BC27203A17AE001B7095 /* Test_CEVariantSeries.m in Sources */,
+				A634BCD7204BDF8E00E2BA10 /* Test_CEVariantTag.m in Sources */,
+				A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */,
 				A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */,
 				A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */,
 				A6602118203A754D004C17FB /* Test_CombinationEngine.m in Sources */,
+				A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */,
 				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
 				A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */,
+				A634BCE9204C13C500E2BA10 /* CECombination.m in Sources */,
 				A6CFEAA5200D39910009B8D2 /* Test_CLKOptionGroup.m in Sources */,
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
-				A6E9BC23203A173E001B7095 /* CombinationTumbler.m in Sources */,
+				A634BCE4204C0F9600E2BA10 /* CEVariant.m in Sources */,
+				A6E9BC23203A173E001B7095 /* CEVariantSeries.m in Sources */,
+				A634BCDF204C047E00E2BA10 /* CETemplate.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
+				A62AAB2C20495D57003910B0 /* CombinationEngineContext.m in Sources */,
+				A634BCDC204C00A800E2BA10 /* Test_CETemplateSeries.m in Sources */,
 				A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

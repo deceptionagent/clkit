@@ -20,6 +20,8 @@ extern id CEPrototypeNoValue;
 
 - (void)enumerateCombinations:(void (^)(NSDictionary<NSString *, id> *))combinationBlock;
 
+- (void)addVariantPrototype:(NSDictionary<NSString *, NSArray *> *)prototype;
+
 @end
 
 NS_ASSUME_NONNULL_END
