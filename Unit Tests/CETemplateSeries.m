@@ -7,6 +7,16 @@
 #import "CEVariantTag.h"
 
 
+id CETemplateSeriesNoValue;
+
+
+__attribute__((constructor))
+static void _init(void)
+{
+    CETemplateSeriesNoValue = [[NSObject alloc] init];
+}
+
+
 @implementation CETemplateSeries
 {
     NSString *_identifier;

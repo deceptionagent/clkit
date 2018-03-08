@@ -5,10 +5,15 @@
 #import <Foundation/Foundation.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
+
+// a special value for use in template series value arrays. allows a combination engine to generate combinations that
+// lack particular keys when CETemplateSeriesNoValue would be chosen for those keys.
+extern id CETemplateSeriesNoValue;
+
+
 @class CEVariantTag;
 
-
-NS_ASSUME_NONNULL_BEGIN
 
 @interface CETemplateSeries : NSObject
 
