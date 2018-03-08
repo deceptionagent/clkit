@@ -9,13 +9,13 @@
 {
     NSString *_identifier;
     NSArray *_values;
-    id<CEVariantSourceDelegate> _delegate;
     NSUInteger _currentPosition;
+    NSMutableArray<id<CEVariantSourceObserver>> *_observers;
 }
 
 @synthesize identifier = _identifier;
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSourceDelegate>)delegate
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values
 {
     NSParameterAssert(identifier.length > 0);
     NSParameterAssert(values.count > 0);
@@ -24,7 +24,7 @@
     if (self != nil) {
         _identifier = [identifier copy];
         _values = [values copy];
-        _delegate = delegate;
+        _observers = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -32,6 +32,7 @@
 
 - (void)dealloc
 {
+    [_observers release];
     [_values release];
     [_identifier release];
     [super dealloc];
@@ -54,7 +55,26 @@
     _currentPosition++;
     if (_currentPosition >= _values.count) {
         _currentPosition = 0;
-        [_delegate variantSourceDidAdvanceToInitialValue:self];
+        [self _notifyObservers_variantSourceDidAdvanceToInitialValue];
+    }
+}
+
+#pragma mark -
+
+- (void)addObserver:(id<CEVariantSourceObserver>)observer
+{
+    [_observers addObject:observer];
+}
+
+- (void)removeObserver:(id<CEVariantSourceObserver>)observer
+{
+    [_observers removeObject:observer];
+}
+
+- (void)_notifyObservers_variantSourceDidAdvanceToInitialValue
+{
+    for (id<CEVariantSourceObserver> observer in _observers) {
+        [observer variantSourceDidAdvanceToInitialValue:self];
     }
 }
 

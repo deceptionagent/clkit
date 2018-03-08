@@ -5,14 +5,14 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol CEVariantSourceDelegate;
+@protocol CEVariantSourceObserver;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariantSource : NSObject
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values delegate:(id<CEVariantSourceDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -22,6 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)advanceToNextValue;
 
+- (void)addObserver:(id<CEVariantSourceObserver>)observer;
+- (void)removeObserver:(id<CEVariantSourceObserver>)observer;
+
 @end
 
 NS_ASSUME_NONNULL_END
@@ -29,7 +32,7 @@ NS_ASSUME_NONNULL_END
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol CEVariantSourceDelegate
+@protocol CEVariantSourceObserver
 
 @required
 

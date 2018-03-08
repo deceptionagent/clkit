@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_END
 #pragma mark -
 
 
-@interface CombinationEngine () <CEVariantSourceDelegate>
+@interface CombinationEngine () <CEVariantSourceObserver>
 
 @end
 
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_END
         _baseTumblers = [[NSMutableArray alloc] init];
         for (NSString *key in prototype) {
             id values = prototype[key];
-            CEVariantSource *tumbler = [[CEVariantSource alloc] initWithIdentifier:key values:values delegate:self];
+            CEVariantSource *tumbler = [[CEVariantSource alloc] initWithIdentifier:key values:values];
             [_baseTumblers addObject:tumbler];
             [tumbler release];
         }
@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_END
     NSMutableArray *tumblers = [[NSMutableArray alloc] init];
     for (NSString *identifier in prototype) {
         id values = prototype[identifier];
-        CEVariantSource *tumbler = [[CEVariantSource alloc] initWithIdentifier:identifier values:values delegate:self];
+        CEVariantSource *tumbler = [[CEVariantSource alloc] initWithIdentifier:identifier values:values];
         [tumblers addObject:tumbler];
         [tumbler release];
     }

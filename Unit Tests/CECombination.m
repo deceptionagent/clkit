@@ -4,7 +4,6 @@
 
 #import "CECombination_Private.h"
 
-#import "CLKAssert.h"
 #import "CEVariantTag.h"
 
 
@@ -37,7 +36,7 @@
 - (id)objectForKeyedSubscript:(NSString *)identifier
 {
     id value = _combination[identifier];
-    CLKHardAssert((value != nil), NSInvalidArgumentException, @"subscripting unknown identifier '%@'", identifier);
+    NSAssert((value != nil), NSInvalidArgumentException, @"subscripting unknown identifier '%@'", identifier);
     return value;
 }
 
