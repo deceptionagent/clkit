@@ -12,7 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CECombination ()
 
-- (instancetype)initWithCombinationDictionary:(NSDictionary<NSString *, id> *)dictionary tag:(CEVariantTag *)tag NS_DESIGNATED_INITIALIZER;
++ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag;
+- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag NS_DESIGNATED_INITIALIZER;
+
+@property (readonly) NSDictionary<NSString *, id> *backing;
 
 @end
 

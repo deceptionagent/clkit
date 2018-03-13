@@ -32,7 +32,13 @@
     CEVariantTag *alpha = [CEVariantTag tag];
     CEVariantTag *bravo = [CEVariantTag tag];
     XCTAssertEqualObjects(alpha, alpha);
+    XCTAssertTrue([alpha isEqualToVariantTag:alpha]);
+    
     XCTAssertNotEqualObjects(alpha, bravo);
+    XCTAssertFalse([alpha isEqualToVariantTag:bravo]);
+    
+    XCTAssertEqual(alpha.hash, alpha.hash);
+    XCTAssertNotEqual(alpha.hash, bravo.hash);
 }
 
 - (void)testCollectionSupport_dictionaryKey

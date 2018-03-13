@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // a special value for use in template series value arrays. allows a combination engine to generate combinations that
 // lack particular keys when CETemplateSeriesNoValue would be chosen for those keys.
+#warning not great that variant view and variant source view know about this header file because of this value
 extern id CETemplateSeriesNoValue;
 
 

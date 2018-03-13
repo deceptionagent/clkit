@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_END
     NSUUID *_uuid;
 }
 
-@synthesize UUID = _UUID;
+@synthesize UUID = _uuid;
 
 + (instancetype)tag
 {

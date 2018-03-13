@@ -13,16 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariant : NSObject
 
-- (instancetype)initWithTag:(CEVariantTag *)tag rootSource:(CEVariantSource *)source NS_DESIGNATED_INITIALIZER;
++ (instancetype)variantWithTag:(CEVariantTag *)tag sources:(NSArray<CEVariantSource *> *)sources;
+- (instancetype)initWithTag:(CEVariantTag *)tag sources:(NSArray<CEVariantSource *> *)sources NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly) CEVariantTag *tag;
-@property (readonly) NSSet<CEVariantSource *> *sources;
-
-- (void)addSource:(CEVariantSource *)superiorSource superiorToSource:(CEVariantSource *)inferiorSource;
-- (nullable CEVariantSource *)sourceSuperiorToSource:(CEVariantSource *)source;
+@property (readonly) NSArray<CEVariantSource *> *sources;
 
 @end
 
