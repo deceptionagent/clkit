@@ -9,17 +9,23 @@
 
 @implementation CECombination
 {
-    NSDictionary<NSString *, id> *_combination; // { identifier : series value }
+    NSDictionary<NSString *, id> *_backing; // { identifier : series value }
     CEVariantTag *_tag;
 }
 
+@synthesize backing = _backing;
 @synthesize tag = _tag;
 
-- (instancetype)initWithCombinationDictionary:(NSDictionary<NSString *, id> *)dictionary tag:(CEVariantTag *)tag
++ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag
+{
+    return [[[self alloc] initWithBacking:backing tag:tag] autorelease];
+}
+
+- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag
 {
     self = [super init];
     if (self != nil) {
-        _combination = [dictionary copy];
+        _backing = [backing copy];
         _tag = [tag copy];
     }
     
@@ -28,16 +34,45 @@
 
 - (void)dealloc
 {
-    [_combination release];
+    [_backing release];
     [_tag release];
     [super dealloc];
 }
 
+- (NSUInteger)hash
+{
+    return (_tag.hash ^ _backing.hash);
+}
+
+- (BOOL)isEqual:(id)obj
+{
+    if (obj == self) {
+        return YES;
+    }
+    
+    if (![obj isKindOfClass:[CECombination class]]) {
+        return NO;
+    }
+    
+    return [self isEqualToCombination:(CECombination *)obj];
+}
+
+#pragma mark -
+
 - (id)objectForKeyedSubscript:(NSString *)identifier
 {
-    id value = _combination[identifier];
-    NSAssert((value != nil), NSInvalidArgumentException, @"subscripting unknown identifier '%@'", identifier);
+    id value = _backing[identifier];
+    NSAssert((value != nil), @"subscripting unknown identifier '%@'", identifier);
     return value;
+}
+
+- (BOOL)isEqualToCombination:(CECombination *)combination
+{
+    if (![_tag isEqualToVariantTag:combination.tag]) {
+        return NO;
+    }
+    
+    return [_backing isEqualToDictionary:combination.backing];
 }
 
 @end

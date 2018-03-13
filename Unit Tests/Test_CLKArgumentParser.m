@@ -458,7 +458,7 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-#warning add testValidation_recurrent
+#warning add testValidation_restricted
 
 - (void)testValidation_mutualExclusionGroup
 {

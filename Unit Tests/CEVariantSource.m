@@ -9,11 +9,15 @@
 {
     NSString *_identifier;
     NSArray *_values;
-    NSUInteger _currentPosition;
-    NSMutableArray<id<CEVariantSourceObserver>> *_observers;
 }
 
 @synthesize identifier = _identifier;
+@synthesize values = _values;
+
++ (instancetype)sourceWithIdentifier:(NSString *)identifier values:(NSArray *)values
+{
+    return [[[self alloc] initWithIdentifier:identifier values:values] autorelease];
+}
 
 - (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values
 {
@@ -24,7 +28,6 @@
     if (self != nil) {
         _identifier = [identifier copy];
         _values = [values copy];
-        _observers = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -32,7 +35,6 @@
 
 - (void)dealloc
 {
-    [_observers release];
     [_values release];
     [_identifier release];
     [super dealloc];
@@ -40,42 +42,7 @@
 
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"%@ { identifier: '%@' | pos: %llu | value: %@ }", super.debugDescription, _identifier, (unsigned long long)_currentPosition, self.currentValue];
-}
-
-#pragma mark -
-
-- (id)currentValue
-{
-    return _values[_currentPosition];
-}
-
-- (void)advanceToNextValue
-{
-    _currentPosition++;
-    if (_currentPosition >= _values.count) {
-        _currentPosition = 0;
-        [self _notifyObservers_variantSourceDidAdvanceToInitialValue];
-    }
-}
-
-#pragma mark -
-
-- (void)addObserver:(id<CEVariantSourceObserver>)observer
-{
-    [_observers addObject:observer];
-}
-
-- (void)removeObserver:(id<CEVariantSourceObserver>)observer
-{
-    [_observers removeObject:observer];
-}
-
-- (void)_notifyObservers_variantSourceDidAdvanceToInitialValue
-{
-    for (id<CEVariantSourceObserver> observer in _observers) {
-        [observer variantSourceDidAdvanceToInitialValue:self];
-    }
+    return [NSString stringWithFormat:@"%@ { identifier: '%@' }", super.debugDescription, _identifier];
 }
 
 @end

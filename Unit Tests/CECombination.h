@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) CEVariantTag *tag;
 
+- (BOOL)isEqualToCombination:(CECombination *)combination;
+
 @end
 
 NS_ASSUME_NONNULL_END
