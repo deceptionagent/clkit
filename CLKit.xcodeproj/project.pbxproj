@@ -36,6 +36,8 @@
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 		A6A91ABA20577F78001B81CF /* CEGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AB920577F78001B81CF /* CEGenerator.m */; };
 		A6A91ABC2057CA2A001B81CF /* Test_CEGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */; };
+		A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */; };
+		A6A91AC1205A5123001B81CF /* Test_CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */; };
 		A6B0D30C200E006000BF6300 /* CLKError_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B0D30B200E006000BF6300 /* CLKError_Private.h */; };
 		A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */; };
 		A6BB1B3E2032F1A900927BD9 /* CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3C2032F1A900927BD9 /* CLKOptionRegistry.m */; };
@@ -154,6 +156,9 @@
 		A6A91AB820577F78001B81CF /* CEGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEGenerator.h; sourceTree = "<group>"; };
 		A6A91AB920577F78001B81CF /* CEGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEGenerator.m; sourceTree = "<group>"; };
 		A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEGenerator.m; sourceTree = "<group>"; };
+		A6A91ABD205A440E001B81CF /* CEVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariantBuilder.h; sourceTree = "<group>"; };
+		A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariantBuilder.m; sourceTree = "<group>"; };
+		A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantBuilder.m; sourceTree = "<group>"; };
 		A6B0D30B200E006000BF6300 /* CLKError_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKError_Private.h; sourceTree = "<group>"; };
 		A6B47E8B2011E89000E49F5E /* CLKOptionGroup_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionGroup_Private.h; sourceTree = "<group>"; };
 		A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionRegistry.h; sourceTree = "<group>"; };
@@ -222,6 +227,8 @@
 				A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */,
 				A634BCE2204C0F9600E2BA10 /* CEVariant.h */,
 				A634BCE3204C0F9600E2BA10 /* CEVariant.m */,
+				A6A91ABD205A440E001B81CF /* CEVariantBuilder.h */,
+				A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */,
 				A6E9BC1F203A173E001B7095 /* CEVariantSource.h */,
 				A6E9BC21203A173E001B7095 /* CEVariantSource.m */,
 				A6C5F8FF2054EA410004E039 /* CEVariantSourceView.h */,
@@ -242,6 +249,7 @@
 				A634BCE0204C074700E2BA10 /* Test_CETemplate.m */,
 				A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */,
 				A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */,
+				A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */,
 				A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */,
 				A6C5F90520550DD40004E039 /* Test_CEVariantSourceView.m */,
 				A6C5F9072055186D0004E039 /* Test_CEVariantView.m */,
@@ -526,6 +534,7 @@
 				A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */,
 				A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */,
 				A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */,
+				A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */,
 				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
 				A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */,
 				A634BCE9204C13C500E2BA10 /* CECombination.m in Sources */,
@@ -541,6 +550,7 @@
 				A6A91ABC2057CA2A001B81CF /* Test_CEGenerator.m in Sources */,
 				A6C5F90620550DD40004E039 /* Test_CEVariantSourceView.m in Sources */,
 				A6C5F9012054EA410004E039 /* CEVariantSourceView.m in Sources */,
+				A6A91AC1205A5123001B81CF /* Test_CEVariantBuilder.m in Sources */,
 				A6A91ABA20577F78001B81CF /* CEGenerator.m in Sources */,
 				A6C5F9042054EBFB0004E039 /* CEVariantView.m in Sources */,
 			);
