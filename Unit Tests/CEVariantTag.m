@@ -4,12 +4,18 @@
 
 #import "CEVariantTag.h"
 
+#import <stdatomic.h>
+
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariantTag ()
 
-@property (readonly) NSUUID *UUID;
++ (uint64_t)_nextSerial;
+
+- (instancetype)_initWithSerial:(uint64_t)serial NS_DESIGNATED_INITIALIZER;
+
+@property (readonly) uint64_t serial;
 
 @end
 
@@ -18,30 +24,31 @@ NS_ASSUME_NONNULL_END
 
 @implementation CEVariantTag
 {
-    NSUUID *_uuid;
+    uint64_t _serial;
 }
 
-@synthesize UUID = _uuid;
+@synthesize serial = _serial;
+
++ (uint64_t)_nextSerial
+{
+    static _Atomic uint64_t sLastSerial;
+    return atomic_fetch_add(&sLastSerial, 1);
+}
 
 + (instancetype)tag
 {
-    return [[[self alloc] init] autorelease];
+    uint64_t serial = [self _nextSerial];
+    return [[[self alloc] _initWithSerial:serial] autorelease];
 }
 
-- (instancetype)init
+- (instancetype)_initWithSerial:(uint64_t)serial
 {
     self = [super init];
     if (self != nil) {
-        _uuid = [[NSUUID alloc] init];
+        _serial = serial;
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_uuid release];
-    [super dealloc];
 }
 
 - (id)copyWithZone:(__unused NSZone *)zone
@@ -52,7 +59,7 @@ NS_ASSUME_NONNULL_END
 
 - (NSUInteger)hash
 {
-    return _uuid.hash;
+    return _serial;
 }
 
 - (BOOL)isEqual:(id)obj
@@ -70,7 +77,16 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)isEqualToVariantTag:(CEVariantTag *)tag
 {
-    return [_uuid isEqual:tag.UUID];
+    return (_serial == tag.serial);
+}
+
+- (NSComparisonResult)compare:(CEVariantTag *)tag
+{
+    if (_serial == tag.serial) {
+        return NSOrderedSame;
+    }
+    
+    return (_serial > tag.serial ? NSOrderedDescending : NSOrderedAscending);
 }
 
 @end

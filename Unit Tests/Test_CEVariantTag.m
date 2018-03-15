@@ -54,4 +54,14 @@
     XCTAssertEqualObjects(dict[bravo], @"barf");
 }
 
+- (void)testComparison
+{
+    CEVariantTag *alpha = [CEVariantTag tag];
+    CEVariantTag *bravo = [CEVariantTag tag];
+    
+    XCTAssertEqual([alpha compare:alpha], NSOrderedSame);
+    XCTAssertEqual([alpha compare:bravo], NSOrderedAscending);
+    XCTAssertEqual([bravo compare:alpha], NSOrderedDescending);
+}
+
 @end
