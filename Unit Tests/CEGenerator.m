@@ -2,7 +2,7 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "CEGenerator.h"
+#import "CEGenerator_Private.h"
 
 #import "CLKAssert.h"
 #import "CECombination.h"

@@ -8,6 +8,7 @@
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
+#import "CombinationEngine.h"
 #import "XCTestCase+CLKAdditions.h"
 
 #warning hidden during CE bringup
@@ -56,6 +57,27 @@ NS_ASSUME_NONNULL_END
 @implementation Test_CLKOption
 
 #warning combinatorial tests need restriction support
+
+- (CETemplate *)flarnTemplate
+{
+    CEVariantTag *switch = [CEVariantTag tag];
+    CEVariantTag *switch_restricted = [CEVariantTag tag];
+    CEVariantTag *parameter = [CEVariantTag tag];
+    CEVariantTag *parameter_restricted = [CEVariantTag tag];
+    NSArray *allVariants = @[ switch, switch_restricted, parameter, parameter_restricted ];
+    NSArray *dependencyList = @[
+        CEPrototypeNoValue,
+        @[ @"confound" ],
+        @[ @"delivery" ]
+    ];
+    
+    NSArray *series = @[
+        [CETemplateSeries seriesWithIdentifier:@"name" values:@[ @"flarn", @"barf" ] variantTags:allVariants],
+        [CETemplateSeries seriesWithIdentifier:@"flag" values:@[ @[ CEPrototypeNoValue, @"a", @"b" ] ] variantTags:allVariants],
+        [CETemplateSeries seriesWithIdentifier:@"dependencies" values:dependencyList variantTags:@[ switch, parameter ]],
+        [CETemplateSeries seriesWithIdentifier:@"restricted" values:@[ @(YES), @(NO) ] variantTags:@[ switch_restricted, parameter_restricted ]]
+    ];
+}
 
 - (NSDictionary<NSString *, id> *)standardSwitchOptionPrototype
 {
