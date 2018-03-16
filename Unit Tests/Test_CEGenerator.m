@@ -5,7 +5,7 @@
 #import <XCTest/XCTest.h>
 
 #import "CECombination_Private.h"
-#import "CEGenerator.h"
+#import "CEGenerator_Private.h"
 #import "CEVariant.h"
 #import "CEVariantSource.h"
 #import "CEVariantTag.h"
@@ -101,5 +101,7 @@ NS_ASSUME_NONNULL_END
     NSArray *combinations = [self generateCombinationsUsingGenerator:generator];
     XCTAssertEqualObjects(combinations, expectedCombinations);
 }
+
+#warning generator builder test
 
 @end
