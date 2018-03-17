@@ -39,6 +39,7 @@
 		A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */; };
 		A6A91AC1205A5123001B81CF /* Test_CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */; };
 		A6A91AC5205B1E15001B81CF /* CEGenerator+Building.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC4205B1E15001B81CF /* CEGenerator+Building.m */; };
+		A6A91AC8205CE3B9001B81CF /* Test_CEGenerator+Building.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC7205CE3B9001B81CF /* Test_CEGenerator+Building.m */; };
 		A6B0D30C200E006000BF6300 /* CLKError_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B0D30B200E006000BF6300 /* CLKError_Private.h */; };
 		A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */; };
 		A6BB1B3E2032F1A900927BD9 /* CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3C2032F1A900927BD9 /* CLKOptionRegistry.m */; };
@@ -164,6 +165,7 @@
 		A6A91AC3205B1E15001B81CF /* CEGenerator+Building.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CEGenerator+Building.h"; sourceTree = "<group>"; };
 		A6A91AC4205B1E15001B81CF /* CEGenerator+Building.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CEGenerator+Building.m"; sourceTree = "<group>"; };
 		A6A91AC6205B1F9E001B81CF /* CombinationEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CombinationEngine.h; sourceTree = "<group>"; };
+		A6A91AC7205CE3B9001B81CF /* Test_CEGenerator+Building.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Test_CEGenerator+Building.m"; sourceTree = "<group>"; };
 		A6B0D30B200E006000BF6300 /* CLKError_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKError_Private.h; sourceTree = "<group>"; };
 		A6B47E8B2011E89000E49F5E /* CLKOptionGroup_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionGroup_Private.h; sourceTree = "<group>"; };
 		A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionRegistry.h; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 			children = (
 				A634BCEB204C174F00E2BA10 /* Test_CECombination.m */,
 				A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */,
+				A6A91AC7205CE3B9001B81CF /* Test_CEGenerator+Building.m */,
 				A634BCE0204C074700E2BA10 /* Test_CETemplate.m */,
 				A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */,
 				A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */,
@@ -541,6 +544,7 @@
 				A6A91AC5205B1E15001B81CF /* CEGenerator+Building.m in Sources */,
 				A634BCD7204BDF8E00E2BA10 /* Test_CEVariantTag.m in Sources */,
 				A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */,
+				A6A91AC8205CE3B9001B81CF /* Test_CEGenerator+Building.m in Sources */,
 				A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */,
 				A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */,
 				A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */,
