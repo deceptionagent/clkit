@@ -21,25 +21,25 @@ static void _init(void)
 {
     NSString *_identifier;
     NSArray *_values;
-    NSArray<CEVariantTag *> *_variantTags;
+    NSArray<CEVariantTag *> *_variants;
 }
 
 @synthesize identifier = _identifier;
 @synthesize values = _values;
-@synthesize variantTags = _variantTags;
+@synthesize variants = _variants;
 
-+ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variantTags:(NSArray<CEVariantTag *> *)variantTags
++ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values variantTags:variantTags] autorelease];
+    return [[[self alloc] initWithIdentifier:identifier values:values variants:variants] autorelease];
 }
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variantTags:(NSArray<CEVariantTag *> *)variantTags
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
 {
     self = [super init];
     if (self != nil) {
         _identifier = [identifier copy];
         _values = [values copy];
-        _variantTags = [variantTags copy];
+        _variants = [variants copy];
     }
     
     return self;
@@ -49,7 +49,7 @@ static void _init(void)
 {
     [_identifier release];
     [_values release];
-    [_variantTags release];
+    [_variants release];
     [super dealloc];
 }
 

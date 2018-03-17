@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_END
 - (void)testSingleVariantFromSingleSeries
 {
     CEVariantTag *tag = [CEVariantTag tag];
-    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variantTags:@[ tag ]];
+    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ tag ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     
     // expectation
@@ -91,8 +91,8 @@ NS_ASSUME_NONNULL_END
 - (void)testSingleVariantFromMultipleSeries
 {
     CEVariantTag *tag = [CEVariantTag tag];
-    CETemplateSeries *seriesAlpha = [CETemplateSeries seriesWithIdentifier:@"alpha" values:@[ @(7) ] variantTags:@[ tag ]];
-    CETemplateSeries *seriesBravo = [CETemplateSeries seriesWithIdentifier:@"bravo" values:@[ @(420) ] variantTags:@[ tag ]];
+    CETemplateSeries *seriesAlpha = [CETemplateSeries seriesWithIdentifier:@"alpha" values:@[ @(7) ]   variants:@[ tag ]];
+    CETemplateSeries *seriesBravo = [CETemplateSeries seriesWithIdentifier:@"bravo" values:@[ @(420) ] variants:@[ tag ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ seriesAlpha, seriesBravo ]];
     
     // expectation
@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_END
 {
     CEVariantTag *alphaTag = [CEVariantTag tag];
     CEVariantTag *bravoTag = [CEVariantTag tag];
-    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variantTags:@[ alphaTag, bravoTag ]];
+    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ alphaTag, bravoTag ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     
     CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(420) ]];
@@ -124,10 +124,10 @@ NS_ASSUME_NONNULL_END
     CEVariantTag *bravoTag   = [CEVariantTag tag]; // elec + tau
     CEVariantTag *charlieTag = [CEVariantTag tag]; // charm
     
-    CETemplateSeries *elecSeries  = [CETemplateSeries seriesWithIdentifier:@"elec"  values:@[ @(1) ] variantTags:@[ alphaTag, bravoTag ]];
-    CETemplateSeries *muonSeries  = [CETemplateSeries seriesWithIdentifier:@"muon"  values:@[ @(2) ] variantTags:@[ alphaTag ]];
-    CETemplateSeries *tauSeries   = [CETemplateSeries seriesWithIdentifier:@"tau"   values:@[ @(3) ] variantTags:@[ bravoTag ]];
-    CETemplateSeries *charmSeries = [CETemplateSeries seriesWithIdentifier:@"charm" values:@[ @(4) ] variantTags:@[ charlieTag ]];
+    CETemplateSeries *elecSeries  = [CETemplateSeries seriesWithIdentifier:@"elec"  values:@[ @(1) ] variants:@[ alphaTag, bravoTag ]];
+    CETemplateSeries *muonSeries  = [CETemplateSeries seriesWithIdentifier:@"muon"  values:@[ @(2) ] variants:@[ alphaTag ]];
+    CETemplateSeries *tauSeries   = [CETemplateSeries seriesWithIdentifier:@"tau"   values:@[ @(3) ] variants:@[ bravoTag ]];
+    CETemplateSeries *charmSeries = [CETemplateSeries seriesWithIdentifier:@"charm" values:@[ @(4) ] variants:@[ charlieTag ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ elecSeries, muonSeries, tauSeries, charmSeries ]];
     
     CEVariantSource *elecSource  = [CEVariantSource sourceWithIdentifier:@"elec"  values:@[ @(1) ]];
