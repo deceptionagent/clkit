@@ -102,6 +102,4 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(combinations, expectedCombinations);
 }
 
-#warning generator builder test
-
 @end
