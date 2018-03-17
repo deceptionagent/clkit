@@ -18,7 +18,7 @@
 - (void)testBuildAndRunGenerator
 {
     CEVariantTag *tag = [CEVariantTag tag];
-    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variantTags:@[ tag ]];
+    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ tag ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     NSArray *expectedCombinations = @[
         [CECombination combinationWithBacking:@{ @"flarn" : @(420) } tag:tag]

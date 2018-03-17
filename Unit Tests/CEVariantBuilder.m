@@ -19,7 +19,7 @@
     
     for (CETemplateSeries *series in template.allSeries) {
         CEVariantSource *source = [CEVariantSource sourceWithIdentifier:series.identifier values:series.values];
-        for (CEVariantTag *tag in series.variantTags) {
+        for (CEVariantTag *tag in series.variants) {
             // if this tag hasn't already been set up in the workspace, add it
             NSMutableArray *sources = workspace[tag];
             if (sources == nil) {

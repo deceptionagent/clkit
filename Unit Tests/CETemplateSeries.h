@@ -18,15 +18,15 @@ extern id CETemplateSeriesNoValue;
 
 @interface CETemplateSeries : NSObject
 
-+ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variantTags:(NSArray<CEVariantTag *> *)variantTags;
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variantTags:(NSArray<CEVariantTag *> *)variantTags NS_DESIGNATED_INITIALIZER;
++ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants;
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly) NSString *identifier;
 @property (readonly) NSArray *values;
-@property (readonly) NSArray<CEVariantTag *> *variantTags;
+@property (readonly) NSArray<CEVariantTag *> *variants;
 
 @end
 
