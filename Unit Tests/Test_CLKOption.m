@@ -430,36 +430,6 @@ NS_ASSUME_NONNULL_END
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
-    
-    # warning i think this was moved to testConstraints_parameterOptions
-    /* parameter options */
-    
-    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:YES transformer:nil dependencies:nil];
-    XCTAssertEqualObjects(quone.constraints, @[]);
-    
-    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:nil dependencies:nil];
-    expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"]
-    ];
-    
-    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
-    
-    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:nil dependencies:nil];
-    expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"]
-    ];
-    
-    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
-    
-    quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:YES transformer:nil dependencies:@[ @"barf", @"flarn"]];
-    expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
-    ];
-    
-    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
 }
 
 - (void)testConstraints_parameterOptions
