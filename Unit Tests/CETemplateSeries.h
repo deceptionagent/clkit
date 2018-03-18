@@ -7,11 +7,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// a special value for use in template series value arrays. allows a combination engine to generate combinations that
-// lack particular keys when CETemplateSeriesNoValue would be chosen for those keys.
-#warning not great that variant view and variant source view know about this header file because of this value
-extern id CETemplateSeriesNoValue;
-
 
 @class CEVariantTag;
 
@@ -20,7 +15,11 @@ extern id CETemplateSeriesNoValue;
 
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant;
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants;
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants NS_DESIGNATED_INITIALIZER;
+
++ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant;
++ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants;
+
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values elidable:(BOOL)elidable variants:(NSArray<CEVariantTag *> *)variants NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -28,6 +27,7 @@ extern id CETemplateSeriesNoValue;
 @property (readonly) NSString *identifier;
 @property (readonly) NSArray *values;
 @property (readonly) NSArray<CEVariantTag *> *variants;
+@property (readonly) BOOL elidable;
 
 @end
 

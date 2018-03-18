@@ -35,12 +35,12 @@
     CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:flarn] autorelease];
     XCTAssertNotNil(view);
     XCTAssertEqual(view.variantSource, flarn);
-    XCTAssertEqualObjects(view.currentValue, @"barf");
+    XCTAssertEqualObjects(view.value, @"barf");
     
     view = [[[CEVariantSourceView alloc] initWithVariantSource:quone] autorelease];
     XCTAssertNotNil(view);
     XCTAssertEqual(view.variantSource, quone);
-    XCTAssertEqualObjects(view.currentValue, @"confound");
+    XCTAssertEqualObjects(view.value, @"confound");
 }
 
 - (void)testAdvancing
@@ -49,19 +49,19 @@
     CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:source] autorelease];
     [view addObserver:self];
     
-    XCTAssertEqualObjects(view.currentValue, @"flarn");
+    XCTAssertEqualObjects(view.value, @"flarn");
     XCTAssertNil(_callbackSourceView);
     for (int i = 0 ; i < 2 ; i++) {
-        [view advanceToNextValue];
-        XCTAssertEqualObjects(view.currentValue, @"barf");
+        [view advance];
+        XCTAssertEqualObjects(view.value, @"barf");
         XCTAssertNil(_callbackSourceView);
         
-        [view advanceToNextValue];
-        XCTAssertEqualObjects(view.currentValue, @"quone");
+        [view advance];
+        XCTAssertEqualObjects(view.value, @"quone");
         XCTAssertNil(_callbackSourceView);
         
-        [view advanceToNextValue];
-        XCTAssertEqualObjects(view.currentValue, @"flarn");
+        [view advance];
+        XCTAssertEqualObjects(view.value, @"flarn");
         XCTAssertEqual(_callbackSourceView, view);
         _callbackSourceView = nil;
     }
@@ -73,11 +73,11 @@
     CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:source] autorelease];
     [view addObserver:self];
     
-    XCTAssertEqualObjects(view.currentValue, @"flarn");
+    XCTAssertEqualObjects(view.value, @"flarn");
     XCTAssertNil(_callbackSourceView);
     for (int i = 0 ; i < 2 ; i++) {
-        [view advanceToNextValue];
-        XCTAssertEqualObjects(view.currentValue, @"flarn");
+        [view advance];
+        XCTAssertEqualObjects(view.value, @"flarn");
         XCTAssertEqual(_callbackSourceView, view);
         _callbackSourceView = nil;
     }
@@ -91,7 +91,7 @@
     [view removeObserver:self];
     
     XCTAssertNil(_callbackSourceView);
-    [view advanceToNextValue];
+    [view advance];
     XCTAssertNil(_callbackSourceView);
     
     // safe to do when the parameter is not an observer

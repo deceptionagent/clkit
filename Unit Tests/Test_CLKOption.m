@@ -64,18 +64,17 @@ NS_ASSUME_NONNULL_END
     CEVariantTag *switchOption_restricted = [CEVariantTag tag];
     CEVariantTag *parameterOption = [CEVariantTag tag];
     CEVariantTag *parameterOption_restricted = [CEVariantTag tag];
-    NSArray *allVariants = @[ switch, switch_restricted, parameter, parameter_restricted ];
+    NSArray *allVariants = @[ switchOption, switchOption_restricted, parameterOption, parameterOption_restricted ];
     NSArray *dependencyList = @[
-        CEPrototypeNoValue,
         @[ @"confound" ],
         @[ @"delivery" ]
     ];
     
     NSArray *series = @[
         [CETemplateSeries seriesWithIdentifier:@"name" values:@[ @"flarn", @"barf" ] variants:allVariants],
-        [CETemplateSeries seriesWithIdentifier:@"flag" values:@[ @[ CEPrototypeNoValue, @"a", @"b" ] ] variants:allVariants],
-        [CETemplateSeries seriesWithIdentifier:@"dependencies" values:dependencyList variants:@[ switch, parameter ]],
-        [CETemplateSeries seriesWithIdentifier:@"restricted" values:@[ @(YES), @(NO) ] variants:@[ switch_restricted, parameter_restricted ]]
+        [CETemplateSeries elidableSeriesWithIdentifier:@"flag" values:@[ @[ @"a", @"b" ] ] variants:allVariants],
+        [CETemplateSeries elidableSeriesWithIdentifier:@"dependencies" values:dependencyList variants:@[ switchOption, parameterOption ]],
+        [CETemplateSeries seriesWithIdentifier:@"restricted" values:@[ @(YES), @(NO) ] variants:@[ switchOption_restricted, parameterOption_restricted ]]
     ];
 }
 

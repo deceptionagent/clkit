@@ -32,7 +32,15 @@
     XCTAssertEqualObjects(source.values, (@[ @"flarn", @"barf" ]));
     
     XCTAssertThrows([[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[]] autorelease]);
+    XCTAssertThrows([[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ CEVariantSource.noValueMarker ]] autorelease]);
     XCTAssertThrows([[[CEVariantSource alloc] initWithIdentifier:@"" values:@[ @"barf" ]] autorelease]);
+}
+
+- (void)test_noValueMarker
+{
+    id markerA = CEVariantSource.noValueMarker;
+    id markerB = CEVariantSource.noValueMarker;
+    XCTAssertEqual(markerA, markerB);
 }
 
 @end

@@ -16,10 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithVariantSource:(CEVariantSource *)variantSource;
 
 @property (readonly) CEVariantSource *variantSource;
-@property (readonly) id currentValue;
-@property (readonly) BOOL elided;
+@property (nullable, readonly) id value;
 
-- (void)advanceToNextValue;
+- (void)advance;
 
 - (void)addObserver:(id<CEVariantSourceViewObserver>)observer;
 - (void)removeObserver:(id<CEVariantSourceViewObserver>)observer;
