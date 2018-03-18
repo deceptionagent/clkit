@@ -23,13 +23,19 @@
     XCTAssertNotNil(series);
     XCTAssertEqualObjects(series.identifier, @"quone");
     XCTAssertEqualObjects(series.values, (@[ @"flarn", @"barf" ]));
-    XCTAssertEqualObjects(series.variants, (@[ east, west]));
+    XCTAssertEqualObjects(series.variants, (@[ east, west ]));
     
     series = [CETemplateSeries seriesWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] variants:@[ east, west ]];
     XCTAssertNotNil(series);
     XCTAssertEqualObjects(series.identifier, @"quone");
     XCTAssertEqualObjects(series.values, (@[ @"flarn", @"barf" ]));
-    XCTAssertEqualObjects(series.variants, (@[ east, west]));
+    XCTAssertEqualObjects(series.variants, (@[ east, west ]));
+    
+    series = [CETemplateSeries seriesWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] variant:east];
+    XCTAssertNotNil(series);
+    XCTAssertEqualObjects(series.identifier, @"quone");
+    XCTAssertEqualObjects(series.values, (@[ @"flarn", @"barf" ]));
+    XCTAssertEqualObjects(series.variants, @[ east ]);
 }
 
 @end

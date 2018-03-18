@@ -28,6 +28,11 @@ static void _init(void)
 @synthesize values = _values;
 @synthesize variants = _variants;
 
++ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant
+{
+    return [[[self alloc] initWithIdentifier:identifier values:values variants:@[ variant ]] autorelease];
+}
+
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
 {
     return [[[self alloc] initWithIdentifier:identifier values:values variants:variants] autorelease];
