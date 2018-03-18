@@ -150,12 +150,13 @@ NS_ASSUME_NONNULL_END
     [self performTestWithVariantView:view expectedCombinations:@[ expectedCombination ]];
 }
 
-- (void)test_CETemplateSeriesNoValue
+- (void)testGenerateCombinations_noValueMarker
 {
+    id elide = CEVariantSource.noValueMarker;
     CEVariantTag *tag = [CEVariantTag tag];
     CEVariantSource *flarn = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(1), @(2) ]];
-    CEVariantSource *barf  = [CEVariantSource sourceWithIdentifier:@"barf"  values:@[ CETemplateSeriesNoValue, @(4) ]];
-    CEVariantSource *quone = [CEVariantSource sourceWithIdentifier:@"quone" values:@[ @(5), CETemplateSeriesNoValue, @(6) ]];
+    CEVariantSource *barf  = [CEVariantSource sourceWithIdentifier:@"barf"  values:@[ elide, @(4) ]];
+    CEVariantSource *quone = [CEVariantSource sourceWithIdentifier:@"quone" values:@[ @(5), elide, @(6) ]];
     CEVariant *variant = [CEVariant variantWithTag:tag sources:@[ flarn, barf, quone ]];
     
     NSArray *expectedCombinations = @[

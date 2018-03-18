@@ -88,8 +88,9 @@ NS_ASSUME_NONNULL_END
     NSMutableDictionary<NSString *, id> *combinationDict = [NSMutableDictionary dictionary];
     
     for (CEVariantSourceView *sourceView in _sourceViews) {
-        if (!sourceView.elided) {
-            combinationDict[sourceView.variantSource.identifier] = sourceView.currentValue;
+        id value = sourceView.value;
+        if (value != nil) {
+            combinationDict[sourceView.variantSource.identifier] = value;
         }
     }
     
@@ -103,7 +104,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)advance
 {
-    [self._rootSourceView advanceToNextValue];
+    [self._rootSourceView advance];
 }
 
 #pragma mark -
@@ -113,7 +114,7 @@ NS_ASSUME_NONNULL_END
 {
     CEVariantSourceView *superiorView = [self _sourceViewSuperiorToSourceView:sourceView];
     if (superiorView != nil) {
-        [superiorView advanceToNextValue];
+        [superiorView advance];
     } else {
         _exhausted = YES;
     }

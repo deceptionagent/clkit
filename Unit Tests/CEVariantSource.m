@@ -23,6 +23,7 @@
 {
     NSParameterAssert(identifier.length > 0);
     NSParameterAssert(values.count > 0);
+    NSParameterAssert(!(values.count == 1 && values[0] == CEVariantSource.noValueMarker));
     
     self = [super init];
     if (self != nil) {
@@ -43,6 +44,19 @@
 - (NSString *)debugDescription
 {
     return [NSString stringWithFormat:@"%@ { identifier: '%@' }", super.debugDescription, _identifier];
+}
+
+#pragma mark -
+
++ (id)noValueMarker
+{
+    static id noValueMarker;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        noValueMarker = [[NSObject alloc] init];
+    });
+    
+    return noValueMarker;
 }
 
 @end

@@ -7,44 +7,47 @@
 #import "CEVariantTag.h"
 
 
-id CETemplateSeriesNoValue;
-
-
-__attribute__((constructor))
-static void _init(void)
-{
-    CETemplateSeriesNoValue = [[NSObject alloc] init];
-}
-
-
 @implementation CETemplateSeries
 {
     NSString *_identifier;
     NSArray *_values;
     NSArray<CEVariantTag *> *_variants;
+    BOOL _elidable;
 }
 
 @synthesize identifier = _identifier;
 @synthesize values = _values;
 @synthesize variants = _variants;
+@synthesize elidable = _elidable;
 
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values variants:@[ variant ]] autorelease];
+    return [[[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:@[ variant ]] autorelease];
 }
 
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values variants:variants] autorelease];
+    return [[[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:variants] autorelease];
 }
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
++ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant
+{
+    return [[[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:@[ variant ]] autorelease];
+}
+
++ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
+{
+    return [[[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:variants] autorelease];
+}
+
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values elidable:(BOOL)elidable variants:(NSArray<CEVariantTag *> *)variants
 {
     self = [super init];
     if (self != nil) {
         _identifier = [identifier copy];
         _values = [values copy];
         _variants = [variants copy];
+        _elidable = elidable;
     }
     
     return self;

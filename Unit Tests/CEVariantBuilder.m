@@ -18,7 +18,14 @@
     NSMutableDictionary<CEVariantTag *, NSMutableArray<CEVariantSource *> *> *workspace = [NSMutableDictionary dictionary];
     
     for (CETemplateSeries *series in template.allSeries) {
-        CEVariantSource *source = [CEVariantSource sourceWithIdentifier:series.identifier values:series.values];
+        NSArray *values;
+        if (series.elidable) {
+            values = [@[ CEVariantSource.noValueMarker ] arrayByAddingObjectsFromArray:series.values];
+        } else {
+            values = series.values;
+        }
+        
+        CEVariantSource *source = [CEVariantSource sourceWithIdentifier:series.identifier values:values];
         for (CEVariantTag *tag in series.variants) {
             // if this tag hasn't already been set up in the workspace, add it
             NSMutableArray *sources = workspace[tag];

@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (void)testSingleVariantFromSingleSeries
+- (void)testVariantFromTemplateSeries
 {
     CEVariantTag *tag = [CEVariantTag tag];
     CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ tag ]];
@@ -88,7 +88,20 @@ NS_ASSUME_NONNULL_END
     [self performTestWithTemplate:template expectedVariants:@[ variant ]];
 }
 
-- (void)testSingleVariantFromMultipleSeries
+- (void)testVariantFromElidableTemplateSeries
+{
+    CEVariantTag *tag = [CEVariantTag tag];
+    CETemplateSeries *series = [CETemplateSeries elidableSeriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ tag ]];
+    CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
+    
+    // expectation
+    CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ CEVariantSource.noValueMarker, @(420) ]];
+    CEVariant *variant = [CEVariant variantWithTag:tag sources:@[ source ]];
+    
+    [self performTestWithTemplate:template expectedVariants:@[ variant ]];
+}
+
+- (void)testVariantFromMultipleTemplateSeries
 {
     CEVariantTag *tag = [CEVariantTag tag];
     CETemplateSeries *seriesAlpha = [CETemplateSeries seriesWithIdentifier:@"alpha" values:@[ @(7) ]   variants:@[ tag ]];
@@ -104,7 +117,7 @@ NS_ASSUME_NONNULL_END
 }
 
 // i don't know why you'd do this but it should behave sanely
-- (void)testMultipleVariantsFromSingleSeries
+- (void)testMultipleVariantsFromTemplateSeries
 {
     CEVariantTag *alphaTag = [CEVariantTag tag];
     CEVariantTag *bravoTag = [CEVariantTag tag];
@@ -118,7 +131,7 @@ NS_ASSUME_NONNULL_END
     [self performTestWithTemplate:template expectedVariants:@[ alphaVariant, bravoVariant ]];
 }
 
-- (void)testMultipleVariantsFromMultipleSeries
+- (void)testMultipleVariantsFromMultipleTemplateSeries
 {
     CEVariantTag *alphaTag   = [CEVariantTag tag]; // elec + muon
     CEVariantTag *bravoTag   = [CEVariantTag tag]; // elec + tau
@@ -143,3 +156,8 @@ NS_ASSUME_NONNULL_END
 }
 
 @end
+
+
+
+
+

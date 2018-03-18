@@ -39,22 +39,18 @@
 
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"%@ { identifier: '%@' | pos: %llu | value: %@ }", super.debugDescription, _source.identifier, (unsigned long long)_currentPosition, self.currentValue];
+    return [NSString stringWithFormat:@"%@ { identifier: '%@' | pos: %llu | value: %@ }", super.debugDescription, _source.identifier, (unsigned long long)_currentPosition, self.value];
 }
 
 #pragma mark -
 
-- (id)currentValue
+- (id)value
 {
-    return _source.values[_currentPosition];
+    id value = _source.values[_currentPosition];
+    return (value == CEVariantSource.noValueMarker ? nil : value);
 }
 
-- (BOOL)elided
-{
-    return (self.currentValue == CETemplateSeriesNoValue);
-}
-
-- (void)advanceToNextValue
+- (void)advance
 {
     _currentPosition++;
     if (_currentPosition >= _source.values.count) {

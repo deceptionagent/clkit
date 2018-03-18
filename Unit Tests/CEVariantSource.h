@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSString *identifier;
 @property (readonly) NSArray *values;
 
+// a special value to allow a combination engine to generate a combination that
+// lacks a value for a source when CEVariantSourceNoValue would be chosen.
+@property (class, readonly) id noValueMarker;
+
 @end
 
 NS_ASSUME_NONNULL_END
