@@ -18,6 +18,7 @@ extern id CETemplateSeriesNoValue;
 
 @interface CETemplateSeries : NSObject
 
++ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant;
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants;
 - (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants NS_DESIGNATED_INITIALIZER;
 
