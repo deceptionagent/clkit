@@ -98,6 +98,48 @@ NS_ASSUME_NONNULL_END
     };
 }
 
+- (CLKOption *)optionFromCombination:(CECombination *)combination
+{
+    CLKOption *option = nil;
+    
+    if ([combination.variant isEqualToString:@"switch"]) {
+        // ...
+    } else if ([combination.variant isEqualToString:@"switch_restricted"]) {
+        // ...
+    } else if ([combination.variant isEqualToString:@"parameter"]) {
+        // ...
+    } else if ([combination.variant isEqualToString:@"parameter_restricted"]) {
+        // ...
+    } else {
+        XCTFail(@"unknown combination variant: '%@'", combination.variant);
+    }
+    
+    XCTAssertNotNil(option);
+    
+    return option;
+}
+
+- (CLKOption *)optionFromCombination:(CECombination *)combination
+{
+    CLKOption *option = nil;
+    
+    if ([combination isVariant:@"switch"]) {
+        option = [CLKOption optionWithName:combination[@"name"] flag:combination[@"flag"] dependencies:combination[@"dependencies"]];
+    } else if ([combination isVariant:@"switch_restricted"]) {
+        option = [CLKOption optionWithName:combination[@"name"] flag:combination[@"flag"] restricted:combination[@"restricted"]];
+    } else if ([combination isVariant:@"parameter"]) {
+        // ...
+    } else if ([combination isVariant:@"parameter_restricted"]) {
+        // ...
+    } else {
+        XCTFail(@"unknown combination variant: '%@'", combination.variant);
+    }
+    
+    XCTAssertNotNil(option);
+    
+    return option;
+}
+
 - (CLKOption *)switchOptionFromDictionaryRepresentation:(NSDictionary<NSString *, id> *)representation
 {
     NSString *name = representation[@"name"];
