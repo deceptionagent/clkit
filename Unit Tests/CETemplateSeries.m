@@ -11,7 +11,7 @@
 {
     NSString *_identifier;
     NSArray *_values;
-    NSArray<CEVariantTag *> *_variants;
+    NSArray<NSString *> *_variants;
     BOOL _elidable;
 }
 
@@ -20,27 +20,27 @@
 @synthesize variants = _variants;
 @synthesize elidable = _elidable;
 
-+ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant
++ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(NSString *)variant
 {
     return [[[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:@[ variant ]] autorelease];
 }
 
-+ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
++ (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<NSString *> *)variants
 {
     return [[[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:variants] autorelease];
 }
 
-+ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(CEVariantTag *)variant
++ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(NSString *)variant
 {
     return [[[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:@[ variant ]] autorelease];
 }
 
-+ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<CEVariantTag *> *)variants
++ (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<NSString *> *)variants
 {
     return [[[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:variants] autorelease];
 }
 
-- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values elidable:(BOOL)elidable variants:(NSArray<CEVariantTag *> *)variants
+- (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values elidable:(BOOL)elidable variants:(NSArray<NSString *> *)variants
 {
     self = [super init];
     if (self != nil) {

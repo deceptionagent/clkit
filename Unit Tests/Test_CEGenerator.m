@@ -39,12 +39,10 @@ NS_ASSUME_NONNULL_END
 
 - (void)testInit
 {
-    CEVariantTag *alphaTag = [CEVariantTag tag];
-    CEVariantTag *bravoTag = [CEVariantTag tag];
     CEVariantSource *flarn = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(1) ]];
     CEVariantSource *barf = [CEVariantSource sourceWithIdentifier:@"barf" values:@[ @(1) ]];
-    CEVariant *alphaVariant = [CEVariant variantWithTag:alphaTag sources:@[ flarn ]];
-    CEVariant *bravoVariant = [CEVariant variantWithTag:bravoTag sources:@[ flarn, barf ]];
+    CEVariant *alphaVariant = [CEVariant variantWithTag:@"alpha" sources:@[ flarn ]];
+    CEVariant *bravoVariant = [CEVariant variantWithTag:@"bravo" sources:@[ flarn, barf ]];
     
     CEGenerator *generator = [[[CEGenerator alloc] initWithVariants:@[ alphaVariant ]] autorelease];
     XCTAssertNotNil(generator);
@@ -57,16 +55,15 @@ NS_ASSUME_NONNULL_END
 
 - (void)test_enumerateCombinations_singleVariant
 {
-    CEVariantTag *tag = [CEVariantTag tag];
     CEVariantSource *flarn = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(1), @(2) ]];
     CEVariantSource *barf = [CEVariantSource sourceWithIdentifier:@"barf" values:@[ @(3), @(4) ]];
-    CEVariant *variant = [CEVariant variantWithTag:tag sources:@[ flarn, barf ]];
+    CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn, barf ]];
     NSArray *expectedCombinations = @[
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3) } tag:tag],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3) } tag:tag],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3) } tag:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4) } tag:tag],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } tag:tag]
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } tag:@"tag"]
     ];
     
     CEGenerator *generator = [[[CEGenerator alloc] initWithVariants:@[ variant ]] autorelease];
@@ -76,25 +73,23 @@ NS_ASSUME_NONNULL_END
 
 - (void)test_enumerateCombinations_multipleVariants
 {
-    CEVariantTag *alphaTag = [CEVariantTag tag];
-    CEVariantTag *bravoTag = [CEVariantTag tag];
     CEVariantSource *flarn = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(1), @(2) ]];
     CEVariantSource *barf = [CEVariantSource sourceWithIdentifier:@"barf" values:@[ @(3), @(4) ]];
-    CEVariant *alphaVariant = [CEVariant variantWithTag:alphaTag sources:@[ flarn ]];
-    CEVariant *bravoVariant = [CEVariant variantWithTag:bravoTag sources:@[ flarn, barf ]];
+    CEVariant *alphaVariant = [CEVariant variantWithTag:@"alpha" sources:@[ flarn ]];
+    CEVariant *bravoVariant = [CEVariant variantWithTag:@"bravo" sources:@[ flarn, barf ]];
     NSArray *expectedCombinations = @[
         /* alphaVariant */
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1) } tag:alphaTag],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2) } tag:alphaTag],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1) } tag:@"alpha"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2) } tag:@"alpha"],
         
         /* bravoVariant */
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3) } tag:bravoTag],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3) } tag:bravoTag],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3) } tag:@"bravo"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3) } tag:@"bravo"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4) } tag:bravoTag],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } tag:bravoTag],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4) } tag:@"bravo"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } tag:@"bravo"],
     ];
 
     CEGenerator *generator = [[[CEGenerator alloc] initWithVariants:@[ alphaVariant, bravoVariant ]] autorelease];

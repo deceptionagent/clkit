@@ -5,15 +5,15 @@
 #import "CECombination.h"
 
 
-@class CEVariantTag;
+//@class CEVariantTag;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CECombination ()
 
-+ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag;
-- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag NS_DESIGNATED_INITIALIZER;
++ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(NSString *)tag;
+- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(NSString *)tag NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) NSDictionary<NSString *, id> *backing;
 

@@ -77,41 +77,38 @@ NS_ASSUME_NONNULL_END
 
 - (void)testVariantFromTemplateSeries
 {
-    CEVariantTag *tag = [CEVariantTag tag];
-    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ tag ]];
+    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ @"tag" ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     
     // expectation
     CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(420) ]];
-    CEVariant *variant = [CEVariant variantWithTag:tag sources:@[ source ]];
+    CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ source ]];
     
     [self performTestWithTemplate:template expectedVariants:@[ variant ]];
 }
 
 - (void)testVariantFromElidableTemplateSeries
 {
-    CEVariantTag *tag = [CEVariantTag tag];
-    CETemplateSeries *series = [CETemplateSeries elidableSeriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ tag ]];
+    CETemplateSeries *series = [CETemplateSeries elidableSeriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ @"tag" ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     
     // expectation
     CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ CEVariantSource.noValueMarker, @(420) ]];
-    CEVariant *variant = [CEVariant variantWithTag:tag sources:@[ source ]];
+    CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ source ]];
     
     [self performTestWithTemplate:template expectedVariants:@[ variant ]];
 }
 
 - (void)testVariantFromMultipleTemplateSeries
 {
-    CEVariantTag *tag = [CEVariantTag tag];
-    CETemplateSeries *seriesAlpha = [CETemplateSeries seriesWithIdentifier:@"alpha" values:@[ @(7) ]   variants:@[ tag ]];
-    CETemplateSeries *seriesBravo = [CETemplateSeries seriesWithIdentifier:@"bravo" values:@[ @(420) ] variants:@[ tag ]];
+    CETemplateSeries *seriesAlpha = [CETemplateSeries seriesWithIdentifier:@"alpha" values:@[ @(7) ]   variants:@[ @"tag" ]];
+    CETemplateSeries *seriesBravo = [CETemplateSeries seriesWithIdentifier:@"bravo" values:@[ @(420) ] variants:@[ @"tag" ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ seriesAlpha, seriesBravo ]];
     
     // expectation
     CEVariantSource *sourceAlpha = [CEVariantSource sourceWithIdentifier:@"alpha" values:@[ @(7) ]];
     CEVariantSource *sourceBravo = [CEVariantSource sourceWithIdentifier:@"bravo" values:@[ @(420) ]];
-    CEVariant *variant = [CEVariant variantWithTag:tag sources:@[ sourceAlpha, sourceBravo ]];
+    CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ sourceAlpha, sourceBravo ]];
     
     [self performTestWithTemplate:template expectedVariants:@[ variant ]];
 }
@@ -119,23 +116,21 @@ NS_ASSUME_NONNULL_END
 // i don't know why you'd do this but it should behave sanely
 - (void)testMultipleVariantsFromTemplateSeries
 {
-    CEVariantTag *alphaTag = [CEVariantTag tag];
-    CEVariantTag *bravoTag = [CEVariantTag tag];
-    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ alphaTag, bravoTag ]];
+    CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ @"alpha", @"bravo" ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     
     CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(420) ]];
-    CEVariant *alphaVariant = [CEVariant variantWithTag:alphaTag sources:@[ source ]];
-    CEVariant *bravoVariant = [CEVariant variantWithTag:bravoTag sources:@[ source ]];
+    CEVariant *alphaVariant = [CEVariant variantWithTag:@"alpha" sources:@[ source ]];
+    CEVariant *bravoVariant = [CEVariant variantWithTag:@"bravo" sources:@[ source ]];
     
     [self performTestWithTemplate:template expectedVariants:@[ alphaVariant, bravoVariant ]];
 }
 
 - (void)testMultipleVariantsFromMultipleTemplateSeries
 {
-    CEVariantTag *alphaTag   = [CEVariantTag tag]; // elec + muon
-    CEVariantTag *bravoTag   = [CEVariantTag tag]; // elec + tau
-    CEVariantTag *charlieTag = [CEVariantTag tag]; // charm
+    NSString *alphaTag = @"alpha"; // elec + muon
+    NSString *bravoTag = @"bravo"; // elec + tau
+    NSString *charlieTag = @"charlie"; // charm
     
     CETemplateSeries *elecSeries  = [CETemplateSeries seriesWithIdentifier:@"elec"  values:@[ @(1) ] variants:@[ alphaTag, bravoTag ]];
     CETemplateSeries *muonSeries  = [CETemplateSeries seriesWithIdentifier:@"muon"  values:@[ @(2) ] variants:@[ alphaTag ]];

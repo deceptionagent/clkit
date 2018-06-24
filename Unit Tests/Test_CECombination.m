@@ -17,52 +17,48 @@
 
 - (void)testInit
 {
-    CEVariantTag *tag = [CEVariantTag tag];
     NSDictionary *backing = @{ @"flarn" : @"barf" };
     
-    CECombination *combination = [[[CECombination alloc] initWithBacking:backing tag:tag] autorelease];
+    CECombination *combination = [[[CECombination alloc] initWithBacking:backing tag:@"tag"] autorelease];
     XCTAssertNotNil(combination);
-    XCTAssertEqualObjects(combination.tag, tag);
+    XCTAssertEqualObjects(combination.tag, @"tag");
     XCTAssertEqualObjects(combination.backing, backing);
 
-    combination = [CECombination combinationWithBacking:backing tag:tag];
+    combination = [CECombination combinationWithBacking:backing tag:@"tag"];
     XCTAssertNotNil(combination);
-    XCTAssertEqualObjects(combination.tag, tag);
+    XCTAssertEqualObjects(combination.tag, @"tag");
     XCTAssertEqualObjects(combination.backing, backing);
 }
 
 - (void)testSubscripting
 {
-    CEVariantTag *tag = [CEVariantTag tag];
     NSDictionary *backing = @{
         @"flarn" : @"barf",
         @"confound" : @"delivery"
     };
     
-    CECombination *combination = [[[CECombination alloc] initWithBacking:backing tag:tag] autorelease];
+    CECombination *combination = [[[CECombination alloc] initWithBacking:backing tag:@"tag"] autorelease];
     XCTAssertEqualObjects(combination[@"flarn"], @"barf");
     XCTAssertEqualObjects(combination[@"confound"], @"delivery");
 }
 
 - (void)testEquality
 {
-    CEVariantTag *alphaTag = [CEVariantTag tag];
     NSDictionary *alphaBacking = @{
         @"flarn" : @"barf",
         @"confound" : @"delivery"
     };
     
-    CEVariantTag *bravoTag = [CEVariantTag tag];
     NSDictionary *bravoBacking = @{
         @"flarn" : @"barf",
     };
     
-    CECombination *alpha_alpha_a = [[[CECombination alloc] initWithBacking:alphaBacking tag:alphaTag] autorelease];
-    CECombination *alpha_alpha_b = [[[CECombination alloc] initWithBacking:alphaBacking tag:alphaTag] autorelease];
-    CECombination *bravo_bravo = [[[CECombination alloc] initWithBacking:bravoBacking tag:bravoTag] autorelease];
-    CECombination *alpha_alpha = [[[CECombination alloc] initWithBacking:alphaBacking tag:alphaTag] autorelease];
-    CECombination *alpha_bravo = [[[CECombination alloc] initWithBacking:alphaBacking tag:bravoTag] autorelease];
-    CECombination *bravo_alpha = [[[CECombination alloc] initWithBacking:bravoBacking tag:alphaTag] autorelease];
+    CECombination *alpha_alpha_a = [[[CECombination alloc] initWithBacking:alphaBacking tag:@"alpha"] autorelease];
+    CECombination *alpha_alpha_b = [[[CECombination alloc] initWithBacking:alphaBacking tag:@"alpha"] autorelease];
+    CECombination *bravo_bravo = [[[CECombination alloc] initWithBacking:bravoBacking tag:@"bravo"] autorelease];
+    CECombination *alpha_alpha = [[[CECombination alloc] initWithBacking:alphaBacking tag:@"alpha"] autorelease];
+    CECombination *alpha_bravo = [[[CECombination alloc] initWithBacking:alphaBacking tag:@"bravo"] autorelease];
+    CECombination *bravo_alpha = [[[CECombination alloc] initWithBacking:bravoBacking tag:@"alpha"] autorelease];
     
     XCTAssertEqualObjects(alpha_alpha_a, alpha_alpha_a);
     XCTAssertEqualObjects(alpha_alpha_a, alpha_alpha_b);
