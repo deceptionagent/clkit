@@ -6,20 +6,20 @@
 
 
 @class CEVariantSource;
-@class CEVariantTag;
+////@class CEVariantTag;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariant : NSObject
 
-+ (instancetype)variantWithTag:(CEVariantTag *)tag sources:(NSArray<CEVariantSource *> *)sources;
-- (instancetype)initWithTag:(CEVariantTag *)tag sources:(NSArray<CEVariantSource *> *)sources NS_DESIGNATED_INITIALIZER;
++ (instancetype)variantWithTag:(NSString *)tag sources:(NSArray<CEVariantSource *> *)sources;
+- (instancetype)initWithTag:(NSString *)tag sources:(NSArray<CEVariantSource *> *)sources NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (readonly) CEVariantTag *tag;
+@property (readonly) NSString *tag;
 @property (readonly) NSArray<CEVariantSource *> *sources;
 
 @end

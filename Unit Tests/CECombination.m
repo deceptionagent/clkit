@@ -10,18 +10,18 @@
 @implementation CECombination
 {
     NSDictionary<NSString *, id> *_backing; // { identifier : series value }
-    CEVariantTag *_tag;
+    NSString *_tag;
 }
 
 @synthesize backing = _backing;
 @synthesize tag = _tag;
 
-+ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag
++ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(NSString *)tag
 {
     return [[[self alloc] initWithBacking:backing tag:tag] autorelease];
 }
 
-- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(CEVariantTag *)tag
+- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(NSString *)tag
 {
     self = [super init];
     if (self != nil) {
@@ -68,7 +68,7 @@
 
 - (BOOL)isEqualToCombination:(CECombination *)combination
 {
-    if (![_tag isEqualToVariantTag:combination.tag]) {
+    if (![_tag isEqualToString:combination.tag]) {
         return NO;
     }
     

@@ -15,8 +15,6 @@
 		A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */; };
 		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
 		A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */; };
-		A634BCD4204BDD1200E2BA10 /* CEVariantTag.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */; };
-		A634BCD7204BDF8E00E2BA10 /* Test_CEVariantTag.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */; };
 		A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */; };
 		A634BCDC204C00A800E2BA10 /* Test_CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */; };
 		A634BCDF204C047E00E2BA10 /* CETemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDE204C047E00E2BA10 /* CETemplate.m */; };
@@ -108,9 +106,6 @@
 		A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAssert.m; sourceTree = "<group>"; };
 		A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstraintValidationSpec.h; sourceTree = "<group>"; };
 		A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConstraintValidationSpec.m; sourceTree = "<group>"; };
-		A634BCD2204BDD1200E2BA10 /* CEVariantTag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariantTag.h; sourceTree = "<group>"; };
-		A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariantTag.m; sourceTree = "<group>"; };
-		A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantTag.m; sourceTree = "<group>"; };
 		A634BCD8204BF96800E2BA10 /* CETemplateSeries.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETemplateSeries.h; sourceTree = "<group>"; };
 		A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CETemplateSeries.m; sourceTree = "<group>"; };
 		A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CETemplateSeries.m; sourceTree = "<group>"; };
@@ -246,8 +241,6 @@
 				A6C5F9002054EA410004E039 /* CEVariantSourceView.m */,
 				A6C5F9022054EBFB0004E039 /* CEVariantView.h */,
 				A6C5F9032054EBFB0004E039 /* CEVariantView.m */,
-				A634BCD2204BDD1200E2BA10 /* CEVariantTag.h */,
-				A634BCD3204BDD1200E2BA10 /* CEVariantTag.m */,
 			);
 			name = "Combination Engine";
 			sourceTree = "<group>";
@@ -265,7 +258,6 @@
 				A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */,
 				A6C5F90520550DD40004E039 /* Test_CEVariantSourceView.m */,
 				A6C5F9072055186D0004E039 /* Test_CEVariantView.m */,
-				A634BCD6204BDF8E00E2BA10 /* Test_CEVariantTag.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -538,11 +530,9 @@
 				A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */,
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
-				A634BCD4204BDD1200E2BA10 /* CEVariantTag.m in Sources */,
 				A6C5F9082055186D0004E039 /* Test_CEVariantView.m in Sources */,
 				A6E9BC27203A17AE001B7095 /* Test_CEVariantSource.m in Sources */,
 				A6A91AC5205B1E15001B81CF /* CEGenerator+Building.m in Sources */,
-				A634BCD7204BDF8E00E2BA10 /* Test_CEVariantTag.m in Sources */,
 				A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */,
 				A6A91AC8205CE3B9001B81CF /* Test_CEGenerator+Building.m in Sources */,
 				A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */,

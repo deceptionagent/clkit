@@ -15,7 +15,7 @@
 
 + (NSArray<CEVariant *> *)variantsFromTemplate:(CETemplate *)template
 {
-    NSMutableDictionary<CEVariantTag *, NSMutableArray<CEVariantSource *> *> *workspace = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSString *, NSMutableArray<CEVariantSource *> *> *workspace = [NSMutableDictionary dictionary];
     
     for (CETemplateSeries *series in template.allSeries) {
         NSArray *values;
@@ -26,7 +26,7 @@
         }
         
         CEVariantSource *source = [CEVariantSource sourceWithIdentifier:series.identifier values:values];
-        for (CEVariantTag *tag in series.variants) {
+        for (NSString *tag in series.variants) {
             // if this tag hasn't already been set up in the workspace, add it
             NSMutableArray *sources = workspace[tag];
             if (sources == nil) {
@@ -41,13 +41,13 @@
     // variants are constructed deterministically to aid in testing and debugging.
     // variants are sorted by tag. each variant's sources are sorted alphabetically by identifier.
     
-    NSArray *sortedTags = [[workspace allKeys] sortedArrayUsingComparator:^(CEVariantTag *tagA, CEVariantTag *tagB) {
+    NSArray *sortedTags = [[workspace allKeys] sortedArrayUsingComparator:^(NSString *tagA, NSString *tagB) {
         return [tagA compare:tagB];
     }];
     
     NSMutableArray<CEVariant *> *variants = [NSMutableArray array];
     
-    for (CEVariantTag *tag in sortedTags) {
+    for (NSString *tag in sortedTags) {
         NSArray *sources = workspace[tag];
         NSArray *sortedSources = [sources sortedArrayUsingComparator:^(CEVariantSource *sourceA, CEVariantSource *sourceB) {
             return [sourceA.identifier compare:sourceB.identifier options:NSLiteralSearch];

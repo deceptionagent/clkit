@@ -18,12 +18,8 @@
 
 - (void)testInit
 {
-    CEVariantTag *north = [CEVariantTag tag];
-    CEVariantTag *south = [CEVariantTag tag];
-    CEVariantTag *east = [CEVariantTag tag];
-    CEVariantTag *west = [CEVariantTag tag];
-    CETemplateSeries *alpha = [[[CETemplateSeries alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] elidable:NO variants:@[ north, south ]] autorelease];
-    CETemplateSeries *bravo = [[[CETemplateSeries alloc] initWithIdentifier:@"xyzzy" values:@[ @"confound", @"delivery" ] elidable:NO variants:@[ east, west ]] autorelease];
+    CETemplateSeries *alpha = [[[CETemplateSeries alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] elidable:NO variants:@[ @"north", @"south" ]] autorelease];
+    CETemplateSeries *bravo = [[[CETemplateSeries alloc] initWithIdentifier:@"xyzzy" values:@[ @"confound", @"delivery" ] elidable:NO variants:@[ @"east", @"west" ]] autorelease];
     
     CETemplate *template = [[[CETemplate alloc] initWithSeries:@[ alpha, bravo ]] autorelease];
     XCTAssertNotNil(template);
