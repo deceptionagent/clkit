@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_END
             for (NSString *dependencyName in option.dependencies) {
                 CLKOption *dependency = [_optionRegistry optionNamed:dependencyName];
                 CLKHardAssert((dependency != nil), @"unregistered option '%@' found in dependency list for option '%@'", dependencyName, option.name);
-                CLKHardAssert((dependency.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required (option: '%@' -> dependency: '%@'", option.name, dependencyName);
+                CLKHardAssert((dependency.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required (option: '%@' -> dependency: '%@')", option.name, dependencyName);
             }
         }
         
