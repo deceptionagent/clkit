@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_END
         }
     }
     
-    return [[[CECombination alloc] initWithBacking:combinationDict tag:_variant.tag] autorelease];
+    return [[[CECombination alloc] initWithBacking:combinationDict variant:_variant.tag] autorelease];
 }
 
 - (CEVariantSourceView *)_rootSourceView

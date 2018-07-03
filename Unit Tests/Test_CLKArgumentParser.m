@@ -135,7 +135,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie", @"--syn-ack", @"quone", @"--ack--syn", @"xyzzy" ];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES transformer:nil dependencies:nil],
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil],
         [CLKOption parameterOptionWithName:@"bar" flag:@"b"],
         [CLKOption parameterOptionWithName:@"syn-ack" flag:@"s"],
         [CLKOption parameterOptionWithName:@"ack--syn" flag:@"a"]
@@ -308,7 +308,7 @@ NS_ASSUME_NONNULL_END
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
          [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES transformer:nil dependencies:nil],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:nil],
          [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
          [CLKOption optionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],
@@ -362,7 +362,7 @@ NS_ASSUME_NONNULL_END
     // dependencies can't reference unregistered options
     NSArray *options = @[
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:@[ @"flarn" ]]
+         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"flarn" ] transformer:nil]
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
@@ -370,7 +370,7 @@ NS_ASSUME_NONNULL_END
     // switches can't be dependencies
     options = @[
          [CLKOption optionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:@[ @"ack" ]]
+         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"ack" ] transformer:nil]
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
@@ -448,7 +448,7 @@ NS_ASSUME_NONNULL_END
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
-    flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES transformer:nil dependencies:nil];
+    flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil];
     NSDictionary *expectedOptionManifest = @{
         @"flarn" : @[ @"barf", @"barf" ]
     };
@@ -457,8 +457,6 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
     [self evaluateSpec:spec usingParser:parser];
 }
-
-#warning add testValidation_restricted
 
 - (void)testValidation_mutualExclusionGroup
 {

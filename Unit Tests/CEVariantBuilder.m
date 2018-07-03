@@ -20,7 +20,7 @@
     for (CETemplateSeries *series in template.allSeries) {
         NSArray *values;
         if (series.elidable) {
-            values = [@[ CEVariantSource.noValueMarker ] arrayByAddingObjectsFromArray:series.values];
+            values = [series.values arrayByAddingObject:CEVariantSource.noValueMarker];
         } else {
             values = series.values;
         }

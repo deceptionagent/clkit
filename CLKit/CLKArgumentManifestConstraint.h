@@ -10,8 +10,7 @@ typedef NS_ENUM(uint32_t, CLKConstraintType) {
     CLKConstraintTypeConditionallyRequired = 1,
     CLKConstraintTypeRepresentativeRequired = 2,
     CLKConstraintTypeMutuallyExclusive = 3,
-    CLKConstraintTypeOccurrencesLimited = 4,
-//    CLKConstraintType
+    CLKConstraintTypeOccurrencesLimited = 4
 };
 
 
@@ -24,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)constraintRequiringRepresentativeForOptions:(NSArray<NSString *> *)options;
 + (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options;
 + (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option;
-+ (instancetype)constraintRestrictingOptions:(NSArray<NSString *> *)options;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;

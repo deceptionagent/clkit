@@ -68,17 +68,17 @@ NS_ASSUME_NONNULL_END
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn, barf, quone ]];
     
     NSArray *expectedCombinations = @[
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(5) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3), @"quone" : @(5) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(5) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3), @"quone" : @(5) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(5) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(5) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(5) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(5) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(6) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3), @"quone" : @(6) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(6) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(3), @"quone" : @(6) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(6) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(6) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(6) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(6) } variant:@"tag"],
     ];
     
     CEVariantView *view = [[[CEVariantView alloc] initWithVariant:variant] autorelease];
@@ -93,14 +93,14 @@ NS_ASSUME_NONNULL_END
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn, barf, quone ]];
     
     NSArray *expectedCombinations = @[
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(4) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(4) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(4) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(4) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(5) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(5) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(5) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(5) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(6) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(6) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(6) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(3), @"quone" : @(6) } variant:@"tag"],
     ];
     
     CEVariantView *view = [[[CEVariantView alloc] initWithVariant:variant] autorelease];
@@ -113,9 +113,9 @@ NS_ASSUME_NONNULL_END
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn ]];
     
     NSArray *expectedCombinations = @[
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(3) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(3) } variant:@"tag"],
     ];
     
     CEVariantView *view = [[[CEVariantView alloc] initWithVariant:variant] autorelease];
@@ -126,7 +126,7 @@ NS_ASSUME_NONNULL_END
 {
     CEVariantSource *flarn = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(1) ]];
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn ]];
-    CECombination *expectedCombination = [CECombination combinationWithBacking:@{ @"flarn" : @(1) } tag:@"tag"];
+    CECombination *expectedCombination = [CECombination combinationWithBacking:@{ @"flarn" : @(1) } variant:@"tag"];
     
     CEVariantView *view = [[[CEVariantView alloc] initWithVariant:variant] autorelease];
     [self performTestWithVariantView:view expectedCombinations:@[ expectedCombination ]];
@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_END
     CEVariantSource *barf  = [CEVariantSource sourceWithIdentifier:@"barf"  values:@[ @(2) ]];
     CEVariantSource *quone = [CEVariantSource sourceWithIdentifier:@"quone" values:@[ @(3) ]];
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn, barf, quone ]];
-    CECombination *expectedCombination = [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(3) } tag:@"tag"];
+    CECombination *expectedCombination = [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(2), @"quone" : @(3) } variant:@"tag"];
     
     CEVariantView *view = [[[CEVariantView alloc] initWithVariant:variant] autorelease];
     [self performTestWithVariantView:view expectedCombinations:@[ expectedCombination ]];
@@ -153,23 +153,23 @@ NS_ASSUME_NONNULL_END
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ flarn, barf, quone ]];
     
     NSArray *expectedCombinations = @[
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"quone" : @(5) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"quone" : @(5) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"quone" : @(5) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"quone" : @(5) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(5) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(5) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(5) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(5) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"quone" : @(6) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"quone" : @(6) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"quone" : @(6) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"quone" : @(6) } variant:@"tag"],
         
-        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(6) } tag:@"tag"],
-        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(6) } tag:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(1), @"barf" : @(4), @"quone" : @(6) } variant:@"tag"],
+        [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4), @"quone" : @(6) } variant:@"tag"],
     ];
     
     CEVariantView *view = [[[CEVariantView alloc] initWithVariant:variant] autorelease];

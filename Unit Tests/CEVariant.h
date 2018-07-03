@@ -6,7 +6,6 @@
 
 
 @class CEVariantSource;
-////@class CEVariantTag;
 
 
 NS_ASSUME_NONNULL_BEGIN

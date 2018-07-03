@@ -255,12 +255,8 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --flarn: mutually exclusive options encountered"];
 }
 
-#warning add restricted constraint test
-
 - (void)testMultipleConstraints
 {
-    #warning add restricted constraint
-    
     CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];
     CLKOption *thrud_alt = [CLKOption optionWithName:@"thrud_alt" flag:nil];
     CLKOption *ack = [CLKOption parameterOptionWithName:@"ack" flag:nil];

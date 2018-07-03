@@ -10,23 +10,23 @@
 @implementation CECombination
 {
     NSDictionary<NSString *, id> *_backing; // { identifier : series value }
-    NSString *_tag;
+    NSString *_variant;
 }
 
 @synthesize backing = _backing;
-@synthesize tag = _tag;
+@synthesize variant = _variant;
 
-+ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing tag:(NSString *)tag
++ (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing variant:(NSString *)variant
 {
-    return [[[self alloc] initWithBacking:backing tag:tag] autorelease];
+    return [[[self alloc] initWithBacking:backing variant:variant] autorelease];
 }
 
-- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing tag:(NSString *)tag
+- (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing variant:(NSString *)variant
 {
     self = [super init];
     if (self != nil) {
         _backing = [backing copy];
-        _tag = [tag copy];
+        _variant = [variant copy];
     }
     
     return self;
@@ -35,13 +35,13 @@
 - (void)dealloc
 {
     [_backing release];
-    [_tag release];
+    [_variant release];
     [super dealloc];
 }
 
 - (NSUInteger)hash
 {
-    return (_tag.hash ^ _backing.hash);
+    return (_variant.hash ^ _backing.hash);
 }
 
 - (BOOL)isEqual:(id)obj
@@ -62,13 +62,13 @@
 - (id)objectForKeyedSubscript:(NSString *)identifier
 {
     id value = _backing[identifier];
-    NSAssert((value != nil), @"subscripting unknown identifier '%@'", identifier);
+//    NSAssert((value != nil), @"subscripting unknown identifier '%@'", identifier);
     return value;
 }
 
 - (BOOL)isEqualToCombination:(CECombination *)combination
 {
-    if (![_tag isEqualToString:combination.tag]) {
+    if (![_variant isEqualToString:combination.variant]) {
         return NO;
     }
     
