@@ -25,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Switch Options
 
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag restricted:(BOOL)restricted;
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
 
 #pragma mark -
@@ -33,22 +32,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag restricted:(BOOL)restricted;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag recurrent:(BOOL)recurrent;
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag recurrent:(BOOL)recurrent restricted:(BOOL)restricted transformer:(nullable CLKArgumentTransformer *)transformer;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required recurrent:(BOOL)recurrent transformer:(nullable CLKArgumentTransformer *)transformer dependencies:(nullable NSArray<NSString *> *)dependencies;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required recurrent:(BOOL)recurrent dependencies:(nullable NSArray<NSString *> *)dependencies transformer:(nullable CLKArgumentTransformer *)transformer;
 
 #pragma mark -
 
+@property (readonly) CLKOptionType type;
 @property (readonly) NSString *name;
 @property (nullable, readonly) NSString *flag;
 @property (readonly) BOOL required;
 @property (readonly) BOOL recurrent;
-@property (readonly) BOOL restricted;
-@property (nullable, readonly) CLKArgumentTransformer *transformer;
 @property (nullable, readonly) NSArray<NSString *> *dependencies;
-@property (readonly) CLKOptionType type;
+@property (nullable, readonly) CLKArgumentTransformer *transformer;
 
 - (BOOL)isEqualToOption:(CLKOption *)option;
 

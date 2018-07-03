@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_END
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     
     // expectation
-    CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ CEVariantSource.noValueMarker, @(420) ]];
+    CEVariantSource *source = [CEVariantSource sourceWithIdentifier:@"flarn" values:@[ @(420), CEVariantSource.noValueMarker ]];
     CEVariant *variant = [CEVariant variantWithTag:@"tag" sources:@[ source ]];
     
     [self performTestWithTemplate:template expectedVariants:@[ variant ]];

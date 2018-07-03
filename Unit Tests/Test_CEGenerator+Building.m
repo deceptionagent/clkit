@@ -20,7 +20,7 @@
     CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ @"tag" ]];
     CETemplate *template = [CETemplate templateWithSeries:@[ series ]];
     NSArray *expectedCombinations = @[
-        [CECombination combinationWithBacking:@{ @"flarn" : @(420) } tag:@"tag"]
+        [CECombination combinationWithBacking:@{ @"flarn" : @(420) } variant:@"tag"]
     ];
     
     CEGenerator *generator = [CEGenerator generatorWithTemplate:template];

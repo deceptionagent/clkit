@@ -59,9 +59,9 @@ NS_ASSUME_NONNULL_END
 - (void)testParameterOptions
 {
     CLKOption *switchOption = [CLKOption optionWithName:@"switch" flag:@"f"];
-    CLKOption *lorem = [CLKOption parameterOptionWithName:@"lorem" flag:@"l" required:NO recurrent:YES transformer:nil dependencies:nil];
-    CLKOption *ipsum = [CLKOption parameterOptionWithName:@"ipsum" flag:@"i" required:NO recurrent:YES transformer:nil dependencies:nil];
-    CLKOption *solo = [CLKOption parameterOptionWithName:@"solo" flag:@"s" required:NO recurrent:YES transformer:nil dependencies:nil];
+    CLKOption *lorem = [CLKOption parameterOptionWithName:@"lorem" flag:@"l" required:NO recurrent:YES dependencies:nil transformer:nil];
+    CLKOption *ipsum = [CLKOption parameterOptionWithName:@"ipsum" flag:@"i" required:NO recurrent:YES dependencies:nil transformer:nil];
+    CLKOption *solo = [CLKOption parameterOptionWithName:@"solo" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:nil];
     CLKOption *oneshot = [CLKOption parameterOptionWithName:@"oneshot" flag:nil];
     CLKOption *never = [CLKOption parameterOptionWithName:@"never" flag:nil];
     CLKArgumentManifest *manifest = [self manifestWithRegisteredOptions:@[ switchOption, lorem, ipsum, solo, oneshot, never ]];

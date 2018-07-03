@@ -5,9 +5,6 @@
 #import <Foundation/Foundation.h>
 
 
-//@class CEVariantTag;
-
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CECombination : NSObject
@@ -17,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id)objectForKeyedSubscript:(NSString *)identifier;
 
-@property (readonly) NSString *tag;
+@property (readonly) NSString *variant;
 
 - (BOOL)isEqualToCombination:(CECombination *)combination;
 

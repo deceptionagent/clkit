@@ -7,10 +7,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-//@class CEVariantTag;
-
-
 @interface CETemplateSeries : NSObject
 
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(NSString *)variant;
