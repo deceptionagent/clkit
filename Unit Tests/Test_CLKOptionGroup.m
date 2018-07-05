@@ -69,6 +69,12 @@
     NSArray<CLKOptionGroup *> *subgroups = @[ subgroupAlpha, subgroupBravo ];
     CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ] subgroups:subgroups required:NO];
     XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf", @"quone", @"xyzzy", @"syn", @"ack", ]));
+    
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ] subgroups:nil required:NO];
+    XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf" ]));
+    
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:nil subgroups:subgroups required:NO];
+    XCTAssertEqualObjects(group.allOptions, (@[ @"quone", @"xyzzy", @"syn", @"ack" ]));
 }
 
 - (void)testConstraints_boringGroup
