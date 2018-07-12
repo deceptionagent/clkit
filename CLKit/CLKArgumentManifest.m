@@ -92,21 +92,23 @@
 
 - (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName
 {
-    CLKOption *option = [_optionRegistry optionNamed:optionName];
     id value = _optionManifest[optionName];
     if (value == nil) {
         return 0;
     }
     
+    CLKOption *option = [_optionRegistry optionNamed:optionName];
+    NSAssert(option != nil, @"found a manifest value for option named '%@', but no manifest entry", optionName);
+    
     NSUInteger occurrences = 0;
     switch (option.type) {
         case CLKOptionTypeSwitch:
-            NSAssert2(([value isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for option named: %@", NSStringFromClass([value class]), optionName);
+            NSAssert2(([value isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for option named '%@'", NSStringFromClass([value class]), optionName);
             occurrences = ((NSNumber *)value).unsignedIntegerValue;
             break;
         
         case CLKOptionTypeParameter:
-            NSAssert2(([value isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option named: %@", NSStringFromClass([value class]), optionName);
+            NSAssert2(([value isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option named '%@'", NSStringFromClass([value class]), optionName);
             occurrences = ((NSMutableArray *)value).count;
             break;
     }
