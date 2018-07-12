@@ -352,8 +352,11 @@ NS_ASSUME_NONNULL_END
          [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
     ];
     
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ]];
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
+    
     CLKOptionGroup *subgroup = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ]];
-    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"syn" ] subgroups:@[ subgroup ] required:NO];
+    group = [CLKOptionGroup mutexedGroupWithSubgroups:@[ subgroup ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
@@ -498,26 +501,27 @@ NS_ASSUME_NONNULL_END
     CLKOption *ack = [CLKOption optionWithName:@"ack" flag:@"a"];
     CLKOption *what = [CLKOption optionWithName:@"what" flag:@"w"];
     NSArray *options = @[ flarn, barf, quone, xyzzy, syn, ack, what ];
+    CLKOptionGroup *mutexedSubgroup = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
     CLKOptionGroup *subgroupQuoneXyzzy = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ]];
     CLKOptionGroup *subgroupSynAck = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ]];
-    CLKOptionGroup *mutexGroup = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ] subgroups:@[ subgroupQuoneXyzzy, subgroupSynAck ] required:NO];
+    CLKOptionGroup *mutexedGroup = [CLKOptionGroup mutexedGroupWithSubgroups:@[ mutexedSubgroup, subgroupQuoneXyzzy, subgroupSynAck ]];
     
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ mutexGroup ]];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ mutexedGroup ]];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];;
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
-    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--quone" ] options:options optionGroups:@[ mutexGroup ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--flarn", @"--quone" ] options:options optionGroups:@[ mutexedGroup ]];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --quone: mutually exclusive options encountered"];;
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
-    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--quone", @"--ack" ] options:options optionGroups:@[ mutexGroup ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--quone", @"--ack" ] options:options optionGroups:@[ mutexedGroup ]];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];;
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
     
-    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--ack", @"--quone" ] options:options optionGroups:@[ mutexGroup ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--ack", @"--quone" ] options:options optionGroups:@[ mutexedGroup ]];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];;
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
@@ -527,11 +531,11 @@ NS_ASSUME_NONNULL_END
         @"ack" : @(1)
     };
     
-    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--syn", @"--ack" ] options:options optionGroups:@[ mutexGroup ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--syn", @"--ack" ] options:options optionGroups:@[ mutexedGroup ]];
     spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
     [self evaluateSpec:spec usingParser:parser];
     
-    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--barf", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexGroup ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--barf", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexedGroup ]];
     NSArray *errors = @[
         [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --xyzzy: mutually exclusive options encountered"],
         [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --syn: mutually exclusive options encountered"],
@@ -541,7 +545,7 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParserSpec specWithErrors:errors];
     [self evaluateSpec:spec usingParser:parser];
     
-    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--what", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexGroup ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--what", @"--xyzzy", @"--syn" ] options:options optionGroups:@[ mutexedGroup ]];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"];;
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
