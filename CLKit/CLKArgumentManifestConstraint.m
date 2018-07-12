@@ -81,6 +81,8 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
 
 - (instancetype)_initWithType:(CLKConstraintType)type option:(NSString *)option associatedOption:(NSString *)associatedOption linkedOptions:(NSArray<NSString *> *)linkedOptions
 {
+    NSParameterAssert(option != nil || linkedOptions != nil);
+    
     self = [super init];
     if (self != nil) {
         _type = type;

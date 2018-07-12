@@ -84,14 +84,25 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:transformer] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required recurrent:(BOOL)recurrent dependencies:(NSArray<NSString *> *)dependencies transformer:(CLKArgumentTransformer *)transformer
++ (instancetype)parameterOptionWithName:(NSString *)name
+                                   flag:(nullable NSString *)flag
+                               required:(BOOL)required
+                              recurrent:(BOOL)recurrent
+                           dependencies:(nullable NSArray<NSString *> *)dependencies
+                            transformer:(nullable CLKArgumentTransformer *)transformer
 {
     return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer] autorelease];
 }
 
 #pragma mark -
 
-- (instancetype)initWithType:(CLKOptionType)type name:(NSString *)name flag:(NSString *)flag required:(BOOL)required recurrent:(BOOL)recurrent dependencies:(NSArray<NSString *> *)dependencies transformer:(CLKArgumentTransformer *)transformer
+- (instancetype)initWithType:(CLKOptionType)type
+                        name:(NSString *)name
+                        flag:(nullable NSString *)flag
+                    required:(BOOL)required
+                   recurrent:(BOOL)recurrent
+                dependencies:(nullable NSArray<NSString *> *)dependencies
+                 transformer:(nullable CLKArgumentTransformer *)transformer
 {
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
