@@ -2,7 +2,7 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "CLKOptionGroup.h"
+#import "CLKOptionGroup_Private.h"
 
 #import "CLKArgumentManifestConstraint.h"
 #import "NSMutableArray+CLKAdditions.h"
@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CLKArgumentManifestConstraint *)_requiredConstraint;
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints;
+- (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraintsForSubgroups;
 - (nullable NSArray<NSString *> *)_allSubgroupOptions;
 
 @end
@@ -59,13 +60,21 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:YES required:required] autorelease];
 }
 
-+ (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required
++ (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:subgroups mutexed:YES required:required] autorelease];
+    return [[[self alloc] _initWithOptionsNamed:nil subgroups:subgroups mutexed:YES required:NO] autorelease];
+}
+
++ (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required
+{
+    return [[[self alloc] _initWithOptionsNamed:nil subgroups:subgroups mutexed:YES required:required] autorelease];
 }
 
 - (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups mutexed:(BOOL)mutexed required:(BOOL)required
 {
+    NSParameterAssert(!(options != nil && subgroups != nil));
+    NSParameterAssert(!(options == nil && subgroups == nil));
+    
     self = [super init];
     if (self != nil) {
         _options = [options copy];
@@ -119,6 +128,10 @@ NS_ASSUME_NONNULL_END
         [constraints addObject:[self _requiredConstraint]];
     }
     
+    if (_subgroups != nil) {
+        [constraints addObjectsFromArray:[self _subgroupConstraints]];
+    }
+    
     if (_mutexed) {
         [constraints addObjectsFromArray:[self _mutexConstraints]];
     }
@@ -135,48 +148,56 @@ NS_ASSUME_NONNULL_END
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints
 {
     NSAssert(_mutexed, @"constructing mutex constraints for non-mutexed group");
+    NSAssert(!(_options != nil && _subgroups != nil), @"cannot have both primary options and subgroups");
+    NSAssert(!(_options == nil && _subgroups == nil), @"must have either primary options or subgroups");
+    
+    if (_options != nil) {
+        if (_options.count > 0) {
+            /* primary options are mutually exclusive with each other */
+            CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:_options];
+            return @[ constraint ];
+        }
+    } else if (_subgroups != nil) {
+        /* subgroups are mutually exclusive with each other */
+        return [self _mutexConstraintsForSubgroups];
+    }
+    
+    return @[];
+}
+
+- (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraintsForSubgroups
+{
+    if (_subgroups.count < 2) {
+        return @[];
+    }
     
     NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     
-    /* primary options are mutually exclusive with each other */
-    
-    if (_options.count > 0) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:_options];
-        [constraints addObject:constraint];
-    }
-    
-    /* each primary option is mutually exclusive with every subgroup */
-    
-    if (_options.count > 0) {
-        NSArray<NSString *> *allSubgroupOptions = [self _allSubgroupOptions];
-        if (allSubgroupOptions.count > 0) {
-            for (NSString *option in _options) {
-                for (NSString *subgroupOption in allSubgroupOptions) {
-                    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ option, subgroupOption ]];
+    NSMutableArray<CLKOptionGroup *> *remainingSubgroups = [[_subgroups mutableCopy] autorelease];
+    CLKOptionGroup *currentSubgroup;
+    while ((currentSubgroup = [remainingSubgroups clk_popFirstObject]) != nil) {
+        for (NSString *currentSubgroupOption in currentSubgroup.options) {
+            for (CLKOptionGroup *group in remainingSubgroups) {
+                for (NSString *option in group.options) {
+                    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ currentSubgroupOption, option ]];
                     [constraints addObject:constraint];
                 }
             }
         }
     }
     
-    /* subgroups are mutually exclusive with each other */
-    
-    if (_subgroups.count > 1) {
-        NSMutableArray<CLKOptionGroup *> *remainingSubgroups = [[_subgroups mutableCopy] autorelease];
-        CLKOptionGroup *currentSubgroup;
-        while ((currentSubgroup = [remainingSubgroups clk_popFirstObject]) != nil) {
-            for (NSString *currentSubgroupOption in currentSubgroup.options) {
-                for (CLKOptionGroup *group in remainingSubgroups) {
-                    for (NSString *option in group.options) {
-                        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ currentSubgroupOption, option ]];
-                        [constraints addObject:constraint];
-                    }
-                }
-            }
-        }
-    }
-    
     return constraints;
+}
+
+- (NSArray<CLKArgumentManifestConstraint *> *)_subgroupConstraints
+{
+    NSMutableArray<CLKArgumentManifestConstraint *> *subgroupConstraints = [NSMutableArray array];
+
+    for (CLKOptionGroup *subgroup in _subgroups) {
+        [subgroupConstraints addObjectsFromArray:subgroup.constraints];
+    }
+
+    return subgroupConstraints;
 }
 
 @end

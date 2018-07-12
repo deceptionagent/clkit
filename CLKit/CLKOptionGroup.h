@@ -14,9 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required;
+
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required;
-+ (instancetype)mutexedGroupForOptionsNamed:(nullable NSArray<NSString *> *)options subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required;
+
++ (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups;
++ (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
