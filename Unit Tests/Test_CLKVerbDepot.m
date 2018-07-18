@@ -33,15 +33,27 @@
     XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:nil] autorelease]);
     XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:@[]] autorelease]);
 #pragma clang diagnostic pop
-    
-    // verify collision guard
-    verbs = @[
+}
+
+- (void)testInit_collisionGuard
+{
+    NSArray *argv = @[ @"flarn", @"--barf" ];
+    NSArray<id<CLKVerb>> *verbs = @[
         [StuntVerb flarnVerb],
         [StuntVerb quoneVerb],
         [StuntVerb flarnVerb]
     ];
     
     XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:verbs] autorelease]);
+    
+/* [future: when case-insensitive lookup is implemented] */
+//
+//    verbs = @[
+//        [[[StuntVerb alloc] initWithName:@"flarn" help:@"" pubilc:YES options:nil optionGroups:nil] autorelease],
+//        [[[StuntVerb alloc] initWithName:@"FLARN" help:@"" pubilc:YES options:nil optionGroups:nil] autorelease],
+//    ];
+//
+//    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:verbs] autorelease]);
 }
 
 @end
