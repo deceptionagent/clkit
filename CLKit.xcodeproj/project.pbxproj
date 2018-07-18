@@ -26,7 +26,6 @@
 		A64615EC20FDF9EA001F885C /* CLKCommandResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615EA20FDF9EA001F885C /* CLKCommandResult.h */; };
 		A64615ED20FDF9EA001F885C /* CLKCommandResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615EB20FDF9EA001F885C /* CLKCommandResult.m */; };
 		A64615EF20FEC95E001F885C /* Test_CLKCommandResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615EE20FEC95E001F885C /* Test_CLKCommandResult.m */; };
-		A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */; };
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
 		A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DF21F02406F00456347 /* Test_CLKOption.m */; };
 		A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */; };
@@ -61,8 +60,6 @@
 		A6E478DA1F133AB80081EB82 /* CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DEA1F023CE200456347 /* CLKOption.m */; };
 		A6E478DB1F133AB80081EB82 /* CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFD1F02DF4300456347 /* CLKArgumentManifest.m */; };
 		A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */; };
-		A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3E1F0A31E300BF6FAE /* CLKVerb.m */; };
-		A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */; };
 		A6E478FC1F1347530081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E478FF1F13475B0081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E9BC23203A173E001B7095 /* CEVariantSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC21203A173E001B7095 /* CEVariantSource.m */; };
@@ -127,11 +124,6 @@
 		A64615EE20FEC95E001F885C /* Test_CLKCommandResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKCommandResult.m; sourceTree = "<group>"; };
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
-		A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKVerbDepot.m; sourceTree = "<group>"; };
-		A6527C3D1F0A31E300BF6FAE /* CLKVerbDepot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKVerbDepot.h; sourceTree = "<group>"; };
-		A6527C3E1F0A31E300BF6FAE /* CLKVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKVerb.m; sourceTree = "<group>"; };
-		A6527C3F1F0A31E300BF6FAE /* CLKVerb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKVerb.h; sourceTree = "<group>"; };
-		A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKVerbDepot.m; sourceTree = "<group>"; };
 		A66A9DDF1F02294800456347 /* clklab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clklab; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66A9DE21F02294800456347 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A66A9DE91F023CE200456347 /* CLKOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption.h; sourceTree = "<group>"; };
@@ -299,10 +291,6 @@
 			children = (
 				A64615EA20FDF9EA001F885C /* CLKCommandResult.h */,
 				A64615EB20FDF9EA001F885C /* CLKCommandResult.m */,
-				A6527C3F1F0A31E300BF6FAE /* CLKVerb.h */,
-				A6527C3E1F0A31E300BF6FAE /* CLKVerb.m */,
-				A6527C3D1F0A31E300BF6FAE /* CLKVerbDepot.h */,
-				A6527C3C1F0A31E300BF6FAE /* CLKVerbDepot.m */,
 			);
 			name = Verbs;
 			sourceTree = "<group>";
@@ -354,7 +342,6 @@
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
 				A6CFEAA4200D39910009B8D2 /* Test_CLKOptionGroup.m */,
 				A6BB1B3F2033F74A00927BD9 /* Test_CLKOptionRegistry.m */,
-				A6527C441F0A397C00BF6FAE /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);
 			path = "Unit Tests";
@@ -550,7 +537,6 @@
 				A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */,
 				A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */,
 				A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */,
-				A6527C451F0A397C00BF6FAE /* Test_CLKVerbDepot.m in Sources */,
 				A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */,
 				A634BCE9204C13C500E2BA10 /* CECombination.m in Sources */,
 				A6CFEAA5200D39910009B8D2 /* Test_CLKOptionGroup.m in Sources */,
@@ -588,8 +574,6 @@
 				A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */,
 				A6E478DB1F133AB80081EB82 /* CLKArgumentManifest.m in Sources */,
 				A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */,
-				A6E478DD1F133AB80081EB82 /* CLKVerb.m in Sources */,
-				A6E478DE1F133AB80081EB82 /* CLKVerbDepot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
