@@ -34,7 +34,7 @@
             
             if (option.flag != nil) {
                 CLKOption *collision = _optionFlagMap[option.flag];
-                CLKHardAssert((collision == nil), NSInvalidArgumentException, @"encountered colliding flag '%@' found for options '%@' and '%@'", option.flag, option.name, collision.name);
+                CLKHardAssert((collision == nil), NSInvalidArgumentException, @"encountered colliding flag '%@' for options '%@' and '%@'", option.flag, option.name, collision.name);
                 _optionFlagMap[option.flag] = option;
             }
         }

@@ -26,6 +26,10 @@
 		A64615EC20FDF9EA001F885C /* CLKCommandResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615EA20FDF9EA001F885C /* CLKCommandResult.h */; };
 		A64615ED20FDF9EA001F885C /* CLKCommandResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615EB20FDF9EA001F885C /* CLKCommandResult.m */; };
 		A64615EF20FEC95E001F885C /* Test_CLKCommandResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615EE20FEC95E001F885C /* Test_CLKCommandResult.m */; };
+		A64615F320FF26C6001F885C /* CLKVerbDepot.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615F120FF26C6001F885C /* CLKVerbDepot.h */; };
+		A64615F420FF26C6001F885C /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F220FF26C6001F885C /* CLKVerbDepot.m */; };
+		A64615F620FF3DEC001F885C /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F520FF3DEC001F885C /* Test_CLKVerbDepot.m */; };
+		A64615F920FF3E2B001F885C /* StuntVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F820FF3E2B001F885C /* StuntVerb.m */; };
 		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
 		A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DF21F02406F00456347 /* Test_CLKOption.m */; };
 		A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */; };
@@ -122,6 +126,12 @@
 		A64615EA20FDF9EA001F885C /* CLKCommandResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKCommandResult.h; sourceTree = "<group>"; };
 		A64615EB20FDF9EA001F885C /* CLKCommandResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKCommandResult.m; sourceTree = "<group>"; };
 		A64615EE20FEC95E001F885C /* Test_CLKCommandResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKCommandResult.m; sourceTree = "<group>"; };
+		A64615F020FF2616001F885C /* CLKVerb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKVerb.h; sourceTree = "<group>"; };
+		A64615F120FF26C6001F885C /* CLKVerbDepot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKVerbDepot.h; sourceTree = "<group>"; };
+		A64615F220FF26C6001F885C /* CLKVerbDepot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKVerbDepot.m; sourceTree = "<group>"; };
+		A64615F520FF3DEC001F885C /* Test_CLKVerbDepot.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKVerbDepot.m; sourceTree = "<group>"; };
+		A64615F720FF3E2B001F885C /* StuntVerb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StuntVerb.h; sourceTree = "<group>"; };
+		A64615F820FF3E2B001F885C /* StuntVerb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StuntVerb.m; sourceTree = "<group>"; };
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
 		A66A9DDF1F02294800456347 /* clklab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clklab; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -291,6 +301,9 @@
 			children = (
 				A64615EA20FDF9EA001F885C /* CLKCommandResult.h */,
 				A64615EB20FDF9EA001F885C /* CLKCommandResult.m */,
+				A64615F020FF2616001F885C /* CLKVerb.h */,
+				A64615F120FF26C6001F885C /* CLKVerbDepot.h */,
+				A64615F220FF26C6001F885C /* CLKVerbDepot.m */,
 			);
 			name = Verbs;
 			sourceTree = "<group>";
@@ -342,6 +355,7 @@
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
 				A6CFEAA4200D39910009B8D2 /* Test_CLKOptionGroup.m */,
 				A6BB1B3F2033F74A00927BD9 /* Test_CLKOptionRegistry.m */,
+				A64615F520FF3DEC001F885C /* Test_CLKVerbDepot.m */,
 				A66A9DF41F02406F00456347 /* Info.plist */,
 			);
 			path = "Unit Tests";
@@ -379,6 +393,8 @@
 				A6E34F6A202C59E900CE22E1 /* ArgumentParserSpec.m */,
 				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
 				A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */,
+				A64615F720FF3E2B001F885C /* StuntVerb.h */,
+				A64615F820FF3E2B001F885C /* StuntVerb.m */,
 				A609E2C21F5964670088DEDA /* XCTestCase+CLKAdditions.h */,
 				A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */,
 			);
@@ -393,6 +409,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A609E2DC1F5D1BAB0088DEDA /* CLKError.h in Headers */,
+				A64615F320FF26C6001F885C /* CLKVerbDepot.h in Headers */,
 				A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */,
 				A609E2C51F5B6D580088DEDA /* CLKArgumentManifestValidator.h in Headers */,
 				A674001F2003209E00910474 /* CLKOptionGroup.h in Headers */,
@@ -528,8 +545,10 @@
 				A64615EF20FEC95E001F885C /* Test_CLKCommandResult.m in Sources */,
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
+				A64615F620FF3DEC001F885C /* Test_CLKVerbDepot.m in Sources */,
 				A6C5F9082055186D0004E039 /* Test_CEVariantView.m in Sources */,
 				A6E9BC27203A17AE001B7095 /* Test_CEVariantSource.m in Sources */,
+				A64615F920FF3E2B001F885C /* StuntVerb.m in Sources */,
 				A6A91AC5205B1E15001B81CF /* CEGenerator+Building.m in Sources */,
 				A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */,
 				A6A91AC8205CE3B9001B81CF /* Test_CEGenerator+Building.m in Sources */,
@@ -573,6 +592,7 @@
 				A6BB1B3E2032F1A900927BD9 /* CLKOptionRegistry.m in Sources */,
 				A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */,
 				A6E478DB1F133AB80081EB82 /* CLKArgumentManifest.m in Sources */,
+				A64615F420FF26C6001F885C /* CLKVerbDepot.m in Sources */,
 				A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
