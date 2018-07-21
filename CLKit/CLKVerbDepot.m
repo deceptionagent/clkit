@@ -79,7 +79,8 @@ NS_ASSUME_NONNULL_END
 
 - (CLKCommandResult *)_runVerb:(id<CLKVerb>)verb withArgumentVector:(NSArray<NSString *> *)argumentVector
 {
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argumentVector options:verb.options optionGroups:verb.optionGroups];
+    NSArray<CLKOption *> *options = (verb.options != nil ? verb.options : @[]);
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argumentVector options:options optionGroups:verb.optionGroups];
     CLKArgumentManifest *manifest = [parser parseArguments];
     if (manifest == nil) {
         return [CLKCommandResult resultWithExitStatus:EX_USAGE errors:parser.errors];

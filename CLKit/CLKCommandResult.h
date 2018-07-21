@@ -12,6 +12,7 @@
 
 + (instancetype)resultWithExitStatus:(int)exitStatus;
 + (instancetype)resultWithExitStatus:(int)exitStatus errors:(nullable NSArray<NSError *> *)errors;
++ (instancetype)resultWithExitStatus:(int)exitStatus userInfo:(nullable NSDictionary *)userInfo;
 
 - (instancetype)initWithExitStatus:(int)exitStatus errors:(nullable NSArray<NSError *> *)errors userInfo:(nullable NSDictionary *)userInfo NS_DESIGNATED_INITIALIZER;
 

@@ -63,8 +63,7 @@
     CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
     
     [switchOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSNumber *count, __unused BOOL *outStop) {
-        int i;
-        for (i = 0 ; i < count.intValue ; i++) {
+        for (int i = 0 ; i < count.intValue ; i++) {
             [manifest accumulateSwitchOptionNamed:option.name];
         }
     }];
