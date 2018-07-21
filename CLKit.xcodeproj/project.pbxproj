@@ -30,7 +30,6 @@
 		A64615F420FF26C6001F885C /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F220FF26C6001F885C /* CLKVerbDepot.m */; };
 		A64615F620FF3DEC001F885C /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F520FF3DEC001F885C /* Test_CLKVerbDepot.m */; };
 		A64615F920FF3E2B001F885C /* StuntVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F820FF3E2B001F885C /* StuntVerb.m */; };
-		A66A9DE31F02294800456347 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DE21F02294800456347 /* main.m */; };
 		A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DF21F02406F00456347 /* Test_CLKOption.m */; };
 		A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */; };
 		A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */; };
@@ -38,6 +37,8 @@
 		A674001F2003209E00910474 /* CLKOptionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = A674001D2003209E00910474 /* CLKOptionGroup.h */; };
 		A67400202003209E00910474 /* CLKOptionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A674001E2003209E00910474 /* CLKOptionGroup.m */; };
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
+		A696CC0F21033D6D00A9F7E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC0E21033D6D00A9F7E7 /* main.m */; };
+		A696CC1221033DD000A9F7E7 /* ConfoundVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */; };
 		A6A91ABA20577F78001B81CF /* CEGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AB920577F78001B81CF /* CEGenerator.m */; };
 		A6A91ABC2057CA2A001B81CF /* Test_CEGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */; };
 		A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */; };
@@ -135,7 +136,6 @@
 		A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKArgumentTransformer.h; sourceTree = "<group>"; };
 		A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentTransformer.m; sourceTree = "<group>"; };
 		A66A9DDF1F02294800456347 /* clklab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clklab; sourceTree = BUILT_PRODUCTS_DIR; };
-		A66A9DE21F02294800456347 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A66A9DE91F023CE200456347 /* CLKOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption.h; sourceTree = "<group>"; };
 		A66A9DEA1F023CE200456347 /* CLKOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOption.m; sourceTree = "<group>"; };
 		A66A9DF01F02406F00456347 /* Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,6 +158,10 @@
 		A6794E621F0F82D8004FEA4A /* NSError+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+CLKAdditions.m"; sourceTree = "<group>"; };
 		A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_ArgumentTransformers.m; sourceTree = "<group>"; };
 		A6893C2C1F11A49300E15F11 /* CLKAssert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKAssert.h; sourceTree = "<group>"; };
+		A696CC0E21033D6D00A9F7E7 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = clklab/main.m; sourceTree = "<group>"; };
+		A696CC1021033DD000A9F7E7 /* ConfoundVerb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ConfoundVerb.h; path = clklab/ConfoundVerb.h; sourceTree = "<group>"; };
+		A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ConfoundVerb.m; path = clklab/ConfoundVerb.m; sourceTree = "<group>"; };
+		A696CC1321033E5B00A9F7E7 /* CLKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKit.h; sourceTree = "<group>"; };
 		A6A91AB820577F78001B81CF /* CEGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEGenerator.h; sourceTree = "<group>"; };
 		A6A91AB920577F78001B81CF /* CEGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEGenerator.m; sourceTree = "<group>"; };
 		A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEGenerator.m; sourceTree = "<group>"; };
@@ -312,6 +316,7 @@
 			isa = PBXGroup;
 			children = (
 				A6E478C81F123CF20081EB82 /* readme.txt */,
+				A6BE98CE21033D240056963C /* clklab */,
 				A66A9DE11F02294800456347 /* CLKit */,
 				A66A9DF11F02406F00456347 /* Unit Tests */,
 				A66A9DE01F02294800456347 /* Products */,
@@ -331,7 +336,7 @@
 		A66A9DE11F02294800456347 /* CLKit */ = {
 			isa = PBXGroup;
 			children = (
-				A66A9DE21F02294800456347 /* main.m */,
+				A696CC1321033E5B00A9F7E7 /* CLKit.h */,
 				A6527C471F0A4CFA00BF6FAE /* Arguments */,
 				A66A9E0A1F041DBB00456347 /* Categories */,
 				A6893C2D1F11A51E00E15F11 /* Misc */,
@@ -383,6 +388,16 @@
 				A609E2DB1F5D1BAB0088DEDA /* CLKError.m */,
 			);
 			name = Misc;
+			sourceTree = "<group>";
+		};
+		A6BE98CE21033D240056963C /* clklab */ = {
+			isa = PBXGroup;
+			children = (
+				A696CC0E21033D6D00A9F7E7 /* main.m */,
+				A696CC1021033DD000A9F7E7 /* ConfoundVerb.h */,
+				A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */,
+			);
+			name = clklab;
 			sourceTree = "<group>";
 		};
 		A6E9BC1D203A165B001B7095 /* Testing Support */ = {
@@ -529,7 +544,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A66A9DE31F02294800456347 /* main.m in Sources */,
+				A696CC1221033DD000A9F7E7 /* ConfoundVerb.m in Sources */,
+				A696CC0F21033D6D00A9F7E7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
