@@ -107,6 +107,22 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
+- (void)testEmptyOptionsArray
+{
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[]];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:@{} positionalArguments:@[]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"flarn.txt" ] options:@[]];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{} positionalArguments:@[ @"flarn.txt" ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    parser = [CLKArgumentParser parserWithArgumentVector:@[ @"--barf" ] options:@[]];
+    NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--barf'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ expectedError ]];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
 - (void)testSwitchOptions
 {
     NSArray *argv = @[ @"--foo", @"-f", @"-bfb", @"-qqq",  @"--syn-ack", @"--ack--syn" ];

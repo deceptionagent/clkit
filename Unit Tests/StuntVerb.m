@@ -38,6 +38,11 @@
     return [[[self alloc] initWithName:@"quone" help:@"quone the xyzzy" pubilc:YES options:@[ xyzzy ] optionGroups:nil] autorelease];
 }
 
++ (instancetype)verbWithName:(NSString *)name options:(NSArray<CLKOption *> *)options
+{
+    return [[[self alloc] initWithName:name help:[NSString stringWithFormat:@"<%@ help>", name] pubilc:YES options:options optionGroups:nil] autorelease];
+}
+
 - (instancetype)initWithName:(NSString *)name
                         help:(NSString *)help
                       pubilc:(BOOL)public
@@ -62,6 +67,7 @@
     [_help release];
     [_options release];
     [_optionGroups release];
+    [_runWithManifest_impl release];
     [super dealloc];
 }
 
@@ -71,7 +77,12 @@
 - (CLKCommandResult *)runWithManifest:(CLKArgumentManifest *)manifest
 {
     if (_runWithManifest_impl == nil) {
-        return [CLKCommandResult resultWithExitStatus:0];
+        NSDictionary *userInfo = @{
+            @"verb" : _name,
+            @"manifest" : manifest,
+        };
+        
+        return [[[CLKCommandResult alloc] initWithExitStatus:0 errors:nil userInfo:userInfo] autorelease];
     }
     
     return _runWithManifest_impl(manifest);

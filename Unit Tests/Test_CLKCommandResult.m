@@ -40,6 +40,12 @@
         XCTAssertEqual(result.exitStatus, 7);
         XCTAssertEqualObjects(result.errors, errors);
         XCTAssertNil(result.userInfo);
+        
+        result = [CLKCommandResult resultWithExitStatus:7 userInfo:userInfo_];
+        XCTAssertNotNil(result);
+        XCTAssertEqual(result.exitStatus, 7);
+        XCTAssertNil(result.errors);
+        XCTAssertEqualObjects(result.userInfo, userInfo_);
     }];
     
     CLKCommandResult *result = [CLKCommandResult resultWithExitStatus:7];

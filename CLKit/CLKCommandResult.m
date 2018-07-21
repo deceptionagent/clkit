@@ -26,6 +26,11 @@
     return [[[self alloc] initWithExitStatus:exitStatus errors:errors userInfo:nil] autorelease];
 }
 
++ (instancetype)resultWithExitStatus:(int)exitStatus userInfo:(NSDictionary *)userInfo
+{
+    return [[[self alloc] initWithExitStatus:exitStatus errors:nil userInfo:userInfo] autorelease];
+}
+
 - (instancetype)initWithExitStatus:(int)exitStatus errors:(NSArray<NSError *> *)errors userInfo:(NSDictionary *)userInfo
 {
     self = [super init];

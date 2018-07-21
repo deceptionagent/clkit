@@ -7,10 +7,13 @@
 #import <sysexits.h>
 
 #import "CLKCommandResult.h"
+#import "CLKArgumentManifest_Private.h"
+#import "CLKOption.h"
 #import "CLKVerb.h"
 #import "CLKVerbDepot.h"
 #import "StuntVerb.h"
 #import "NSError+CLKAdditions.h"
+#import "XCTestCase+CLKAdditions.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -18,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Test_CLKVerbDepot : XCTestCase
 
 - (void)_performDispatchTestWithDepot:(CLKVerbDepot *)depot expectedResult:(CLKCommandResult *)expectedResult;
+- (void)_performDispatchTestWithDepot:(CLKVerbDepot *)depot expectedVerb:(NSString *)expectedVerb expectedManifest:(CLKArgumentManifest *)expectedManifest;
 
 @end
 
@@ -32,6 +36,20 @@ NS_ASSUME_NONNULL_END
     XCTAssertNotNil(result);
     XCTAssertEqual(result.exitStatus, expectedResult.exitStatus);
     XCTAssertEqualObjects(result.errors, expectedResult.errors);
+    XCTAssertNil(result.userInfo);
+}
+
+- (void)_performDispatchTestWithDepot:(CLKVerbDepot *)depot expectedVerb:(NSString *)expectedVerb expectedManifest:(CLKArgumentManifest *)expectedManifest
+{
+    CLKCommandResult *result = [depot dispatchVerb];
+    XCTAssertNotNil(result);
+    XCTAssertEqual(result.exitStatus, 0);
+    XCTAssertNil(result.errors);
+    XCTAssertEqualObjects(result.userInfo[@"verb"], expectedVerb);
+    
+    CLKArgumentManifest *manifest = result.userInfo[@"manifest"];
+    XCTAssertEqualObjects(manifest.optionManifest, expectedManifest.optionManifest);
+    XCTAssertEqualObjects(manifest.positionalArguments, expectedManifest.positionalArguments);
 }
 
 #pragma mark -
@@ -104,6 +122,39 @@ NS_ASSUME_NONNULL_END
     expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"--quone: Unrecognized verb."];
     expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
     depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"--quone", @"barf" ] verbs:verbs] autorelease];
+    [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
+}
+
+- (void)test_dispatchVerb_optionlessVerb
+{
+    NSArray *verbs = @[ [StuntVerb verbWithName:@"xyzzy" options:nil] ];
+    
+    CLKArgumentManifest *expectedManifest = [self manifestWithSwitchOptions:nil parameterOptions:nil];
+    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"xyzzy" ] verbs:verbs] autorelease];
+    [self _performDispatchTestWithDepot:depot expectedVerb:@"xyzzy" expectedManifest:expectedManifest];
+    
+    NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--barf'"];
+    CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
+    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"xyzzy", @"--barf" ] verbs:verbs] autorelease];
+    [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
+}
+
+- (void)test_dispatchVerb_verbWithOptions
+{
+    CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
+    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
+    NSArray *verbs = @[
+        [StuntVerb verbWithName:@"flarn" options:@[ barf ]],
+        [StuntVerb verbWithName:@"quone" options:@[ xyzzy ]]
+    ];
+    
+    CLKArgumentManifest *expectedManifest = [self manifestWithSwitchOptions:@{ xyzzy : @(1) } parameterOptions:nil];
+    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"quone", @"--xyzzy" ] verbs:verbs] autorelease];
+    [self _performDispatchTestWithDepot:depot expectedVerb:@"quone" expectedManifest:expectedManifest];
+    
+    NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--what'"];
+    CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
+    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--what" ] verbs:verbs] autorelease];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
