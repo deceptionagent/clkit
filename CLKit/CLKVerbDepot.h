@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 
 
+@class CLKCommandResult;
 @protocol CLKVerb;
 
 
@@ -17,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 //- (instancetype)initWithArgv:(const char * _Nonnull [])argv argc:(int)argc verbs:(NSArray<CLKVerb> *)verbs;
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs NS_DESIGNATED_INITIALIZER;
+
+- (CLKCommandResult *)dispatchVerb;
 
 @end
 
