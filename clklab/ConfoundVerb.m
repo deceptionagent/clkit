@@ -12,16 +12,6 @@
     return @"confound";
 }
 
-- (NSString *)help
-{
-    return @"fatum iustum stultorum";
-}
-
-- (BOOL)public
-{
-    return YES;
-}
-
 - (NSArray<CLKOption *> *)options
 {
     return @[

@@ -20,8 +20,6 @@
 }
 
 @synthesize name = _name;
-@synthesize help = _help;
-@synthesize public = _public;
 @synthesize options = _options;
 @synthesize optionGroups = _optionGroups;
 @synthesize runWithManifest_impl = _runWithManifest_impl;
@@ -29,31 +27,27 @@
 + (instancetype)flarnVerb
 {
     CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
-    return [[[self alloc] initWithName:@"flarn" help:@"flarn the barf" pubilc:YES options:@[ barf ] optionGroups:nil] autorelease];
+    return [[[self alloc] initWithName:@"flarn" options:@[ barf ] optionGroups:nil] autorelease];
 }
 
 + (instancetype)quoneVerb
 {
     CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
-    return [[[self alloc] initWithName:@"quone" help:@"quone the xyzzy" pubilc:YES options:@[ xyzzy ] optionGroups:nil] autorelease];
+    return [[[self alloc] initWithName:@"quone" options:@[ xyzzy ] optionGroups:nil] autorelease];
 }
 
 + (instancetype)verbWithName:(NSString *)name options:(NSArray<CLKOption *> *)options
 {
-    return [[[self alloc] initWithName:name help:[NSString stringWithFormat:@"<%@ help>", name] pubilc:YES options:options optionGroups:nil] autorelease];
+    return [[[self alloc] initWithName:name options:options optionGroups:nil] autorelease];
 }
 
 - (instancetype)initWithName:(NSString *)name
-                        help:(NSString *)help
-                      pubilc:(BOOL)public
                      options:(NSArray<CLKOption *> *)options
                 optionGroups:(NSArray<CLKOptionGroup *> *)optionGroups
 {
     self = [super init];
     if (self != nil) {
         _name = [name copy];
-        _help = [help copy];
-        _public = public;
         _options = [options copy];
         _optionGroups = [optionGroups copy];
     }
@@ -64,7 +58,6 @@
 - (void)dealloc
 {
     [_name release];
-    [_help release];
     [_options release];
     [_optionGroups release];
     [_runWithManifest_impl release];

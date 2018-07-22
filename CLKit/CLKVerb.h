@@ -16,8 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol CLKVerb <NSObject>
 
 @property (readonly) NSString *name;
-@property (readonly) NSString *help;
-@property (readonly) BOOL public;
 @property (nullable, readonly) NSArray<CLKOption *> *options;
 @property (nullable, readonly) NSArray<CLKOptionGroup *> *optionGroups;
 
