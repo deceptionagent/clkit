@@ -27,8 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)verbWithName:(NSString *)name options:(nullable NSArray<CLKOption *> *)options;
 
 - (instancetype)initWithName:(NSString *)name
-                        help:(NSString *)help
-                      pubilc:(BOOL)public
                      options:(nullable NSArray<CLKOption *> *)options
                 optionGroups:(nullable NSArray<CLKOptionGroup *> *)optionGroups NS_DESIGNATED_INITIALIZER;
 
