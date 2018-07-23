@@ -26,14 +26,38 @@
 
 + (instancetype)flarnVerb
 {
-    CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
-    return [[[self alloc] initWithName:@"flarn" options:@[ barf ] optionGroups:nil] autorelease];
+    CLKOption *option = [CLKOption optionWithName:@"alpha" flag:@"a"];
+    return [[[self alloc] initWithName:@"flarn" options:@[ option ] optionGroups:nil] autorelease];
+}
+
++ (instancetype)barfVerb
+{
+    CLKOption *option = [CLKOption optionWithName:@"bravo" flag:@"b"];
+    return [[[self alloc] initWithName:@"flarn" options:@[ option ] optionGroups:nil] autorelease];
 }
 
 + (instancetype)quoneVerb
 {
-    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
-    return [[[self alloc] initWithName:@"quone" options:@[ xyzzy ] optionGroups:nil] autorelease];
+    CLKOption *option = [CLKOption optionWithName:@"charlie" flag:@"c"];
+    return [[[self alloc] initWithName:@"quone" options:@[ option ] optionGroups:nil] autorelease];
+}
+
++ (instancetype)xyzzyVerb
+{
+    CLKOption *option = [CLKOption optionWithName:@"delta" flag:@"d"];
+    return [[[self alloc] initWithName:@"xyzzy" options:@[ option ] optionGroups:nil] autorelease];
+}
+
++ (instancetype)synVerb
+{
+    CLKOption *option = [CLKOption optionWithName:@"echo" flag:@"e"];
+    return [[[self alloc] initWithName:@"syn" options:@[ option ] optionGroups:nil] autorelease];
+}
+
++ (instancetype)ackVerb
+{
+    CLKOption *option = [CLKOption optionWithName:@"foxtrot" flag:@"f"];
+    return [[[self alloc] initWithName:@"ack" options:@[ option ] optionGroups:nil] autorelease];
 }
 
 + (instancetype)verbWithName:(NSString *)name options:(NSArray<CLKOption *> *)options

@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs;
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector
                                  verbs:(NSArray<id<CLKVerb>> *)verbs
-                              families:(nullable NSArray<CLKVerbFamily *> *)families NS_DESIGNATED_INITIALIZER;
+                          verbFamilies:(nullable NSArray<CLKVerbFamily *> *)verbFamilies NS_DESIGNATED_INITIALIZER;
 
 - (CLKCommandResult *)dispatchVerb;
 
