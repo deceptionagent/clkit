@@ -11,6 +11,7 @@
 #import "CLKCommandResult.h"
 #import "CLKError.h"
 #import "CLKVerb.h"
+#import "CLKVerbFamily.h"
 #import "NSMutableArray+CLKAdditions.h"
 #import "NSError+CLKAdditions.h"
 
@@ -29,10 +30,18 @@ NS_ASSUME_NONNULL_END
 @implementation CLKVerbDepot
 {
     NSArray<NSString *> *_argumentVector;
-    NSMutableDictionary<NSString *, id<CLKVerb>> *_verbMap;
+    CLKVerbFamily *_topLevelVerbFamily;
+    NSMutableDictionary<NSString *, CLKVerbFamily *> *_verbFamilyMap;
 }
 
+//- (instancetype)initWithArgv:(const char * _Nonnull [])argv argc:(int)argc verbs:(NSArray<CLKVerb> *)verbs
+
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs
+{
+    return [self initWithArgumentVector:argumentVector verbs:verbs families:nil];
+}
+
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs families:(NSArray<CLKVerbFamily *> *)families
 {
     CLKHardParameterAssert(argumentVector != nil);
     CLKHardParameterAssert(verbs.count > 0);
@@ -40,12 +49,8 @@ NS_ASSUME_NONNULL_END
     self = [super init];
     if (self != nil) {
         _argumentVector = [argumentVector copy];
-        
-        _verbMap = [[NSMutableDictionary alloc] init];
-        for (id<CLKVerb> verb in verbs) {
-            CLKHardAssert((_verbMap[verb.name] == nil), NSInvalidArgumentException, @"encountered multiple verbs named '%@'", verb.name);
-            _verbMap[verb.name] = verb;
-        }
+        _topLevelVerbFamily = [[CLKVerbFamily familyWithName:@"(top-level verbs)" verbs:verbs] retain];
+        _verbFamilyMap = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -53,6 +58,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)dealloc
 {
+    [_verbFamilyMap release];
+    [_topLevelVerbFamily release];
     [_argumentVector release];
     [super dealloc];
 }
@@ -68,7 +75,7 @@ NS_ASSUME_NONNULL_END
     
     NSMutableArray<NSString *> *remainingArguments = [[_argumentVector mutableCopy] autorelease];
     NSString *verbName = [remainingArguments clk_popFirstObject];
-    id<CLKVerb> verb = _verbMap[verbName];
+    id<CLKVerb> verb = [_topLevelVerbFamily verbNamed:verbName];
     if (verb == nil) {
         NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"%@: Unrecognized verb.", verbName];
         return [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ error ]];
