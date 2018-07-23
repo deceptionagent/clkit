@@ -76,27 +76,6 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic pop
 }
 
-- (void)testInit_collisionGuard
-{
-    NSArray *argv = @[ @"flarn", @"--barf" ];
-    NSArray *verbs = @[
-        [StuntVerb flarnVerb],
-        [StuntVerb quoneVerb],
-        [StuntVerb flarnVerb]
-    ];
-    
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:verbs] autorelease]);
-    
-/* [future: when case-insensitive lookup is implemented] */
-//
-//    verbs = @[
-//        [[[StuntVerb alloc] initWithName:@"flarn" help:@"" pubilc:YES options:nil optionGroups:nil] autorelease],
-//        [[[StuntVerb alloc] initWithName:@"FLARN" help:@"" pubilc:YES options:nil optionGroups:nil] autorelease],
-//    ];
-//
-//    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:verbs] autorelease]);
-}
-
 - (void)test_dispatchVerb_emptyArgumentVector
 {
     NSArray *verbs = @[ [StuntVerb flarnVerb] ];
