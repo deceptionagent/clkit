@@ -21,8 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 
 // simple verbs that always return success
-+ (instancetype)flarnVerb; // --barf (-b)
-+ (instancetype)quoneVerb; // --xyxxy (-x)
++ (instancetype)flarnVerb; // --alpha (-a)
++ (instancetype)barfVerb; // --bravo (-b)
++ (instancetype)quoneVerb; // --charlie (-c)
++ (instancetype)xyzzyVerb; // --delta (-d)
++ (instancetype)synVerb; // --echo (-e)
++ (instancetype)ackVerb; // --foxtrot (-f)
 
 + (instancetype)verbWithName:(NSString *)name options:(nullable NSArray<CLKOption *> *)options;
 

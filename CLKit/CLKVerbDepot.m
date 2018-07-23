@@ -38,10 +38,10 @@ NS_ASSUME_NONNULL_END
 
 - (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs
 {
-    return [self initWithArgumentVector:argumentVector verbs:verbs families:nil];
+    return [self initWithArgumentVector:argumentVector verbs:verbs verbFamilies:nil];
 }
 
-- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs families:(NSArray<CLKVerbFamily *> *)families
+- (instancetype)initWithArgumentVector:(NSArray<NSString *> *)argumentVector verbs:(NSArray<id<CLKVerb>> *)verbs verbFamilies:(NSArray<CLKVerbFamily *> *)verbFamilies
 {
     CLKHardParameterAssert(argumentVector != nil);
     CLKHardParameterAssert(verbs.count > 0);
@@ -51,6 +51,11 @@ NS_ASSUME_NONNULL_END
         _argumentVector = [argumentVector copy];
         _topLevelVerbFamily = [[CLKVerbFamily familyWithName:@"(top-level verbs)" verbs:verbs] retain];
         _verbFamilyMap = [[NSMutableDictionary alloc] init];
+        
+        for (CLKVerbFamily *family in verbFamilies) {
+            CLKHardAssert((_verbFamilyMap[family.name] == nil), NSInvalidArgumentException, @"encountered multiple verb families named '%@'", family.name);
+            _verbFamilyMap[family.name] = family;
+        }
     }
     
     return self;

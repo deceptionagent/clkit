@@ -42,8 +42,8 @@
 /* [future: when case-insensitive lookup is implemented] */
 //
 //    verbs = @[
-//        [[[StuntVerb alloc] initWithName:@"flarn" help:@"" pubilc:YES options:nil optionGroups:nil] autorelease],
-//        [[[StuntVerb alloc] initWithName:@"FLARN" help:@"" pubilc:YES options:nil optionGroups:nil] autorelease],
+//        [[[StuntVerb alloc] initWithName:@"flarn" options:nil optionGroups:nil] autorelease],
+//        [[[StuntVerb alloc] initWithName:@"FLARN" options:nil optionGroups:nil] autorelease],
 //    ];
 //
 //    XCTAssertThrows([CLKVerbFamily familyWithName:@"confound" verbs:verbs]);
