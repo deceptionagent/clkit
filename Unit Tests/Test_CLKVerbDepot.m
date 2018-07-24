@@ -115,9 +115,40 @@ NS_ASSUME_NONNULL_END
     depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease];
     XCTAssertNotNil(depot);
 
-#warning should this be allowed?
-//    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:nil verbFamilies:families] autorelease];
-//    XCTAssertNotNil(depot);
+    // [TACK] should this be allowed?
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:nil verbFamilies:families] autorelease]);
+#pragma clang diagnostic pop
+}
+
+- (void)testVerbFamilyCollisionGuard
+{
+    NSArray *topLevelVerbs = @[
+        [StuntVerb flarnVerb]
+    ];
+    
+    NSArray *deliveryFamilyVerbs = @[
+        [StuntVerb barfVerb]
+    ];
+    
+    NSArray *confoundFamilyVerbsAlpha = @[
+        [StuntVerb quoneVerb],
+        [StuntVerb xyzzyVerb]
+    ];
+    
+    NSArray *confoundFamilyVerbsBravo = @[
+        [StuntVerb synVerb],
+        [StuntVerb ackVerb]
+    ];
+    
+    NSArray *families = @[
+        [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbsAlpha],
+        [CLKVerbFamily familyWithName:@"delivery" verbs:deliveryFamilyVerbs],
+        [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbsBravo]
+    ];
+    
+    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease]);
 }
 
 - (void)test_dispatchVerb_emptyArgumentVector
@@ -125,7 +156,16 @@ NS_ASSUME_NONNULL_END
     NSArray *verbs = @[ [StuntVerb flarnVerb] ];
     NSError *expectedError = [NSError clk_CLKErrorWithCode:CLKErrorNoVerbSpecified description:@"No verb specified."];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
+    
     CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs] autorelease];
+    [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
+
+    NSArray *familyVerbs = @[
+        [StuntVerb barfVerb]
+    ];
+    
+    CLKVerbFamily *family = [CLKVerbFamily familyWithName:@"quone" verbs:familyVerbs];
+    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs verbFamilies:@[ family ]] autorelease];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
