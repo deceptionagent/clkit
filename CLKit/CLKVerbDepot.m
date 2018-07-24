@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_END
         _verbFamilyMap = [[NSMutableDictionary alloc] init];
         
         for (CLKVerbFamily *family in verbFamilies) {
+            CLKHardAssert(([_topLevelVerbFamily verbNamed:family.name] == nil), NSInvalidArgumentException, @"encountered identically named top-level verb and verb family: '%@'", family.name);
             CLKHardAssert((_verbFamilyMap[family.name] == nil), NSInvalidArgumentException, @"encountered multiple verb families named '%@'", family.name);
             _verbFamilyMap[family.name] = family;
         }

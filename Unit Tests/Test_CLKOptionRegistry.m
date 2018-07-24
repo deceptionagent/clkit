@@ -28,7 +28,7 @@
     XCTAssertNotNil([[[CLKOptionRegistry alloc] initWithOptions:@[]] autorelease]);
 }
 
-- (void)testOptionCollisionGuard
+- (void)testOptionCollision
 {
     // name collision: two --ack opt names, different flags
     NSArray *options = @[

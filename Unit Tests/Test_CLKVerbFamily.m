@@ -29,7 +29,7 @@
 #pragma clang diagnostic pop
 }
 
-- (void)testVerbCollisionGuard
+- (void)testVerbCollision
 {
     NSArray *verbs = @[
         [StuntVerb flarnVerb],
