@@ -11,4 +11,5 @@
 #import "CLKOptionGroup.h"
 #import "CLKVerb.h"
 #import "CLKVerbDepot.h"
+#import "CLKVerbFamily.h"
 #import "NSArray+CLKAdditions.h"
