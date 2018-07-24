@@ -122,7 +122,7 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic pop
 }
 
-- (void)testVerbFamilyCollisionGuard
+- (void)testVerbFamilyCollision
 {
     NSArray *topLevelVerbs = @[
         [StuntVerb flarnVerb]
@@ -146,6 +146,31 @@ NS_ASSUME_NONNULL_END
         [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbsAlpha],
         [CLKVerbFamily familyWithName:@"delivery" verbs:deliveryFamilyVerbs],
         [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbsBravo]
+    ];
+    
+    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease]);
+}
+
+- (void)testVerbFamilyAndTopLevelVerbCollision
+{
+    NSArray *topLevelVerbs = @[
+        [StuntVerb flarnVerb],
+        [StuntVerb barfVerb]
+    ];
+    
+    NSArray *confoundFamilyVerbs = @[
+        [StuntVerb quoneVerb],
+    ];
+    
+    NSArray *confoundFamilyVerbsAlpha = @[
+        [StuntVerb synVerb],
+        [StuntVerb barfVerb],
+        [StuntVerb ackVerb]
+    ];
+    
+    NSArray *families = @[
+        [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbs],
+        [CLKVerbFamily familyWithName:@"delivery" verbs:confoundFamilyVerbsAlpha],
     ];
     
     XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease]);
