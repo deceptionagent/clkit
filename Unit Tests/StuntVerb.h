@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)synVerb; // --echo (-e)
 + (instancetype)ackVerb; // --foxtrot (-f)
 
++ (instancetype)verbWithName:(NSString *)name option:(CLKOption *)option;
 + (instancetype)verbWithName:(NSString *)name options:(nullable NSArray<CLKOption *> *)options;
 
 - (instancetype)initWithName:(NSString *)name

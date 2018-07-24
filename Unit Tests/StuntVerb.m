@@ -60,6 +60,11 @@
     return [[[self alloc] initWithName:@"ack" options:@[ option ] optionGroups:nil] autorelease];
 }
 
++ (instancetype)verbWithName:(NSString *)name option:(CLKOption *)option
+{
+    return [[[self alloc] initWithName:name options:@[ option ] optionGroups:nil] autorelease];
+}
+
 + (instancetype)verbWithName:(NSString *)name options:(NSArray<CLKOption *> *)options
 {
     return [[[self alloc] initWithName:name options:options optionGroups:nil] autorelease];

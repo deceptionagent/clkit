@@ -79,11 +79,26 @@ NS_ASSUME_NONNULL_END
         return [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ error ]];
     }
     
+    id<CLKVerb> verb = nil;
     NSMutableArray<NSString *> *remainingArguments = [[_argumentVector mutableCopy] autorelease];
-    NSString *verbName = [remainingArguments clk_popFirstObject];
-    id<CLKVerb> verb = [_topLevelVerbFamily verbNamed:verbName];
+    NSString *verbOrFamilyName = [remainingArguments clk_popFirstObject];
+    
+    CLKVerbFamily *family = _verbFamilyMap[verbOrFamilyName];
+    if (family != nil) {
+        verbOrFamilyName = [remainingArguments clk_popFirstObject];
+        verb = [family verbNamed:verbOrFamilyName];
+    } else {
+        verb = [_topLevelVerbFamily verbNamed:verbOrFamilyName];
+    }
+    
     if (verb == nil) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"%@: Unrecognized verb.", verbName];
+        NSError *error;
+        if (family != nil) {
+            error = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"%@: Unrecognized %@ verb.", verbOrFamilyName, family.name];
+        } else {
+            error = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"%@: Unrecognized verb.", verbOrFamilyName];
+        }
+        
         return [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ error ]];
     }
     
