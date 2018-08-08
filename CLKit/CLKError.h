@@ -7,7 +7,6 @@
 
 extern NSString * const CLKErrorDomain;
 
-
 typedef NS_ERROR_ENUM(CLKErrorDomain, CLKError) {
     CLKErrorNoError = 0,
     

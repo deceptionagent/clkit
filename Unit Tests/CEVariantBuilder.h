@@ -8,7 +8,6 @@
 @class CETemplate;
 @class CEVariant;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariantBuilder : NSObject

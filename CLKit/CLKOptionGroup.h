@@ -7,7 +7,6 @@
 
 @class CLKOption;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOptionGroup : NSObject

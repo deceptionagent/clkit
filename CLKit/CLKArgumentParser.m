@@ -30,7 +30,6 @@ typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateEnd
 };
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentParser ()
@@ -48,7 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
 
 @implementation CLKArgumentParser
 {

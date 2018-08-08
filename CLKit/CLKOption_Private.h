@@ -8,7 +8,6 @@
 @class CLKArgumentManifestConstraint;
 @class CLKArgumentTransformer;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 NSString *CLKStringForOptionType(CLKOptionType type);

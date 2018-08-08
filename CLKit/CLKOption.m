@@ -23,7 +23,6 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     return @"unknown";
 }
 
-
 @implementation CLKOption
 {
     CLKOptionType _type;

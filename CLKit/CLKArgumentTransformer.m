@@ -22,7 +22,6 @@
 
 @end
 
-
 @implementation CLKIntArgumentTransformer
 
 - (id)transformedArgument:(NSString *)argument error:(NSError **)outError
@@ -39,7 +38,6 @@
 }
 
 @end
-
 
 @implementation CLKFloatArgumentTransformer
 

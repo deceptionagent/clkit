@@ -7,7 +7,6 @@
 
 @class CETemplate;
 
-
 @interface CEGenerator (Building)
 
 + (CEGenerator *)generatorWithTemplate:(CETemplate *)template;

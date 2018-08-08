@@ -12,7 +12,6 @@
 
 @end
 
-
 @implementation Test_CLKOptionRegistry
 
 - (void)testInit

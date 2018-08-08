@@ -15,11 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
 @interface CLKIntArgumentTransformer : CLKArgumentTransformer
 
 @end
-
 
 @interface CLKFloatArgumentTransformer : CLKArgumentTransformer
 

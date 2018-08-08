@@ -8,7 +8,6 @@
 @class CEVariant;
 @class CECombination;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariantView : NSObject

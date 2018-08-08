@@ -14,7 +14,6 @@
 
 @end
 
-
 @implementation Test_CLKOptionGroup
 
 - (void)verifyGroup:(CLKOptionGroup *)group options:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required mutexed:(BOOL)mutexed

@@ -7,7 +7,6 @@
 
 @class CLKArgumentManifestConstraint;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ConstraintValidationSpec : NSObject
@@ -25,4 +24,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-

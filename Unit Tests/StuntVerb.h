@@ -12,7 +12,6 @@
 @class CLKOption;
 @class CLKOptionGroup;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface StuntVerb : NSObject <CLKVerb>

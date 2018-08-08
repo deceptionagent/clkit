@@ -26,7 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-
 @implementation CLKVerbDepot
 {
     NSArray<NSString *> *_argumentVector;

@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-
 @implementation Test_CEVariantView
 
 - (void)performTestWithVariantView:(CEVariantView *)view expectedCombinations:(NSArray<CECombination *> *)expectedCombinations

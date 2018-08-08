@@ -13,7 +13,6 @@
 
 @end
 
-
 @implementation Test_CETemplate
 
 - (void)testInit

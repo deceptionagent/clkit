@@ -13,7 +13,6 @@ typedef NS_ENUM(uint32_t, CLKConstraintType) {
     CLKConstraintTypeOccurrencesLimited = 4
 };
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifestConstraint : NSObject

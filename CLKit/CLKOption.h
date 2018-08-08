@@ -10,9 +10,7 @@ typedef NS_ENUM(uint32_t, CLKOptionType) {
     CLKOptionTypeParameter = 1
 };
 
-
 @class CLKArgumentTransformer;
-
 
 NS_ASSUME_NONNULL_BEGIN
 

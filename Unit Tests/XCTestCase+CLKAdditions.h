@@ -13,7 +13,6 @@
 @class CLKOption;
 @class CombinationEngine;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XCTestCase (CLKAdditions)
