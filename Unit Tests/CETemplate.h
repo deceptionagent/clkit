@@ -7,7 +7,6 @@
 
 @class CETemplateSeries;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CETemplate : NSObject

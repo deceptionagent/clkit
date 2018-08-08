@@ -12,7 +12,6 @@
 
 @end
 
-
 @implementation Test_CECombination
 
 - (void)testInit

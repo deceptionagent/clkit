@@ -12,7 +12,6 @@
 
 @end
 
-
 @implementation Test_CEGenerator_Building
 
 - (void)testBuildAndRunGenerator

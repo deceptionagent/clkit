@@ -11,7 +11,6 @@
 
 @end
 
-
 @implementation Test_CLKArgumentManifestConstraint
 
 - (void)testDescription

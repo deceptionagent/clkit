@@ -7,7 +7,6 @@
 
 @class CEVariantSource;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariant : NSObject

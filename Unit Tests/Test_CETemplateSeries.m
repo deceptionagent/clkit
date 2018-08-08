@@ -12,7 +12,6 @@
 
 @end
 
-
 @implementation Test_CETemplateSeries
 
 - (void)testInit

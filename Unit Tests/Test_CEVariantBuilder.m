@@ -24,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-
 @implementation Test_CEVariantBuilder
 
 - (void)performTestWithTemplate:(CETemplate *)template expectedVariants:(NSArray<CEVariant *> *)expectedVariants

@@ -24,7 +24,6 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
     return @"unknown";
 }
 
-
 @interface CLKArgumentManifestConstraint ()
 
 - (nonnull instancetype)_initWithType:(CLKConstraintType)type
@@ -33,7 +32,6 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
                        linkedOptions:(nullable NSArray<NSString *> *)linkedOptions NS_DESIGNATED_INITIALIZER;
 
 @end
-
 
 @implementation CLKArgumentManifestConstraint
 {

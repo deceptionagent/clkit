@@ -15,7 +15,6 @@
 
 @end
 
-
 @implementation Test_CEVariantSourceView
 
 #pragma mark <CEVariantSourceViewObserver>

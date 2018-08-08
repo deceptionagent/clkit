@@ -9,7 +9,6 @@
 @class CLKArgumentManifestConstraint;
 @class CLKOption;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^CLKAMVIssueHandler)(NSError *error);

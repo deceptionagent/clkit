@@ -15,7 +15,6 @@
 
 @end
 
-
 @implementation Test_NSArray_CLKAdditions
 
 - (void)test_clk_arrayWithArgv_argc
@@ -36,14 +35,11 @@
 
 @end
 
-
 #pragma mark -
-
 
 @interface Test_NSError_CLKAdditions : XCTestCase
 
 @end
-
 
 @implementation Test_NSError_CLKAdditions
 
@@ -67,14 +63,11 @@
 
 @end
 
-
 #pragma mark -
-
 
 @interface Test_NSMutableArray_CLKAdditions : XCTestCase
 
 @end
-
 
 @implementation Test_NSMutableArray_CLKAdditions
 

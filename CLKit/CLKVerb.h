@@ -10,7 +10,6 @@
 @class CLKOption;
 @class CLKOptionGroup;
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol CLKVerb <NSObject>
