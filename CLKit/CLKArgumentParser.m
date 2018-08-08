@@ -262,7 +262,10 @@ NS_ASSUME_NONNULL_END
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     
-    NSString *name = [[_argumentVector clk_popFirstObject] substringFromIndex:2];
+    NSString *rawArgument = [_argumentVector clk_popFirstObject];
+    NSAssert((rawArgument.length > 2 && [rawArgument hasPrefix:@"--"]), @"unexpectedly encountered '%@' when attempting to parse an option name", rawArgument);
+    
+    NSString *name = [rawArgument substringFromIndex:2];
     CLKOption *option = [_optionRegistry optionNamed:name];
     if (option == nil) {
         NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--%@'", name];
@@ -277,7 +280,10 @@ NS_ASSUME_NONNULL_END
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
     
-    NSString *flag = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
+    NSString *rawArgument = [_argumentVector clk_popFirstObject];
+    NSAssert((rawArgument.length == 2 && [rawArgument hasPrefix:@"-"]), @"unexpectedly encountered '%@' when attempting to parse an option flag", rawArgument);
+    
+    NSString *flag = [rawArgument substringFromIndex:1];
     CLKOption *option = [_optionRegistry optionForFlag:flag];
     if (option == nil) {
         NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-%@'", flag];
