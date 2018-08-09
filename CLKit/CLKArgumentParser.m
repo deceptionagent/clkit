@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
                                options:(NSArray<CLKOption *> *)options
                           optionGroups:(nullable NSArray<CLKOptionGroup *> *)groups NS_DESIGNATED_INITIALIZER;
 
-@property (nullable, retain) CLKOption *currentOption;
+@property (nullable, retain) CLKOption *currentParameterOption;
 
 - (void)_accumulateError:(NSError *)error;
 
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_END
 @implementation CLKArgumentParser
 {
     CLKAPState _state;
-    CLKOption *_currentOption;
+    CLKOption *_currentParameterOption;
     NSMutableArray<NSString *> *_argumentVector;
     NSArray<CLKOption *> *_options;
     NSArray<CLKOptionGroup *> *_optionGroups;
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_END
     NSMutableArray<NSError *> *_errors;
 }
 
-@synthesize currentOption = _currentOption;
+@synthesize currentParameterOption = _currentParameterOption;
 @synthesize errors = _errors;
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_END
     [_optionRegistry release];
     [_optionGroups release];
     [_argumentVector release];
-    [_currentOption release];
+    [_currentParameterOption release];
     [_options release];
     [super dealloc];
 }
@@ -180,6 +180,21 @@ NS_ASSUME_NONNULL_END
     }
     
     return _manifest;
+}
+
+- (void)setCurrentParameterOption:(CLKOption *)option
+{
+    NSParameterAssert(option == nil || option.type == CLKOptionTypeParameter);
+    
+    if (option != _currentParameterOption) {
+        [_currentParameterOption release];
+        _currentParameterOption = [option retain];
+    }
+}
+
+- (CLKOption *)currentParameterOption
+{
+    return _currentParameterOption;
 }
 
 - (BOOL)_validateManifest
@@ -294,10 +309,10 @@ NS_ASSUME_NONNULL_END
 
 - (CLKAPState)_processParsedOption:(CLKOption *)option
 {
-    NSAssert(self.currentOption == nil, @"currentOption unexpectedly set when processing parsed option");
+    NSAssert(self.currentParameterOption == nil, @"currentOption unexpectedly set when processing parsed option");
     
     if (option.type == CLKOptionTypeParameter) {
-        self.currentOption = option;
+        self.currentParameterOption = option;
         return CLKAPStateParseArgument;
     }
     
@@ -338,9 +353,7 @@ NS_ASSUME_NONNULL_END
         return CLKAPStateError;
     }
     
-    if (self.currentOption != nil) {
-        NSAssert((self.currentOption.type == CLKOptionTypeParameter), @"attempting to parse an argument for a non-parameter option");
-        
+    if (self.currentParameterOption != nil) {
         // reject: the next argument is some kind of option, but we expect an argument
         if ([argument hasPrefix:@"-"]) {
             NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument];
@@ -348,7 +361,7 @@ NS_ASSUME_NONNULL_END
             return CLKAPStateError;
         }
         
-        CLKArgumentTransformer *transformer = self.currentOption.transformer;
+        CLKArgumentTransformer *transformer = self.currentParameterOption.transformer;
         if (transformer != nil) {
             NSError *error;
             argument = [transformer transformedArgument:argument error:&error];
@@ -358,8 +371,8 @@ NS_ASSUME_NONNULL_END
             }
         }
         
-        [_manifest accumulateArgument:argument forParameterOptionNamed:self.currentOption.name];
-        self.currentOption = nil;
+        [_manifest accumulateArgument:argument forParameterOptionNamed:self.currentParameterOption.name];
+        self.currentParameterOption = nil;
     } else {
         [_manifest accumulatePositionalArgument:argument];
     }
