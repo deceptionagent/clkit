@@ -17,6 +17,51 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface StuntTransformer : CLKArgumentTransformer
+
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)transformer NS_UNAVAILABLE;
+
+- (instancetype)initWithError:(NSError *)error NS_DESIGNATED_INITIALIZER;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+@implementation StuntTransformer
+{
+    NSError *_error;
+}
+
+- (instancetype)initWithError:(NSError *)error
+{
+    self = [super init];
+    if (self != nil) {
+        _error = [error retain];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [_error release];
+    [super dealloc];
+}
+
+- (id)transformedArgument:(__unused NSString *)argument error:(NSError **)outError
+{
+    *outError = _error;
+    return nil;
+}
+
+@end
+
+NS_ASSUME_NONNULL_BEGIN
+
+#pragma mark -
+
 @interface Test_CLKArgumentParser : XCTestCase
 
 - (void)evaluateSpec:(ArgumentParserSpec *)spec usingParser:(CLKArgumentParser *)parser;
@@ -284,7 +329,6 @@ NS_ASSUME_NONNULL_END
 - (void)testArgumentTransformation
 {
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
-    
     CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
     CLKOption *strange = [CLKOption parameterOptionWithName:@"strange" flag:@"s" transformer:transformer];
     CLKOption *aeons = [CLKOption parameterOptionWithName:@"aeons" flag:@"a" transformer:transformer];
@@ -299,6 +343,21 @@ NS_ASSUME_NONNULL_END
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
+- (void)testArgumentTransformationFailure
+{
+    NSArray *argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
+    NSError *confoundError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"confound error"];
+    StuntTransformer *confoundTransformer = [[[StuntTransformer alloc] initWithError:confoundError] autorelease];
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"acme" flag:@"a" transformer:[CLKArgumentTransformer transformer]],
+        [CLKOption parameterOptionWithName:@"confound" flag:@"c" transformer:confoundTransformer]
+    ];
+    
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ confoundError ]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
