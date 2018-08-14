@@ -151,6 +151,26 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
+- (void)testUnexpectedToken
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q"]
+    ];
+    
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--'"];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    NSArray *argv = @[ @"--flarn", @"barf", @"--", @"-q"];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    argv = @[ @"--flarn", @"barf", @"-", @"-q"];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
 - (void)testEmptyOptionsArray
 {
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[]];
