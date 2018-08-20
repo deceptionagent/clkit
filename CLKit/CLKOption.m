@@ -105,6 +105,8 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 {
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
+    #warning name and flag form asserts should be in NSString+CLKAdditions
+    #warning should assert flag is not a number
     CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
     CLKHardParameterAssert(![flag hasPrefix:@"-"], @"option flags should not begin with -- or -");
     CLKHardParameterAssert(name.length > 0);

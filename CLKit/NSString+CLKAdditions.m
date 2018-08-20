@@ -4,8 +4,41 @@
 
 #import "NSString+CLKAdditions.h"
 
+#import "NSCharacterSet+CLKAdditions.h"
+
 
 @implementation NSString (CLKAdditions)
+
+- (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet range:(NSRange)range
+{
+    return ([self rangeOfCharacterFromSet:characterSet options:NSLiteralSearch range:range].location != NSNotFound);
+}
+
+- (BOOL)clk_isNumericArgumentToken
+{
+    static NSCharacterSet *nonNumericArgumentCharacterSet;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        nonNumericArgumentCharacterSet = [NSCharacterSet.clk_numericArgumentCharacterSet.invertedSet retain];
+    });
+    
+    NSRange range;
+    if ([self hasPrefix:@"-"]) {
+        range = NSMakeRange(1, self.length - 1);
+    } else {
+        range = NSMakeRange(0, self.length);
+    }
+    
+    if (![self clk_containsCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet range:range]) {
+        return NO;
+    }
+    
+    if ([self clk_containsCharacterFromSet:nonNumericArgumentCharacterSet range:range]) {
+        return NO;
+    }
+    
+    return YES;
+}
 
 - (CLKTokenKind)clk_tokenKind
 {
@@ -14,44 +47,35 @@
     }
     
     if (self.length == 1) {
-        // `-` is a valid argument
         return CLKTokenKindArgument;
     }
     
-    if ([self hasPrefix:@"-"] && [self containsString:@" "]) {
-        return CLKTokenKindInvalid;
-    }
-    
-    if ([self isEqualToString:@"--"]) {
-        // it's up to the caller whether this is special or just another argument
-        return CLKTokenKindOptionRemainderDelimiter;
-    }
-    
-    if ([self hasPrefix:@"--"]) {
-        NSAssert((self.length > 2), @"unexpected token length");
-        return CLKTokenKindOptionName;
-    }
-    
-    NSAssert((self.length > 1), @"unexpected token length");
-    
     if ([self hasPrefix:@"-"]) {
-        BOOL containsDigit = ([self rangeOfCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet].location != NSNotFound);
-        
-        if (self.length > 2) {
-            if (containsDigit) {
-                // looks like a flag group with a number jammed in (e.g., `-x7z`)
-                return CLKTokenKindInvalid;
-            }
-            
-            return CLKTokenKindOptionFlagGroup;
+        if ([self containsString:@" "]) {
+            return CLKTokenKindInvalid;
         }
         
-        if (containsDigit) {
-            // this resembles a negative number argument (e.g., `-7`)
+        if (self.clk_isNumericArgumentToken) {
             return CLKTokenKindArgument;
         }
-    
-        return CLKTokenKindOptionFlag;
+        
+        if (self.length == 2) {
+            if ([self isEqualToString:@"--"]) {
+                return CLKTokenKindRemainderArgumentsDelimiter;
+            }
+            
+            return CLKTokenKindOptionFlag;
+        }
+        
+        if ([self hasPrefix:@"--"]) {
+            return CLKTokenKindOptionName;
+        }
+        
+        if ([self clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet range:NSMakeRange(1, self.length - 1)]) {
+            return CLKTokenKindInvalid;
+        }
+        
+        return CLKTokenKindOptionFlagGroup;
     }
     
     return CLKTokenKindArgument;

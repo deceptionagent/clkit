@@ -6,6 +6,7 @@
 
 #import "CLKError.h"
 #import "NSArray+CLKAdditions.h"
+#import "NSCharacterSet+CLKAdditions.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
 #import "NSString+CLKAdditions.h"
@@ -32,6 +33,39 @@
     NSArray *charlie = [NSArray clk_arrayWithArgv:argvCharlie argc:0];
     XCTAssertNotNil(charlie);
     XCTAssertEqual(charlie.count, 0UL);
+}
+
+@end
+
+#pragma mark -
+
+@interface Test_NSCharacterSet_CLKAdditions : XCTestCase
+
+@end
+
+@implementation Test_NSCharacterSet_CLKAdditions
+
+- (void)test_clk_numericArgumentCharacterSet
+{
+    NSCharacterSet *charset = NSCharacterSet.clk_numericArgumentCharacterSet;
+    XCTAssertNotNil(charset);
+    XCTAssertEqual(charset, NSCharacterSet.clk_numericArgumentCharacterSet);
+    XCTAssertTrue([charset characterIsMember:'.']);
+    XCTAssertTrue([charset characterIsMember:':']);
+    XCTAssertTrue([charset characterIsMember:'0']);
+    XCTAssertTrue([charset characterIsMember:'1']);
+    XCTAssertTrue([charset characterIsMember:'2']);
+    XCTAssertTrue([charset characterIsMember:'3']);
+    XCTAssertTrue([charset characterIsMember:'4']);
+    XCTAssertTrue([charset characterIsMember:'5']);
+    XCTAssertTrue([charset characterIsMember:'6']);
+    XCTAssertTrue([charset characterIsMember:'7']);
+    XCTAssertTrue([charset characterIsMember:'8']);
+    XCTAssertTrue([charset characterIsMember:'9']);
+    XCTAssertFalse([charset characterIsMember:'x']);
+    XCTAssertFalse([charset characterIsMember:' ']);
+    XCTAssertFalse([charset characterIsMember:'-']);
+    XCTAssertFalse([charset characterIsMember:'$']);
 }
 
 @end
@@ -97,6 +131,70 @@
 
 @implementation Test_NSString_CLKAdditions
 
+- (void)test_clk_containsCharacterFromSet_range
+{
+    NSCharacterSet *charset = [NSCharacterSet characterSetWithCharactersInString:@"!"];
+    XCTAssertTrue([@"?!?" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 3)]);
+    XCTAssertTrue([@"?!?" clk_containsCharacterFromSet:charset range:NSMakeRange(1, 1)]);
+    XCTAssertFalse([@"!?!" clk_containsCharacterFromSet:charset range:NSMakeRange(1, 1)]);
+}
+
+- (void)test_clk_isNumericToken
+{
+    // leading-dash variants are generated from this list
+    NSArray *nonMatchInputs = @[
+        @"",
+        @" ",
+        @".",
+        @". ",
+        @":",
+        @": ",
+        @":.",
+        @"..",
+        @"::",
+        @"q",
+        @".q",
+        @"q:",
+        @"xyz",
+        @"0x0",
+        @".0x0",
+        @"0x0:",
+        @"$100.00"
+    ];
+    
+    for (NSString *token in nonMatchInputs) {
+        XCTAssertFalse(token.clk_isNumericArgumentToken, @"token: '%@'", token);
+        NSString *dashToken = [@"-" stringByAppendingString:token];
+        XCTAssertFalse(dashToken.clk_isNumericArgumentToken, @"dashToken: '%@'", dashToken);
+    }
+    
+    // leading-dash variants are generated from this list
+    NSArray *matchInputs = @[
+        @"1",
+        @"234",
+        @".5",
+        @"5.",
+        @"0.6",
+        @"000.666",
+        @"7.0",
+        @"777.000",
+        @":7",
+        @"7:",
+        @"8:0",
+        @".9.",
+        @":10:",
+        @"7..7",
+        @"7::7",
+        @"7.7.7:7"
+    ];
+    
+    for (NSString *token in matchInputs) {
+        XCTAssertTrue(token.clk_isNumericArgumentToken, @"token: '%@'", token);
+        NSString *dashToken = [@"-" stringByAppendingString:token];
+        XCTAssertTrue(dashToken.clk_isNumericArgumentToken, @"dashToken: '%@'", dashToken);
+    }
+}
+
 - (void)test_clk_tokenType
 {
     XCTAssertEqual(@"--x".clk_tokenKind, CLKTokenKindOptionName);
@@ -104,11 +202,14 @@
     XCTAssertEqual(@"--syn-ack".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--syn--ack".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--syn.ack".clk_tokenKind, CLKTokenKindOptionName);
+    XCTAssertEqual(@"--.syn.ack.".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--what-".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--what--".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--what?".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--se7en".clk_tokenKind, CLKTokenKindOptionName);
+    XCTAssertEqual(@"--420".clk_tokenKind, CLKTokenKindOptionName);
     XCTAssertEqual(@"--barƒ".clk_tokenKind, CLKTokenKindOptionName);
+    XCTAssertEqual(@"---".clk_tokenKind, CLKTokenKindOptionName);
     
     XCTAssertEqual(@"-a".clk_tokenKind, CLKTokenKindOptionFlag);
     XCTAssertEqual(@"-Z".clk_tokenKind, CLKTokenKindOptionFlag);
@@ -119,29 +220,46 @@
     XCTAssertEqual(@"-xYz".clk_tokenKind, CLKTokenKindOptionFlagGroup);
     XCTAssertEqual(@"-πƒ".clk_tokenKind, CLKTokenKindOptionFlagGroup);
     
-    XCTAssertEqual(@"--".clk_tokenKind, CLKTokenKindOptionRemainderDelimiter);
+    XCTAssertEqual(@"--".clk_tokenKind, CLKTokenKindRemainderArgumentsDelimiter);
     
     XCTAssertEqual(@" ".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"  ".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"   ".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"-".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"flarn".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"w-hat".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@" -x".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@" --flarn".clk_tokenKind, CLKTokenKindArgument);
+    
     XCTAssertEqual(@"-7".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"-420".clk_tokenKind, CLKTokenKindArgument);
+    
     XCTAssertEqual(@"-42.0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-.420".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"-0.420".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"-00.420".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-4.2.0".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-4..2..0".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-.420".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-420.".clk_tokenKind, CLKTokenKindArgument);
+    
+    XCTAssertEqual(@"-42:0".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-0:420".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-00:420".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-4:2:0".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-4::2::0".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-:420".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-420:".clk_tokenKind, CLKTokenKindArgument);
+    
+    XCTAssertEqual(@"-4.2:0".clk_tokenKind, CLKTokenKindArgument);
+    XCTAssertEqual(@"-4.2.0:7:7".clk_tokenKind, CLKTokenKindArgument);
     
     XCTAssertEqual(@"".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"- ".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-  ".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-- ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"--  ".clk_tokenKind, CLKTokenKindInvalid);
+    XCTAssertEqual(@"--   ".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"- -".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-x ".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"- x".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"- x ".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"--flarn ".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-- flarn".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-- flarn ".clk_tokenKind, CLKTokenKindInvalid);
@@ -150,11 +268,6 @@
     XCTAssertEqual(@"-7x7".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-7yz".clk_tokenKind, CLKTokenKindInvalid);
     XCTAssertEqual(@"-xy7".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-4.2.0".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-4..2..0".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-..420".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-420.".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-420..".clk_tokenKind, CLKTokenKindInvalid);
 }
 
 @end

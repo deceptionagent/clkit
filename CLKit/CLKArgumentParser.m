@@ -24,6 +24,7 @@ typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateReadNextItem,
     CLKAPStateParseOptionName,
     CLKAPStateParseOptionFlag,
+    #warning rename: "group" is overloaded
     CLKAPStateParseOptionFlagGroup,
     CLKAPStateParseArgument,
     CLKAPStateError,
@@ -320,6 +321,7 @@ NS_ASSUME_NONNULL_END
     return CLKAPStateReadNextItem;
 }
 
+#warning rename: "group" is overloaded
 - (CLKAPState)_parseOptionFlagGroup
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
