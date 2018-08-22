@@ -220,7 +220,7 @@
     XCTAssertEqual(@"-xYz".clk_tokenKind, CLKTokenKindOptionFlagSet);
     XCTAssertEqual(@"-πƒ".clk_tokenKind, CLKTokenKindOptionFlagSet);
     
-    XCTAssertEqual(@"--".clk_tokenKind, CLKTokenKindRemainderArgumentsDelimiter);
+    XCTAssertEqual(@"--".clk_tokenKind, CLKTokenKindOptionParsingSentinel);
     
     XCTAssertEqual(@" ".clk_tokenKind, CLKTokenKindArgument);
     XCTAssertEqual(@"   ".clk_tokenKind, CLKTokenKindArgument);

@@ -54,7 +54,7 @@
         
         if (self.length == 2) {
             if ([self isEqualToString:@"--"]) {
-                return CLKTokenKindRemainderArgumentsDelimiter;
+                return CLKTokenKindOptionParsingSentinel;
             }
             
             return CLKTokenKindOptionFlag;

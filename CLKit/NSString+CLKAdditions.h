@@ -9,8 +9,7 @@ typedef NS_ENUM(uint32_t, CLKTokenKind) {
     CLKTokenKindOptionName = 0, // `--xyxxy`
     CLKTokenKindOptionFlag = 1, // `-x`
     CLKTokenKindOptionFlagSet = 2, // `-xyz`
-    #warning rename this: "sentinel"
-    CLKTokenKindRemainderArgumentsDelimiter = 3, // `--`
+    CLKTokenKindOptionParsingSentinel = 3, // `--`
     CLKTokenKindArgument = 4,
     CLKTokenKindInvalid = 5
 };
