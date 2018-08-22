@@ -14,6 +14,21 @@
     return ([self rangeOfCharacterFromSet:characterSet options:NSLiteralSearch range:range].location != NSNotFound);
 }
 
+- (BOOL)clk_resemblesOptionArgumentToken
+{
+    switch (self.clk_argumentTokenKind) {
+        case CLKArgumentTokenKindOptionName:
+        case CLKArgumentTokenKindOptionFlag:
+        case CLKArgumentTokenKindOptionFlagSet:
+        case CLKArgumentTokenKindMalformedOption:
+            return YES;
+        
+        case CLKArgumentTokenKindOptionParsingSentinel:
+        case CLKArgumentTokenKindArgument:
+            return NO;
+    }
+}
+
 - (BOOL)clk_isNumericArgumentToken
 {
     static NSCharacterSet *nonNumericArgumentCharacterSet;
@@ -33,45 +48,42 @@
             && ![self clk_containsCharacterFromSet:nonNumericArgumentCharacterSet range:range]);
 }
 
-- (CLKTokenKind)clk_tokenKind
+- (CLKArgumentTokenKind)clk_argumentTokenKind
 {
-    if (self.length == 0) {
-        return CLKTokenKindInvalid;
-    }
-    
-    if (self.length == 1) {
-        return CLKTokenKindArgument;
+    if (self.length < 2) {
+        // a zero-length argument is technically still an argument
+        return CLKArgumentTokenKindArgument;
     }
     
     if ([self hasPrefix:@"-"]) {
         if ([self containsString:@" "]) {
-            return CLKTokenKindInvalid;
+            return CLKArgumentTokenKindMalformedOption;
         }
         
         if (self.clk_isNumericArgumentToken) {
-            return CLKTokenKindArgument;
+            return CLKArgumentTokenKindArgument;
         }
         
         if (self.length == 2) {
             if ([self isEqualToString:@"--"]) {
-                return CLKTokenKindOptionParsingSentinel;
+                return CLKArgumentTokenKindOptionParsingSentinel;
             }
             
-            return CLKTokenKindOptionFlag;
+            return CLKArgumentTokenKindOptionFlag;
         }
         
         if ([self hasPrefix:@"--"]) {
-            return CLKTokenKindOptionName;
+            return CLKArgumentTokenKindOptionName;
         }
         
         if ([self clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet range:NSMakeRange(1, self.length - 1)]) {
-            return CLKTokenKindInvalid;
+            return CLKArgumentTokenKindMalformedOption;
         }
         
-        return CLKTokenKindOptionFlagSet;
+        return CLKArgumentTokenKindOptionFlagSet;
     }
     
-    return CLKTokenKindArgument;
+    return CLKArgumentTokenKindArgument;
 }
 
 @end

@@ -17,17 +17,18 @@
 #import "CLKOptionRegistry.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
+#import "NSString+CLKAdditions.h"
 
 
 typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateBegin = 0,
-    CLKAPStateReadNextItem,
-    CLKAPStateParseOptionName,
-    CLKAPStateParseOptionFlag,
-    CLKAPStateParseOptionFlagSet,
-    CLKAPStateParseArgument,
-    CLKAPStateError,
-    CLKAPStateEnd
+    CLKAPStateReadNextArgumentToken = 1,
+    CLKAPStateParseOptionName = 2,
+    CLKAPStateParseOptionFlag = 3,
+    CLKAPStateParseOptionFlagSet = 4,
+    CLKAPStateParseArgument = 5,
+    CLKAPStateError = 6,
+    CLKAPStateEnd = 7
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -44,10 +45,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_accumulateError:(NSError *)error;
 
-- (CLKAPState)_readNextItem;
+- (CLKAPState)_readNextArgumentToken;
 - (CLKAPState)_parseOptionName;
 - (CLKAPState)_parseOptionFlag;
-- (CLKAPState)_processParsedOption:(CLKOption *)option;
+- (CLKAPState)_processParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation;
 - (CLKAPState)_parseOptionFlagSet;
 - (CLKAPState)_parseArgument;
 
@@ -57,9 +58,9 @@ NS_ASSUME_NONNULL_END
 
 @implementation CLKArgumentParser
 {
+    NSMutableArray<NSString *> *_argumentVector;
     CLKAPState _state;
     CLKOption *_currentParameterOption;
-    NSMutableArray<NSString *> *_argumentVector;
     NSArray<CLKOption *> *_options;
     NSArray<CLKOptionGroup *> *_optionGroups;
     CLKOptionRegistry *_optionRegistry;
@@ -120,10 +121,15 @@ NS_ASSUME_NONNULL_END
     [_manifest release];
     [_optionRegistry release];
     [_optionGroups release];
-    [_argumentVector release];
     [_currentParameterOption release];
     [_options release];
+    [_argumentVector release];
     [super dealloc];
+}
+
+- (NSString *)debugDescription
+{
+    return [NSString stringWithFormat:@"%@ { state: %d | argvec: %@ }", super.debugDescription, _state, _argumentVector];
 }
 
 #pragma mark -
@@ -136,11 +142,11 @@ NS_ASSUME_NONNULL_END
         @autoreleasepool {
             switch (_state) {
                 case CLKAPStateBegin:
-                    _state = CLKAPStateReadNextItem;
+                    _state = CLKAPStateReadNextArgumentToken;
                     break;
                 
-                case CLKAPStateReadNextItem:
-                    _state = [self _readNextItem];
+                case CLKAPStateReadNextArgumentToken:
+                    _state = [self _readNextArgumentToken];
                     break;
                 
                 case CLKAPStateParseOptionName:
@@ -161,6 +167,7 @@ NS_ASSUME_NONNULL_END
                 
                 case CLKAPStateError:
                     NSAssert((self.errors.count > 0), @"expected at least one error on CLKAPStateError");
+                    NSAssert((self.currentParameterOption == nil), @"currentParameterOption should be clear on CLKAPStateError");
                     _state = CLKAPStateEnd;
                     [_manifest release];
                     _manifest = nil;
@@ -242,40 +249,32 @@ NS_ASSUME_NONNULL_END
 #pragma mark -
 #pragma mark State Steps
 
-- (CLKAPState)_readNextItem
+- (CLKAPState)_readNextArgumentToken
 {
-    NSString *nextItem = _argumentVector.firstObject;
-    
     // if we're reached the end of the arg vector, we've parsed everything
-    if (nextItem == nil) {
+    if (_argumentVector.count == 0) {
         return CLKAPStateEnd;
     }
     
-    // reject meaningless input
-    // [TACK] if we wanted to support remainder arguments, we would remove the "--" guard and add that as a scenario.
-    //        (we'd probably just collect them into a separate array on the manifest so the client can pass them through
-    //         to another program or send them through a second parser.)
-    if ([nextItem isEqualToString:@"--"] || [nextItem isEqualToString:@"-"]) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem];
-        [self _accumulateError:error];
-        return CLKAPStateError;
-    }
-    
-    if ([nextItem hasPrefix:@"--"]) {
-        return CLKAPStateParseOptionName;
-    }
-    
-    if ([nextItem hasPrefix:@"-"]) {
-        if (nextItem.length == 2) {
-            return CLKAPStateParseOptionFlag;
-        }
+    NSString *nextItem = _argumentVector.firstObject;
+    switch (nextItem.clk_argumentTokenKind) {
+        case CLKArgumentTokenKindOptionName:
+            return CLKAPStateParseOptionName;
         
-        if (nextItem.length > 2) {
+        case CLKArgumentTokenKindOptionFlag:
+            return CLKAPStateParseOptionFlag;
+        
+        case CLKArgumentTokenKindOptionFlagSet:
             return CLKAPStateParseOptionFlagSet;
-        }
+        
+        case CLKArgumentTokenKindOptionParsingSentinel:
+        case CLKArgumentTokenKindArgument:
+            return CLKAPStateParseArgument;
+        
+        case CLKArgumentTokenKindMalformedOption:
+            [self _accumulateError:[NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextItem]];
+            return CLKAPStateError;
     }
-    
-    return CLKAPStateParseArgument;
 }
 
 - (CLKAPState)_parseOptionName
@@ -287,12 +286,12 @@ NS_ASSUME_NONNULL_END
     NSString *name = [rawArgument substringFromIndex:2];
     CLKOption *option = [_optionRegistry optionNamed:name];
     if (option == nil) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--%@'", name];
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", rawArgument];
         [self _accumulateError:error];
         return CLKAPStateError;
     }
     
-    return [self _processParsedOption:option];
+    return [self _processParsedOption:option userInvocation:rawArgument];
 }
 
 - (CLKAPState)_parseOptionFlag
@@ -304,25 +303,31 @@ NS_ASSUME_NONNULL_END
     NSString *flag = [rawArgument substringFromIndex:1];
     CLKOption *option = [_optionRegistry optionForFlag:flag];
     if (option == nil) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-%@'", flag];
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", rawArgument];
         [self _accumulateError:error];
         return CLKAPStateError;
     }
     
-    return [self _processParsedOption:option];
+    return [self _processParsedOption:option userInvocation:rawArgument];
 }
 
-- (CLKAPState)_processParsedOption:(CLKOption *)option
+- (CLKAPState)_processParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation
 {
     NSAssert(self.currentParameterOption == nil, @"currentParameterOption previously set");
     
     if (option.type == CLKOptionTypeParameter) {
+        if (_argumentVector.count == 0) {
+            NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", userInvocation];
+            [self _accumulateError:error];
+            return CLKAPStateError;
+        }
+        
         self.currentParameterOption = option;
         return CLKAPStateParseArgument;
     }
     
     [_manifest accumulateSwitchOptionNamed:option.name];
-    return CLKAPStateReadNextItem;
+    return CLKAPStateReadNextArgumentToken;
 }
 
 - (CLKAPState)_parseOptionFlagSet
@@ -343,7 +348,7 @@ NS_ASSUME_NONNULL_END
         [_argumentVector insertObject:[@"-" stringByAppendingString:flag] atIndex:0];
     }];
     
-    return CLKAPStateReadNextItem;
+    return CLKAPStateReadNextArgumentToken;
 }
 
 - (CLKAPState)_parseArgument
@@ -355,14 +360,16 @@ NS_ASSUME_NONNULL_END
     if (argument.length == 0) {
         NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
         [self _accumulateError:error];
+        self.currentParameterOption = nil;
         return CLKAPStateError;
     }
     
     if (self.currentParameterOption != nil) {
-        // reject: the next argument is some kind of option, but we expect an argument
-        if ([argument hasPrefix:@"-"]) {
+        // reject: the next argument looks like an option, but we expect an argument
+        if (argument.clk_resemblesOptionArgumentToken) {
             NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument];
             [self _accumulateError:error];
+            self.currentParameterOption = nil;
             return CLKAPStateError;
         }
         
@@ -372,17 +379,18 @@ NS_ASSUME_NONNULL_END
             argument = [transformer transformedArgument:argument error:&error];
             if (argument == nil) {
                 [self _accumulateError:error];
+                self.currentParameterOption = nil;
                 return CLKAPStateError;
             }
         }
         
         [_manifest accumulateArgument:argument forParameterOptionNamed:self.currentParameterOption.name];
         self.currentParameterOption = nil;
-    } else {
+    } else { // self.currentParameterOption == nil
         [_manifest accumulatePositionalArgument:argument];
     }
     
-    return CLKAPStateReadNextItem;
+    return CLKAPStateReadNextArgumentToken;
 }
 
 @end

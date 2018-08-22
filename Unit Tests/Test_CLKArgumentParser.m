@@ -115,6 +115,13 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic pop
 }
 
+- (void)test_debugDescription
+{
+    NSArray *argv = @[ @"--flarn", @"--barf" ];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[]];
+    XCTAssertEqualObjects(parser.debugDescription, ([NSString stringWithFormat:@"<CLKArgumentParser: %p> { state: 0 | argvec: %@ }", parser, argv]));
+}
+
 - (void)testEmptyArgv
 {
     NSArray *options = @[
@@ -149,27 +156,6 @@ NS_ASSUME_NONNULL_END
     
     parser = [CLKArgumentParser parserWithArgumentVector:@[ @"-b", @"-f", @"flarn" ] options:options];
     spec = [ArgumentParserSpec specWithErrors:@[ shortError ]];
-    [self evaluateSpec:spec usingParser:parser];
-}
-
-#warning re-evaluate during branches/tokenwerk
-- (void)testUnexpectedToken
-{
-    NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
-        [CLKOption parameterOptionWithName:@"quone" flag:@"q"]
-    ];
-    
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--'"];
-    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
-    NSArray *argv = @[ @"--flarn", @"barf", @"--", @"-q"];
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
-    [self evaluateSpec:spec usingParser:parser];
-    
-    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-'"];
-    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
-    argv = @[ @"--flarn", @"barf", @"-", @"-q"];
-    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     [self evaluateSpec:spec usingParser:parser];
 }
 
@@ -232,6 +218,67 @@ NS_ASSUME_NONNULL_END
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[]];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
+- (void)testParameterOptions_argumentNotProvided
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    NSError *longError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--barf'"];
+    NSError *shortError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '-b'"];
+    
+    NSArray *argv = @[ @"--barf" ];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ longError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-b" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    spec = [ArgumentParserSpec specWithErrors:@[ shortError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"quone", @"--barf" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    spec = [ArgumentParserSpec specWithErrors:@[ longError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"quone", @"-b" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    spec = [ArgumentParserSpec specWithErrors:@[ shortError ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"--barf", @"what" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--barf'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"-b", @"what" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-b'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"-lol", @"what" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-lol'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"-0x0", @"what" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-0x0'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"--w hat", @"what" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--w hat'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
@@ -308,20 +355,6 @@ NS_ASSUME_NONNULL_END
     NSArray *argv = @[ @"alpha", @"bravo", @"charlie" ];
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[]];
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:@{} positionalArguments:argv];
-    [self evaluateSpec:spec usingParser:parser];
-}
-
-- (void)testOptionArgumentNotProvided
-{
-    NSArray *argv = @[ @"--foo", @"--bar", @"what" ];
-    NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"foo" flag:@"f"],
-        [CLKOption parameterOptionWithName:@"bar" flag:@"b"]
-    ];
-    
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--bar'"];
-    ArgumentParserSpec *spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
 }
 
