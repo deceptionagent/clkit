@@ -216,9 +216,9 @@
     XCTAssertEqual(@"-?".clk_tokenKind, CLKTokenKindOptionFlag);
     XCTAssertEqual(@"-π".clk_tokenKind, CLKTokenKindOptionFlag);
     
-    XCTAssertEqual(@"-xy".clk_tokenKind, CLKTokenKindOptionFlagGroup);
-    XCTAssertEqual(@"-xYz".clk_tokenKind, CLKTokenKindOptionFlagGroup);
-    XCTAssertEqual(@"-πƒ".clk_tokenKind, CLKTokenKindOptionFlagGroup);
+    XCTAssertEqual(@"-xy".clk_tokenKind, CLKTokenKindOptionFlagSet);
+    XCTAssertEqual(@"-xYz".clk_tokenKind, CLKTokenKindOptionFlagSet);
+    XCTAssertEqual(@"-πƒ".clk_tokenKind, CLKTokenKindOptionFlagSet);
     
     XCTAssertEqual(@"--".clk_tokenKind, CLKTokenKindRemainderArgumentsDelimiter);
     

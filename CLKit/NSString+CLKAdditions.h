@@ -8,8 +8,7 @@
 typedef NS_ENUM(uint32_t, CLKTokenKind) {
     CLKTokenKindOptionName = 0, // `--xyxxy`
     CLKTokenKindOptionFlag = 1, // `-x`
-    #warning rename: "group" is overloaded"
-    CLKTokenKindOptionFlagGroup = 2, // `-xyz`
+    CLKTokenKindOptionFlagSet = 2, // `-xyz`
     #warning rename this: "sentinel"
     CLKTokenKindRemainderArgumentsDelimiter = 3, // `--`
     CLKTokenKindArgument = 4,
