@@ -17,10 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
                               mutexed:(BOOL)mutexed
                              required:(BOOL)required NS_DESIGNATED_INITIALIZER;
 
+- (nullable NSArray<NSString *> *)_allSubgroupOptions;
+
 - (CLKArgumentManifestConstraint *)_requiredConstraint;
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints;
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraintsForSubgroups;
-- (nullable NSArray<NSString *> *)_allSubgroupOptions;
+- (NSArray<CLKArgumentManifestConstraint *> *)_subgroupConstraints;
 
 @end
 

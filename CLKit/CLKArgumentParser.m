@@ -41,9 +41,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, retain) CLKOption *currentParameterOption;
 
+- (BOOL)_validateManifest;
+
 - (void)_accumulateError:(NSError *)error;
 
+- (CLKAPState)_readNextItem;
+- (CLKAPState)_parseOptionName;
+- (CLKAPState)_parseOptionFlag;
 - (CLKAPState)_processParsedOption:(CLKOption *)option;
+- (CLKAPState)_parseOptionFlagGroup;
+- (CLKAPState)_parseArgument;
 
 @end
 
@@ -275,7 +282,6 @@ NS_ASSUME_NONNULL_END
 - (CLKAPState)_parseOptionName
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    
     NSString *rawArgument = [_argumentVector clk_popFirstObject];
     NSAssert((rawArgument.length > 2 && [rawArgument hasPrefix:@"--"]), @"unexpectedly encountered '%@' when attempting to parse an option name", rawArgument);
     
@@ -293,7 +299,6 @@ NS_ASSUME_NONNULL_END
 - (CLKAPState)_parseOptionFlag
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    
     NSString *rawArgument = [_argumentVector clk_popFirstObject];
     NSAssert((rawArgument.length == 2 && [rawArgument hasPrefix:@"-"]), @"unexpectedly encountered '%@' when attempting to parse an option flag", rawArgument);
     
@@ -310,7 +315,7 @@ NS_ASSUME_NONNULL_END
 
 - (CLKAPState)_processParsedOption:(CLKOption *)option
 {
-    NSAssert(self.currentParameterOption == nil, @"currentOption unexpectedly set when processing parsed option");
+    NSAssert(self.currentParameterOption == nil, @"currentParameterOption previously set");
     
     if (option.type == CLKOptionTypeParameter) {
         self.currentParameterOption = option;

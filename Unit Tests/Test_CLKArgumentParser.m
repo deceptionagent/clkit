@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_END
 
 - (id)transformedArgument:(__unused NSString *)argument error:(NSError **)outError
 {
+    NSParameterAssert(outError != nil);
     *outError = _error;
     return nil;
 }
