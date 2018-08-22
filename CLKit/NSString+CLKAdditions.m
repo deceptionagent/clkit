@@ -29,15 +29,8 @@
         range = NSMakeRange(0, self.length);
     }
     
-    if (![self clk_containsCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet range:range]) {
-        return NO;
-    }
-    
-    if ([self clk_containsCharacterFromSet:nonNumericArgumentCharacterSet range:range]) {
-        return NO;
-    }
-    
-    return YES;
+    return ([self clk_containsCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet range:range]
+            && ![self clk_containsCharacterFromSet:nonNumericArgumentCharacterSet range:range]);
 }
 
 - (CLKTokenKind)clk_tokenKind
