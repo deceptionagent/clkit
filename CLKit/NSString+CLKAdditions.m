@@ -68,7 +68,7 @@
             return CLKTokenKindInvalid;
         }
         
-        return CLKTokenKindOptionFlagGroup;
+        return CLKTokenKindOptionFlagSet;
     }
     
     return CLKTokenKindArgument;

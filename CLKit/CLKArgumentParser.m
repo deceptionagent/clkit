@@ -24,8 +24,7 @@ typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateReadNextItem,
     CLKAPStateParseOptionName,
     CLKAPStateParseOptionFlag,
-    #warning rename: "group" is overloaded
-    CLKAPStateParseOptionFlagGroup,
+    CLKAPStateParseOptionFlagSet,
     CLKAPStateParseArgument,
     CLKAPStateError,
     CLKAPStateEnd
@@ -49,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CLKAPState)_parseOptionName;
 - (CLKAPState)_parseOptionFlag;
 - (CLKAPState)_processParsedOption:(CLKOption *)option;
-- (CLKAPState)_parseOptionFlagGroup;
+- (CLKAPState)_parseOptionFlagSet;
 - (CLKAPState)_parseArgument;
 
 @end
@@ -152,8 +151,8 @@ NS_ASSUME_NONNULL_END
                     _state = [self _parseOptionFlag];
                     break;
                 
-                case CLKAPStateParseOptionFlagGroup:
-                    _state = [self _parseOptionFlagGroup];
+                case CLKAPStateParseOptionFlagSet:
+                    _state = [self _parseOptionFlagSet];
                     break;
                 
                 case CLKAPStateParseArgument:
@@ -272,7 +271,7 @@ NS_ASSUME_NONNULL_END
         }
         
         if (nextItem.length > 2) {
-            return CLKAPStateParseOptionFlagGroup;
+            return CLKAPStateParseOptionFlagSet;
         }
     }
     
@@ -326,22 +325,21 @@ NS_ASSUME_NONNULL_END
     return CLKAPStateReadNextItem;
 }
 
-#warning rename: "group" is overloaded
-- (CLKAPState)_parseOptionFlagGroup
+- (CLKAPState)_parseOptionFlagSet
 {
     NSAssert((_argumentVector.count > 0), @"unexpectedly empty argument vector");
-    NSString *flagGroup = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
+    NSString *flagSet = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
     
-    // simple trick to implement option flag groups:
+    // simple trick to implement option flag sets:
     //
     //    1. explode the group into individual flags
     //    2. add the flags to the front of argv
     //    3. let normal option flag parsing take care of them
     //
     
-    NSRange range = [flagGroup rangeOfString:flagGroup];
+    NSRange range = NSMakeRange(0, flagSet.length);
     NSStringEnumerationOptions enumerationOpts = (NSStringEnumerationByComposedCharacterSequences | NSStringEnumerationReverse); // backward to preserve order when inserting
-    [flagGroup enumerateSubstringsInRange:range options:enumerationOpts usingBlock:^(NSString *flag, __unused NSRange substringRange, __unused NSRange enclosingRange, __unused BOOL *outStop) {
+    [flagSet enumerateSubstringsInRange:range options:enumerationOpts usingBlock:^(NSString *flag, __unused NSRange substringRange, __unused NSRange enclosingRange, __unused BOOL *outStop) {
         [_argumentVector insertObject:[@"-" stringByAppendingString:flag] atIndex:0];
     }];
     
