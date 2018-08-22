@@ -5,13 +5,13 @@
 #import <Foundation/Foundation.h>
 
 
-typedef NS_ENUM(uint32_t, CLKTokenKind) {
-    CLKTokenKindOptionName = 0, // `--xyxxy`
-    CLKTokenKindOptionFlag = 1, // `-x`
-    CLKTokenKindOptionFlagSet = 2, // `-xyz`
-    CLKTokenKindOptionParsingSentinel = 3, // `--`
-    CLKTokenKindArgument = 4,
-    CLKTokenKindInvalid = 5
+typedef NS_ENUM(uint32_t, CLKArgumentTokenKind) {
+    CLKArgumentTokenKindOptionName = 0, // `--xyxxy`
+    CLKArgumentTokenKindOptionFlag = 1, // `-x`
+    CLKArgumentTokenKindOptionFlagSet = 2, // `-xyz`
+    CLKArgumentTokenKindOptionParsingSentinel = 3, // `--`
+    CLKArgumentTokenKindArgument = 4,
+    CLKArgumentTokenKindMalformedOption = 5
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,8 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet range:(NSRange)range;
 
+@property (readonly) BOOL clk_resemblesOptionArgumentToken;
 @property (readonly) BOOL clk_isNumericArgumentToken;
-@property (readonly) CLKTokenKind clk_tokenKind;
+@property (readonly) CLKArgumentTokenKind clk_argumentTokenKind;
 
 @end
 

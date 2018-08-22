@@ -195,79 +195,94 @@
     }
 }
 
-- (void)test_clk_tokenType
+- (void)testTokenKindProperties
 {
-    XCTAssertEqual(@"--x".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--flarn".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--syn-ack".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--syn--ack".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--syn.ack".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--.syn.ack.".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--what-".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--what--".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--what?".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--se7en".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--420".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"--barƒ".clk_tokenKind, CLKTokenKindOptionName);
-    XCTAssertEqual(@"---".clk_tokenKind, CLKTokenKindOptionName);
+    #define TEST_TOKEN(token, expectedKind) \
+    { \
+        CLKArgumentTokenKind kind = token.clk_argumentTokenKind; \
+        XCTAssertEqual(kind, expectedKind, @"(token: '%@')", token); \
+        if (kind == CLKArgumentTokenKindOptionName \
+            || kind == CLKArgumentTokenKindOptionFlag \
+            || kind == CLKArgumentTokenKindOptionFlagSet \
+            || kind == CLKArgumentTokenKindMalformedOption ) \
+        { \
+            XCTAssertTrue(token.clk_resemblesOptionArgumentToken); \
+        } else { \
+            XCTAssertFalse(token.clk_resemblesOptionArgumentToken); \
+        } \
+    }
     
-    XCTAssertEqual(@"-a".clk_tokenKind, CLKTokenKindOptionFlag);
-    XCTAssertEqual(@"-Z".clk_tokenKind, CLKTokenKindOptionFlag);
-    XCTAssertEqual(@"-?".clk_tokenKind, CLKTokenKindOptionFlag);
-    XCTAssertEqual(@"-π".clk_tokenKind, CLKTokenKindOptionFlag);
+    TEST_TOKEN(@"--x", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--flarn", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--syn-ack", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--syn--ack", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--syn.ack", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--.syn.ack.", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--what-", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--what--", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--what?", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--se7en", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--420", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"--barƒ", CLKArgumentTokenKindOptionName);
+    TEST_TOKEN(@"---", CLKArgumentTokenKindOptionName);
     
-    XCTAssertEqual(@"-xy".clk_tokenKind, CLKTokenKindOptionFlagSet);
-    XCTAssertEqual(@"-xYz".clk_tokenKind, CLKTokenKindOptionFlagSet);
-    XCTAssertEqual(@"-πƒ".clk_tokenKind, CLKTokenKindOptionFlagSet);
+    TEST_TOKEN(@"-a", CLKArgumentTokenKindOptionFlag);
+    TEST_TOKEN(@"-Z", CLKArgumentTokenKindOptionFlag);
+    TEST_TOKEN(@"-?", CLKArgumentTokenKindOptionFlag);
+    TEST_TOKEN(@"-π", CLKArgumentTokenKindOptionFlag);
     
-    XCTAssertEqual(@"--".clk_tokenKind, CLKTokenKindOptionParsingSentinel);
+    TEST_TOKEN(@"-xy", CLKArgumentTokenKindOptionFlagSet);
+    TEST_TOKEN(@"-xYz", CLKArgumentTokenKindOptionFlagSet);
+    TEST_TOKEN(@"-πƒ", CLKArgumentTokenKindOptionFlagSet);
     
-    XCTAssertEqual(@" ".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"   ".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"flarn".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"w-hat".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@" -x".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@" --flarn".clk_tokenKind, CLKTokenKindArgument);
+    TEST_TOKEN(@"--", CLKArgumentTokenKindOptionParsingSentinel);
     
-    XCTAssertEqual(@"-7".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-420".clk_tokenKind, CLKTokenKindArgument);
+    TEST_TOKEN(@"", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@" ", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"   ", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"flarn", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"w-hat", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@" -x", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@" --flarn", CLKArgumentTokenKindArgument);
     
-    XCTAssertEqual(@"-42.0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-0.420".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-00.420".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-4.2.0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-4..2..0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-.420".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-420.".clk_tokenKind, CLKTokenKindArgument);
+    TEST_TOKEN(@"-7", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-420", CLKArgumentTokenKindArgument);
     
-    XCTAssertEqual(@"-42:0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-0:420".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-00:420".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-4:2:0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-4::2::0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-:420".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-420:".clk_tokenKind, CLKTokenKindArgument);
+    TEST_TOKEN(@"-42.0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-0.420", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-00.420", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-4.2.0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-4..2..0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-.420", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-420.", CLKArgumentTokenKindArgument);
     
-    XCTAssertEqual(@"-4.2:0".clk_tokenKind, CLKTokenKindArgument);
-    XCTAssertEqual(@"-4.2.0:7:7".clk_tokenKind, CLKTokenKindArgument);
+    TEST_TOKEN(@"-42:0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-0:420", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-00:420", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-4:2:0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-4::2::0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-:420", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-420:", CLKArgumentTokenKindArgument);
     
-    XCTAssertEqual(@"".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"- ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-  ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-- ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"--   ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"- -".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-x ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"- x".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"--flarn ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-- flarn".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-- flarn ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-- w hat ".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-x7z".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-7x7".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-7yz".clk_tokenKind, CLKTokenKindInvalid);
-    XCTAssertEqual(@"-xy7".clk_tokenKind, CLKTokenKindInvalid);
+    TEST_TOKEN(@"-4.2:0", CLKArgumentTokenKindArgument);
+    TEST_TOKEN(@"-4.2.0:7:7", CLKArgumentTokenKindArgument);
+    
+    TEST_TOKEN(@"- ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-  ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-- ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"--   ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"- -", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-x ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"- x", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"--flarn ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-- flarn", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-- flarn ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-- w hat ", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-x7z", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-7x7", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-7yz", CLKArgumentTokenKindMalformedOption);
+    TEST_TOKEN(@"-xy7", CLKArgumentTokenKindMalformedOption);
 }
 
 @end
