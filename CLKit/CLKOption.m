@@ -123,9 +123,10 @@ NS_ASSUME_NONNULL_END
 {
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
-    CLKHardParameterAssert(name.length > 0);
-    CLKHardParameterAssert(flag == nil || flag.length == 1);
-    CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet], @"'%@' is not allowed as a flag", flag);
+    CLKHardParameterAssert(name.length > 0, @"options must have names");
+    CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
+    CLKHardParameterAssert(![flag isEqualToString:@"-"], @"'-' is not allowed as an option flag");
+    CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet], @"'%@' is not allowed as an option flag", flag);
     CLKHardParameterAssert(![name clk_containsCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet], @"option names cannot contain whitespace characters");
     CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet], @"option flags cannot contain whitespace characters");
     CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
@@ -136,7 +137,7 @@ NS_ASSUME_NONNULL_END
     }
     
     NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
-    CLKHardParameterAssert(uniqueDependencyCount == dependencies.count, @"option dependency lists cannot contain duplicate references");
+    CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");
     
     self = [super init];
     if (self != nil) {

@@ -148,6 +148,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"."]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@":"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"7"]);
@@ -205,6 +206,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption parameterOptionWithName:@"" flag:@"x"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"xx"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"."]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@":"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"7"]);
