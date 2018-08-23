@@ -9,6 +9,11 @@
 
 @implementation NSString (CLKAdditions)
 
+- (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet
+{
+    return [self clk_containsCharacterFromSet:characterSet range:NSMakeRange(0, self.length)];
+}
+
 - (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet range:(NSRange)range
 {
     return ([self rangeOfCharacterFromSet:characterSet options:NSLiteralSearch range:range].location != NSNotFound);

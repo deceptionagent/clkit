@@ -319,7 +319,7 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-- (void)testPositionalArguments
+- (void)testPositionalArguments_withRegisteredOptions
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
@@ -337,7 +337,7 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-- (void)testPositionalArgumentsOnly
+- (void)testPositionalArguments_withRegisteredOptions_onlyPositionalArgv
 {
     NSArray *argv = @[ @"/flarn.txt", @"/bort.txt" ];
     NSArray *options = @[
@@ -350,7 +350,7 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-- (void)testPositionalArgumentsOnly_noParserOptions
+- (void)testPositionalArgumentsOnly_noRegisteredOptions
 {
     NSArray *argv = @[ @"alpha", @"bravo", @"charlie" ];
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[]];
@@ -379,6 +379,48 @@ NS_ASSUME_NONNULL_END
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     spec = [ArgumentParserSpec specWithErrors:@[ error ]];
     [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"foo", @"", @"bar" ];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:@[]];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
+#warning test matrix:
+// - no constraints, options divided by sentinel (success)
+//    - sentinel at argv.firstObject
+//    - sentinel in middle of argv somewhere
+//    - sentinel at argv.lastObject
+// - required option appears after sentinel (error)
+// - option with dependency provided before sentinel, dependency provided after sentinel (error)
+// - option with dependency provided after sentinel, dependency not provided before sentinel (success)
+// - mutually exclusive options divided by sentinel (success)
+// - required group member provided after sentinel (error)
+- (void)disabled_testOptionParsingSentinel
+{
+    NSArray *argv = @[ @"--flarn", @"--", @"--barf", @"tru.dat" ];
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    #warning should this be the standard order of items in other tests?
+    NSDictionary *expectedOptionManifest = @{ @"flarn" : @(1) };
+    NSArray *expectedPositionalArguments = @[ @"--barf", @"tru.dat" ];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
+- (void)disabled_testNonSentinelOrphanedDashes
+{
+    // ...
+}
+
+- (void)disabled_testNegativeNumericalArguments
+{
+    // ...
 }
 
 - (void)testArgumentTransformation
