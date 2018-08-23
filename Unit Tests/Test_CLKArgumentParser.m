@@ -388,7 +388,8 @@ NS_ASSUME_NONNULL_END
 }
 
 #warning test matrix:
-// - no constraints, options divided by sentinel (success)
+// - no constraints, parameter option separated from its argument by sentinel (success)
+// - no constraints, options cleanly divided by sentinel (success)
 //    - sentinel at argv.firstObject
 //    - sentinel in middle of argv somewhere
 //    - sentinel at argv.lastObject
@@ -418,9 +419,57 @@ NS_ASSUME_NONNULL_END
     // ...
 }
 
-- (void)disabled_testNegativeNumericalArguments
+- (void)testNegativeNumericalArguments
 {
-    // ...
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption optionWithName:@"barf" flag:@"b"]
+    ];
+    
+    NSArray *argv = @[ @"-7" ];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-4", @"-2.0" ];
+    spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-b", @"-0" ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"barf" : @(1) } positionalArguments:@[ @"-0" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-0", @"-b" ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"barf" : @(1) } positionalArguments:@[ @"-0" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"-7", ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"flarn" : @[ @"-7" ] }];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-7.7.7", @"--flarn", @"-4:2:0" ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"flarn" : @[ @"-4:2:0" ] } positionalArguments:@[ @"-7.7.7" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"--flarn", @"-4:2:0:6.6.6", @"-b" ];
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @[ @"-4:2:0:6.6.6" ],
+        @"barf" : @(1)
+    };
+    
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+
+    argv = @[ @"--flarn", @"-7", @"-4:20" ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"flarn" : @[ @"-7" ] } positionalArguments:@[ @"-4:20" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
 }
 
 - (void)testArgumentTransformation

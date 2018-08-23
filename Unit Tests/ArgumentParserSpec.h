@@ -9,12 +9,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ArgumentParserSpec : NSObject
 
-+ (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments;
-+ (instancetype)specWithErrors:(NSArray<NSError *> *)errors;
-- (instancetype)initWithOptionManifest:(nullable NSDictionary<NSString *, id> *)optionManifest positionalArguments:(nullable NSArray<NSString *> *)positionalArguments errors:(nullable NSArray<NSError *> *)errors NS_DESIGNATED_INITIALIZER;
-
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
++ (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest;
++ (instancetype)specWithPositionalArguments:(NSArray<NSString *> *)positionalArguments;
++ (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments;
++ (instancetype)specWithErrors:(NSArray<NSError *> *)errors;
 
 @property (nullable, readonly) NSDictionary<NSString *, id> *optionManifest;
 @property (nullable, readonly) NSArray<NSString *> *positionalArguments;
