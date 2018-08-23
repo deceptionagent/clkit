@@ -5,6 +5,18 @@
 #import "ArgumentParserSpec.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface ArgumentParserSpec ()
+
+- (instancetype)_initWithOptionManifest:(nullable NSDictionary<NSString *, id> *)optionManifest
+                    positionalArguments:(nullable NSArray<NSString *> *)positionalArguments
+                                 errors:(nullable NSArray<NSError *> *)errors NS_DESIGNATED_INITIALIZER;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
 @implementation ArgumentParserSpec
 {
     NSDictionary<NSString *, id> *_optionManifest;
@@ -16,17 +28,27 @@
 @synthesize positionalArguments = _positionalArguments;
 @synthesize errors = _errors;
 
++ (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest
+{
+    return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:@[] errors:nil] autorelease];
+}
+
++ (instancetype)specWithPositionalArguments:(NSArray<NSString *> *)positionalArguments
+{
+    return [[[self alloc] _initWithOptionManifest:@{} positionalArguments:positionalArguments errors:nil] autorelease];
+}
+
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments
 {
-    return [[[self alloc] initWithOptionManifest:optionManifest positionalArguments:positionalArguments errors:nil] autorelease];
+    return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:positionalArguments errors:nil] autorelease];
 }
 
 + (instancetype)specWithErrors:(NSArray<NSError *> *)errors
 {
-    return [[[self alloc] initWithOptionManifest:nil positionalArguments:nil errors:errors] autorelease];
+    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:errors] autorelease];
 }
 
-- (instancetype)initWithOptionManifest:(nullable NSDictionary<NSString *, id> *)optionManifest positionalArguments:(nullable NSArray<NSString *> *)positionalArguments errors:(nullable NSArray<NSError *> *)errors
+- (instancetype)_initWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments errors:(NSArray<NSError *> *)errors
 {
     self = [super init];
     if (self != nil) {
