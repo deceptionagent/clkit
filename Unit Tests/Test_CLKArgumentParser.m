@@ -414,9 +414,71 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-- (void)disabled_testNonSentinelOrphanedDashes
+- (void)testNonSentinelOrphanedDashes
 {
-    // ...
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption optionWithName:@"barf" flag:@"b"]
+    ];
+    
+    NSArray *argv = @[ @"-" ];
+    ArgumentParserSpec *spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-", @"-" ];
+    spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-", @"quone" ];
+    spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"quone", @"-" ];
+    spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-b", @"-", @"-b" ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"barf" : @(2) } positionalArguments:@[ @"-" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-", @"-b", @"-" ];
+    spec = [ArgumentParserSpec specWithOptionManifest:@{ @"barf" : @(1) } positionalArguments:@[ @"-", @"-" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+
+    argv = @[ @"-", @"--flarn", @"-" ];
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @[ @"-" ],
+    };
+    
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[ @"-" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-", @"--flarn", @"-" ];
+    expectedOptionManifest = @{
+        @"flarn" : @[ @"-" ],
+    };
+    
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:@[ @"-" ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"quone", @"---", @"xyzzy"];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '---'"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"quone", @"---", @"--flarn", @"-"];
+    spec = [ArgumentParserSpec specWithErrors:@[ error ]];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
 }
 
 - (void)testNegativeNumericalArguments
@@ -429,6 +491,11 @@ NS_ASSUME_NONNULL_END
     NSArray *argv = @[ @"-7" ];
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithPositionalArguments:argv];
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+    
+    argv = @[ @"-7", @"quone" ];
+    spec = [ArgumentParserSpec specWithPositionalArguments:argv];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     [self evaluateSpec:spec usingParser:parser];
     
     argv = @[ @"-4", @"-2.0" ];
@@ -450,6 +517,16 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParserSpec specWithOptionManifest:@{ @"flarn" : @[ @"-7" ] }];
     parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     [self evaluateSpec:spec usingParser:parser];
+
+    argv = @[ @"--flarn", @"-7", @"-b"];
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @[ @"-7" ],
+        @"barf" : @(1)
+    };
+    
+    spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest];
+    parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
     
     argv = @[ @"-7.7.7", @"--flarn", @"-4:2:0" ];
     spec = [ArgumentParserSpec specWithOptionManifest:@{ @"flarn" : @[ @"-4:2:0" ] } positionalArguments:@[ @"-7.7.7" ]];
@@ -457,7 +534,7 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
     
     argv = @[ @"--flarn", @"-4:2:0:6.6.6", @"-b" ];
-    NSDictionary *expectedOptionManifest = @{
+    expectedOptionManifest = @{
         @"flarn" : @[ @"-4:2:0:6.6.6" ],
         @"barf" : @(1)
     };
