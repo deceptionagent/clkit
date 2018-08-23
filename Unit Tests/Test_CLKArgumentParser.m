@@ -591,6 +591,7 @@ NS_ASSUME_NONNULL_END
         @"acme",
         @"--syn", @"aeons",
         @"--xyzzy",
+        @"-",
         @"thrud",
         @"-a", @"hack",
         @"-x",
@@ -620,7 +621,7 @@ NS_ASSUME_NONNULL_END
         @"quone" : @(1)
     };
     
-    NSArray *expectedPositionalArguments = @[ @"acme", @"thrud", @"confound", @"delivery" ];
+    NSArray *expectedPositionalArguments = @[ @"acme", @"-", @"thrud", @"confound", @"delivery" ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
     ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
