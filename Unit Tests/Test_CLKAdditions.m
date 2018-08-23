@@ -131,9 +131,24 @@
 
 @implementation Test_NSString_CLKAdditions
 
+- (void)test_clk_containsCharacterFromSet
+{
+    NSCharacterSet *charset = [NSCharacterSet characterSetWithCharactersInString:@"!"];
+    XCTAssertFalse([@"" clk_containsCharacterFromSet:charset]);
+    XCTAssertFalse([@"?" clk_containsCharacterFromSet:charset]);
+    XCTAssertTrue([@"!" clk_containsCharacterFromSet:charset]);
+    XCTAssertTrue([@"?!?" clk_containsCharacterFromSet:charset]);
+    XCTAssertFalse([@"???" clk_containsCharacterFromSet:charset]);
+}
+
 - (void)test_clk_containsCharacterFromSet_range
 {
     NSCharacterSet *charset = [NSCharacterSet characterSetWithCharactersInString:@"!"];
+    XCTAssertFalse([@"" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 0)]);
+    XCTAssertFalse([@"?" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 0)]);
+    XCTAssertFalse([@"!" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 0)]);
+    XCTAssertFalse([@"?" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 1)]);
+    XCTAssertTrue([@"!" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 1)]);
     XCTAssertTrue([@"?!?" clk_containsCharacterFromSet:charset range:NSMakeRange(0, 3)]);
     XCTAssertTrue([@"?!?" clk_containsCharacterFromSet:charset range:NSMakeRange(1, 1)]);
     XCTAssertFalse([@"!?!" clk_containsCharacterFromSet:charset range:NSMakeRange(1, 1)]);

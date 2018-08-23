@@ -141,6 +141,18 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
     [self verifySwitchOption:option name:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
     
+    // option names can include numeric characters and dashes
+    XCTAssertNotNil([CLKOption optionWithName:@"mode7" flag:nil]);
+    XCTAssertNotNil([CLKOption optionWithName:@"pit-pat" flag:nil]);
+    
+    XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"."]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@":"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"7"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@" "]);
+    XCTAssertThrows([CLKOption optionWithName:@"w hat" flag:@"f"]);
     XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
@@ -149,13 +161,7 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertThrows([CLKOption optionWithName:nil flag:nil]);
     XCTAssertThrows([CLKOption optionWithName:nil flag:@"x"]);
-    XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
-    
-    // switch options do not support transformers
-    XCTAssertThrows([[[CLKOption alloc] initWithType:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:[CLKArgumentTransformer transformer]] autorelease]);
 #pragma clang diagnostic pop
 }
 
@@ -192,17 +198,24 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:@[ @"barf" ] transformer:transformer];
     [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:@[ @"barf" ]];
     
+    // option names can include numeric characters and dashes
+    XCTAssertNotNil([CLKOption parameterOptionWithName:@"mode7" flag:nil]);
+    XCTAssertNotNil([CLKOption parameterOptionWithName:@"pit-pat" flag:nil]);
+    
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"" flag:@"x"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@""]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"xx"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"."]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@":"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"7"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-f"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertThrows([CLKOption parameterOptionWithName:nil flag:nil]);
     XCTAssertThrows([CLKOption parameterOptionWithName:nil flag:@"x"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"" flag:@"x"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@""]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"xx"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
 #pragma clang diagnostic pop
 }
 

@@ -8,6 +8,8 @@
 #import "CLKArgumentManifestConstraint.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
+#import "NSCharacterSet+CLKAdditions.h"
+#import "NSString+CLKAdditions.h"
 
 
 NSString *CLKStringForOptionType(CLKOptionType type)
@@ -22,6 +24,22 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     NSCAssert(YES, @"unknown option type: %d", type);
     return @"unknown";
 }
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface CLKOption ()
+
+- (instancetype)_initWithType:(CLKOptionType)type
+                        name:(NSString *)name
+                        flag:(nullable NSString *)flag
+                    required:(BOOL)required
+                   recurrent:(BOOL)recurrent
+                dependencies:(nullable NSArray<NSString *> *)dependencies
+                 transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
+
+@end
+
+NS_ASSUME_NONNULL_END
 
 @implementation CLKOption
 {
@@ -47,12 +65,12 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:nil transformer:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:nil transformer:nil] autorelease];
 }
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<NSString *> *)dependencies
 {
-    return [[[self alloc] initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil] autorelease];
 }
 
 #pragma mark -
@@ -60,27 +78,27 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:NO dependencies:nil transformer:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:NO dependencies:nil transformer:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag recurrent:(BOOL)recurrent
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:recurrent dependencies:nil transformer:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:recurrent dependencies:nil transformer:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:dependencies transformer:nil] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:dependencies transformer:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:transformer] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:transformer] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name
@@ -90,12 +108,12 @@ NSString *CLKStringForOptionType(CLKOptionType type)
                            dependencies:(nullable NSArray<NSString *> *)dependencies
                             transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer] autorelease];
 }
 
 #pragma mark -
 
-- (instancetype)initWithType:(CLKOptionType)type
+- (instancetype)_initWithType:(CLKOptionType)type
                         name:(NSString *)name
                         flag:(nullable NSString *)flag
                     required:(BOOL)required
@@ -105,12 +123,13 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 {
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
-    #warning name and flag form asserts should be in NSString+CLKAdditions
-    #warning should assert flag is not a number
-    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
-    CLKHardParameterAssert(![flag hasPrefix:@"-"], @"option flags should not begin with -- or -");
     CLKHardParameterAssert(name.length > 0);
     CLKHardParameterAssert(flag == nil || flag.length == 1);
+    CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet], @"'%@' is not allowed as a flag", flag);
+    CLKHardParameterAssert(![name clk_containsCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet], @"option names cannot contain whitespace characters");
+    CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet], @"option flags cannot contain whitespace characters");
+    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
+    CLKHardParameterAssert(![flag hasPrefix:@"-"], @"option flags should not begin with -- or -");
     
     for (NSString *dependency in dependencies) {
         CLKHardParameterAssert(![dependency isEqualToString:name], @"options cannot list themselves as dependencies");

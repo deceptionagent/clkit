@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSString (CLKAdditions)
 
+- (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet;
 - (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet range:(NSRange)range;
 
 @property (readonly) BOOL clk_resemblesOptionArgumentToken;

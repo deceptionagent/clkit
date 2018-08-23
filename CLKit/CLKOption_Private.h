@@ -14,14 +14,6 @@ NSString *CLKStringForOptionType(CLKOptionType type);
 
 @interface CLKOption ()
 
-- (instancetype)initWithType:(CLKOptionType)type
-                        name:(NSString *)name
-                        flag:(nullable NSString *)flag
-                    required:(BOOL)required
-                   recurrent:(BOOL)recurrent
-                dependencies:(nullable NSArray<NSString *> *)dependencies
-                 transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
-
 @property (readonly) NSArray<CLKArgumentManifestConstraint *> *constraints;
 
 @end
