@@ -154,6 +154,11 @@
     XCTAssertFalse([@"!?!" clk_containsCharacterFromSet:charset range:NSMakeRange(1, 1)]);
 }
 
+- (void)test_clk_resemblesOptionArgumentToken
+{
+    XCTFail(@"unimplemented test");
+}
+
 - (void)test_clk_isNumericToken
 {
     // leading-dash variants are generated from this list
