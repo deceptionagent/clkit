@@ -387,31 +387,32 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-#warning test matrix:
-// - no constraints, parameter option separated from its argument by sentinel (success)
-// - no constraints, options cleanly divided by sentinel (success)
-//    - sentinel at argv.firstObject
-//    - sentinel in middle of argv somewhere
-//    - sentinel at argv.lastObject
-// - required option appears after sentinel (error)
-// - option with dependency provided before sentinel, dependency provided after sentinel (error)
-// - option with dependency provided after sentinel, dependency not provided before sentinel (success)
-// - mutually exclusive options divided by sentinel (success)
-// - required group member provided after sentinel (error)
-- (void)disabled_testOptionParsingSentinel
+// test matrix:
+//    - no constraints, parameter option separated from its argument by sentinel (success)
+//    - no constraints, options cleanly divided by sentinel (success)
+//       - sentinel at argv.firstObject
+//       - sentinel in middle of argv somewhere
+//       - sentinel at argv.lastObject
+//    - required option appears after sentinel (error)
+//    - option with dependency provided before sentinel, dependency provided after sentinel (error)
+//    - option with dependency provided after sentinel, dependency not provided before sentinel (success)
+//    - mutually exclusive options divided by sentinel (success)
+//    - required group member provided after sentinel (error)
+- (void)testOptionParsingSentinel
 {
-    NSArray *argv = @[ @"--flarn", @"--", @"--barf", @"tru.dat" ];
-    NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
-        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
-    ];
-    
-    #warning should this be the standard order of items in other tests?
-    NSDictionary *expectedOptionManifest = @{ @"flarn" : @(1) };
-    NSArray *expectedPositionalArguments = @[ @"--barf", @"tru.dat" ];
-    ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
-    [self evaluateSpec:spec usingParser:parser];
+    XCTFail(@"unimplemented test");
+//    NSArray *argv = @[ @"--flarn", @"--", @"--barf", @"tru.dat" ];
+//    NSArray *options = @[
+//        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+//        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
+//    ];
+//
+//    #warning should this be the standard order of items in other tests?
+//    NSDictionary *expectedOptionManifest = @{ @"flarn" : @(1) };
+//    NSArray *expectedPositionalArguments = @[ @"--barf", @"tru.dat" ];
+//    ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
+//    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+//    [self evaluateSpec:spec usingParser:parser];
 }
 
 - (void)testNonSentinelOrphanedDashes
