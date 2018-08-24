@@ -12,7 +12,7 @@
 {
     CEVariantSource *_source;
     NSUInteger _currentPosition;
-    NSMutableArray<id<CEVariantSourceViewObserver>> *_observers;
+    NSHashTable<id<CEVariantSourceViewObserver>> *_observers;
 }
 
 @synthesize variantSource = _source;
@@ -24,7 +24,7 @@
     self = [super init];
     if (self != nil) {
         _source = [variantSource retain];
-        _observers = [[NSMutableArray alloc] init];
+        _observers = [[NSHashTable alloc] initWithOptions:(NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality) capacity:1];
     }
     
     return self;
