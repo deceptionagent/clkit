@@ -387,32 +387,67 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingParser:parser];
 }
 
-// test matrix:
-//    - no constraints, parameter option separated from its argument by sentinel (success)
-//    - no constraints, options cleanly divided by sentinel (success)
-//       - sentinel at argv.firstObject
-//       - sentinel in middle of argv somewhere
-//       - sentinel at argv.lastObject
-//    - required option appears after sentinel (error)
-//    - option with dependency provided before sentinel, dependency provided after sentinel (error)
-//    - option with dependency provided after sentinel, dependency not provided before sentinel (success)
-//    - mutually exclusive options divided by sentinel (success)
-//    - required group member provided after sentinel (error)
 - (void)testOptionParsingSentinel
 {
-    XCTFail(@"unimplemented test");
-//    NSArray *argv = @[ @"--flarn", @"--", @"--barf", @"tru.dat" ];
-//    NSArray *options = @[
-//        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
-//        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
-//    ];
-//
-//    #warning should this be the standard order of items in other tests?
-//    NSDictionary *expectedOptionManifest = @{ @"flarn" : @(1) };
-//    NSArray *expectedPositionalArguments = @[ @"--barf", @"tru.dat" ];
-//    ArgumentParserSpec *spec = [ArgumentParserSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
-//    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
-//    [self evaluateSpec:spec usingParser:parser];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b" required:YES];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
+    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c" dependencies:@[ @"delivery" ]];
+    CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
+    
+    /* sentinel alone in argv */
+    
+    NSArray *argv = @[ @"--" ];
+    
+    /* two -- tokens in argv and nothing else */
+    
+    argv = @[ @"--", @"--" ];
+    
+    /* no constraints, parameter option separated from its argument by sentinel (success) */
+    
+    argv = @[ @"--flarn", @"--", @"what" ];
+    
+    argv = @[ @"--flarn", @"--", @"--quone" ]; // interpreting `--quone` as an argument, not an option
+    
+    argv = @[ @"--flarn", @"--", @"-q" ]; // interpreting `-q` as an argument, not an option
+    
+    argv = @[ @"--flarn", @"--", @"--xyzzy" ]; // interpreting `--xyzzy` (unregistered) as an argument, not an option
+    
+    argv = @[ @"--flarn", @"--", @"-x" ]; // interpreting `-x` (unregistered) as an argument, not an option
+    
+    /* no constraints, sentinel at argv.firstObject (success) */
+    
+    argv = @[ @"--", @"-q", @"--flarn", @"what" ];
+    
+    /* no constraints, sentinel at argv.lastObject (success) */
+    
+    argv = @[ @"-q", @"--flarn", @"what", @"--" ];
+
+    /* two `--` tokens in argv separated by stuff */
+    
+    argv = @[ @"--flarn", @"what", @"--", @"-x", @"--", @"y"];
+    
+    /* required option appears after sentinel (error) */
+    
+    argv = @[ @"--flarn", @"what", @"--", @"--barf" ];
+    
+    /* option declaring dependency provided before sentinel, dependency provided after sentinel (error) */
+    
+    argv = @[ @"--confound", @"acme", @"--", @"--delivery", @"station" ];
+    
+    /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
+    
+    argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
+    
+    /* mutually exclusive options divided by sentinel (success) */
+    
+    CLKOptionGroup *mutex = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"quone" ]];
+    argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"station" ];
+    
+    /* required group member provided after sentinel (error) */
+    
+    CLKOptionGroup *requiredGroup = [CLKOptionGroup groupForOptionsNamed:@[ @"confound", @"delivery" ] required:YES];
+    argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
 }
 
 - (void)testNonSentinelOrphanedDashes
