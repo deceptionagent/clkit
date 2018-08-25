@@ -399,7 +399,7 @@ NS_ASSUME_NONNULL_END
     
     NSArray *argv = @[ @"--" ];
     
-    /* two -- tokens in argv and nothing else */
+    /* two `--` tokens in argv and nothing else */
     
     argv = @[ @"--", @"--" ];
     
