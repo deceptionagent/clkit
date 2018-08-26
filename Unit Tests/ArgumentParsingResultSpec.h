@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ArgumentParserResultSpec : NSObject
+@interface ArgumentParsingResultSpec : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
