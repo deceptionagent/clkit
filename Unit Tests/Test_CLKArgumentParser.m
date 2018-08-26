@@ -442,6 +442,7 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"--flarn", @"what", @"--", @"-x", @"--", @"y"];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"what" ] } positionalArguments:@[ @"-x", @"--", @"y" ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     /* required option appears after sentinel (error) */
     
