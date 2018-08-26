@@ -390,56 +390,93 @@ NS_ASSUME_NONNULL_END
     /* sentinel alone in argv */
     
     NSArray *argv = @[ @"--" ];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithEmptyManifest];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     /* two `--` tokens in argv and nothing else */
     
     argv = @[ @"--", @"--" ];
+    spec = [ArgumentParsingResultSpec specWithPositionalArguments:@[ @"--" ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     /* no constraints, parameter option separated from its argument by sentinel (success) */
     
     argv = @[ @"--flarn", @"--", @"what" ];
-    
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"what" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
+
     argv = @[ @"--flarn", @"--", @"--quone" ]; // interpreting `--quone` as an argument, not an option
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"--quone" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     argv = @[ @"--flarn", @"--", @"-q" ]; // interpreting `-q` as an argument, not an option
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-q" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     argv = @[ @"--flarn", @"--", @"--xyzzy" ]; // interpreting `--xyzzy` (unregistered) as an argument, not an option
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"--xyzzy" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     argv = @[ @"--flarn", @"--", @"-x" ]; // interpreting `-x` (unregistered) as an argument, not an option
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-x" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     /* no constraints, sentinel at argv.firstObject (success) */
     
     argv = @[ @"--", @"-q", @"--flarn", @"what" ];
+    spec = [ArgumentParsingResultSpec specWithPositionalArguments:@[ @"-q", @"--flarn", @"what" ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn, quone ] spec:spec];
     
     /* no constraints, sentinel at argv.lastObject (success) */
     
     argv = @[ @"-q", @"--flarn", @"what", @"--" ];
-
+    NSDictionary *expectedOptionManifest = @{
+        @"flarn" : @[ @"what" ],
+        @"quone" : @(1)
+    };
+    
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
+    [self performTestWithArgumentVector:argv options:@[ flarn, quone ] spec:spec];
+    
     /* two `--` tokens in argv separated by stuff */
     
     argv = @[ @"--flarn", @"what", @"--", @"-x", @"--", @"y"];
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"what" ] } positionalArguments:@[ @"-x", @"--", @"y" ]];
     
     /* required option appears after sentinel (error) */
     
     argv = @[ @"--flarn", @"what", @"--", @"--barf" ];
+    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];;
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn, barf ] spec:spec];
     
     /* option declaring dependency provided before sentinel, dependency provided after sentinel (error) */
     
     argv = @[ @"--confound", @"acme", @"--", @"--delivery", @"station" ];
-    
+    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--delivery is required when using --confound"];;
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    [self performTestWithArgumentVector:argv options:@[ confound, delivery ] spec:spec];
+
     /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
     
     argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn, confound, delivery ] spec:spec];
     
     /* mutually exclusive options divided by sentinel (success) */
     
     CLKOptionGroup *mutex = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"quone" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"station" ];
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn, quone ] optionGroups:@[ mutex ] spec:spec];
     
     /* required group member provided after sentinel (error) */
     
-    CLKOptionGroup *requiredGroup = [CLKOptionGroup groupForOptionsNamed:@[ @"confound", @"delivery" ] required:YES];
-    argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
+    CLKOptionGroup *requiredGroup = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"delivery" ] required:YES];
+    argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
+    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --confound --delivery"];
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
 }
 
 - (void)testNonSentinelOrphanedDashes
