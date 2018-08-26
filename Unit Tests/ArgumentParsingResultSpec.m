@@ -28,6 +28,11 @@ NS_ASSUME_NONNULL_END
 @synthesize positionalArguments = _positionalArguments;
 @synthesize errors = _errors;
 
++ (instancetype)specWithEmptyManifest
+{
+    return [[[self alloc] _initWithOptionManifest:@{} positionalArguments:@[] errors:nil] autorelease];
+}
+
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest
 {
     return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:@[] errors:nil] autorelease];

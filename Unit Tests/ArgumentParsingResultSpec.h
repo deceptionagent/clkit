@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
++ (instancetype)specWithEmptyManifest;
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest;
 + (instancetype)specWithPositionalArguments:(NSArray<NSString *> *)positionalArguments;
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments;
