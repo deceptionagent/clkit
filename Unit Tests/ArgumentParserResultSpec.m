@@ -2,12 +2,12 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "ArgumentParserSpec.h"
+#import "ArgumentParserResultSpec.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ArgumentParserSpec ()
+@interface ArgumentParserResultSpec ()
 
 - (instancetype)_initWithOptionManifest:(nullable NSDictionary<NSString *, id> *)optionManifest
                     positionalArguments:(nullable NSArray<NSString *> *)positionalArguments
@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-@implementation ArgumentParserSpec
+@implementation ArgumentParserResultSpec
 {
     NSDictionary<NSString *, id> *_optionManifest;
     NSArray<NSString *> *_positionalArguments;
