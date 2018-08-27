@@ -98,11 +98,19 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifest *manifest = [parser parseArguments];
     if (spec.parserShouldSucceed) {
         XCTAssertNotNil(manifest);
+        if (manifest == nil) {
+            return;
+        }
+        
         XCTAssertNil(parser.errors);
         XCTAssertEqualObjects(manifest.optionManifest, spec.optionManifest);
         XCTAssertEqualObjects(manifest.positionalArguments, spec.positionalArguments);
     } else {
         XCTAssertNil(manifest);
+        if (manifest != nil) {
+            return;
+        }
+        
         XCTAssertEqualObjects(parser.errors, spec.errors);
     }
 }
@@ -306,7 +314,8 @@ NS_ASSUME_NONNULL_END
     NSArray *argv = @[ @"--a", @"-a", @"--b", @"-aa" ];
     NSArray *options = @[
         [CLKOption optionWithName:@"a" flag:@"a"],
-        [CLKOption optionWithName:@"b" flag:nil]
+        [CLKOption optionWithName:@"b" flag:nil],
+        [CLKOption optionWithName:@"barf" flag:@"b"] // make sure this `-b` is not confused for `--b`
     ];
     
     NSDictionary *expectedOptionManifest = @{
@@ -404,7 +413,7 @@ NS_ASSUME_NONNULL_END
     argv = @[ @"--flarn", @"--", @"what" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"what" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
-
+    
     argv = @[ @"--flarn", @"--", @"--quone" ]; // interpreting `--quone` as an argument, not an option
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"--quone" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
@@ -461,23 +470,29 @@ NS_ASSUME_NONNULL_END
     /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
     
     argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] }];
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] } positionalArguments:@[ @"--confound", @"station" ]];
     [self performTestWithArgumentVector:argv options:@[ flarn, confound, delivery ] spec:spec];
     
     /* mutually exclusive options divided by sentinel (success) */
     
     CLKOptionGroup *mutex = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"quone" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"station" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] }];
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] } positionalArguments:@[ @"--quone", @"station" ]];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone ] optionGroups:@[ mutex ] spec:spec];
     
     /* required group member provided after sentinel (error) */
     
     CLKOptionGroup *requiredGroup = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"delivery" ] required:YES];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --confound --delivery"];
+    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
     spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
+    
+    /* zero-length argument provided after sentinel */
+    argv = @[ @"--flarn", @"acme", @"--", @"", @"station" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
 }
 
 - (void)testNonSentinelOrphanedDashes
