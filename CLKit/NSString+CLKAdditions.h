@@ -9,8 +9,8 @@ typedef NS_ENUM(uint32_t, CLKArgumentTokenKind) {
     CLKArgumentTokenKindOptionName = 0, // `--xyxxy`
     CLKArgumentTokenKindOptionFlag = 1, // `-x`
     CLKArgumentTokenKindOptionFlagSet = 2, // `-xyz`
-    CLKArgumentTokenKindOptionParsingSentinel = 3, // `--`
-    CLKArgumentTokenKindArgument = 4,
+    CLKArgumentTokenKindArgument = 3,
+    CLKArgumentTokenKindOptionParsingSentinel = 4, // `--`
     CLKArgumentTokenKindMalformedOption = 5
 };
 
