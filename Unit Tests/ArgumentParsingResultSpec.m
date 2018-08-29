@@ -48,6 +48,11 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:positionalArguments errors:nil] autorelease];
 }
 
++ (instancetype)specWithError:(NSError *)error
+{
+    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
+}
+
 + (instancetype)specWithErrors:(NSArray<NSError *> *)errors
 {
     return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:errors] autorelease];

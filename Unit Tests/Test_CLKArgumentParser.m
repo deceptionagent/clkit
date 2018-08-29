@@ -761,10 +761,10 @@ NS_ASSUME_NONNULL_END
  
         - invokes the validator
         - passes constraints to the validator
-        - correctly handles the validator's result
+        - correctly handles the validator's results
  
-    CLKOption and CLKArgumentManifestValidator have comprehensive tests for constraints,
-    but while we're here we cover some full-stack examples.
+    CLKOption, CLKOptionGroup, and CLKArgumentManifestValidator have comprehensive tests
+    for constraints.
 */
 
 - (void)testValidation_required
@@ -940,7 +940,7 @@ NS_ASSUME_NONNULL_END
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
     [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
-
+    
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
     spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
     [self performTestWithArgumentVector:@[ @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];

@@ -28,8 +28,7 @@ typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateParseOptionFlagSet = 4,
     CLKAPStateParseArgument = 5,
     CLKAPStateParseRemainingArguments = 6,
-    CLKAPStateError = 7,
-    CLKAPStateEnd = 8
+    CLKAPStateEnd = 7
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -172,32 +171,19 @@ NS_ASSUME_NONNULL_END
                     _state = [self _parseRemainingArguments];
                     break;
                 
-                case CLKAPStateError:
-                    NSAssert((self.errors.count > 0), @"expected at least one error on CLKAPStateError");
-                    NSAssert((self.currentParameterOption == nil), @"currentParameterOption should be clear on CLKAPStateError");
-                    _state = CLKAPStateEnd;
-                    [_manifest release];
-                    _manifest = nil;
-                    break;
-                
                 case CLKAPStateEnd:
                     break;
             }
         } // autorelease pool
     }; // state machine loop
     
-    if (_manifest == nil) {
-        NSAssert((self.errors.count > 0), @"expected one or more errors when manifest is nil");
-        return nil;
-    }
-    
-    NSAssert(self.errors == nil, @"self.errors should be nil when manifest is non-nil");
-    
     if (![self _validateManifest]) {
         NSAssert((self.errors.count > 0), @"expected one or more errors on validation failure");
+    }
+    
+    if (self.errors.count > 0) {
         [_manifest release];
         _manifest = nil;
-        return nil;
     }
     
     return _manifest;
@@ -281,8 +267,9 @@ NS_ASSUME_NONNULL_END
             return CLKAPStateParseRemainingArguments;
         
         case CLKArgumentTokenKindMalformedOption:
+            [_argumentVector removeObjectAtIndex:0];
             [self _accumulateError:[NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextToken]];
-            return CLKAPStateError;
+            return CLKAPStateReadNextArgumentToken;
     }
 }
 
@@ -297,7 +284,7 @@ NS_ASSUME_NONNULL_END
     if (option == nil) {
         NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", rawArgument];
         [self _accumulateError:error];
-        return CLKAPStateError;
+        return CLKAPStateReadNextArgumentToken;
     }
     
     return [self _processParsedOption:option userInvocation:rawArgument];
@@ -314,7 +301,7 @@ NS_ASSUME_NONNULL_END
     if (option == nil) {
         NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '%@'", rawArgument];
         [self _accumulateError:error];
-        return CLKAPStateError;
+        return CLKAPStateReadNextArgumentToken;
     }
     
     return [self _processParsedOption:option userInvocation:rawArgument];
@@ -328,7 +315,7 @@ NS_ASSUME_NONNULL_END
         if (_argumentVector.count == 0) {
             NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", userInvocation];
             [self _accumulateError:error];
-            return CLKAPStateError;
+            return CLKAPStateReadNextArgumentToken;
         }
         
         self.currentParameterOption = option;
@@ -371,7 +358,7 @@ NS_ASSUME_NONNULL_END
     NSError *error;
     if (![self _parseArgument:&error]) {
         [self _accumulateError:error];
-        return CLKAPStateError;
+        return CLKAPStateReadNextArgumentToken;
     }
     
     return CLKAPStateReadNextArgumentToken;
@@ -386,7 +373,7 @@ NS_ASSUME_NONNULL_END
         NSError *error;
         if (![self _parseArgument:&error]) {
             [self _accumulateError:error];
-            return CLKAPStateError;
+            return CLKAPStateReadNextArgumentToken;
         }
     }
     
