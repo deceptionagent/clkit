@@ -388,6 +388,21 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:@[] spec:spec];
 }
 
+- (void)testOptionTokenContainsWhitespace
+{
+    CLKOption *option = [CLKOption parameterOptionWithName:@"what" flag:@"w"];
+    
+    NSArray *argv = @[ @"--w hat", @"barf" ];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--w hat'"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
+    
+    argv = @[ @"--what", @"barf", @"-w hat" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"];
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
+}
+
 - (void)testOptionParsingSentinel
 {
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
@@ -648,24 +663,27 @@ NS_ASSUME_NONNULL_END
     // organized by how they should be interpreted by the parser
     NSArray *argv = @[
         @"acme",
-        @"--syn", @"aeons",
+        @"--syn", @"819",
         @"--xyzzy",
         @"-",
         @"thrud",
         @"-a", @"hack",
         @"-x",
+        @"-420",
         @"-xpx",
-        @"--syn", @"cathedra",
-        @"--noise", @"819",
+        @"-s", @"-666",
+        @"--noise", @"ex cathedra",
         @"--quone",
-        @"confound", @"delivery"
+        @"confound", @"delivery",
+        @"--",
+        @"-wormfood", @"--dude"
     ];
     
     NSArray *options = @[
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:[CLKIntArgumentTransformer transformer]],
+         [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:nil],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:nil],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:[CLKIntArgumentTransformer transformer]],
          [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
          [CLKOption optionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],
@@ -674,13 +692,13 @@ NS_ASSUME_NONNULL_END
     NSDictionary *expectedOptionManifest = @{
         @"xyzzy" : @(4),
         @"spline" : @(1),
-        @"syn" : @[ @"aeons", @"cathedra" ],
+        @"syn" : @[ @(819), @(-666) ],
         @"ack" : @[ @"hack" ],
-        @"noise" : @[ @(819) ],
+        @"noise" : @[ @"ex cathedra" ],
         @"quone" : @(1)
     };
     
-    NSArray *expectedPositionalArguments = @[ @"acme", @"-", @"thrud", @"confound", @"delivery" ];
+    NSArray *expectedPositionalArguments = @[ @"acme", @"-", @"thrud", @"-420", @"confound", @"delivery", @"-wormfood", @"--dude" ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
     [self performTestWithArgumentVector:argv options:options spec:spec];
