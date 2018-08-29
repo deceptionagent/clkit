@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest;
 + (instancetype)specWithPositionalArguments:(NSArray<NSString *> *)positionalArguments;
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments;
++ (instancetype)specWithError:(NSError *)error;
 + (instancetype)specWithErrors:(NSArray<NSError *> *)errors;
 
 @property (nullable, readonly) NSDictionary<NSString *, id> *optionManifest;
