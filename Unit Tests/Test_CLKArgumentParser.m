@@ -169,16 +169,16 @@ NS_ASSUME_NONNULL_END
     NSError *longError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--foo'"];
     NSError *shortError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-f'"];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ longError ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:longError];
     [self performTestWithArgumentVector:@[ @"--foo", @"flarn" ] options:options spec:spec];
     
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ longError ]];
+    spec = [ArgumentParsingResultSpec specWithError:longError];
     [self performTestWithArgumentVector:@[ @"--bar", @"--foo", @"flarn" ] options:options spec:spec];
     
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ shortError ]];
+    spec = [ArgumentParsingResultSpec specWithError:shortError];
     [self performTestWithArgumentVector:@[ @"-f", @"flarn" ] options:options spec:spec];
     
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ shortError ]];
+    spec = [ArgumentParsingResultSpec specWithError:shortError];
     [self performTestWithArgumentVector:@[ @"-b", @"-f", @"flarn" ] options:options spec:spec];
 }
 
@@ -191,7 +191,7 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:@[ @"flarn.txt" ] options:@[] spec:spec];
     
     NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--barf'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ expectedError ]];
+    spec = [ArgumentParsingResultSpec specWithError:expectedError];
     [self performTestWithArgumentVector:@[ @"--barf" ] options:@[] spec:spec];
 }
 
@@ -250,44 +250,44 @@ NS_ASSUME_NONNULL_END
     NSError *shortError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '-b'"];
     
     NSArray *argv = @[ @"--barf" ];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ longError ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:longError];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 
     argv = @[ @"-b" ];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ shortError ]];
+    spec = [ArgumentParsingResultSpec specWithError:shortError];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"quone", @"--barf" ];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ longError ]];
+    spec = [ArgumentParsingResultSpec specWithError:longError];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"quone", @"-b" ];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ shortError ]];
+    spec = [ArgumentParsingResultSpec specWithError:shortError];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"--barf", @"what" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--barf'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"-b", @"what" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-b'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"-lol", @"what" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-lol'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"-0x0", @"what" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-0x0'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"--w hat", @"what" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--w hat'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
@@ -369,22 +369,22 @@ NS_ASSUME_NONNULL_END
     
     NSArray *argv = @[ @"--foo", @"", @"what" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
     argv = @[ @"--foo", @"bar", @"" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
     argv = @[ @"", @"--foo", @"bar" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
     argv = @[ @"foo", @"", @"bar" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[] spec:spec];
 }
 
@@ -394,12 +394,12 @@ NS_ASSUME_NONNULL_END
     
     NSArray *argv = @[ @"--w hat", @"barf" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--w hat'"];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
     argv = @[ @"--what", @"barf", @"-w hat" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
 }
 
@@ -472,14 +472,14 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"--flarn", @"what", @"--", @"--barf" ];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn, barf ] spec:spec];
     
     /* option declaring dependency provided before sentinel, dependency provided after sentinel (error) */
     
     argv = @[ @"--confound", @"acme", @"--", @"--delivery", @"station" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--delivery is required when using --confound"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ confound, delivery ] spec:spec];
 
     /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
@@ -500,13 +500,13 @@ NS_ASSUME_NONNULL_END
     CLKOptionGroup *requiredGroup = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"delivery" ] required:YES];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
     
     /* zero-length argument provided after sentinel */
     argv = @[ @"--flarn", @"acme", @"--", @"", @"station" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
 }
 
@@ -559,11 +559,11 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"quone", @"---", @"xyzzy"];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '---'"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"quone", @"---", @"--flarn", @"-"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
@@ -654,7 +654,7 @@ NS_ASSUME_NONNULL_END
         [CLKOption parameterOptionWithName:@"confound" flag:@"c" transformer:confoundTransformer]
     ];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ confoundError ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:confoundError];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
@@ -775,11 +775,11 @@ NS_ASSUME_NONNULL_END
     ];
     
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:@[] options:options spec:spec];
     
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:@[ @"--alpha" ] options:options spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
@@ -800,7 +800,7 @@ NS_ASSUME_NONNULL_END
     
     NSArray *argv = @[ @"--charlie" ];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
@@ -819,7 +819,7 @@ NS_ASSUME_NONNULL_END
     NSArray *argv = @[ @"--flarn", @"barf", @"--flarn", @"barf" ];
     
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil];
@@ -847,12 +847,12 @@ NS_ASSUME_NONNULL_END
     
     NSArray *argv = @[ @"--quone", @"--flarn", @"--barf" ];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
 
     argv = @[ @"--flarn" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
@@ -884,22 +884,22 @@ NS_ASSUME_NONNULL_END
     
     NSArray *argv = @[ @"--flarn", @"--barf" ];
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
     
     argv = @[ @"--flarn", @"--quone" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --quone: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
 
     argv = @[ @"--quone", @"--ack" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
     
     argv = @[ @"--ack", @"--quone" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
 
     NSDictionary *expectedOptionManifest = @{
@@ -920,10 +920,10 @@ NS_ASSUME_NONNULL_END
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
     [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
+    
     argv = @[ @"--what", @"--xyzzy", @"--syn" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
 }
 
@@ -938,11 +938,11 @@ NS_ASSUME_NONNULL_END
     CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"flarn", @"barf" ] required:YES];
     
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
     
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ error ]];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:@[ @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
