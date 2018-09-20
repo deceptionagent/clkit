@@ -180,6 +180,9 @@ NS_ASSUME_NONNULL_END
     
     spec = [ArgumentParsingResultSpec specWithError:shortError];
     [self performTestWithArgumentVector:@[ @"-b", @"-f", @"flarn" ] options:options spec:spec];
+    
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ longError, shortError ]];
+    [self performTestWithArgumentVector:@[ @"--foo", @"quone", @"-b", @"-f", @"flarn" ] options:options spec:spec];
 }
 
 - (void)testEmptyOptionsArray
@@ -289,9 +292,18 @@ NS_ASSUME_NONNULL_END
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--w hat'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"--flarn", @"--barf", @"what", @"--flarn", @"-q" ];
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '--barf'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-q'"]
+    ];
+    
+    spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-- (void)testNoFlag
+- (void)testFlaglessOptions
 {
     NSArray *argv = @[ @"--alpha", @"bravo", @"--charlie", @"--charlie" ];
     NSArray *options = @[
@@ -309,7 +321,7 @@ NS_ASSUME_NONNULL_END
 }
 
 // very edge-casey
-- (void)testSingleCharacterNames
+- (void)testSingleCharacterOptionNames
 {
     NSArray *argv = @[ @"--a", @"-a", @"--b", @"-aa" ];
     NSArray *options = @[
@@ -365,42 +377,89 @@ NS_ASSUME_NONNULL_END
 
 - (void)testZeroLengthStringsInArgumentVector
 {
-    CLKOption *option = [CLKOption parameterOptionWithName:@"foo" flag:@"f"];
+    CLKOption *option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     
-    NSArray *argv = @[ @"--foo", @"", @"what" ];
+    NSArray *argv = @[ @"--flarn", @"", @"what" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
-    argv = @[ @"--foo", @"bar", @"" ];
+    argv = @[ @"--flarn", @"barf", @"" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
-    argv = @[ @"", @"--foo", @"bar" ];
+    argv = @[ @"", @"--flarn", @"barf" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
-    argv = @[ @"foo", @"", @"bar" ];
+    argv = @[ @"syn", @"", @"ack" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[] spec:spec];
+    
+    argv = @[ @"", @"syn", @"ack", @"--flarn", @"" ];
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]
+    ];
+    
+    spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
 }
 
-- (void)testOptionTokenContainsWhitespace
+- (void)testMalformedOptionToken_whitespace
 {
-    CLKOption *option = [CLKOption parameterOptionWithName:@"what" flag:@"w"];
+    NSArray *options =  @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"what" flag:@"w"]
+    ];
     
     NSArray *argv = @[ @"--w hat", @"barf" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--w hat'"];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--what", @"barf", @"-w hat" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"--w hat", @"barf", @"--flarn", @"barf", @"-w hat" ];
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--w hat'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"]
+    ];
+    
+    spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+}
+
+- (void)testMalformedOptionToken_numericArgumentCharacters
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"]
+    ];
+    
+    NSArray *argv = @[ @"-w0t", @"--flarn", @"barf" ];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"--flarn", @"barf", @"-w0t" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"];
+    spec = [ArgumentParsingResultSpec specWithError:error];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"-y0", @"-420", @"--flarn", @"-7", @"-w0t" ];
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-y0'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"]
+    ];
+    
+    spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
 - (void)testOptionParsingSentinel
@@ -704,6 +763,32 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
+- (void)testMultipleMixedErrors
+{
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" recurrent:YES];
+    
+    NSArray *argv = @[
+        @"-w0t", // malformed token
+        @"--xyzzy", // unrecognized option
+        @"-x", // unrecognized option
+        @"--flarn", @"", // zero-length argument
+        @"--flarn", @"-f", // expected argument (option-like token)
+        @"--flarn" // expected argument (end of vector)
+    ];
+    
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--xyzzy'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-x'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '-f'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--flarn'"]
+    ];
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
+}
+
 - (void)testParserReuseNotAllowed
 {
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[]];
@@ -754,7 +839,6 @@ NS_ASSUME_NONNULL_END
 }
 
 #pragma mark -
-#pragma mark Validation
 
 /*
     the primary goal of validation tests involving the parser is verifying the parser:
