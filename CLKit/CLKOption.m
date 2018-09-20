@@ -20,9 +20,6 @@ NSString *CLKStringForOptionType(CLKOptionType type)
         case CLKOptionTypeParameter:
             return @"parameter";
     }
-    
-    NSCAssert(YES, @"unknown option type: %d", type);
-    return @"unknown";
 }
 
 NS_ASSUME_NONNULL_BEGIN
