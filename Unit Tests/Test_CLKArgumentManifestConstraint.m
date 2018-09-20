@@ -23,14 +23,14 @@
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { conditionally required | primary: flarn | associated: barf | linked: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf", @"quone" ]];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { representative required | primary: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+    
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | primary: (null) | associated: (null) | linked: [ flarn, barf ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
-    constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf", @"quone" ]];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | primary: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
-    XCTAssertEqualObjects(constraint.description, expectedDescription);
-
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences limited | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);

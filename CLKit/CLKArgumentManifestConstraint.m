@@ -5,7 +5,7 @@
 #import "CLKArgumentManifestConstraint.h"
 
 
-NSString *CLKStringForConstraintType(CLKConstraintType type)
+static NSString *CLKStringForConstraintType(CLKConstraintType type)
 {
     switch (type) {
         case CLKConstraintTypeRequired:
@@ -19,9 +19,6 @@ NSString *CLKStringForConstraintType(CLKConstraintType type)
         case CLKConstraintTypeOccurrencesLimited:
             return @"occurrences limited";
     }
-    
-    NSCAssert(YES, @"unknown constraint type: %d", type);
-    return @"unknown";
 }
 
 NS_ASSUME_NONNULL_BEGIN
