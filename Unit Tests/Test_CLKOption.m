@@ -149,6 +149,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"--"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"."]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@":"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"7"]);
