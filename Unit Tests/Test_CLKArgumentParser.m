@@ -439,7 +439,8 @@ NS_ASSUME_NONNULL_END
 - (void)testMalformedOptionToken_numericArgumentCharacters
 {
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"]
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q"]
     ];
     
     NSArray *argv = @[ @"-w0t", @"--flarn", @"barf" ];
@@ -449,6 +450,21 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"--flarn", @"barf", @"-w0t" ];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"];
+    spec = [ArgumentParsingResultSpec specWithError:error];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"--flarn", @"barf", @"-q-one" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-q-one'"];
+    spec = [ArgumentParsingResultSpec specWithError:error];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"--flarn", @"barf", @"-q:one" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-q:one'"];
+    spec = [ArgumentParsingResultSpec specWithError:error];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"--flarn", @"barf", @"-q.one" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-q.one'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     

@@ -131,6 +131,18 @@
 
 @implementation Test_NSString_CLKAdditions
 
+- (void)test_clk_containsString_range
+{
+    XCTAssertFalse([@"" clk_containsString:@"?" range:NSMakeRange(0, 0)]);
+    XCTAssertFalse([@"?" clk_containsString:@"?" range:NSMakeRange(0, 0)]);
+    XCTAssertFalse([@"!" clk_containsString:@"?" range:NSMakeRange(0, 0)]);
+    XCTAssertTrue([@"?" clk_containsString:@"?" range:NSMakeRange(0, 1)]);
+    XCTAssertFalse([@"!" clk_containsString:@"?" range:NSMakeRange(0, 1)]);
+    XCTAssertTrue([@"?!?" clk_containsString:@"?" range:NSMakeRange(0, 3)]);
+    XCTAssertFalse([@"?!?" clk_containsString:@"?" range:NSMakeRange(1, 1)]);
+    XCTAssertTrue([@"!?!" clk_containsString:@"?" range:NSMakeRange(1, 1)]);
+}
+
 - (void)test_clk_containsCharacterFromSet
 {
     NSCharacterSet *charset = [NSCharacterSet characterSetWithCharactersInString:@"!"];
