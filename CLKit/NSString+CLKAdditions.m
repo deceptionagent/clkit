@@ -9,6 +9,11 @@
 
 @implementation NSString (CLKAdditions)
 
+- (BOOL)clk_containsString:(NSString *)string range:(NSRange)range
+{
+    return ([self rangeOfString:string options:NSLiteralSearch range:range].location != NSNotFound);
+}
+
 - (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet
 {
     return [self clk_containsCharacterFromSet:characterSet range:NSMakeRange(0, self.length)];
@@ -81,7 +86,13 @@
             return CLKArgumentTokenKindOptionName;
         }
         
-        if ([self clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet range:NSMakeRange(1, self.length - 1)]) {
+        // flag sets cannot contain dashes
+        NSRange contractedRange = NSMakeRange(1, self.length - 1);
+        if ([self clk_containsString:@"-" range:contractedRange]) {
+            return CLKArgumentTokenKindMalformedOption;
+        }
+        
+        if ([self clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet range:contractedRange]) {
             return CLKArgumentTokenKindMalformedOption;
         }
         
