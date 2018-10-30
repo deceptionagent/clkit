@@ -25,8 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
                          flag:(nullable NSString *)flag
                      required:(BOOL)required
                     recurrent:(BOOL)recurrent
-                  transformer:(nullable CLKArgumentTransformer *)transformer
-                 dependencies:(nullable NSArray<NSString *> *)dependencies;
+                 dependencies:(nullable NSArray<NSString *> *)dependencies
+                  transformer:(nullable CLKArgumentTransformer *)transformer;
 
 - (void)verifySwitchOption:(CLKOption *)option
                       name:(NSString *)name
@@ -39,8 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
                 flag:(nullable NSString *)flag
             required:(BOOL)required
            recurrent:(BOOL)recurrent
-         transformer:(nullable CLKArgumentTransformer *)transformer
-        dependencies:(nullable NSArray<NSString *> *)dependencies;
+        dependencies:(nullable NSArray<NSString *> *)dependencies
+         transformer:(nullable CLKArgumentTransformer *)transformer;
 
 @end
 
@@ -88,10 +88,10 @@ NS_ASSUME_NONNULL_END
                          flag:(NSString *)flag
                      required:(BOOL)required
                     recurrent:(BOOL)recurrent
-                  transformer:(CLKArgumentTransformer *)transformer
                  dependencies:(NSArray<NSString *> *)dependencies
+                  transformer:(CLKArgumentTransformer *)transformer
 {
-    [self verifyOption:option type:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent transformer:transformer dependencies:dependencies];
+    [self verifyOption:option type:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer];
 }
 
 - (void)verifySwitchOption:(CLKOption *)option
@@ -103,7 +103,7 @@ NS_ASSUME_NONNULL_END
     //    - are always recurrent
     //    - are never required
     //    - do not support transformers
-    [self verifyOption:option type:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES transformer:nil dependencies:dependencies];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil];
 }
 
 - (void)verifyOption:(CLKOption *)option
@@ -112,8 +112,8 @@ NS_ASSUME_NONNULL_END
                 flag:(NSString *)flag
             required:(BOOL)required
            recurrent:(BOOL)recurrent
-         transformer:(CLKArgumentTransformer *)transformer
         dependencies:(NSArray<NSString *> *)dependencies
+         transformer:(CLKArgumentTransformer *)transformer
 {
     XCTAssertNotNil(option);
     XCTAssertEqual(option.type, type);
@@ -121,8 +121,8 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(option.flag, flag);
     XCTAssertEqual(option.required, required);
     XCTAssertEqual(option.recurrent, recurrent);
-    XCTAssertEqual(option.transformer, transformer); // transformers don't support equality
     XCTAssertEqualObjects(option.dependencies, dependencies);
+    XCTAssertEqual(option.transformer, transformer); // transformers don't support equality
 }
 
 #pragma mark -
@@ -170,35 +170,26 @@ NS_ASSUME_NONNULL_END
 - (void)testInitParameterOption
 {
     CLKOption *option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:nil];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:nil];
-    [self verifyParameterOption:option name:@"flarn" flag:nil required:NO recurrent:NO transformer:nil dependencies:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:nil required:NO recurrent:NO dependencies:nil transformer:nil];
     
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:NO transformer:nil dependencies:nil];
-
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" recurrent:YES];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:YES transformer:nil dependencies:nil];
+    option = [CLKOption requiredParameterOptionWithName:@"flarn" flag:@"f"];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:NO dependencies:nil transformer:nil];
     
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:nil];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:nil];
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:nil];
     
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"barf" ]];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:@[ @"barf" ]];
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:nil];
     
     CLKArgumentTransformer *transformer = [CLKArgumentTransformer transformer];
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:transformer];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:transformer dependencies:nil];
-    
-    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:nil];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:nil dependencies:nil];
-    
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:transformer];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:nil];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:transformer];
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:@[ @"barf" ] transformer:transformer];
-    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES transformer:transformer dependencies:@[ @"barf" ]];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:@[ @"barf" ] transformer:transformer];
     
     // option names can include numeric characters and dashes
     XCTAssertNotNil([CLKOption parameterOptionWithName:@"mode7" flag:nil]);
@@ -213,7 +204,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"7"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-f"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"flarn" ] transformer:nil]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"

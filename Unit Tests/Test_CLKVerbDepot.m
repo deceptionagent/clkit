@@ -328,7 +328,7 @@ NS_ASSUME_NONNULL_END
         [StuntVerb verbWithName:@"xyzzy" option:delta],
     ];
     
-    CLKOption *echo = [CLKOption parameterOptionWithName:@"echo" flag:@"e" recurrent:YES];
+    CLKOption *echo = [CLKOption parameterOptionWithName:@"echo" flag:@"e" required:NO recurrent:YES dependencies:nil transformer:nil];
     CLKOption *foxtrot = [CLKOption optionWithName:@"foxtrot" flag:@"f"];
     NSArray<id<CLKVerb>> *deliveryFamilyVerbs = @[
         [StuntVerb verbWithName:@"syn" options:@[ echo, foxtrot ]],

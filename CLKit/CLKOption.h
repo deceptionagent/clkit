@@ -29,10 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Parameter Options
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag required:(BOOL)required;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag recurrent:(BOOL)recurrent;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
++ (instancetype)requiredParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 
 + (instancetype)parameterOptionWithName:(NSString *)name
                                    flag:(nullable NSString *)flag
