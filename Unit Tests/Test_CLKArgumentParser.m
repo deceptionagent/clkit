@@ -481,9 +481,9 @@ NS_ASSUME_NONNULL_END
 - (void)testOptionParsingSentinel
 {
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b" required:YES];
+    CLKOption *barf = [CLKOption requiredParameterOptionWithName:@"barf" flag:@"b"];
     CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
-    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c" dependencies:@[ @"delivery" ]];
+    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:@[ @"delivery" ] transformer:nil];
     CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
     
     /* sentinel alone in argv */
@@ -704,8 +704,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
-    CLKOption *strange = [CLKOption parameterOptionWithName:@"strange" flag:@"s" transformer:transformer];
-    CLKOption *aeons = [CLKOption parameterOptionWithName:@"aeons" flag:@"a" transformer:transformer];
+    CLKOption *strange = [CLKOption parameterOptionWithName:@"strange" flag:@"s" required:NO recurrent:NO dependencies:nil transformer:transformer];
+    CLKOption *aeons = [CLKOption parameterOptionWithName:@"aeons" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:transformer];
     NSArray *options = @[ strange, aeons ];
     
     NSDictionary *expectedOptionManifest = @{
@@ -725,8 +725,8 @@ NS_ASSUME_NONNULL_END
     NSError *confoundError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"confound error"];
     StuntTransformer *confoundTransformer = [[[StuntTransformer alloc] initWithError:confoundError] autorelease];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"acme" flag:@"a" transformer:[CLKArgumentTransformer transformer]],
-        [CLKOption parameterOptionWithName:@"confound" flag:@"c" transformer:confoundTransformer]
+        [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:[CLKArgumentTransformer transformer]],
+        [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:nil transformer:confoundTransformer]
     ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:confoundError];
@@ -756,7 +756,7 @@ NS_ASSUME_NONNULL_END
     
     NSArray *options = @[
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"noise" flag:@"n" transformer:nil],
+         [CLKOption parameterOptionWithName:@"noise" flag:@"n" required:NO recurrent:NO dependencies:nil transformer:nil],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
          [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:[CLKIntArgumentTransformer transformer]],
          [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
@@ -781,7 +781,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testMultipleMixedErrors
 {
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" recurrent:YES];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil];
     
     NSArray *argv = @[
         @"-w0t", // malformed token
@@ -812,7 +812,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertNotNil(manifest);
     XCTAssertThrows([parser parseArguments]);
     
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES];
+    CLKOption *flarn = [CLKOption requiredParameterOptionWithName:@"flarn" flag:@"f"];
     parser = [CLKArgumentParser parserWithArgumentVector:@[] options:@[ flarn ]];
     manifest = [parser parseArguments];
     XCTAssertNil(manifest);
@@ -871,7 +871,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *options = @[
          [CLKOption optionWithName:@"alpha" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:YES]
+         [CLKOption requiredParameterOptionWithName:@"bravo" flag:@"b"]
     ];
     
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
