@@ -78,24 +78,9 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:nil] autorelease];
 }
 
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag required:(BOOL)required
++ (instancetype)requiredParameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:NO dependencies:nil transformer:nil] autorelease];
-}
-
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag recurrent:(BOOL)recurrent
-{
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:recurrent dependencies:nil transformer:nil] autorelease];
-}
-
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies
-{
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:dependencies transformer:nil] autorelease];
-}
-
-+ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer
-{
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:transformer] autorelease];
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:YES recurrent:NO dependencies:nil transformer:nil] autorelease];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name
