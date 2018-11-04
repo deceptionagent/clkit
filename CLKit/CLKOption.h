@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
++ (instancetype)standaloneOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 
 #pragma mark -
 #pragma mark Parameter Options
@@ -38,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
                            dependencies:(nullable NSArray<NSString *> *)dependencies
                             transformer:(nullable CLKArgumentTransformer *)transformer;
 
++ (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
++ (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag recurrent:(BOOL)recurrent transformer:(nullable CLKArgumentTransformer *)transformer;
+
 #pragma mark -
 
 @property (readonly) CLKOptionType type;
@@ -45,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, readonly) NSString *flag;
 @property (readonly) BOOL required;
 @property (readonly) BOOL recurrent;
+@property (readonly) BOOL standalone;
 @property (nullable, readonly) NSArray<NSString *> *dependencies;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
 

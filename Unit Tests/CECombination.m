@@ -57,6 +57,11 @@
     return [self isEqualToCombination:(CECombination *)obj];
 }
 
+- (NSString *)debugDescription
+{
+    return [NSString stringWithFormat:@"%@ - %@", _variant, _backing];
+}
+
 #pragma mark -
 
 - (id)objectForKeyedSubscript:(NSString *)identifier

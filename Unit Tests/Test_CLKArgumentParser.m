@@ -103,7 +103,7 @@ NS_ASSUME_NONNULL_END
         }
         
         XCTAssertNil(parser.errors);
-        XCTAssertEqualObjects(manifest.optionManifest, spec.optionManifest);
+        XCTAssertEqualObjects(manifest.dictionaryRepresentation, spec.optionManifest);
         XCTAssertEqualObjects(manifest.positionalArguments, spec.positionalArguments);
     } else {
         XCTAssertNil(manifest);

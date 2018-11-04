@@ -14,11 +14,11 @@
 @implementation CLKArgumentManifest
 {
     CLKOptionRegistry *_optionRegistry;
-    NSMutableDictionary<NSString *, id> *_optionManifest; /* option name : NSNumber or NSArray */
+    NSMutableDictionary<NSString *, id> *_optionManifest; /* option name : NSNumber (switch) or NSArray (parameter) */
     NSMutableArray<NSString *> *_positionalArguments;
 }
 
-@synthesize optionManifest = _optionManifest;
+@synthesize dictionaryRepresentation = _optionManifest;
 @synthesize positionalArguments = _positionalArguments;
 
 - (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry;
@@ -46,7 +46,7 @@
 - (NSString *)debugDescription
 {
     NSString *fmt = @"%@\n%@\n\npositional arguments:\n%@";
-    return [NSString stringWithFormat:fmt, super.debugDescription, _optionManifest, _positionalArguments];
+    return [NSString stringWithFormat:fmt, super.debugDescription, self.dictionaryRepresentation, _positionalArguments];
 }
 
 #pragma mark -
@@ -83,6 +83,11 @@
     }
     
     return object;
+}
+
+- (NSSet<NSString *> *)accumulatedOptionNames
+{
+    return [NSSet setWithArray:_optionManifest.allKeys];
 }
 
 - (BOOL)hasOptionNamed:(NSString *)optionName

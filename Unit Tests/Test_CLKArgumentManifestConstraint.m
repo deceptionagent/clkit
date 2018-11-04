@@ -31,6 +31,14 @@
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | primary: (null) | associated: (null) | linked: [ flarn, barf ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { standalone | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+    
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"quone", ]];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { standalone | primary: flarn | associated: (null) | linked: [ barf, quone ] }", constraint];
+    XCTAssertEqualObjects(constraint.description, expectedDescription);
+    
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences limited | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
@@ -70,6 +78,21 @@
     XCTAssertNil(constraint.option);
     XCTAssertNil(constraint.associatedOption);
     XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"flarn", @"barf" ]));
+}
+
+- (void)testStandalone
+{
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
+    XCTAssertEqual(constraint.type, CLKConstraintTypeStandalone);
+    XCTAssertEqualObjects(constraint.option, @"flarn");
+    XCTAssertNil(constraint.associatedOption);
+    XCTAssertNil(constraint.linkedOptions);
+
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"quone" ]];
+    XCTAssertEqual(constraint.type, CLKConstraintTypeStandalone);
+    XCTAssertEqualObjects(constraint.option, @"flarn");
+    XCTAssertNil(constraint.associatedOption);
+    XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"barf", @"quone" ]));
 }
 
 - (void)testOccurrencesLimited

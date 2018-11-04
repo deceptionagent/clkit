@@ -51,10 +51,10 @@ NS_ASSUME_NONNULL_END
 - (CETemplate *)optionTemplate
 {
     NSArray *series = @[
-        [CETemplateSeries seriesWithIdentifier:@"name" values:@[ @"flarn", @"barf" ] variants:@[ @"switch", @"parameter" ]],
-        [CETemplateSeries elidableSeriesWithIdentifier:@"flag" values:@[ @"a", @"b" ] variants:@[ @"switch", @"parameter" ]],
-        [CETemplateSeries seriesWithIdentifier:@"required" values:@[ @(YES), @(NO) ] variant:@"parameter"],
-        [CETemplateSeries seriesWithIdentifier:@"recurrent" values:@[ @(YES), @(NO) ] variant:@"parameter"],
+        [CETemplateSeries seriesWithIdentifier:@"name" values:@[ @"flarn", @"barf" ] variants:@[ @"switch", @"parameter", @"standalone_switch", @"standalone_parameter" ]],
+        [CETemplateSeries elidableSeriesWithIdentifier:@"flag" values:@[ @"a", @"b" ] variants:@[ @"switch", @"parameter", @"standalone_switch", @"standalone_parameter" ]],
+        [CETemplateSeries seriesWithIdentifier:@"required" values:@[ @YES, @NO ] variant:@"parameter"],
+        [CETemplateSeries seriesWithIdentifier:@"recurrent" values:@[ @YES, @NO ] variants:@[ @"parameter", @"standalone_parameter" ]],
         [CETemplateSeries elidableSeriesWithIdentifier:@"dependencies" values:@[ @[ @"confound" ], @[ @"delivery" ] ] variants:@[ @"switch", @"parameter" ]]
     ];
     
@@ -66,14 +66,20 @@ NS_ASSUME_NONNULL_END
     CLKOption *option = nil;
     NSString *name = combination[@"name"];
     NSString *flag = combination[@"flag"];
-    NSArray<NSString *> *dependencies = combination[@"dependencies"];
     
     if ([combination.variant isEqualToString:@"switch"]) {
+        NSArray<NSString *> *dependencies = combination[@"dependencies"];
         option = [CLKOption optionWithName:name flag:flag dependencies:dependencies];
     } else if ([combination.variant isEqualToString:@"parameter"]) {
         BOOL required = [combination[@"required"] boolValue];
         BOOL recurrent = [combination[@"recurrent"] boolValue];
+        NSArray<NSString *> *dependencies = combination[@"dependencies"];
         option = [CLKOption parameterOptionWithName:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:nil];
+    } else if ([combination.variant isEqualToString:@"standalone_switch"]) {
+        option = [CLKOption standaloneOptionWithName:name flag:flag];
+    } else if ([combination.variant isEqualToString:@"standalone_parameter"]) {
+        BOOL recurrent = [combination[@"recurrent"] boolValue];
+        option = [CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:recurrent transformer:nil];
     } else {
         XCTFail(@"unknown combination variant: '%@'", combination.variant);
     }
@@ -313,19 +319,23 @@ NS_ASSUME_NONNULL_END
 
 - (void)testDescription
 {
-    CLKOption *switchA = [CLKOption optionWithName:@"switchA" flag:@"a"];
+    CLKOption *switchA = [CLKOption optionWithName:@"switchA" flag:@"s"];
     CLKOption *switchB = [CLKOption optionWithName:@"switchB" flag:nil];
-    CLKOption *switchC = [CLKOption optionWithName:@"switchC" flag:@"a" dependencies:@[ @"flarn", @"barf" ]];
+    CLKOption *switchC = [CLKOption optionWithName:@"switchC" flag:@"s" dependencies:@[ @"flarn", @"barf" ]];
+    CLKOption *switchD = [CLKOption standaloneOptionWithName:@"switchD" flag:@"s"];
     CLKOption *paramA = [CLKOption parameterOptionWithName:@"paramA" flag:@"p" required:NO recurrent:NO dependencies:nil transformer:nil];
     CLKOption *paramB = [CLKOption parameterOptionWithName:@"paramB" flag:nil required:YES recurrent:YES dependencies:nil transformer:nil];
     CLKOption *paramC = [CLKOption parameterOptionWithName:@"paramC" flag:@"p" required:YES recurrent:YES dependencies:@[ @"flarn", @"barf" ] transformer:nil];
+    CLKOption *paramD = [CLKOption standaloneParameterOptionWithName:@"paramD" flag:@"p" recurrent:YES transformer:nil];
     
-    XCTAssertEqualObjects(switchA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchA | -a | switch, recurrent | dependencies: (null) }", switchA]));
+    XCTAssertEqualObjects(switchA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchA | -s | switch, recurrent | dependencies: (null) }", switchA]));
     XCTAssertEqualObjects(switchB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchB | -(null) | switch, recurrent | dependencies: (null) }", switchB]));
-    XCTAssertEqualObjects(switchC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchC | -a | switch, recurrent | dependencies: flarn, barf }", switchC]));
+    XCTAssertEqualObjects(switchC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchC | -s | switch, recurrent | dependencies: flarn, barf }", switchC]));
+    XCTAssertEqualObjects(switchD.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --switchD | -s | switch, recurrent, standalone | dependencies: (null) }", switchD]));
     XCTAssertEqualObjects(paramA.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramA | -p | parameter | dependencies: (null) }", paramA]));
     XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -(null) | parameter, required, recurrent | dependencies: (null) }", paramB]));
     XCTAssertEqualObjects(paramC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramC | -p | parameter, required, recurrent | dependencies: flarn, barf }", paramC]));
+    XCTAssertEqualObjects(paramD.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramD | -p | parameter, recurrent, standalone | dependencies: (null) }", paramD]));
 }
 
 - (void)testConstraints_switchOptions

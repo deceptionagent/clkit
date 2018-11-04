@@ -5,7 +5,6 @@
 #import "CLKArgumentManifest.h"
 
 
-@class CLKOption;
 @class CLKOptionRegistry;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,8 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry NS_DESIGNATED_INITIALIZER;
 
-@property (readonly) NSDictionary<NSString *, id> *optionManifest; /* option name : NSNumber (switch) or NSArray (parameter) */
+@property (readonly) NSDictionary<NSString *, id> *dictionaryRepresentation;
 
+@property (readonly) NSSet<NSString *> *accumulatedOptionNames;
 - (BOOL)hasOptionNamed:(NSString *)optionName;
 - (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName;
 
