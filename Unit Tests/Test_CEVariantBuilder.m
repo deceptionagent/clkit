@@ -112,7 +112,6 @@ NS_ASSUME_NONNULL_END
     [self performTestWithTemplate:template expectedVariants:@[ variant ]];
 }
 
-// i don't know why you'd do this but it should behave sanely
 - (void)testMultipleVariantsFromTemplateSeries
 {
     CETemplateSeries *series = [CETemplateSeries seriesWithIdentifier:@"flarn" values:@[ @(420) ] variants:@[ @"alpha", @"bravo" ]];

@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 
 @end
@@ -55,9 +56,11 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
+#warning autorelease pool?
 - (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler
 {
-    // eliminate redundant errors by deduplicating identical constraints
+    // eliminate redundant errors by deduplicating identical constraints.
+    // use an ordered set to keep error emission deterministic and testing sane.
     NSOrderedSet<CLKArgumentManifestConstraint *> *uniqueConstraints = [[NSOrderedSet alloc] initWithArray:constraints];
     
     for (CLKArgumentManifestConstraint *constraint in uniqueConstraints) {
@@ -82,6 +85,9 @@ NS_ASSUME_NONNULL_END
         case CLKConstraintTypeMutuallyExclusive:
             [self _validateMutualExclusion:constraint issueHandler:issueHandler];
             break;
+        case CLKConstraintTypeStandalone:
+            [self _validateStandaloneExclusion:constraint issueHandler:issueHandler];
+            break;
         case CLKConstraintTypeOccurrencesLimited:
             [self _validateOccurrenceLimit:constraint issueHandler:issueHandler];
             break;
@@ -90,6 +96,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
+    NSParameterAssert(constraint.type == CLKConstraintTypeRequired);
+    
     if (![_manifest hasOptionNamed:constraint.option]) {
         NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", constraint.option];
         issueHandler(error);
@@ -98,6 +106,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
+    NSParameterAssert(constraint.type == CLKConstraintTypeConditionallyRequired);
+    
     if ([_manifest hasOptionNamed:constraint.associatedOption] && ![_manifest hasOptionNamed:constraint.option]) {
         NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", constraint.option, constraint.associatedOption];
         issueHandler(error);
@@ -106,6 +116,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
+    NSParameterAssert(constraint.type == CLKConstraintTypeRepresentativeRequired);
+    
     for (NSString *option in constraint.linkedOptions) {
         if ([_manifest hasOptionNamed:option]) {
             return;
@@ -119,6 +131,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
+    NSParameterAssert(constraint.type == CLKConstraintTypeMutuallyExclusive);
+    
     NSMutableArray *hits = nil;
     
     for (NSString *option in constraint.linkedOptions) {
@@ -140,8 +154,38 @@ NS_ASSUME_NONNULL_END
     }
 }
 
+- (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+{
+    NSParameterAssert(constraint.type == CLKConstraintTypeStandalone);
+    
+    if ([_manifest hasOptionNamed:constraint.option]) {
+        NSError *error = nil;
+        NSSet<NSString *> *accumulatedOptions = _manifest.accumulatedOptionNames;
+        if (accumulatedOptions.count > 1) {
+            NSArray<NSString *> *whitelist = constraint.linkedOptions;
+            if (whitelist.count == 0) {
+                error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with other options", constraint.option];
+            } else {
+                NSMutableSet<NSString *> *conflictedOptions = [accumulatedOptions mutableCopy];
+                [conflictedOptions minusSet:[NSSet setWithArray:whitelist]];
+                [conflictedOptions removeObject:constraint.option];
+                if (conflictedOptions.count > 0) {
+                    NSString *whitelistDesc = [whitelist componentsJoinedByString:@" --"];
+                    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with options other than the following: --%@", constraint.option, whitelistDesc];
+                }
+            }
+        }
+        
+        if (error != nil) {
+            issueHandler(error);
+        }
+    }
+}
+
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
+    NSParameterAssert(constraint.type == CLKConstraintTypeOccurrencesLimited);
+    
     if ([_manifest occurrencesOfOptionNamed:constraint.option] > 1) {
         NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", constraint.option];
         issueHandler(error);
@@ -149,3 +193,20 @@ NS_ASSUME_NONNULL_END
 }
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

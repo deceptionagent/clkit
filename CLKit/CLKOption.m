@@ -27,12 +27,21 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CLKOption ()
 
 - (instancetype)_initWithType:(CLKOptionType)type
-                        name:(NSString *)name
-                        flag:(nullable NSString *)flag
-                    required:(BOOL)required
-                   recurrent:(BOOL)recurrent
-                dependencies:(nullable NSArray<NSString *> *)dependencies
-                 transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
+                         name:(NSString *)name
+                         flag:(nullable NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                 dependencies:(nullable NSArray<NSString *> *)dependencies
+                  transformer:(nullable CLKArgumentTransformer *)transformer;
+
+- (instancetype)_initWithType:(CLKOptionType)type
+                         name:(NSString *)name
+                         flag:(nullable NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                   standalone:(BOOL)standalone
+                 dependencies:(nullable NSArray<NSString *> *)dependencies
+                  transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -45,6 +54,7 @@ NS_ASSUME_NONNULL_END
     NSString *_flag;
     BOOL _required;
     BOOL _recurrent;
+    BOOL _standalone;
     NSArray<NSString *> *_dependencies;
     CLKArgumentTransformer *_transformer;
 }
@@ -54,6 +64,7 @@ NS_ASSUME_NONNULL_END
 @synthesize flag = _flag;
 @synthesize required = _required;
 @synthesize recurrent = _recurrent;
+@synthesize standalone = _standalone;
 @synthesize dependencies = _dependencies;
 @synthesize transformer = _transformer;
 
@@ -68,6 +79,11 @@ NS_ASSUME_NONNULL_END
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<NSString *> *)dependencies
 {
     return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil] autorelease];
+}
+
++ (instancetype)standaloneOptionWithName:(NSString *)name flag:(nullable NSString *)flag
+{
+    return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES standalone:YES dependencies:nil transformer:nil] autorelease];
 }
 
 #pragma mark -
@@ -93,18 +109,42 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer] autorelease];
 }
 
++ (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag
+{
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO standalone:YES dependencies:nil transformer:nil] autorelease];
+}
+
++ (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag recurrent:(BOOL)recurrent transformer:(nullable CLKArgumentTransformer *)transformer
+{
+    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:recurrent standalone:YES dependencies:nil transformer:transformer] autorelease];
+}
+
 #pragma mark -
 
 - (instancetype)_initWithType:(CLKOptionType)type
-                        name:(NSString *)name
-                        flag:(nullable NSString *)flag
-                    required:(BOOL)required
-                   recurrent:(BOOL)recurrent
-                dependencies:(nullable NSArray<NSString *> *)dependencies
-                 transformer:(nullable CLKArgumentTransformer *)transformer
+                         name:(NSString *)name
+                         flag:(nullable NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                 dependencies:(nullable NSArray<NSString *> *)dependencies
+                  transformer:(nullable CLKArgumentTransformer *)transformer
+{
+    return [self _initWithType:type name:name flag:flag required:required recurrent:recurrent standalone:NO dependencies:dependencies transformer:transformer];
+}
+
+- (instancetype)_initWithType:(CLKOptionType)type
+                         name:(NSString *)name
+                         flag:(nullable NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                   standalone:(BOOL)standalone
+                 dependencies:(nullable NSArray<NSString *> *)dependencies
+                  transformer:(nullable CLKArgumentTransformer *)transformer
 {
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
+    CLKHardParameterAssert(!(standalone && required), @"standalone options cannot be required");
+    CLKHardParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
     CLKHardParameterAssert(name.length > 0, @"options must have names");
     CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
     CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
@@ -127,6 +167,7 @@ NS_ASSUME_NONNULL_END
         _flag = [flag copy];
         _required = required;
         _recurrent = recurrent;
+        _standalone = standalone;
         _dependencies = [dependencies copy];
         _transformer = [transformer retain];
     }
@@ -162,6 +203,10 @@ NS_ASSUME_NONNULL_END
         [attrs addObject:@"recurrent"];
     }
     
+    if (_standalone) {
+        [attrs addObject:@"standalone"];
+    }
+    
     NSString *attrDesc = [attrs componentsJoinedByString:@", "];
     NSString *dependenciesDesc = [_dependencies componentsJoinedByString:@", "];
     NSString * const fmt = @"%@ { --%@ | -%@ | %@ | dependencies: %@ }";
@@ -190,7 +235,8 @@ NS_ASSUME_NONNULL_END
 {
     if (_type != option.type
         || _required != option.required
-        || _recurrent != option.recurrent
+        ||  _recurrent != option.recurrent
+        || _standalone != option.standalone
         || ![_name isEqualToString:option.name]) // name can never be nil
     {
         return NO;

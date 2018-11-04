@@ -10,10 +10,12 @@ extern NSString * const CLKErrorDomain;
 typedef NS_ERROR_ENUM(CLKErrorDomain, CLKError) {
     CLKErrorNoError = 0,
     
+    // option errors
     CLKErrorRequiredOptionNotProvided = 100,
     CLKErrorTooManyOccurrencesOfOption = 101,
     CLKErrorMutuallyExclusiveOptionsPresent = 102,
     
+    // verb errors
     CLKErrorNoVerbSpecified = 200,
     CLKErrorUnrecognizedVerb = 201
 };

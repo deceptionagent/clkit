@@ -16,6 +16,8 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
             return @"representative required";
         case CLKConstraintTypeMutuallyExclusive:
             return @"mutually exclusive";
+        case CLKConstraintTypeStandalone:
+            return @"standalone";
         case CLKConstraintTypeOccurrencesLimited:
             return @"occurrences limited";
     }
@@ -72,6 +74,12 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithType:CLKConstraintTypeMutuallyExclusive option:nil associatedOption:nil linkedOptions:options] autorelease];
 }
 
++ (instancetype)constraintForStandaloneOption:(NSString *)option allowingOptions:(NSArray<NSString *> *)whitelistedOptions
+{
+    NSParameterAssert(option != nil);
+    return [[[self alloc] _initWithType:CLKConstraintTypeStandalone option:option associatedOption:nil linkedOptions:whitelistedOptions] autorelease];
+}
+
 + (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option
 {
     NSParameterAssert(option != nil);
@@ -80,7 +88,7 @@ NS_ASSUME_NONNULL_END
 
 - (instancetype)_initWithType:(CLKConstraintType)type option:(NSString *)option associatedOption:(NSString *)associatedOption linkedOptions:(NSArray<NSString *> *)linkedOptions
 {
-    NSParameterAssert(option != nil || linkedOptions != nil);
+    NSParameterAssert(option != nil || linkedOptions.count > 0);
     
     self = [super init];
     if (self != nil) {
