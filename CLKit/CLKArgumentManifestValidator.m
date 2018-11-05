@@ -173,6 +173,8 @@ NS_ASSUME_NONNULL_END
                     NSString *whitelistDesc = [whitelist componentsJoinedByString:@" --"];
                     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with options other than the following: --%@", constraint.option, whitelistDesc];
                 }
+                
+                [conflictedOptions release];
             }
         }
         
@@ -193,20 +195,3 @@ NS_ASSUME_NONNULL_END
 }
 
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
