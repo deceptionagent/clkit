@@ -263,7 +263,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testCollectionSupport_set
 {
-    __block NSMutableArray *options = [NSMutableArray array];
+    __block NSMutableArray<CLKOption *> *options = [NSMutableArray array];
     __block NSMutableArray<CLKOption *> *optionClones = [NSMutableArray array]; // verify lookup works for identical instances
     
     CEGenerator *generator = [CEGenerator generatorWithTemplate:self.optionTemplate];
@@ -274,8 +274,11 @@ NS_ASSUME_NONNULL_END
         [optionClones addObject:clone];
     }];
     
-    NSSet *optionSet = [NSSet setWithArray:options];
+    // verify deduplication
+    NSArray<CLKOption *> *redundantOptions = [options arrayByAddingObjectsFromArray:optionClones];
+    NSSet *optionSet = [NSSet setWithArray:redundantOptions];
     XCTAssertEqual(optionSet.count, options.count);
+    
     for (NSUInteger i = 0 ; i < options.count ; i++) {
         CLKOption *option = options[i];
         CLKOption *clone = optionClones[i];

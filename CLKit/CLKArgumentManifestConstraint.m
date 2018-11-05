@@ -115,6 +115,11 @@ NS_ASSUME_NONNULL_END
     return [NSString stringWithFormat:fmt, super.description, CLKStringForConstraintType(_type), _option, _associatedOption, [_linkedOptions componentsJoinedByString:@", "]];
 }
 
+- (NSUInteger)hash
+{
+    return (_option.hash ^ _associatedOption.hash ^ _linkedOptions.hash + _type);
+}
+
 - (BOOL)isEqual:(id)obj
 {
     if (self == obj) {

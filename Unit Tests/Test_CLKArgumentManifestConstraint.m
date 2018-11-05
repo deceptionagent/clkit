@@ -175,4 +175,45 @@
     XCTAssertNotEqualObjects(requiredAlpha, @"not a constraint");
 }
 
+- (void)testCollectionSupport_set
+{
+    NSArray *constraints = @[
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]],
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"],
+    ];
+    
+    // redundant constraints should be deduplicated
+    NSArray *constraintClones = @[
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]],
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"]
+    ];
+    
+    NSArray *redundantConstraints = [constraints arrayByAddingObjectsFromArray:constraintClones];
+    NSSet *constraintSet = [NSSet setWithArray:redundantConstraints];
+    XCTAssertEqual(constraintSet.count, constraints.count);
+    
+    for (NSUInteger i = 0 ; i < constraints.count ; i++) {
+        CLKArgumentManifestConstraint *constraint = constraints[i];
+        CLKArgumentManifestConstraint *clone = constraintClones[i];
+        XCTAssertTrue([constraintSet containsObject:constraint]);
+        XCTAssertTrue([constraintSet containsObject:clone]);
+    }
+}
+
 @end

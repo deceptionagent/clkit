@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_END
     if (spec.shouldPass) {
         XCTAssertEqual(errors.count, 0UL, @"unexpected validation failure for constraints:\n%@\n\n*** errors:\n%@\n\n*** manifest:\n%@\n", spec.constraints, errors, validator.manifest.debugDescription);
     } else {
-        XCTAssertEqualObjects(spec.errors, errors, @"unsatisfied error match for constraints:\n%@\n\n*** manifest:\n%@\n", spec.constraints, validator.manifest.debugDescription);
+        XCTAssertEqualObjects(errors, spec.errors, @"unsatisfied error match for constraints:\n%@\n\n*** manifest:\n%@\n", spec.constraints, validator.manifest.debugDescription);
     }
 }
 
@@ -254,6 +254,41 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --flarn: mutually exclusive options encountered"];
 }
 
+- (void)testValidateConstraint_standalone
+{
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
+    CLKOption *barf = [CLKOption optionWithName:@"barf" flag:@"b"];
+    CLKOption *confound = [CLKOption optionWithName:@"confound" flag:@"c"];
+    CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
+    
+    NSDictionary *switchOptions = @{
+        flarn : @(1)
+    };
+    
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:nil];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
+    [self verifyValidationPassForConstraint:constraint usingValidator:validator];
+    
+    switchOptions = @{
+        flarn : @(1),
+        barf : @(1),
+        confound : @(1),
+    };
+    
+    NSDictionary *parameterOptions = @{
+        delivery : @[ @"xyzzy" ]
+    };
+    
+    validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound" ]];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf --confound"];
+    
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound", @"delivery" ]];
+    [self verifyValidationPassForConstraint:constraint usingValidator:validator];
+}
+
 - (void)testMultipleConstraints
 {
     CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];
@@ -287,7 +322,24 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
         [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"acme", @"station" ]], // passing constraint, no associated error
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"],
+        
+        // redundant constraints should be deduplicated
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"acme", @"station" ]], // passing constraint, no associated error
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
@@ -295,16 +347,15 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
     ];
     
-    // verify redundant constraints are deduplicated
-    constraints = [constraints arrayByAddingObjectsFromArray:constraints];
-    
     NSArray<NSError *> *errors = @[
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn: required option not provided"],
         [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud_alt may not be provided more than once"],
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn is required when using --ack"],
         [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound_alt --delivery_alt: mutually exclusive options encountered"],
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--thrud may not be provided with other options"],
         // no error for acme/station constraint
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--thrud_alt may not be provided with other options"],
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone_alt --xyzzy_alt"],
         [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound --delivery: mutually exclusive options encountered"],
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn_alt is required when using --ack_alt"],
