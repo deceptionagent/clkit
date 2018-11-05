@@ -359,6 +359,13 @@ NS_ASSUME_NONNULL_END
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption standaloneOptionWithName:@"quone" flag:@"q"];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"quone" allowingOptions:nil]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
 }
 
 - (void)testConstraints_parameterOptions
@@ -386,6 +393,19 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
+    ];
+    
+    XCTAssertEqualObjects(quone.constraints, expectedConstraints);
+    
+    quone = [CLKOption standaloneParameterOptionWithName:@"quone" flag:@"q" recurrent:NO transformer:nil];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"quone" allowingOptions:nil]
+    ];
+
+    quone = [CLKOption standaloneParameterOptionWithName:@"quone" flag:@"q" recurrent:YES transformer:nil];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"quone" allowingOptions:nil]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);

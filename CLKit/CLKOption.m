@@ -235,7 +235,7 @@ NS_ASSUME_NONNULL_END
 {
     if (_type != option.type
         || _required != option.required
-        ||  _recurrent != option.recurrent
+        || _recurrent != option.recurrent
         || _standalone != option.standalone
         || ![_name isEqualToString:option.name]) // name can never be nil
     {
@@ -270,6 +270,11 @@ NS_ASSUME_NONNULL_END
     
     if (!_recurrent) {
         CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:self.name];
+        [constraints addObject:constraint];
+    }
+    
+    if (_standalone) {
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:self.name allowingOptions:nil];
         [constraints addObject:constraint];
     }
     
