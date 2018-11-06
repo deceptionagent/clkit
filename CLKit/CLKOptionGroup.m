@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_END
     NSMutableArray<NSString *> *allSubgroupOptions = [NSMutableArray array];
     
     for (CLKOptionGroup *subgroup in _subgroups) {
-        [allSubgroupOptions addObjectsFromArray:subgroup.options];
+        [allSubgroupOptions addObjectsFromArray:subgroup.allOptions];
     }
     
     return allSubgroupOptions;
@@ -129,12 +129,12 @@ NS_ASSUME_NONNULL_END
         [constraints addObject:[self _requiredConstraint]];
     }
     
-    if (_subgroups != nil) {
-        [constraints addObjectsFromArray:[self _subgroupConstraints]];
-    }
-    
     if (_mutexed) {
         [constraints addObjectsFromArray:[self _mutexConstraints]];
+    }
+    
+    if (_subgroups != nil) {
+        [constraints addObjectsFromArray:[self _subgroupConstraints]];
     }
     
     return constraints;
@@ -152,22 +152,23 @@ NS_ASSUME_NONNULL_END
     NSAssert(!(_options != nil && _subgroups != nil), @"cannot have both primary options and subgroups");
     NSAssert(!(_options == nil && _subgroups == nil), @"must have either primary options or subgroups");
     
+    // primary options are mutually exclusive with each other
     if (_options != nil) {
-        if (_options.count > 0) {
-            /* primary options are mutually exclusive with each other */
+        if (_options.count > 1) {
             CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:_options];
             return @[ constraint ];
+        } else {
+            return @[];
         }
-    } else if (_subgroups != nil) {
-        /* subgroups are mutually exclusive with each other */
-        return [self _mutexConstraintsForSubgroups];
     }
     
-    return @[];
+    // if we didn't have primary options, we have subgroups to mutex against each other
+    return [self _mutexConstraintsForSubgroups];
 }
 
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraintsForSubgroups
 {
+    // subgroups are only mutexed against each other, so return early if for some reason we don't have at least two subgroups
     if (_subgroups.count < 2) {
         return @[];
     }

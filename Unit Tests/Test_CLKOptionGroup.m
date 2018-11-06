@@ -152,8 +152,6 @@
     
     CLKOptionGroup *group = [CLKOptionGroup mutexedGroupWithSubgroups:@[ mutexedSubgroup, boringGroup ]];
     NSArray *expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"fatum", @"iustum", @"stultorum" ]],
-        
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"fatum", @"syn" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"fatum", @"ack" ]],
         
@@ -162,6 +160,8 @@
         
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"stultorum", @"syn" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"stultorum", @"ack" ]],
+        
+        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"fatum", @"iustum", @"stultorum" ]],
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
