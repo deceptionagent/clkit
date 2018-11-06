@@ -572,7 +572,7 @@ NS_ASSUME_NONNULL_END
     
     /* required group member provided after sentinel (error) */
     
-    CLKOptionGroup *requiredGroup = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"delivery" ] required:YES];
+    CLKOptionGroup *requiredGroup = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"quone", @"delivery" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
     spec = [ArgumentParsingResultSpec specWithError:error];
@@ -942,7 +942,7 @@ NS_ASSUME_NONNULL_END
     
     NSArray *groups = @[
         [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
-        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:YES]
+        [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:YES mutexed:YES],
     ];
     
     NSArray *argv = @[ @"--quone", @"--flarn", @"--barf" ];
@@ -1035,7 +1035,7 @@ NS_ASSUME_NONNULL_END
         [CLKOption optionWithName:@"xyzzy" flag:@"x"]
     ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"flarn", @"barf" ] required:YES];
+    CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
     
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];

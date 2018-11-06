@@ -56,7 +56,6 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-#warning autorelease pool?
 - (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     // eliminate redundant errors by deduplicating identical constraints.
@@ -64,7 +63,9 @@ NS_ASSUME_NONNULL_END
     NSOrderedSet<CLKArgumentManifestConstraint *> *uniqueConstraints = [[NSOrderedSet alloc] initWithArray:constraints];
     
     for (CLKArgumentManifestConstraint *constraint in uniqueConstraints) {
-        [self _validateConstraint:constraint issueHandler:issueHandler];
+        @autoreleasepool {
+            [self _validateConstraint:constraint issueHandler:issueHandler];
+        }
     }
     
     [uniqueConstraints release];

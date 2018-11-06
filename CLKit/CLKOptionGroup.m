@@ -14,8 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)_initWithOptionsNamed:(nullable NSArray<NSString *> *)options
                             subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
-                              mutexed:(BOOL)mutexed
-                             required:(BOOL)required NS_DESIGNATED_INITIALIZER;
+                             required:(BOOL)required
+                              mutexed:(BOOL)mutexed NS_DESIGNATED_INITIALIZER;
+
+@property (nullable, readonly) NSArray<NSString *> *options;
 
 - (nullable NSArray<NSString *> *)_allSubgroupOptions;
 
@@ -33,45 +35,43 @@ NS_ASSUME_NONNULL_END
     NSArray<NSString *> *_options;
     NSArray<CLKOptionGroup *> *_subgroups;
     BOOL _mutexed;
-    BOOL _required;
+    BOOL _required; // at least one member of this group is required
 }
 
 @synthesize options = _options;
-@synthesize subgroups = _subgroups;
-@synthesize mutexed = _mutexed;
-@synthesize required = _required;
 
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:NO required:NO] autorelease];
+    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:NO mutexed:NO] autorelease];
 }
 
-+ (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required
++ (instancetype)requiredGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:NO required:required] autorelease];
+    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:YES mutexed:NO] autorelease];
 }
 
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:YES required:NO] autorelease];
+    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:NO mutexed:YES] autorelease];
 }
 
-+ (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required
++ (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required mutexed:(BOOL)mutexed
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil mutexed:YES required:required] autorelease];
+    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:required mutexed:mutexed] autorelease];
 }
 
 + (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups
 {
-    return [[[self alloc] _initWithOptionsNamed:nil subgroups:subgroups mutexed:YES required:NO] autorelease];
+    return [[[self alloc] _initWithOptionsNamed:nil subgroups:subgroups required:NO mutexed:YES] autorelease];
 }
 
-+ (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required
++ (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptionNames
 {
-    return [[[self alloc] _initWithOptionsNamed:nil subgroups:subgroups mutexed:YES required:required] autorelease];
+    [NSException raise:@"CLKNotImplementedError" format:@"not implemented"];
+    return nil;
 }
 
-- (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups mutexed:(BOOL)mutexed required:(BOOL)required
+- (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required mutexed:(BOOL)mutexed
 {
     NSParameterAssert(!(options != nil && subgroups != nil));
     NSParameterAssert(!(options == nil && subgroups == nil));
@@ -80,8 +80,8 @@ NS_ASSUME_NONNULL_END
     if (self != nil) {
         _options = [options copy];
         _subgroups = [subgroups copy];
-        _mutexed = mutexed;
         _required = required;
+        _mutexed = mutexed;
     }
     
     return self;
