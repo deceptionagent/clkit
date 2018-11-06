@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_END
 
 - (instancetype)initWithManifest:(CLKArgumentManifest *)manifest
 {
-    CLKHardParameterAssert(manifest != nil);
+    CLKParameterAssert(manifest != nil);
     
     self = [super init];
     if (self != nil) {
