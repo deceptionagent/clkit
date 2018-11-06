@@ -5,6 +5,7 @@
 #import "CLKOptionGroup_Private.h"
 
 #import "CLKArgumentManifestConstraint.h"
+#import "CLKAssert.h"
 #import "NSMutableArray+CLKAdditions.h"
 
 
@@ -15,12 +16,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)_initWithOptionsNamed:(nullable NSArray<NSString *> *)options
                             subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
                              required:(BOOL)required
-                              mutexed:(BOOL)mutexed NS_DESIGNATED_INITIALIZER;
+                              mutexed:(BOOL)mutexed;
+
+- (instancetype)_initWithOptionsNamed:(nullable NSArray<NSString *> *)options
+                            subgroups:(nullable NSArray<CLKOptionGroup *> *)subgroups
+                             required:(BOOL)required
+                              mutexed:(BOOL)mutexed
+                           standalone:(BOOL)standalone NS_DESIGNATED_INITIALIZER;
 
 @property (nullable, readonly) NSArray<NSString *> *options;
 
 - (nullable NSArray<NSString *> *)_allSubgroupOptions;
 
+- (CLKArgumentManifestConstraint *)_standaloneConstraint;
 - (CLKArgumentManifestConstraint *)_requiredConstraint;
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints;
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraintsForSubgroups;
@@ -36,6 +44,12 @@ NS_ASSUME_NONNULL_END
     NSArray<CLKOptionGroup *> *_subgroups;
     BOOL _mutexed;
     BOOL _required; // at least one member of this group is required
+    
+    /*
+        for standalone groups, the standalone option is stored as the sole option in _options,
+        and the whitelist is stored as the sole group in _subgroups.
+    */
+    BOOL _standalone;
 }
 
 @synthesize options = _options;
@@ -67,14 +81,26 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptionNames
 {
-    [NSException raise:@"CLKNotImplementedError" format:@"not implemented"];
-    return nil;
+    CLKOptionGroup *whitelist = [CLKOptionGroup groupForOptionsNamed:whitelistedOptionNames];
+    return [[[self alloc] _initWithOptionsNamed:@[ option ] subgroups:@[ whitelist ] required:NO mutexed:NO standalone:YES] autorelease];
 }
 
-- (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options subgroups:(NSArray<CLKOptionGroup *> *)subgroups required:(BOOL)required mutexed:(BOOL)mutexed
+- (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options
+                            subgroups:(NSArray<CLKOptionGroup *> *)subgroups
+                             required:(BOOL)required
+                              mutexed:(BOOL)mutexed
 {
-    NSParameterAssert(!(options != nil && subgroups != nil));
+    return [self _initWithOptionsNamed:options subgroups:subgroups required:required mutexed:mutexed standalone:NO];
+}
+
+- (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options
+                            subgroups:(NSArray<CLKOptionGroup *> *)subgroups
+                             required:(BOOL)required
+                              mutexed:(BOOL)mutexed
+                           standalone:(BOOL)standalone
+{
     NSParameterAssert(!(options == nil && subgroups == nil));
+    CLKParameterAssert(!(standalone && (required || mutexed)), @"standalone groups cannot be required or mutexed");
     
     self = [super init];
     if (self != nil) {
@@ -82,6 +108,7 @@ NS_ASSUME_NONNULL_END
         _subgroups = [subgroups copy];
         _required = required;
         _mutexed = mutexed;
+        _standalone = standalone;
     }
     
     return self;
@@ -123,6 +150,10 @@ NS_ASSUME_NONNULL_END
 
 - (NSArray<CLKArgumentManifestConstraint *> *)constraints
 {
+    if (_standalone) {
+        return @[ [self _standaloneConstraint] ];
+    }
+    
     NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     
     if (_required) {
@@ -138,6 +169,14 @@ NS_ASSUME_NONNULL_END
     }
     
     return constraints;
+}
+
+- (CLKArgumentManifestConstraint *)_standaloneConstraint
+{
+    NSAssert(_standalone, @"constructing standalone constraint for non-standalone group");
+    NSAssert(_options.count == 1, @"standalone groups should have exactly one primary option");
+    NSAssert(_subgroups.count < 2, @"standalone groups should have no more than one whitelist group");
+    return [CLKArgumentManifestConstraint constraintForStandaloneOption:_options.firstObject allowingOptions:_subgroups.firstObject.options];
 }
 
 - (CLKArgumentManifestConstraint *)_requiredConstraint

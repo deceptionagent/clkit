@@ -141,10 +141,10 @@ NS_ASSUME_NONNULL_END
                  dependencies:(nullable NSArray<NSString *> *)dependencies
                   transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
-    CLKHardParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
-    CLKHardParameterAssert(!(standalone && required), @"standalone options cannot be required");
-    CLKHardParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
+    CLKParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
+    CLKParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
+    CLKParameterAssert(!(standalone && required), @"standalone options cannot be required");
+    CLKParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
     CLKHardParameterAssert(name.length > 0, @"options must have names");
     CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
     CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
