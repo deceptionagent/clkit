@@ -4,9 +4,11 @@
 
 #import "XCTestCase+CLKAdditions.h"
 
+#import "ArgumentParsingResultSpec.h"
 #import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
 #import "CLKArgumentManifestValidator.h"
+#import "CLKArgumentParser.h"
 #import "CLKOption.h"
 #import "CLKOptionRegistry.h"
 
@@ -81,6 +83,48 @@
 {
     CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+}
+
+@end
+
+#pragma mark -
+
+@implementation XCTestCase (CLKArgumentParserTestingAdditions)
+
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options spec:(ArgumentParsingResultSpec *)spec
+{
+    [self performTestWithArgumentVector:argv options:options optionGroups:@[] spec:spec];
+}
+
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
+                              options:(NSArray<CLKOption *> *)options
+                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
+                                 spec:(ArgumentParsingResultSpec *)spec
+{
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:groups];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
+- (void)evaluateSpec:(ArgumentParsingResultSpec *)spec usingParser:(CLKArgumentParser *)parser
+{
+    CLKArgumentManifest *manifest = [parser parseArguments];
+    if (spec.parserShouldSucceed) {
+        XCTAssertNotNil(manifest);
+        if (manifest == nil) {
+            return;
+        }
+        
+        XCTAssertNil(parser.errors);
+        XCTAssertEqualObjects(manifest.dictionaryRepresentation, spec.optionManifest);
+        XCTAssertEqualObjects(manifest.positionalArguments, spec.positionalArguments);
+    } else {
+        XCTAssertNil(manifest);
+        if (manifest != nil) {
+            return;
+        }
+        
+        XCTAssertEqualObjects(parser.errors, spec.errors);
+    }
 }
 
 @end

@@ -169,8 +169,15 @@
 
 - (void)testConstraints_standalone
 {
-    CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[]];
     NSArray *expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[]]
+    ];
+    
+    XCTAssertEqualObjects(group.constraints, expectedConstraints);
+    
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
+    expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]]
     ];
     

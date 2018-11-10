@@ -269,10 +269,12 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[]];
+    [self verifyValidationPassForConstraint:constraint usingValidator:validator];
+    
     switchOptions = @{
         flarn : @(1),
-        barf : @(1),
-        confound : @(1),
+        barf : @(1)
     };
     
     NSDictionary *parameterOptions = @{
@@ -280,7 +282,22 @@ NS_ASSUME_NONNULL_END
     };
     
     validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
+    
+    validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[]];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
+    
+    switchOptions = @{
+        flarn : @(1),
+        barf : @(1),
+        confound : @(1),
+    };
+    
+    validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
+    constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
     
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound" ]];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf --confound"];

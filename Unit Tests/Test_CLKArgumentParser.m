@@ -5,8 +5,6 @@
 #import <XCTest/XCTest.h>
 
 #import "ArgumentParsingResultSpec.h"
-#import "CLKArgumentManifest.h"
-#import "CLKArgumentManifest_Private.h"
 #import "CLKArgumentParser.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
@@ -59,63 +57,11 @@ NS_ASSUME_NONNULL_END
 
 @end
 
-NS_ASSUME_NONNULL_BEGIN
-
-#pragma mark -
-
 @interface Test_CLKArgumentParser : XCTestCase
-
-- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options spec:(ArgumentParsingResultSpec *)spec;
-- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
-                              options:(NSArray<CLKOption *> *)options
-                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
-                                 spec:(ArgumentParsingResultSpec *)spec;
-
-- (void)evaluateSpec:(ArgumentParsingResultSpec *)spec usingParser:(CLKArgumentParser *)parser;
 
 @end
 
-NS_ASSUME_NONNULL_END
-
 @implementation Test_CLKArgumentParser
-
-- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options spec:(ArgumentParsingResultSpec *)spec
-{
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[] spec:spec];
-}
-
-- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
-                              options:(NSArray<CLKOption *> *)options
-                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
-                                 spec:(ArgumentParsingResultSpec *)spec
-{
-    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:groups];
-    [self evaluateSpec:spec usingParser:parser];
-}
-
-- (void)evaluateSpec:(ArgumentParsingResultSpec *)spec usingParser:(CLKArgumentParser *)parser
-{
-    CLKArgumentManifest *manifest = [parser parseArguments];
-    if (spec.parserShouldSucceed) {
-        XCTAssertNotNil(manifest);
-        if (manifest == nil) {
-            return;
-        }
-        
-        XCTAssertNil(parser.errors);
-        XCTAssertEqualObjects(manifest.dictionaryRepresentation, spec.optionManifest);
-        XCTAssertEqualObjects(manifest.positionalArguments, spec.positionalArguments);
-    } else {
-        XCTAssertNil(manifest);
-        if (manifest != nil) {
-            return;
-        }
-        
-        XCTAssertEqualObjects(parser.errors, spec.errors);
-    }
-}
-
-#pragma mark -
 
 - (void)testInit
 {
@@ -546,17 +492,15 @@ NS_ASSUME_NONNULL_END
     /* required option appears after sentinel (error) */
     
     argv = @[ @"--flarn", @"what", @"--", @"--barf" ];
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
     [self performTestWithArgumentVector:argv options:@[ flarn, barf ] spec:spec];
     
     /* option declaring dependency provided before sentinel, dependency provided after sentinel (error) */
     
     argv = @[ @"--confound", @"acme", @"--", @"--delivery", @"station" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--delivery is required when using --confound"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--delivery is required when using --confound"];
     [self performTestWithArgumentVector:argv options:@[ confound, delivery ] spec:spec];
-
+    
     /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
     
     argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
@@ -574,13 +518,12 @@ NS_ASSUME_NONNULL_END
     
     CLKOptionGroup *requiredGroup = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"quone", @"delivery" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
-    spec = [ArgumentParsingResultSpec specWithError:error];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
     
     /* zero-length argument provided after sentinel */
     argv = @[ @"--flarn", @"acme", @"--", @"", @"station" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
 }
@@ -852,206 +795,6 @@ NS_ASSUME_NONNULL_END
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
-}
-
-#pragma mark -
-
-/*
-    the primary goal of validation tests involving the parser is verifying the parser:
- 
-        - invokes the validator
-        - passes constraints to the validator
-        - correctly handles the validator's results
- 
-    CLKOption, CLKOptionGroup, and CLKArgumentManifestValidator have comprehensive tests
-    for constraints.
-*/
-
-- (void)testValidation_required
-{
-    NSArray *options = @[
-         [CLKOption optionWithName:@"alpha" flag:@"a"],
-         [CLKOption requiredParameterOptionWithName:@"bravo" flag:@"b"]
-    ];
-    
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:@[] options:options spec:spec];
-    
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:@[ @"--alpha" ] options:options spec:spec];
-    
-    NSDictionary *expectedOptionManifest = @{
-        @"bravo" : @[ @"flarn" ]
-    };
-    
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:@[ @"--bravo", @"flarn" ] options:options spec:spec];
-}
-
-- (void)testValidation_dependencies
-{
-    NSArray *options = @[
-        [CLKOption optionWithName:@"alpha" flag:@"a"],
-        [CLKOption parameterOptionWithName:@"bravo" flag:@"b"],
-        [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ @"bravo" ]]
-    ];
-    
-    NSArray *argv = @[ @"--charlie" ];
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    NSDictionary *expectedOptionManifest = @{
-        @"charlie" : @(1),
-        @"bravo" : @[ @"flarn" ]
-    };
-    
-    argv = @[ @"--charlie", @"--bravo", @"flarn" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-}
-
-- (void)testValidation_recurrent
-{
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    NSArray *argv = @[ @"--flarn", @"barf", @"--flarn", @"barf" ];
-    
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
-    
-    flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil];
-    NSDictionary *expectedOptionManifest = @{
-        @"flarn" : @[ @"barf", @"barf" ]
-    };
-    
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
-}
-
-- (void)testValidation_mutualExclusionGroup
-{
-    NSArray *options = @[
-        [CLKOption optionWithName:@"flarn" flag:@"f"],
-        [CLKOption optionWithName:@"barf" flag:@"b"],
-        [CLKOption optionWithName:@"quone" flag:@"q"],
-        [CLKOption optionWithName:@"xyzzy" flag:@"x"]
-    ];
-    
-    NSArray *groups = @[
-        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
-        [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:YES mutexed:YES],
-    ];
-    
-    NSArray *argv = @[ @"--quone", @"--flarn", @"--barf" ];
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
-
-    argv = @[ @"--flarn" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
-    
-    NSDictionary *expectedOptionManifest = @{
-        @"flarn" : @(1),
-        @"quone" : @(1)
-    };
-    
-    argv = @[ @"--flarn", @"--quone" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
-}
-
-- (void)testValidation_mutualExclusionGroupWithSubgroups
-{
-    NSArray *options = @[
-        [CLKOption optionWithName:@"flarn" flag:@"f"],
-        [CLKOption optionWithName:@"barf" flag:@"b"],
-        [CLKOption optionWithName:@"quone" flag:@"q"],
-        [CLKOption optionWithName:@"xyzzy" flag:@"x"],
-        [CLKOption optionWithName:@"syn" flag:@"s"],
-        [CLKOption optionWithName:@"ack" flag:@"a"],
-        [CLKOption optionWithName:@"what" flag:@"w"]
-    ];
-    
-    CLKOptionGroup *mutexedSubgroup = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
-    CLKOptionGroup *subgroupQuoneXyzzy = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ]];
-    CLKOptionGroup *subgroupSynAck = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ]];
-    CLKOptionGroup *mutexedGroup = [CLKOptionGroup mutexedGroupWithSubgroups:@[ mutexedSubgroup, subgroupQuoneXyzzy, subgroupSynAck ]];
-    
-    NSArray *argv = @[ @"--flarn", @"--barf" ];
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];;
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-    
-    argv = @[ @"--flarn", @"--quone" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --quone: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
-    argv = @[ @"--quone", @"--ack" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-    
-    argv = @[ @"--ack", @"--quone" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
-    NSDictionary *expectedOptionManifest = @{
-        @"syn" : @(1),
-        @"ack" : @(1)
-    };
-    
-    argv = @[ @"--syn", @"--ack" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
-    argv = @[ @"--barf", @"--xyzzy", @"--syn" ];
-    NSArray *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --xyzzy: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --syn: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"]
-    ];
-    
-    spec = [ArgumentParsingResultSpec specWithErrors:errors];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-    
-    argv = @[ @"--what", @"--xyzzy", @"--syn" ];
-    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"];;
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-}
-
-- (void)testValidation_boringRequiredGroup
-{
-    NSArray *options = @[
-        [CLKOption optionWithName:@"flarn" flag:@"f"],
-        [CLKOption parameterOptionWithName:@"barf" flag:@"b"],
-        [CLKOption optionWithName:@"xyzzy" flag:@"x"]
-    ];
-    
-    CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
-    
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
-    
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:@[ @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
-    
-    NSDictionary *expectedOptionManifest = @{
-        @"flarn" : @(1),
-        @"xyzzy" : @(1)
-    };
-    
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:@[ @"--flarn", @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
 }
 
 @end
