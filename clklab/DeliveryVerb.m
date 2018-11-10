@@ -23,7 +23,7 @@
 - (NSArray<CLKOptionGroup *> *)optionGroups
 {
     return @[
-        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"ex", @"cathedra" ] required:YES]
+        [CLKOptionGroup groupForOptionsNamed:@[ @"ex", @"cathedra" ] required:YES mutexed:YES]
     ];
 }
 
