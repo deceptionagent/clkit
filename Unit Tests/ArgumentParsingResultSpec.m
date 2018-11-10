@@ -4,6 +4,8 @@
 
 #import "ArgumentParsingResultSpec.h"
 
+#import "NSError+CLKAdditions.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,6 +35,16 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithOptionManifest:@{} positionalArguments:@[] errors:nil] autorelease];
 }
 
++ (instancetype)specWithSwitchOption:(NSString *)option occurrences:(NSUInteger)occurrences
+{
+    return [[[self alloc] _initWithOptionManifest:@{ option : @(occurrences) } positionalArguments:@[] errors:nil] autorelease];
+}
+
++ (instancetype)specWithSwitchOption:(NSString *)option occurrences:(NSUInteger)occurrences positionalArguments:(NSArray<NSString *> *)positionalArguments
+{
+    return [[[self alloc] _initWithOptionManifest:@{ option : @(occurrences) } positionalArguments:positionalArguments errors:nil] autorelease];
+}
+
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest
 {
     return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:@[] errors:nil] autorelease];
@@ -56,6 +68,12 @@ NS_ASSUME_NONNULL_END
 + (instancetype)specWithErrors:(NSArray<NSError *> *)errors
 {
     return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:errors] autorelease];
+}
+
++ (instancetype)specWithCLKErrorCode:(CLKError)code description:(NSString *)description
+{
+    NSError *error = [NSError clk_CLKErrorWithCode:code description:@"%@", description];
+    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
 }
 
 - (instancetype)_initWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments errors:(NSArray<NSError *> *)errors
