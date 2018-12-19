@@ -9,7 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSCharacterSet (CLKAdditions)
 
-@property (class, readonly) NSCharacterSet *clk_numericArgumentCharacterSet;
+@property (class, readonly) NSCharacterSet *clk_optionFlagIllegalCharacterSet;
+@property (class, readonly) NSCharacterSet *clk_optionNameIllegalCharacterSet;
+@property (class, readonly) NSCharacterSet *clk_parameterOptionAssignmentCharacterSet;
 
 @end
 

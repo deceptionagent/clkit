@@ -137,6 +137,9 @@ NS_ASSUME_NONNULL_END
 {
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     [self verifySwitchOption:option name:@"flarn" flag:@"f" dependencies:nil];
+
+    option = [CLKOption optionWithName:@"zero" flag:@"0"];
+    [self verifySwitchOption:option name:@"zero" flag:@"0" dependencies:nil];
     
     option = [CLKOption optionWithName:@"flarn" flag:nil];
     [self verifySwitchOption:option name:@"flarn" flag:nil dependencies:nil];
@@ -156,11 +159,12 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"--"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"."]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@":"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"7"]);
+    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"="]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@" "]);
-    XCTAssertThrows([CLKOption optionWithName:@"w hat" flag:@"f"]);
+    XCTAssertThrows([CLKOption optionWithName:@"w hat" flag:@"w"]);
+    XCTAssertThrows([CLKOption optionWithName:@"w:hat" flag:@"w"]);
+    XCTAssertThrows([CLKOption optionWithName:@"w=hat" flag:@"w"]);
     XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
@@ -177,7 +181,10 @@ NS_ASSUME_NONNULL_END
 {
     CLKOption *option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:nil];
-    
+
+    option = [CLKOption parameterOptionWithName:@"zero" flag:@"0"];
+    [self verifyParameterOption:option name:@"zero" flag:@"0" required:NO recurrent:NO dependencies:nil transformer:nil];
+
     option = [CLKOption parameterOptionWithName:@"flarn" flag:nil];
     [self verifyParameterOption:option name:@"flarn" flag:nil required:NO recurrent:NO dependencies:nil transformer:nil];
     
@@ -205,11 +212,13 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@""]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"xx"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"."]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@":"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"7"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"f:larn" flag:@"f"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"f=larn" flag:@"f"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"--flarn" flag:@"f"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-f"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"w:hat" flag:@"w"]);
+    XCTAssertThrows([CLKOption parameterOptionWithName:@"w=hat" flag:@"-w"]);
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"flarn" ] transformer:nil]);
     
 #pragma clang diagnostic push

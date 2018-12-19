@@ -5,13 +5,15 @@
 #import <Foundation/Foundation.h>
 
 
-typedef NS_ENUM(uint32_t, CLKArgumentTokenKind) {
-    CLKArgumentTokenKindOptionName = 0, // `--xyxxy`
-    CLKArgumentTokenKindOptionFlag = 1, // `-x`
-    CLKArgumentTokenKindOptionFlagSet = 2, // `-xyz`
-    CLKArgumentTokenKindArgument = 3,
-    CLKArgumentTokenKindOptionParsingSentinel = 4, // `--`
-    CLKArgumentTokenKindMalformedOption = 5
+typedef NS_ENUM(uint32_t, CLKArgumentTokenForm) {
+    CLKArgumentTokenFormOptionName = 0, // `--xyxxy`
+    CLKArgumentTokenFormOptionFlag, // `-x`
+    CLKArgumentTokenFormOptionFlagSet, // `-xyz`
+    CLKArgumentTokenFormParameterOptionFlagAssignment, // `-x=y`, `-x:y`
+    CLKArgumentTokenFormParameterOptionNameAssignment, // `--flarn=barf`, `--flarn:barf`
+    CLKArgumentTokenFormOptionParsingSentinel, // `--`
+    CLKArgumentTokenFormArgument,
+    CLKArgumentTokenFormMalformedOption
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,9 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet;
 - (BOOL)clk_containsCharacterFromSet:(NSCharacterSet *)characterSet range:(NSRange)range;
 
+@property (readonly) CLKArgumentTokenForm clk_argumentTokenForm;
+
+@property (readonly) BOOL clk_isOptionFlagToken;
+@property (readonly) BOOL clk_isOptionFlagSetToken;
+@property (readonly) BOOL clk_isOptionNameToken;
+@property (readonly) BOOL clk_isParameterOptionFlagAssignmentToken;
+@property (readonly) BOOL clk_isParameterOptionNameAssignmentToken;
+
 @property (readonly) BOOL clk_resemblesOptionArgumentToken;
-@property (readonly) BOOL clk_isNumericArgumentToken;
-@property (readonly) CLKArgumentTokenKind clk_argumentTokenKind;
 
 @end
 
