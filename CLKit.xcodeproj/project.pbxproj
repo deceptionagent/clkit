@@ -208,6 +208,7 @@
 		A6CFEAA2200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentManifestConstraint.m; sourceTree = "<group>"; };
 		A6CFEAA4200D39910009B8D2 /* Test_CLKOptionGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptionGroup.m; sourceTree = "<group>"; };
 		A6D1906E219698E800741AB0 /* Test_CLKArgumentParser_Validation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentParser_Validation.m; sourceTree = "<group>"; };
+		A6D19070219E37EE00741AB0 /* CLKArgumentParser_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentParser_Internal.h; sourceTree = "<group>"; };
 		A6DB92F1212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSCharacterSet+CLKAdditions.h"; sourceTree = "<group>"; };
 		A6DB92F2212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+CLKAdditions.m"; sourceTree = "<group>"; };
 		A6E34F69202C59E900CE22E1 /* ArgumentParsingResultSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentParsingResultSpec.h; sourceTree = "<group>"; };
@@ -321,6 +322,7 @@
 				A609E2C31F5B6D570088DEDA /* CLKArgumentManifestValidator.h */,
 				A609E2C41F5B6D570088DEDA /* CLKArgumentManifestValidator.m */,
 				A66A9DF91F0241DB00456347 /* CLKArgumentParser.h */,
+				A6D19070219E37EE00741AB0 /* CLKArgumentParser_Internal.h */,
 				A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */,
 				A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */,
 				A6527C391F0A2D0C00BF6FAE /* CLKArgumentTransformer.m */,

@@ -132,6 +132,41 @@ NS_ASSUME_NONNULL_END
     return [self _initWithType:type name:name flag:flag required:required recurrent:recurrent standalone:NO dependencies:dependencies transformer:transformer];
 }
 
++ (void)_validateOptionType:(CLKOptionType)type
+                       name:(NSString *)name
+                       flag:(nullable NSString *)flag
+                   required:(BOOL)required
+                  recurrent:(__unused BOOL)recurrent
+                 standalone:(BOOL)standalone
+               dependencies:(nullable NSArray<NSString *> *)dependencies
+                transformer:(nullable CLKArgumentTransformer *)transformer
+{
+    CLKParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
+    CLKParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
+    CLKParameterAssert(!(standalone && required), @"standalone options cannot be required");
+    CLKParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
+    
+    // name guards
+    CLKHardParameterAssert(name.length > 0, @"options must have names");
+    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
+    NSRange r = [name rangeOfCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet options:NSLiteralSearch];
+    BOOL nameIsLegal = (r.location == NSNotFound);
+    CLKHardParameterAssert(nameIsLegal, @"illegal character in option name '%@': '%C'", name, [name characterAtIndex:r.location]);
+    
+    // flag guards
+    CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
+    CLKHardParameterAssert(![NSCharacterSet.clk_optionFlagIllegalCharacterSet characterIsMember:[flag characterAtIndex:0]], @"illegal option flag: '%@'", flag);
+    
+    /* dependency guards */
+    
+    for (NSString *dependency in dependencies) {
+        CLKHardParameterAssert(![dependency isEqualToString:name], @"options cannot list themselves as dependencies");
+    }
+    
+    NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
+    CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");
+}
+
 - (instancetype)_initWithType:(CLKOptionType)type
                          name:(NSString *)name
                          flag:(nullable NSString *)flag
@@ -141,24 +176,7 @@ NS_ASSUME_NONNULL_END
                  dependencies:(nullable NSArray<NSString *> *)dependencies
                   transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    CLKParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
-    CLKParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
-    CLKParameterAssert(!(standalone && required), @"standalone options cannot be required");
-    CLKParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
-    CLKHardParameterAssert(name.length > 0, @"options must have names");
-    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
-    CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
-    CLKHardParameterAssert(![flag isEqualToString:@"-"], @"'-' is not allowed as an option flag");
-    CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.clk_numericArgumentCharacterSet], @"'%@' is not allowed as an option flag", flag);
-    CLKHardParameterAssert(![name clk_containsCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet], @"option names cannot contain whitespace characters");
-    CLKHardParameterAssert(![flag clk_containsCharacterFromSet:NSCharacterSet.whitespaceAndNewlineCharacterSet], @"option flags cannot contain whitespace characters");
-    
-    for (NSString *dependency in dependencies) {
-        CLKHardParameterAssert(![dependency isEqualToString:name], @"options cannot list themselves as dependencies");
-    }
-    
-    NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
-    CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");
+    [[self class] _validateOptionType:type name:name flag:flag required:required recurrent:recurrent standalone:standalone dependencies:dependencies transformer:transformer];
     
     self = [super init];
     if (self != nil) {
