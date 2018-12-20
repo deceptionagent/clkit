@@ -357,45 +357,18 @@ NS_ASSUME_NONNULL_END
 
 - (void)testMalformedOptionToken_whitespace
 {
-    NSArray *options =  @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
-        [CLKOption parameterOptionWithName:@"what" flag:@"w"]
-    ];
-    
-    NSArray *argv = @[ @"--w hat", @"barf" ];
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--w hat'"];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--what", @"barf", @"-w hat" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"];
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--w hat", @"barf", @"--flarn", @"barf", @"-w hat" ];
-    NSArray *errors = @[
-        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '--w hat'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"]
-    ];
-    
-    spec = [ArgumentParsingResultSpec specWithErrors:errors];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-}
-
-- (void)testMalformedOptionToken_numericArgumentCharacters
-{
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
         [CLKOption parameterOptionWithName:@"quone" flag:@"q"]
     ];
     
-    NSArray *argv = @[ @"-w0t", @"--flarn", @"barf" ];
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"];
+    NSArray *argv = @[ @"-w hat", @"--flarn", @"barf" ];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w hat'"];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
-    argv = @[ @"--flarn", @"barf", @"-w0t" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"];
+    argv = @[ @"--flarn", @"barf", @"-w :hat" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w :hat'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
@@ -404,22 +377,12 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
-//    argv = @[ @"--flarn", @"barf", @"-q:one" ];
-//    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-q:one'"];
-//    spec = [ArgumentParsingResultSpec specWithError:error];
-//    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--flarn", @"barf", @"-q.one" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-q.one'"];
-    spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"-y0", @"-420", @"--flarn", @"-7", @"-w0t" ];
+    argv = @[ @"-y o", @"--flarn", @"barf", @"-w :hat" ];
     NSArray *errors = @[
-        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-y0'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w0t'"]
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-y o'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-w :hat'"]
     ];
-    
+
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
@@ -600,64 +563,6 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"quone", @"---", @"--flarn", @"-"];
     spec = [ArgumentParsingResultSpec specWithError:error];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-}
-
-- (void)disabled_testNegativeNumericalArguments
-{
-    NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
-        [CLKOption optionWithName:@"barf" flag:@"b"]
-    ];
-    
-    NSArray *argv = @[ @"-7" ];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithPositionalArguments:argv];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"-7", @"quone" ];
-    spec = [ArgumentParsingResultSpec specWithPositionalArguments:argv];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"-4", @"-2.0" ];
-    spec = [ArgumentParsingResultSpec specWithPositionalArguments:argv];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"-b", @"-0" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"barf" : @(1) } positionalArguments:@[ @"-0" ]];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"-0", @"-b" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"barf" : @(1) } positionalArguments:@[ @"-0" ]];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--flarn", @"-7", ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-7" ] }];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--flarn", @"-7", @"-b"];
-    NSDictionary *expectedOptionManifest = @{
-        @"flarn" : @[ @"-7" ],
-        @"barf" : @(1)
-    };
-    
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"-7.7.7", @"--flarn", @"-4:2:0" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-4:2:0" ] } positionalArguments:@[ @"-7.7.7" ]];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--flarn", @"-4:2:0:6.6.6", @"-b" ];
-    expectedOptionManifest = @{
-        @"flarn" : @[ @"-4:2:0:6.6.6" ],
-        @"barf" : @(1)
-    };
-    
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
-    
-    argv = @[ @"--flarn", @"-7", @"-4:20" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-7" ] } positionalArguments:@[ @"-4:20" ]];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
