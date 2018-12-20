@@ -43,6 +43,15 @@ NS_ASSUME_NONNULL_BEGIN
                  dependencies:(nullable NSArray<NSString *> *)dependencies
                   transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
 
++ (void)_validateOptionType:(CLKOptionType)type
+                       name:(NSString *)name
+                       flag:(nullable NSString *)flag
+                   required:(BOOL)required
+                  recurrent:(__unused BOOL)recurrent
+                 standalone:(BOOL)standalone
+               dependencies:(nullable NSArray<NSString *> *)dependencies
+                transformer:(nullable CLKArgumentTransformer *)transformer;
+
 @end
 
 NS_ASSUME_NONNULL_END
@@ -123,23 +132,49 @@ NS_ASSUME_NONNULL_END
 
 - (instancetype)_initWithType:(CLKOptionType)type
                          name:(NSString *)name
-                         flag:(nullable NSString *)flag
+                         flag:(NSString *)flag
                      required:(BOOL)required
                     recurrent:(BOOL)recurrent
-                 dependencies:(nullable NSArray<NSString *> *)dependencies
-                  transformer:(nullable CLKArgumentTransformer *)transformer
+                 dependencies:(NSArray<NSString *> *)dependencies
+                  transformer:(CLKArgumentTransformer *)transformer
 {
     return [self _initWithType:type name:name flag:flag required:required recurrent:recurrent standalone:NO dependencies:dependencies transformer:transformer];
 }
 
+- (instancetype)_initWithType:(CLKOptionType)type
+                         name:(NSString *)name
+                         flag:(NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                   standalone:(BOOL)standalone
+                 dependencies:(NSArray<NSString *> *)dependencies
+                  transformer:(CLKArgumentTransformer *)transformer
+{
+    [[self class] _validateOptionType:type name:name flag:flag required:required recurrent:recurrent standalone:standalone dependencies:dependencies transformer:transformer];
+    
+    self = [super init];
+    if (self != nil) {
+        _type = type;
+        _name = [name copy];
+        _flag = [flag copy];
+        _required = required;
+        _recurrent = recurrent;
+        _standalone = standalone;
+        _dependencies = [dependencies copy];
+        _transformer = [transformer retain];
+    }
+    
+    return self;
+}
+
 + (void)_validateOptionType:(CLKOptionType)type
                        name:(NSString *)name
-                       flag:(nullable NSString *)flag
+                       flag:(NSString *)flag
                    required:(BOOL)required
                   recurrent:(__unused BOOL)recurrent
                  standalone:(BOOL)standalone
-               dependencies:(nullable NSArray<NSString *> *)dependencies
-                transformer:(nullable CLKArgumentTransformer *)transformer
+               dependencies:(NSArray<NSString *> *)dependencies
+                transformer:(CLKArgumentTransformer *)transformer
 {
     CLKParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
     CLKParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
@@ -165,32 +200,6 @@ NS_ASSUME_NONNULL_END
     
     NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
     CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");
-}
-
-- (instancetype)_initWithType:(CLKOptionType)type
-                         name:(NSString *)name
-                         flag:(nullable NSString *)flag
-                     required:(BOOL)required
-                    recurrent:(BOOL)recurrent
-                   standalone:(BOOL)standalone
-                 dependencies:(nullable NSArray<NSString *> *)dependencies
-                  transformer:(nullable CLKArgumentTransformer *)transformer
-{
-    [[self class] _validateOptionType:type name:name flag:flag required:required recurrent:recurrent standalone:standalone dependencies:dependencies transformer:transformer];
-    
-    self = [super init];
-    if (self != nil) {
-        _type = type;
-        _name = [name copy];
-        _flag = [flag copy];
-        _required = required;
-        _recurrent = recurrent;
-        _standalone = standalone;
-        _dependencies = [dependencies copy];
-        _transformer = [transformer retain];
-    }
-    
-    return self;
 }
 
 - (void)dealloc
