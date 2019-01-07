@@ -362,7 +362,7 @@ NS_ASSUME_NONNULL_END
         @"-",
         @"=",
         @":",
-        @"%@"
+        optionSegment // e.g., `--flarn=--flarn`
     ];
     
     NSMutableArray<AssignmentFormParsingSpec *> *specs = [NSMutableArray array];
@@ -378,6 +378,8 @@ NS_ASSUME_NONNULL_END
     return specs;
 }
 
+#warning need error test: transformer failure
+#warning need error test: switch option
 - (void)testParameterOptionAssignmentForm_names
 {
     NSArray *options = @[
@@ -403,8 +405,17 @@ NS_ASSUME_NONNULL_END
         resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
         [self performTestWithArgumentVector:argv options:options spec:resultSpec];
     }
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '--flarn'"];
+    [self performTestWithArgumentVector:@[ @"--flarn=" ] options:options spec:spec];
+    
+    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '--flarn'"];
+    [self performTestWithArgumentVector:@[ @"--flarn:" ] options:options spec:spec];
 }
 
+#warning need error test: zero-length argument
+#warning need error test: transformer failure
+#warning need error test: switch option
 - (void)testParameterOptionAssignmentForm_flags
 {
     NSArray *options = @[
