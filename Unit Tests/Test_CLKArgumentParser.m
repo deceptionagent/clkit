@@ -102,6 +102,11 @@ NS_ASSUME_NONNULL_END
     [super dealloc];
 }
 
+- (NSString *)debugDescription
+{
+    return self.composedToken;
+}
+
 - (NSString *)composedToken
 {
     return [NSString stringWithFormat:@"%@%@%@", _optionSegment, _operator, _argumentSegment];
@@ -109,15 +114,9 @@ NS_ASSUME_NONNULL_END
 
 @end
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface Test_CLKArgumentParser : XCTestCase
 
-- (NSArray<AssignmentFormParsingSpec *> *)parameterOptionAssignmentSpecsWithOptionSegment:(NSString *)optionSegment;
-
 @end
-
-NS_ASSUME_NONNULL_END
 
 @implementation Test_CLKArgumentParser
 
@@ -343,51 +342,59 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-- (NSArray<AssignmentFormParsingSpec *> *)parameterOptionAssignmentSpecsWithOptionSegment:(NSString *)optionSegment
-{
-    NSArray *argumentSegments = @[
-        @"barf",
-        @"7",
-        @"4.20",
-        @"-7",
-        @"-4.20",
-        @"-4-2:0",
-        @"-barf",
-        @"--barf",
-        @"-b",
-        @"barf:",
-        @"barf=",
-        @"barf:quone",
-        @"barf=quone",
-        @"-",
-        @"=",
-        @":",
-        optionSegment // e.g., `--flarn=--flarn`
-    ];
-    
-    NSMutableArray<AssignmentFormParsingSpec *> *specs = [NSMutableArray array];
-    
-    for (NSString *operator in @[ @"=", @":" ]) {
-        for (NSString *argumentSegment in argumentSegments) {
-            AssignmentFormParsingSpec *spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:optionSegment operator:operator argumentSegment:argumentSegment];
-            [specs addObject:spec];
-            [spec release];
-        }
-    }
-    
-    return specs;
-}
-
-#warning need error test: transformer failure
-#warning need error test: switch option
-- (void)testParameterOptionAssignmentForm_names
+#warning need test: transformer failure
+#warning need test: switch option with assignment
+- (void)testParameterOptionAssignmentForm
 {
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
         [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
     ];
     
-    for (AssignmentFormParsingSpec *formSpec in [self parameterOptionAssignmentSpecsWithOptionSegment:@"--flarn"]) {
+    NSArray *argumentSegments = @[
+        @"barf",
+        @"-barf",
+        @"7",
+        @"4.20",
+        @"-7",
+        @"-4.20",
+        @"-4-2:0",
+        
+        // registered option forms
+        @"--flarn",
+        @"-f",
+        @"--barf",
+        @"-b",
+        
+        // argument segments containing assignment operators
+        @"barf:",
+        @"barf=",
+        @"barf:quone",
+        @"barf=quone",
+        
+        // standalone interesting characters
+        @"-",
+        @"=",
+        @":"
+    ];
+    
+#warning implement flag assignment form
+//    NSArray *optionSegments = @[ @"--flarn", @"-f" ];
+    NSArray *optionSegments = @[ @"--flarn" ];
+    NSArray *operators = @[ @"=", @":" ];
+    
+    NSMutableArray<AssignmentFormParsingSpec *> *formSpecs = [NSMutableArray array];
+    for (NSString *optionSegment in optionSegments) {
+        for (NSString *operator in operators) {
+            for (NSString *argumentSegment in argumentSegments) {
+                AssignmentFormParsingSpec *spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:optionSegment operator:operator argumentSegment:argumentSegment];
+                [formSpecs addObject:spec];
+                [spec release];
+            }
+        }
+    }
+    
+    for (AssignmentFormParsingSpec *formSpec in formSpecs) {
         NSArray *argv = @[ formSpec.composedToken ];
         NSDictionary *expectedManifest = @{
             @"flarn" : @[ formSpec.argumentSegment ]
@@ -411,36 +418,13 @@ NS_ASSUME_NONNULL_END
     
     spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '--flarn'"];
     [self performTestWithArgumentVector:@[ @"--flarn:" ] options:options spec:spec];
-}
-
-#warning need error test: zero-length argument
-#warning need error test: transformer failure
-#warning need error test: switch option
-- (void)testParameterOptionAssignmentForm_flags
-{
-    NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
-        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
-    ];
     
-    for (AssignmentFormParsingSpec *formSpec in [self parameterOptionAssignmentSpecsWithOptionSegment:@"-f"]) {
-        NSArray *argv = @[ formSpec.composedToken ];
-        NSDictionary *expectedManifest = @{
-            @"flarn" : @[ formSpec.argumentSegment ]
-        };
-        
-        ArgumentParsingResultSpec *resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
-        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
-        
-        argv = @[ formSpec.composedToken, @"-b", @"quone" ];
-        expectedManifest = @{
-            @"flarn" : @[ formSpec.argumentSegment ],
-            @"barf" : @[ @"quone" ]
-        };
-        
-        resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
-        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
-    }
+#warning implement flag assignment form
+//    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '-f'"];
+//    [self performTestWithArgumentVector:@[ @"-f:" ] options:options spec:spec];
+//
+//    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '-f'"];
+//    [self performTestWithArgumentVector:@[ @"-f=" ] options:options spec:spec];
 }
 
 - (void)testPositionalArguments_withRegisteredOptions
