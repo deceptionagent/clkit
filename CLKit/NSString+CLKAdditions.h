@@ -7,13 +7,13 @@
 
 typedef NS_ENUM(uint32_t, CLKArgumentTokenForm) {
     CLKArgumentTokenFormOptionName = 0, // `--xyxxy`
-    CLKArgumentTokenFormOptionFlag, // `-x`
-    CLKArgumentTokenFormOptionFlagSet, // `-xyz`
-    CLKArgumentTokenFormParameterOptionFlagAssignment, // `-x=y`, `-x:y`
-    CLKArgumentTokenFormParameterOptionNameAssignment, // `--flarn=barf`, `--flarn:barf`
-    CLKArgumentTokenFormOptionParsingSentinel, // `--`
-    CLKArgumentTokenFormArgument,
-    CLKArgumentTokenFormMalformedOption
+    CLKArgumentTokenFormOptionFlag = 1, // `-x`
+    CLKArgumentTokenFormOptionFlagSet = 2, // `-xyz`
+    CLKArgumentTokenFormParameterOptionNameAssignment = 3, // `--flarn=barf`, `--flarn:barf`
+    CLKArgumentTokenFormParameterOptionFlagAssignment = 4, // `-x=y`, `-x:y`
+    CLKArgumentTokenFormOptionParsingSentinel = 5, // `--`
+    CLKArgumentTokenFormArgument = 6,
+    CLKArgumentTokenFormMalformedOption = 7
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -26,13 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) CLKArgumentTokenForm clk_argumentTokenForm;
 
+@property (readonly) BOOL clk_isOptionNameToken;
 @property (readonly) BOOL clk_isOptionFlagToken;
 @property (readonly) BOOL clk_isOptionFlagSetToken;
-@property (readonly) BOOL clk_isOptionNameToken;
-@property (readonly) BOOL clk_isParameterOptionFlagAssignmentToken;
 @property (readonly) BOOL clk_isParameterOptionNameAssignmentToken;
+@property (readonly) BOOL clk_isParameterOptionFlagAssignmentToken;
 
-@property (readonly) BOOL clk_resemblesOptionArgumentToken;
+@property (readonly) BOOL clk_resemblesOptionTokenForm;
 
 @end
 

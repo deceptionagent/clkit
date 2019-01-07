@@ -76,6 +76,12 @@ NS_ASSUME_NONNULL_END
     return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
 }
 
++ (instancetype)specWithPOSIXErrorCode:(int)code description:(NSString *)description
+{
+    NSError *error = [NSError clk_POSIXErrorWithCode:code description:@"%@", description];
+    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
+}
+
 - (instancetype)_initWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments errors:(NSArray<NSError *> *)errors
 {
     self = [super init];

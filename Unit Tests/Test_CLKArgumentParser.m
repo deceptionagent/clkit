@@ -57,9 +57,67 @@ NS_ASSUME_NONNULL_END
 
 @end
 
-@interface Test_CLKArgumentParser : XCTestCase
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AssignmentFormParsingSpec : NSObject
+
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithOptionSegment:(NSString *)optionSegment operator:(NSString *)operator argumentSegment:(NSString *)argumentSegment NS_DESIGNATED_INITIALIZER;
+
+@property (readonly) NSString *argumentSegment;
+@property (readonly) NSString *composedToken;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
+@implementation AssignmentFormParsingSpec
+{
+    NSString *_optionSegment;
+    NSString *_operator;
+    NSString *_argumentSegment;
+}
+
+@synthesize argumentSegment = _argumentSegment;
+
+- (instancetype)initWithOptionSegment:(NSString *)optionSegment operator:(NSString *)operator argumentSegment:(NSString *)argumentSegment
+{
+    self = [super init];
+    if (self != nil) {
+        _optionSegment = [optionSegment copy];
+        _operator = [operator copy];
+        _argumentSegment = [argumentSegment copy];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [_optionSegment release];
+    [_operator release];
+    [_argumentSegment release];
+    [super dealloc];
+}
+
+- (NSString *)composedToken
+{
+    return [NSString stringWithFormat:@"%@%@%@", _optionSegment, _operator, _argumentSegment];
+}
+
+@end
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface Test_CLKArgumentParser : XCTestCase
+
+- (NSArray<AssignmentFormParsingSpec *> *)parameterOptionAssignmentSpecsWithOptionSegment:(NSString *)optionSegment;
+
+@end
+
+NS_ASSUME_NONNULL_END
 
 @implementation Test_CLKArgumentParser
 
@@ -285,6 +343,95 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
+- (NSArray<AssignmentFormParsingSpec *> *)parameterOptionAssignmentSpecsWithOptionSegment:(NSString *)optionSegment
+{
+    NSArray *argumentSegments = @[
+        @"barf",
+        @"7",
+        @"4.20",
+        @"-7",
+        @"-4.20",
+        @"-4-2:0",
+        @"-barf",
+        @"--barf",
+        @"-b",
+        @"barf:",
+        @"barf=",
+        @"barf:quone",
+        @"barf=quone",
+        @"-",
+        @"=",
+        @":",
+        @"%@"
+    ];
+    
+    NSMutableArray<AssignmentFormParsingSpec *> *specs = [NSMutableArray array];
+    
+    for (NSString *operator in @[ @"=", @":" ]) {
+        for (NSString *argumentSegment in argumentSegments) {
+            AssignmentFormParsingSpec *spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:optionSegment operator:operator argumentSegment:argumentSegment];
+            [specs addObject:spec];
+            [spec release];
+        }
+    }
+    
+    return specs;
+}
+
+- (void)testParameterOptionAssignmentForm_names
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    for (AssignmentFormParsingSpec *formSpec in [self parameterOptionAssignmentSpecsWithOptionSegment:@"--flarn"]) {
+        NSArray *argv = @[ formSpec.composedToken ];
+        NSDictionary *expectedManifest = @{
+            @"flarn" : @[ formSpec.argumentSegment ]
+        };
+        
+        ArgumentParsingResultSpec *resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
+        
+        argv = @[ formSpec.composedToken, @"--barf", @"quone" ];
+        expectedManifest = @{
+            @"flarn" : @[ formSpec.argumentSegment ],
+            @"barf" : @[ @"quone" ]
+        };
+        
+        resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
+    }
+}
+
+- (void)testParameterOptionAssignmentForm_flags
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    for (AssignmentFormParsingSpec *formSpec in [self parameterOptionAssignmentSpecsWithOptionSegment:@"-f"]) {
+        NSArray *argv = @[ formSpec.composedToken ];
+        NSDictionary *expectedManifest = @{
+            @"flarn" : @[ formSpec.argumentSegment ]
+        };
+        
+        ArgumentParsingResultSpec *resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
+        
+        argv = @[ formSpec.composedToken, @"-b", @"quone" ];
+        expectedManifest = @{
+            @"flarn" : @[ formSpec.argumentSegment ],
+            @"barf" : @[ @"quone" ]
+        };
+        
+        resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
+    }
+}
+
 - (void)testPositionalArguments_withRegisteredOptions
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
@@ -445,6 +592,14 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"--flarn", @"--", @"-x" ]; // interpreting `-x` (unregistered) as an argument, not an option
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-x" ] }];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
+    
+    argv = @[ @"--flarn", @"--", @"-x", @"-y" ]; // not interpreting `-y` as an argument to the earlier parameter option
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-x" ] } positionalArguments:@[ @"-y" ]];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
+    
+    argv = @[ @"--flarn", @"--", @"", @"-y" ]; // processing first post-sentinel argument for a parameter option, zero-length argument (error condition)
+    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"encountered zero-length argument"];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     /* no constraints, sentinel at argv.firstObject (success) */
@@ -611,8 +766,9 @@ NS_ASSUME_NONNULL_END
         @"-a", @"hack",
         @"-x",
         @"-xpx",
-#warning use assign form
-//        @"-s", @"-666",
+#warning enable assign forms
+        @"--syn:-420",
+//        @"-s:-666",
         @"--noise", @"ex cathedra",
         @"--quone",
         @"confound", @"delivery",
@@ -633,7 +789,7 @@ NS_ASSUME_NONNULL_END
     NSDictionary *expectedOptionManifest = @{
         @"xyzzy" : @(4),
         @"spline" : @(1),
-        @"syn" : @[ @(819) ],
+        @"syn" : @[ @(819), @(-420) ],
         @"ack" : @[ @"hack" ],
         @"noise" : @[ @"ex cathedra" ],
         @"quone" : @(1)
