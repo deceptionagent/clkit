@@ -342,9 +342,7 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-#warning need test: transformer failure
-#warning need test: switch option with assignment
-- (void)testParameterOptionAssignmentForm
+- (void)testParameterOptionAssignmentForm_tokenAnalysis
 {
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
@@ -378,7 +376,7 @@ NS_ASSUME_NONNULL_END
         @":"
     ];
     
-#warning implement flag assignment form
+#warning implement flag form
 //    NSArray *optionSegments = @[ @"--flarn", @"-f" ];
     NSArray *optionSegments = @[ @"--flarn" ];
     NSArray *operators = @[ @"=", @":" ];
@@ -412,19 +410,72 @@ NS_ASSUME_NONNULL_END
         resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
         [self performTestWithArgumentVector:argv options:options spec:resultSpec];
     }
+}
+
+- (void)testParameterOptionAssignmentForm_argumentTransformation
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:[CLKIntArgumentTransformer transformer]],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b" required:NO recurrent:NO dependencies:nil transformer:[CLKIntArgumentTransformer transformer]],
+    ];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '--flarn'"];
-    [self performTestWithArgumentVector:@[ @"--flarn=" ] options:options spec:spec];
+    NSDictionary *expectedManifest = @{
+        @"flarn" : @[ @(7) ],
+        @"barf" : @[ @(420) ]
+    };
     
-    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '--flarn'"];
-    [self performTestWithArgumentVector:@[ @"--flarn:" ] options:options spec:spec];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+    [self performTestWithArgumentVector:@[ @"--flarn=7", @"--barf:420" ] options:options spec:spec];
     
-#warning implement flag assignment form
-//    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '-f'"];
-//    [self performTestWithArgumentVector:@[ @"-f:" ] options:options spec:spec];
-//
-//    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"expected argument for option '-f'"];
-//    [self performTestWithArgumentVector:@[ @"-f=" ] options:options spec:spec];
+    NSError *flarnError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"flarn error"];
+    NSError *barfError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"barf error"];
+    StuntTransformer *flarnTransformer = [[[StuntTransformer alloc] initWithError:flarnError] autorelease];
+    StuntTransformer *barfTransformer = [[[StuntTransformer alloc] initWithError:barfError] autorelease];
+    options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:flarnTransformer],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b" required:NO recurrent:NO dependencies:nil transformer:barfTransformer]
+    ];
+    
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ flarnError, barfError ]];
+    [self performTestWithArgumentVector:@[ @"--flarn=7", @"--barf:420" ] options:options spec:spec];
+    
+    #warning implement flarm form
+}
+
+- (void)testParameterOptionAssignmentForm_missingArgument
+{
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--flarn'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--barf'"],
+    ];
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:@[ @"--flarn=", @"--barf:" ] options:options spec:spec];
+    
+    #warning implement flag form
+}
+
+- (void)testParameterOptionAssignmentForm_switchAssignment
+{
+    NSArray *options = @[
+        [CLKOption optionWithName:@"flarn" flag:@"f"],
+        [CLKOption optionWithName:@"barf" flag:@"b"]
+    ];
+    
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '--flarn' does not accept arguments"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '--barf' does not accept arguments"],
+    ];
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:@[ @"--flarn=what", @"--barf:what" ] options:options spec:spec];
+    
+    #warning implement flag form
 }
 
 - (void)testPositionalArguments_withRegisteredOptions
@@ -497,7 +548,7 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
 }
 
-- (void)testMalformedOptionToken_whitespace
+- (void)testMalformedOptionTokens
 {
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
@@ -526,6 +577,11 @@ NS_ASSUME_NONNULL_END
     ];
 
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    argv = @[ @"-- flarn:what" ];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-- flarn:what'"];
+    spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
@@ -718,11 +774,11 @@ NS_ASSUME_NONNULL_END
 
 - (void)testArgumentTransformation
 {
-    NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
-    CLKOption *strange = [CLKOption parameterOptionWithName:@"strange" flag:@"s" required:NO recurrent:NO dependencies:nil transformer:transformer];
-    CLKOption *aeons = [CLKOption parameterOptionWithName:@"aeons" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:transformer];
-    NSArray *options = @[ strange, aeons ];
+    NSArray *options = @[
+        [CLKOption parameterOptionWithName:@"strange" flag:@"s" required:NO recurrent:NO dependencies:nil transformer:transformer],
+        [CLKOption parameterOptionWithName:@"aeons" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:transformer]
+    ];
     
     NSDictionary *expectedOptionManifest = @{
         @"strange" : @[ @(7) ],
@@ -731,21 +787,19 @@ NS_ASSUME_NONNULL_END
     
     NSArray *expectedPositionalArguments = @[ @"/fatum/iustum/stultorum" ];
     
+    NSArray *argv = @[ @"--strange", @"7", @"--aeons", @"819", @"/fatum/iustum/stultorum" ];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
     [self performTestWithArgumentVector:argv options:options spec:spec];
-}
-
-- (void)testArgumentTransformationFailure
-{
-    NSArray *argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
+    
     NSError *confoundError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"confound error"];
     StuntTransformer *confoundTransformer = [[[StuntTransformer alloc] initWithError:confoundError] autorelease];
-    NSArray *options = @[
+    options = @[
         [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:[CLKArgumentTransformer transformer]],
         [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:nil transformer:confoundTransformer]
     ];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:confoundError];
+    argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
+    spec = [ArgumentParsingResultSpec specWithError:confoundError];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
