@@ -30,8 +30,13 @@
 - (CLKArgumentTokenForm)clk_argumentTokenForm
 {
     if (self.length < 2) {
-        // a zero-length argument is technically still an argument
+        // a zero-length argument is technically still an argument.
+        // this also catches "-", which has no special meaning to CLKit.
         return CLKArgumentTokenFormArgument;
+    }
+    
+    if (self.clk_isOptionNameToken) {
+        return CLKArgumentTokenFormOptionName;
     }
     
     if (self.clk_isOptionFlagToken) {
@@ -42,27 +47,35 @@
         return CLKArgumentTokenFormOptionFlagSet;
     }
     
-    if (self.clk_isOptionNameToken) {
-        return CLKArgumentTokenFormOptionName;
+    if (self.clk_isParameterOptionNameAssignmentToken) {
+        return CLKArgumentTokenFormParameterOptionNameAssignment;
     }
     
     if (self.clk_isParameterOptionFlagAssignmentToken) {
         return CLKArgumentTokenFormParameterOptionFlagAssignment;
     }
     
-    if (self.clk_isParameterOptionNameAssignmentToken) {
-        return CLKArgumentTokenFormParameterOptionNameAssignment;
-    }
-    
     if ([self isEqualToString:@"--"]) {
         return CLKArgumentTokenFormOptionParsingSentinel;
     }
     
+    // if the token has a leading dash and has failed all of the option form checks,
+    // it looks like an option but is malformed somehow. (e.g., it contains whitespace.)
+    // this is the only order-dependent check.
     if ([self hasPrefix:@"-"]) {
         return CLKArgumentTokenFormMalformedOption;
     }
     
     return CLKArgumentTokenFormArgument;
+}
+
+- (BOOL)clk_isOptionNameToken
+{
+    // `--xyzzy`
+    return (self.length > 2
+            && [self hasPrefix:@"--"]
+            && ![self clk_containsCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet range:NSMakeRange(2, (self.length - 2))]
+    );
 }
 
 - (BOOL)clk_isOptionFlagToken
@@ -80,25 +93,6 @@
     return (self.length > 2
             && [self characterAtIndex:0] == '-'
             && ![self clk_containsCharacterFromSet:NSCharacterSet.clk_optionFlagIllegalCharacterSet range:NSMakeRange(1, (self.length - 1))]
-    );
-}
-
-- (BOOL)clk_isOptionNameToken
-{
-    // `--xyzzy`
-    return (self.length > 2
-            && [self hasPrefix:@"--"]
-            && ![self clk_containsCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet range:NSMakeRange(2, (self.length - 2))]
-    );
-}
-
-- (BOOL)clk_isParameterOptionFlagAssignmentToken
-{
-    // `-x=y`, `-x:y`
-    return (self.length > 2
-            && [self characterAtIndex:0] == '-'
-            && ![NSCharacterSet.clk_optionFlagIllegalCharacterSet characterIsMember:[self characterAtIndex:1]]
-            && [NSCharacterSet.clk_parameterOptionAssignmentCharacterSet characterIsMember:[self characterAtIndex:2]]
     );
 }
 
@@ -123,8 +117,17 @@
     return ![self clk_containsCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet range:r];
 }
 
-#warning rename?
-- (BOOL)clk_resemblesOptionArgumentToken
+- (BOOL)clk_isParameterOptionFlagAssignmentToken
+{
+    // `-x=y`, `-x:y`
+    return (self.length > 2
+            && [self characterAtIndex:0] == '-'
+            && ![NSCharacterSet.clk_optionFlagIllegalCharacterSet characterIsMember:[self characterAtIndex:1]]
+            && [NSCharacterSet.clk_parameterOptionAssignmentCharacterSet characterIsMember:[self characterAtIndex:2]]
+    );
+}
+
+- (BOOL)clk_resemblesOptionTokenForm
 {
     switch (self.clk_argumentTokenForm) {
         case CLKArgumentTokenFormOptionName:

@@ -291,7 +291,8 @@ NS_ASSUME_NONNULL_END
             @"--se7en",
             @"--420",
             @"--barƒ",
-            @"---barf"
+            @"---barf",
+            @"---" // CLKOption guards against `-` as an option name but technically this looks like a option name token
         ];
         
         NSArray *flagAssignments = @[
@@ -432,13 +433,14 @@ NS_ASSUME_NONNULL_END
             @"",
             @" ",
             @"  ",
-            @"-",
             @"flarn",
             @"w-hat",
             @"w=hat",
             @"w:hat",
             @" -x",
-            @" --flarn"
+            @" --flarn",
+            @"-",
+            @" -",
         ];
         
         NSArray *malformedOptions = @[
@@ -559,12 +561,10 @@ NS_ASSUME_NONNULL_END
     }];
 }
 
-#warning test: misc tokens ('--', '---', '---')
-
-- (void)test_clk_resemblesOptionArgumentToken
+- (void)test_clk_resemblesOptionTokenForm
 {
     [self enumerateInputTokens:^(NSString *token, CLKArgumentTokenForm form) {
-        // competing implementation of the logic in clk_resemblesOptionArgumentToken
+        // competing implementation of the logic in clk_resemblesOptionTokenForm
         BOOL shouldResemble = (form == CLKArgumentTokenFormOptionName
                                || form == CLKArgumentTokenFormOptionFlag
                                || form == CLKArgumentTokenFormOptionFlagSet
@@ -573,9 +573,9 @@ NS_ASSUME_NONNULL_END
                                || form == CLKArgumentTokenFormMalformedOption);
         
         if (shouldResemble) {
-            XCTAssertTrue(token.clk_resemblesOptionArgumentToken, @"token: '%@'", token);
+            XCTAssertTrue(token.clk_resemblesOptionTokenForm, @"token: '%@'", token);
         } else {
-            XCTAssertFalse(token.clk_resemblesOptionArgumentToken, @"token: '%@'", token);
+            XCTAssertFalse(token.clk_resemblesOptionTokenForm, @"token: '%@'", token);
         }
     }];
 }
