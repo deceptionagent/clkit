@@ -335,7 +335,7 @@
     }
     
     NSError *processingError;
-    if (![self _processAssignedArgument:argumentSegment forParameterOption:option userInvocation:rawArgument error:&processingError]) {
+    if (![self _processAssignedArgument:argumentSegment forParameterOption:option userInvocation:optionSegment error:&processingError]) {
         [self _accumulateError:processingError];
         return CLKAPStateReadNextArgumentToken;
     }
