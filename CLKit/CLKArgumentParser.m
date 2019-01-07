@@ -317,18 +317,25 @@
     NSAssert((split != NSNotFound), @"expected assignment character in token '%@'", rawArgument);
     NSRange optionTokenRange = NSMakeRange(0, split);
     NSRange argumentRange = NSMakeRange((split + 1), (rawArgument.length - split - 1));
-    NSString *optionToken = [rawArgument substringWithRange:optionTokenRange];
-    NSString *argument = [rawArgument substringWithRange:argumentRange];
+    NSString *optionSegment = [rawArgument substringWithRange:optionTokenRange];
+    NSAssert((optionSegment.length > 0), @"expected option segment");
+    NSString *argumentSegment = [rawArgument substringWithRange:argumentRange];
+    
+    if (argumentSegment.length == 0) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", optionSegment];
+        [self _accumulateError:error];
+        return CLKAPStateReadNextArgumentToken;
+    }
     
     NSError *optionLookupError;
-    CLKOption *option = [self _optionForOptionNameToken:optionToken error:&optionLookupError];
+    CLKOption *option = [self _optionForOptionNameToken:optionSegment error:&optionLookupError];
     if (option == nil) {
         [self _accumulateError:optionLookupError];
         return CLKAPStateReadNextArgumentToken;
     }
     
     NSError *processingError;
-    if (![self _processAssignedArgument:argument forParameterOption:option userInvocation:rawArgument error:&processingError]) {
+    if (![self _processAssignedArgument:argumentSegment forParameterOption:option userInvocation:rawArgument error:&processingError]) {
         [self _accumulateError:processingError];
         return CLKAPStateReadNextArgumentToken;
     }
