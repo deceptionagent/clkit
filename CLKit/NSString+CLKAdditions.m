@@ -60,8 +60,8 @@
     }
     
     // if the token has a leading dash and has failed all of the option form checks,
-    // it looks like an option but is malformed somehow. (e.g., it contains whitespace.)
-    // this is the only order-dependent check.
+    // it looks like an option but is malformed somehow. (e.g., the option segment
+    // contains whitespace after the dash.) this is the only order-dependent check.
     if ([self hasPrefix:@"-"]) {
         return CLKArgumentTokenFormMalformedOption;
     }
@@ -104,15 +104,16 @@
         return NO;
     }
     
-    // find the first occurence of an assignment operator and verify there is an option name preceding it
+    // find the first occurence of an assignment operator and verify there is an option name segment preceding it
+    // (e.g., `--=barf` is malformed)
     NSRange r = NSMakeRange(2, (self.length - 2));
-    NSUInteger l = [self rangeOfCharacterFromSet:NSCharacterSet.clk_parameterOptionAssignmentCharacterSet options:NSLiteralSearch range:r].location;
-    if (l == NSNotFound || l == 2) {
+    NSUInteger loc = [self rangeOfCharacterFromSet:NSCharacterSet.clk_parameterOptionAssignmentCharacterSet options:NSLiteralSearch range:r].location;
+    if (loc == NSNotFound || loc == 2) {
         return NO;
     }
     
     // validate the form of the option name segment
-    NSUInteger s = (l - 2);
+    NSUInteger s = (loc - 2);
     r = NSMakeRange(2, s);
     return ![self clk_containsCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet range:r];
 }

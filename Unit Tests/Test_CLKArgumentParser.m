@@ -377,8 +377,7 @@ NS_ASSUME_NONNULL_END
     ];
     
 #warning implement flag form
-//    NSArray *optionSegments = @[ @"--flarn", @"-f" ];
-    NSArray *optionSegments = @[ @"--flarn" ];
+    NSArray *optionSegments = @[ @"--flarn", @"-f" ];
     NSArray *operators = @[ @"=", @":" ];
     
     NSMutableArray<AssignmentFormParsingSpec *> *formSpecs = [NSMutableArray array];
@@ -439,7 +438,7 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParsingResultSpec specWithErrors:@[ flarnError, barfError ]];
     [self performTestWithArgumentVector:@[ @"--flarn=7", @"--barf:420" ] options:options spec:spec];
     
-    #warning implement flarm form
+    #warning implement flag form
 }
 
 - (void)testParameterOptionAssignmentForm_missingArgument
@@ -815,14 +814,13 @@ NS_ASSUME_NONNULL_END
         @"-a", @"hack",
         @"-x",
         @"-xpx",
-#warning enable assign forms
-        @"--syn:-420",
-//        @"-s:-666",
+        @"--syn=420",
+        @"-s:-666",
         @"--noise", @"ex cathedra",
         @"--quone",
         @"confound", @"delivery",
         @"--",
-        @"-wormfood", @"--dude"
+        @"-wormfood", @"--dude", @"--syn=7"
     ];
     
     NSArray *options = @[
@@ -838,13 +836,13 @@ NS_ASSUME_NONNULL_END
     NSDictionary *expectedOptionManifest = @{
         @"xyzzy" : @(4),
         @"spline" : @(1),
-        @"syn" : @[ @(819), @(-420) ],
+        @"syn" : @[ @(819), @(420), @(-666) ],
         @"ack" : @[ @"hack" ],
         @"noise" : @[ @"ex cathedra" ],
         @"quone" : @(1)
     };
     
-    NSArray *expectedPositionalArguments = @[ @"acme", @"-", @"thrud", @"confound", @"delivery", @"-wormfood", @"--dude" ];
+    NSArray *expectedPositionalArguments = @[ @"acme", @"-", @"thrud", @"confound", @"delivery", @"-wormfood", @"--dude", @"--syn=7" ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
     [self performTestWithArgumentVector:argv options:options spec:spec];
