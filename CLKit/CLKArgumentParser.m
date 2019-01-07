@@ -311,10 +311,11 @@
 {
     NSAssert((_argumentVector.count > 0), @"empty argument vector");
     NSString *rawArgument = [_argumentVector clk_popFirstObject];
-    NSAssert((rawArgument.length > 3 && [rawArgument hasPrefix:@"--"]), @"encountered '%@' when attempting to parse a parameter option assignment token", rawArgument);
+    NSAssert((rawArgument.length > 3 && [rawArgument hasPrefix:@"--"]), @"encountered '%@' when attempting to parse a parameter option name assignment token", rawArgument);
     
     NSUInteger split = [rawArgument rangeOfCharacterFromSet:NSCharacterSet.clk_parameterOptionAssignmentCharacterSet].location;
     NSAssert((split != NSNotFound), @"expected assignment character in token '%@'", rawArgument);
+    NSAssert((split != 2), @"unexpected assignment character at index 2 in token '%@'", rawArgument);
     NSRange optionTokenRange = NSMakeRange(0, split);
     NSRange argumentRange = NSMakeRange((split + 1), (rawArgument.length - split - 1));
     NSString *optionSegment = [rawArgument substringWithRange:optionTokenRange];
@@ -345,7 +346,33 @@
 
 - (CLKAPState)_parseOptionFlagAssignment
 {
-    [NSException raise:@"boom" format:@"not implemented"];
+    NSAssert((_argumentVector.count > 0), @"empty argument vector");
+    NSString *rawArgument = [_argumentVector clk_popFirstObject];
+    NSAssert((rawArgument.length > 2 && [rawArgument hasPrefix:@"-"]), @"encountered '%@' when attempting to parse a parameter option flag assignment token", rawArgument);
+    NSAssert([NSCharacterSet.clk_parameterOptionAssignmentCharacterSet characterIsMember:[rawArgument characterAtIndex:2]], @"expected assignment character at index 2 in token '%@'", rawArgument);
+    
+    NSString *flagSegment = [rawArgument substringToIndex:2];
+    NSString *argumentSegment = [rawArgument substringFromIndex:3];
+    
+    if (argumentSegment.length == 0) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", flagSegment];
+        [self _accumulateError:error];
+        return CLKAPStateReadNextArgumentToken;
+    }
+    
+    NSError *optionLookupError;
+    CLKOption *option = [self _optionForOptionFlagToken:flagSegment error:&optionLookupError];
+    if (option == nil) {
+        [self _accumulateError:optionLookupError];
+        return CLKAPStateReadNextArgumentToken;
+    }
+    
+    NSError *processingError;
+    if (![self _processAssignedArgument:argumentSegment forParameterOption:option userInvocation:flagSegment error:&processingError]) {
+        [self _accumulateError:processingError];
+        return CLKAPStateReadNextArgumentToken;
+    }
+    
     return CLKAPStateReadNextArgumentToken;
 }
 
