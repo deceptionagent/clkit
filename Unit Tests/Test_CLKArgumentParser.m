@@ -21,7 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)transformer NS_UNAVAILABLE;
 
-- (instancetype)initWithError:(NSError *)error NS_DESIGNATED_INITIALIZER;
++ (instancetype)transformerWithTransformedObject:(id)object;
++ (instancetype)erroringTransformerWithPOSIXErrorCode:(int)code description:(NSString *)description;
+
+- (instancetype)initWithObject:(id)object NS_DESIGNATED_INITIALIZER;
+
+@property (nullable, readonly) NSError *error;
 
 @end
 
@@ -29,14 +34,25 @@ NS_ASSUME_NONNULL_END
 
 @implementation StuntTransformer
 {
-    NSError *_error;
+    id _object;
 }
 
-- (instancetype)initWithError:(NSError *)error
++ (instancetype)transformerWithTransformedObject:(id)object
+{
+    return [[[self alloc] initWithObject:object] autorelease];
+}
+
++ (instancetype)erroringTransformerWithPOSIXErrorCode:(int)code description:(NSString *)description
+{
+    NSError *error = [NSError clk_POSIXErrorWithCode:code description:@"%@", description];
+    return [[[self alloc] initWithObject:error] autorelease];
+}
+
+- (instancetype)initWithObject:(id)object
 {
     self = [super init];
     if (self != nil) {
-        _error = [error retain];
+        _object = [object retain];
     }
     
     return self;
@@ -44,34 +60,26 @@ NS_ASSUME_NONNULL_END
 
 - (void)dealloc
 {
-    [_error release];
+    [_object release];
     [super dealloc];
 }
 
-- (id)transformedArgument:(__unused NSString *)argument error:(NSError **)outError
+- (id)transformedArgument:(NSString *)argument error:(NSError **)outError
 {
+    NSParameterAssert(argument != nil);
     NSParameterAssert(outError != nil);
-    *outError = _error;
-    return nil;
+    
+    if ([_object isKindOfClass:[NSError class]]) {
+        *outError = _object;
+        return nil;
+    }
+    
+    return _object;
 }
 
-@end
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface ReflectingErrorTransformer : CLKArgumentTransformer
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-@implementation ReflectingErrorTransformer
-
-- (id)transformedArgument:(__unused NSString *)argument error:(NSError **)outError
+- (NSError *)error
 {
-    NSParameterAssert(outError != nil);
-    *outError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"%@ error", argument];
-    return nil;
+    return ([_object isKindOfClass:[NSError class]] ? _object : nil);
 }
 
 @end
@@ -431,32 +439,40 @@ NS_ASSUME_NONNULL_END
 
 - (void)testParameterOptionAssignmentForm_argumentTransformation
 {
-    CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
+    StuntTransformer *flarnTransformer = [StuntTransformer transformerWithTransformedObject:@(7)];
+    StuntTransformer *barfTransformer  = [StuntTransformer transformerWithTransformedObject:@(420)];
+    StuntTransformer *quoneTransformer = [StuntTransformer transformerWithTransformedObject:@(666)];
+    StuntTransformer *xyzzyTransformer = [StuntTransformer transformerWithTransformedObject:@(-7)];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:transformer],
-        [CLKOption parameterOptionWithName:@"barf" flag:@"b" required:NO recurrent:YES dependencies:nil transformer:transformer]
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:flarnTransformer],
+        [CLKOption parameterOptionWithName:@"barf"  flag:@"b" required:NO recurrent:NO dependencies:nil transformer:barfTransformer],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO dependencies:nil transformer:quoneTransformer],
+        [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x" required:NO recurrent:NO dependencies:nil transformer:xyzzyTransformer]
     ];
     
     NSDictionary *expectedManifest = @{
-        @"flarn" : @[ @(7), @(666) ],
-        @"barf" : @[ @(420), @(777) ]
+        @"flarn" : @[ @(7) ],
+        @"barf" : @[ @(420) ],
+        @"quone" : @[ @(666) ],
+        @"xyzzy" : @[ @(-7) ],
     };
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
-    [self performTestWithArgumentVector:@[ @"--flarn=7", @"--barf:420", @"-f=666", @"-b:777" ] options:options spec:spec];
+    [self performTestWithArgumentVector:@[ @"--flarn=marathon", @"--barf:dank", @"-q=devil", @"-x:nohtaram" ] options:options spec:spec];
     
-    ReflectingErrorTransformer *failingTransformer = [ReflectingErrorTransformer transformer];
+    flarnTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"--flarn error"];
+    barfTransformer  = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"--barf error"];
+    quoneTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"-q error"];
+    xyzzyTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"-x error"];
     options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:failingTransformer],
-        [CLKOption parameterOptionWithName:@"barf" flag:@"b" required:NO recurrent:YES dependencies:nil transformer:failingTransformer]
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:flarnTransformer],
+        [CLKOption parameterOptionWithName:@"barf"  flag:@"b" required:NO recurrent:NO dependencies:nil transformer:barfTransformer],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO dependencies:nil transformer:quoneTransformer],
+        [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x" required:NO recurrent:NO dependencies:nil transformer:xyzzyTransformer]
     ];
     
-    NSError *flarnErrorAlpha = [NSError clk_POSIXErrorWithCode:EINVAL description:@"7 error"];
-    NSError *barfErrorAlpha = [NSError clk_POSIXErrorWithCode:EINVAL description:@"420 error"];
-    NSError *flarnErrorBravo = [NSError clk_POSIXErrorWithCode:EINVAL description:@"666 error"];
-    NSError *barfErrorBravo = [NSError clk_POSIXErrorWithCode:EINVAL description:@"777 error"];
-    NSArray *argv = @[ @"--flarn=7", @"--barf:420", @"-f=666", @"-b:777" ];
-    spec = [ArgumentParsingResultSpec specWithErrors:@[ flarnErrorAlpha, barfErrorAlpha, flarnErrorBravo, barfErrorBravo ]];
+    NSArray *argv = @[ @"--flarn=7", @"--barf:420", @"-q=666", @"-x:-7" ];
+    spec = [ArgumentParsingResultSpec specWithErrors:@[ flarnTransformer.error, barfTransformer.error, quoneTransformer.error, xyzzyTransformer.error ]];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
@@ -813,15 +829,14 @@ NS_ASSUME_NONNULL_END
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
-    NSError *confoundError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"confound error"];
-    StuntTransformer *confoundTransformer = [[[StuntTransformer alloc] initWithError:confoundError] autorelease];
+    StuntTransformer *confoundTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"confound error"];
     options = @[
         [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:[CLKArgumentTransformer transformer]],
         [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:nil transformer:confoundTransformer]
     ];
     
     argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
-    spec = [ArgumentParsingResultSpec specWithError:confoundError];
+    spec = [ArgumentParsingResultSpec specWithError:confoundTransformer.error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
