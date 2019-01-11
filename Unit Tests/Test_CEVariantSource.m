@@ -15,12 +15,12 @@
 
 - (void)testInit
 {
-    CEVariantSource *source = [[[CEVariantSource alloc] initWithIdentifier:@"barf" values:@[ @"flarn" ]] autorelease];
+    CEVariantSource *source = [[CEVariantSource alloc] initWithIdentifier:@"barf" values:@[ @"flarn" ]];
     XCTAssertNotNil(source);
     XCTAssertEqualObjects(source.identifier, @"barf");
     XCTAssertEqualObjects(source.values, @[ @"flarn" ]);
     
-    source = [[[CEVariantSource alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ]] autorelease];
+    source = [[CEVariantSource alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ]];
     XCTAssertNotNil(source);
     XCTAssertEqualObjects(source.identifier, @"quone");
     XCTAssertEqualObjects(source.values, (@[ @"flarn", @"barf" ]));
@@ -30,9 +30,9 @@
     XCTAssertEqualObjects(source.identifier, @"quone");
     XCTAssertEqualObjects(source.values, (@[ @"flarn", @"barf" ]));
     
-    XCTAssertThrows([[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[]] autorelease]);
-    XCTAssertThrows([[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ CEVariantSource.noValueMarker ]] autorelease]);
-    XCTAssertThrows([[[CEVariantSource alloc] initWithIdentifier:@"" values:@[ @"barf" ]] autorelease]);
+    XCTAssertThrows([[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[]]);
+    XCTAssertThrows([[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ CEVariantSource.noValueMarker ]]);
+    XCTAssertThrows([[CEVariantSource alloc] initWithIdentifier:@"" values:@[ @"barf" ]]);
 }
 
 - (void)test_noValueMarker

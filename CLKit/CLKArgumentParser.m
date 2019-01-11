@@ -38,12 +38,12 @@
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
-    return [[[self alloc] _initWithArgumentVector:argv options:options optionGroups:nil] autorelease];
+    return [[self alloc] _initWithArgumentVector:argv options:options optionGroups:nil];
 }
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
 {
-    return [[[self alloc] _initWithArgumentVector:argv options:options optionGroups:groups] autorelease];
+    return [[self alloc] _initWithArgumentVector:argv options:options optionGroups:groups];
 }
 
 - (instancetype)_initWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options optionGroups:(NSArray<CLKOptionGroup *> *)groups
@@ -80,18 +80,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [_errors release];
-    [_manifest release];
-    [_optionRegistry release];
-    [_optionGroups release];
-    [_currentParameterOption release];
-    [_options release];
-    [_argumentVector release];
-    [super dealloc];
-}
-
 - (NSString *)debugDescription
 {
     return [NSString stringWithFormat:@"%@ { state: %d | argvec: %@ }", super.debugDescription, _state, _argumentVector];
@@ -104,8 +92,7 @@
     NSParameterAssert(option == nil || option.type == CLKOptionTypeParameter);
     
     if (option != _currentParameterOption) {
-        [_currentParameterOption release];
-        _currentParameterOption = [option retain];
+        _currentParameterOption = option;
     }
 }
 
@@ -208,7 +195,6 @@
     }
     
     if (self.errors.count > 0) {
-        [_manifest release];
         _manifest = nil;
         return nil;
     }
@@ -502,7 +488,7 @@
             [constraints addObjectsFromArray:group.constraints];
         }
         
-        CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:_manifest] autorelease];
+        CLKArgumentManifestValidator *validator = [[CLKArgumentManifestValidator alloc] initWithManifest:_manifest];
         [validator validateConstraints:constraints issueHandler:^(NSError *error) {
             result = NO;
             [self _accumulateError:error];

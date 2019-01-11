@@ -14,7 +14,7 @@
 
 + (instancetype)templateWithSeries:(NSArray<CETemplateSeries *> *)series
 {
-    return [[[self alloc] initWithSeries:series] autorelease];
+    return [[self alloc] initWithSeries:series];
 }
 
 - (instancetype)initWithSeries:(NSArray<CETemplateSeries *> *)series
@@ -25,12 +25,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_allSeries release];
-    [super dealloc];
 }
 
 @end

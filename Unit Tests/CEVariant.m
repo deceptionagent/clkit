@@ -16,7 +16,7 @@
 
 + (instancetype)variantWithTag:(NSString *)tag sources:(NSArray<CEVariantSource *> *)sources
 {
-    return [[[self alloc] initWithTag:tag sources:sources] autorelease];
+    return [[self alloc] initWithTag:tag sources:sources];
 }
 
 - (instancetype)initWithTag:(NSString *)tag sources:(NSArray<CEVariantSource *> *)sources
@@ -30,13 +30,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_sources release];
-    [_tag release];
-    [super dealloc];
 }
 
 @end

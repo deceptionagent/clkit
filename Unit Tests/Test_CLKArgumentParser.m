@@ -39,29 +39,23 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)transformerWithTransformedObject:(id)object
 {
-    return [[[self alloc] initWithObject:object] autorelease];
+    return [[self alloc] initWithObject:object];
 }
 
 + (instancetype)erroringTransformerWithPOSIXErrorCode:(int)code description:(NSString *)description
 {
     NSError *error = [NSError clk_POSIXErrorWithCode:code description:@"%@", description];
-    return [[[self alloc] initWithObject:error] autorelease];
+    return [[self alloc] initWithObject:error];
 }
 
 - (instancetype)initWithObject:(id)object
 {
     self = [super init];
     if (self != nil) {
-        _object = [object retain];
+        _object = object;
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_object release];
-    [super dealloc];
 }
 
 - (id)transformedArgument:(NSString *)argument error:(NSError **)outError
@@ -119,14 +113,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_optionSegment release];
-    [_operator release];
-    [_argumentSegment release];
-    [super dealloc];
 }
 
 - (NSString *)debugDescription
@@ -412,7 +398,6 @@ NS_ASSUME_NONNULL_END
             for (NSString *argumentSegment in argumentSegments) {
                 AssignmentFormParsingSpec *spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:optionSegment operator:operator argumentSegment:argumentSegment];
                 [formSpecs addObject:spec];
-                [spec release];
             }
         }
     }
@@ -812,7 +797,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)testArgumentTransformation
 {
-    CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
+    CLKIntArgumentTransformer *transformer = [[CLKIntArgumentTransformer alloc] init];
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"strange" flag:@"s" required:NO recurrent:NO dependencies:nil transformer:transformer],
         [CLKOption parameterOptionWithName:@"aeons" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:transformer]
@@ -829,9 +814,10 @@ NS_ASSUME_NONNULL_END
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
+    CLKArgumentTransformer *acmeTransformer = [[CLKArgumentTransformer alloc] init];
     StuntTransformer *confoundTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"confound error"];
     options = @[
-        [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:[CLKArgumentTransformer transformer]],
+        [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:acmeTransformer],
         [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:nil transformer:confoundTransformer]
     ];
     
@@ -861,11 +847,13 @@ NS_ASSUME_NONNULL_END
         @"-wormfood", @"--dude", @"--syn=7"
     ];
     
+    CLKIntArgumentTransformer *synTransformer = [[CLKIntArgumentTransformer alloc] init];
+    
     NSArray *options = @[
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
          [CLKOption parameterOptionWithName:@"noise" flag:@"n" required:NO recurrent:NO dependencies:nil transformer:nil],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:[CLKIntArgumentTransformer transformer]],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:synTransformer],
          [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
          [CLKOption optionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],

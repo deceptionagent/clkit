@@ -62,23 +62,23 @@ NS_ASSUME_NONNULL_END
         [StuntVerb quoneVerb]
     ];
     
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:verbs] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:verbs];
     XCTAssertNotNil(depot);
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs];
     XCTAssertNotNil(depot);
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs verbFamilies:nil] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs verbFamilies:nil];
     XCTAssertNotNil(depot);
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs verbFamilies:@[]] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs verbFamilies:@[]];
     XCTAssertNotNil(depot);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:nil verbs:verbs] autorelease]);
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:nil] autorelease]);
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:@[]] autorelease]);
+    XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:nil verbs:verbs]);
+    XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:nil]);
+    XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:argv verbs:@[]]);
 #pragma clang diagnostic pop
 }
 
@@ -103,7 +103,7 @@ NS_ASSUME_NONNULL_END
         [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbs]
     ];
     
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families];
     XCTAssertNotNil(depot);
     
     families = @[
@@ -111,13 +111,13 @@ NS_ASSUME_NONNULL_END
         [CLKVerbFamily familyWithName:@"delivery" verbs:deliveryFamilyVerbs]
     ];
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families];
     XCTAssertNotNil(depot);
 
     // [TACK] should this be allowed?
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:nil verbFamilies:families] autorelease]);
+    XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:nil verbFamilies:families]);
 #pragma clang diagnostic pop
 }
 
@@ -147,7 +147,7 @@ NS_ASSUME_NONNULL_END
         [CLKVerbFamily familyWithName:@"confound" verbs:confoundFamilyVerbsBravo]
     ];
     
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease]);
+    XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families]);
 }
 
 - (void)testVerbFamilyAndTopLevelVerbCollision
@@ -172,7 +172,7 @@ NS_ASSUME_NONNULL_END
         [CLKVerbFamily familyWithName:@"delivery" verbs:confoundFamilyVerbsAlpha],
     ];
     
-    XCTAssertThrows([[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease]);
+    XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families]);
 }
 
 - (void)test_dispatchVerb_emptyArgumentVector
@@ -181,7 +181,7 @@ NS_ASSUME_NONNULL_END
     NSError *expectedError = [NSError clk_CLKErrorWithCode:CLKErrorNoVerbSpecified description:@"No verb specified."];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
     
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -191,15 +191,15 @@ NS_ASSUME_NONNULL_END
     NSError *expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"barf: Unrecognized verb."];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
     
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf" ] verbs:verbs] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf", @"--quone" ] verbs:verbs] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf", @"--quone" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
     expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"--quone: Unrecognized verb."];
     expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"--quone", @"barf" ] verbs:verbs] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"--quone", @"barf" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -207,12 +207,12 @@ NS_ASSUME_NONNULL_END
 {
     NSArray<id<CLKVerb>> *verbs = @[ [StuntVerb verbWithName:@"xyzzy" options:nil] ];
     CLKArgumentManifest *expectedManifest = [self manifestWithSwitchOptions:nil parameterOptions:nil];
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"xyzzy" ] verbs:verbs] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"xyzzy" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"xyzzy" expectedManifest:expectedManifest];
     
     NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--barf'"];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"xyzzy", @"--barf" ] verbs:verbs] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"xyzzy", @"--barf" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -226,16 +226,16 @@ NS_ASSUME_NONNULL_END
     ];
     
     CLKArgumentManifest *expectedManifest = [self manifestWithSwitchOptions:@{ alpha : @(1) } parameterOptions:nil];
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--alpha" ] verbs:verbs] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--alpha" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"flarn" expectedManifest:expectedManifest];
     
     expectedManifest = [self manifestWithSwitchOptions:@{ bravo : @(1) } parameterOptions:nil];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf", @"--bravo" ] verbs:verbs] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf", @"--bravo" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"barf" expectedManifest:expectedManifest];
     
     NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--what'"];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--what" ] verbs:verbs] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--what" ] verbs:verbs];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -251,7 +251,7 @@ NS_ASSUME_NONNULL_END
     
     NSError *expectedError = [NSError clk_CLKErrorWithCode:CLKErrorNoVerbSpecified description:@"No verb specified."];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -267,28 +267,28 @@ NS_ASSUME_NONNULL_END
     
     NSError *expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"barf: Unrecognized verb."];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf", @"--quone" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"barf", @"--quone" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
     expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"--quone: Unrecognized verb."];
     expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"--quone", @"barf" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"--quone", @"barf" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
     expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"barf: Unrecognized confound verb."];
     expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"barf" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"barf" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"barf", @"--quone" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"barf", @"--quone" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
     
     expectedError = [NSError clk_CLKErrorWithCode:CLKErrorUnrecognizedVerb description:@"--quone: Unrecognized delivery verb."];
     expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"delivery", @"--quone", @"barf" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"delivery", @"--quone", @"barf" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -303,12 +303,12 @@ NS_ASSUME_NONNULL_END
     ];
     
     CLKArgumentManifest *expectedManifest = [self manifestWithSwitchOptions:nil parameterOptions:nil];
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"cede" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"cede" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"cede" expectedManifest:expectedManifest];
     
     NSError *expectedError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--acme'"];
     CLKCommandResult *expectedResult = [CLKCommandResult resultWithExitStatus:EX_USAGE errors:@[ expectedError ]];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"delivery", @"malis", @"--acme" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"delivery", @"malis", @"--acme" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedResult:expectedResult];
 }
 
@@ -340,15 +340,15 @@ NS_ASSUME_NONNULL_END
     ];
     
     CLKArgumentManifest *expectedManifest = [self manifestWithSwitchOptions:@{ alpha : @(2) } parameterOptions:nil];
-    CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--alpha", @"-a" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"flarn", @"--alpha", @"-a" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"flarn" expectedManifest:expectedManifest];
     
     expectedManifest = [self manifestWithSwitchOptions:@{ charlie : @(2) } parameterOptions:nil];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"quone", @"--charlie", @"-c" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"confound", @"quone", @"--charlie", @"-c" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"quone" expectedManifest:expectedManifest];
     
     expectedManifest = [self manifestWithSwitchOptions:@{ foxtrot : @(1) } parameterOptions:@{ echo : @[ @"acme", @"station" ] }];
-    depot = [[[CLKVerbDepot alloc] initWithArgumentVector:@[ @"delivery", @"syn", @"--echo", @"acme", @"-e", @"station", @"-f" ] verbs:topLevelVerbs verbFamilies:families] autorelease];
+    depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[ @"delivery", @"syn", @"--echo", @"acme", @"-e", @"station", @"-f" ] verbs:topLevelVerbs verbFamilies:families];
     [self _performDispatchTestWithDepot:depot expectedVerb:@"syn" expectedManifest:expectedManifest];
 }
 

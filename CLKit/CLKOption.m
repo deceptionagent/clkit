@@ -82,17 +82,17 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:nil transformer:nil] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:nil transformer:nil];
 }
 
 + (instancetype)optionWithName:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<NSString *> *)dependencies
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil];
 }
 
 + (instancetype)standaloneOptionWithName:(NSString *)name flag:(nullable NSString *)flag
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES standalone:YES dependencies:nil transformer:nil] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES standalone:YES dependencies:nil transformer:nil];
 }
 
 #pragma mark -
@@ -100,12 +100,12 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:nil] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO dependencies:nil transformer:nil];
 }
 
 + (instancetype)requiredParameterOptionWithName:(NSString *)name flag:(NSString *)flag
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:YES recurrent:NO dependencies:nil transformer:nil] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:YES recurrent:NO dependencies:nil transformer:nil];
 }
 
 + (instancetype)parameterOptionWithName:(NSString *)name
@@ -115,17 +115,17 @@ NS_ASSUME_NONNULL_END
                            dependencies:(nullable NSArray<NSString *> *)dependencies
                             transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer];
 }
 
 + (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO standalone:YES dependencies:nil transformer:nil] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO standalone:YES dependencies:nil transformer:nil];
 }
 
 + (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag recurrent:(BOOL)recurrent transformer:(nullable CLKArgumentTransformer *)transformer
 {
-    return [[[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:recurrent standalone:YES dependencies:nil transformer:transformer] autorelease];
+    return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:recurrent standalone:YES dependencies:nil transformer:transformer];
 }
 
 #pragma mark -
@@ -161,7 +161,7 @@ NS_ASSUME_NONNULL_END
         _recurrent = recurrent;
         _standalone = standalone;
         _dependencies = [dependencies copy];
-        _transformer = [transformer retain];
+        _transformer = transformer;
     }
     
     return self;
@@ -202,19 +202,10 @@ NS_ASSUME_NONNULL_END
     CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");
 }
 
-- (void)dealloc
-{
-    [_transformer release];
-    [_dependencies release];
-    [_flag release];
-    [_name release];
-    [super dealloc];
-}
-
 - (id)copyWithZone:(__unused NSZone *)zone
 {
     // CLKOption is immutable
-    return [self retain];
+    return self;
 }
 
 - (NSString *)description

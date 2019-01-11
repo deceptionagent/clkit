@@ -18,17 +18,17 @@
 
 + (instancetype)resultWithExitStatus:(int)exitStatus
 {
-    return [[[self alloc] initWithExitStatus:exitStatus errors:nil userInfo:nil] autorelease];
+    return [[self alloc] initWithExitStatus:exitStatus errors:nil userInfo:nil];
 }
 
 + (instancetype)resultWithExitStatus:(int)exitStatus errors:(NSArray<NSError *> *)errors
 {
-    return [[[self alloc] initWithExitStatus:exitStatus errors:errors userInfo:nil] autorelease];
+    return [[self alloc] initWithExitStatus:exitStatus errors:errors userInfo:nil];
 }
 
 + (instancetype)resultWithExitStatus:(int)exitStatus userInfo:(NSDictionary *)userInfo
 {
-    return [[[self alloc] initWithExitStatus:exitStatus errors:nil userInfo:userInfo] autorelease];
+    return [[self alloc] initWithExitStatus:exitStatus errors:nil userInfo:userInfo];
 }
 
 - (instancetype)initWithExitStatus:(int)exitStatus errors:(NSArray<NSError *> *)errors userInfo:(NSDictionary *)userInfo
@@ -41,13 +41,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_errors release];
-    [_userInfo release];
-    [super dealloc];
 }
 
 - (NSString *)errorDescription

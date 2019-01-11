@@ -52,38 +52,38 @@ NS_ASSUME_NONNULL_END
 + (instancetype)constraintForRequiredOption:(NSString *)option
 {
     NSParameterAssert(option != nil);
-    return [[[self alloc] _initWithType:CLKConstraintTypeRequired option:option associatedOption:nil linkedOptions:nil] autorelease];
+    return [[self alloc] _initWithType:CLKConstraintTypeRequired option:option associatedOption:nil linkedOptions:nil];
 }
 
 + (instancetype)constraintForConditionallyRequiredOption:(NSString *)option associatedOption:(NSString *)associatedOption
 {
     NSParameterAssert(option != nil);
     NSParameterAssert(associatedOption != nil);
-    return [[[self alloc] _initWithType:CLKConstraintTypeConditionallyRequired option:option associatedOption:associatedOption linkedOptions:nil] autorelease];
+    return [[self alloc] _initWithType:CLKConstraintTypeConditionallyRequired option:option associatedOption:associatedOption linkedOptions:nil];
 }
 
 + (instancetype)constraintRequiringRepresentativeForOptions:(NSArray<NSString *> *)options
 {
     NSParameterAssert(options.count > 1);
-    return [[[self alloc] _initWithType:CLKConstraintTypeRepresentativeRequired option:nil associatedOption:nil linkedOptions:options] autorelease];
+    return [[self alloc] _initWithType:CLKConstraintTypeRepresentativeRequired option:nil associatedOption:nil linkedOptions:options];
 }
 
 + (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options
 {
     NSParameterAssert(options.count > 1);
-    return [[[self alloc] _initWithType:CLKConstraintTypeMutuallyExclusive option:nil associatedOption:nil linkedOptions:options] autorelease];
+    return [[self alloc] _initWithType:CLKConstraintTypeMutuallyExclusive option:nil associatedOption:nil linkedOptions:options];
 }
 
 + (instancetype)constraintForStandaloneOption:(NSString *)option allowingOptions:(NSArray<NSString *> *)whitelistedOptions
 {
     NSParameterAssert(option != nil);
-    return [[[self alloc] _initWithType:CLKConstraintTypeStandalone option:option associatedOption:nil linkedOptions:whitelistedOptions] autorelease];
+    return [[self alloc] _initWithType:CLKConstraintTypeStandalone option:option associatedOption:nil linkedOptions:whitelistedOptions];
 }
 
 + (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option
 {
     NSParameterAssert(option != nil);
-    return [[[self alloc] _initWithType:CLKConstraintTypeOccurrencesLimited option:option associatedOption:nil linkedOptions:nil] autorelease];
+    return [[self alloc] _initWithType:CLKConstraintTypeOccurrencesLimited option:option associatedOption:nil linkedOptions:nil];
 }
 
 - (instancetype)_initWithType:(CLKConstraintType)type option:(NSString *)option associatedOption:(NSString *)associatedOption linkedOptions:(NSArray<NSString *> *)linkedOptions
@@ -99,14 +99,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_linkedOptions release];
-    [_associatedOption release];
-    [_option release];
-    [super dealloc];
 }
 
 - (NSString *)description

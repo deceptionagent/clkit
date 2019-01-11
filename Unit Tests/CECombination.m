@@ -18,7 +18,7 @@
 
 + (instancetype)combinationWithBacking:(NSDictionary<NSString *, id> *)backing variant:(NSString *)variant
 {
-    return [[[self alloc] initWithBacking:backing variant:variant] autorelease];
+    return [[self alloc] initWithBacking:backing variant:variant];
 }
 
 - (instancetype)initWithBacking:(NSDictionary<NSString *, id> *)backing variant:(NSString *)variant
@@ -30,13 +30,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_backing release];
-    [_variant release];
-    [super dealloc];
 }
 
 - (NSUInteger)hash

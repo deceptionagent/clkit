@@ -16,7 +16,7 @@
 
 - (void)testInit
 {
-    CETemplateSeries *series = [[[CETemplateSeries alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] elidable:YES variants:@[ @"east", @"west" ]] autorelease];
+    CETemplateSeries *series = [[CETemplateSeries alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] elidable:YES variants:@[ @"east", @"west" ]];
     XCTAssertNotNil(series);
     XCTAssertEqualObjects(series.identifier, @"quone");
     XCTAssertEqualObjects(series.values, (@[ @"flarn", @"barf" ]));

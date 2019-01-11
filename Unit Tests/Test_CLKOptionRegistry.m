@@ -23,8 +23,8 @@
     XCTAssertNotNil([CLKOptionRegistry registryWithOptions:@[]]);
     XCTAssertNotNil([CLKOptionRegistry registryWithOptions:options]);
     
-    XCTAssertNotNil([[[CLKOptionRegistry alloc] initWithOptions:options] autorelease]);
-    XCTAssertNotNil([[[CLKOptionRegistry alloc] initWithOptions:@[]] autorelease]);
+    XCTAssertNotNil([[CLKOptionRegistry alloc] initWithOptions:options]);
+    XCTAssertNotNil([[CLKOptionRegistry alloc] initWithOptions:@[]]);
 }
 
 - (void)testOptionCollision
@@ -36,7 +36,7 @@
          [CLKOption optionWithName:@"ack" flag:@"c"],
     ];
     
-    XCTAssertThrowsSpecificNamed([[[CLKOptionRegistry alloc] initWithOptions:options] autorelease], NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed([[CLKOptionRegistry alloc] initWithOptions:options], NSException, NSInvalidArgumentException);
 
     // flag collision: two -x opt flags, different names
     options = @[
@@ -45,7 +45,7 @@
          [CLKOption optionWithName:@"xylo" flag:@"x"],
     ];
     
-    XCTAssertThrowsSpecificNamed([[[CLKOptionRegistry alloc] initWithOptions:options] autorelease], NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed([[CLKOptionRegistry alloc] initWithOptions:options], NSException, NSInvalidArgumentException);
 }
 
 - (void)testOptionLookup
@@ -54,7 +54,7 @@
     CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
     NSArray *options = @[ flarn, barf ];
     
-    CLKOptionRegistry *registry = [[[CLKOptionRegistry alloc] initWithOptions:options] autorelease];
+    CLKOptionRegistry *registry = [[CLKOptionRegistry alloc] initWithOptions:options];
     XCTAssertEqual([registry optionNamed:@"flarn"], flarn);
     XCTAssertEqual([registry optionNamed:@"barf"], barf);
     XCTAssertEqual([registry optionForFlag:@"f"], flarn);
@@ -69,7 +69,7 @@
     CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
     NSArray *options = @[ flarn, barf ];
     
-    CLKOptionRegistry *registry = [[[CLKOptionRegistry alloc] initWithOptions:options] autorelease];
+    CLKOptionRegistry *registry = [[CLKOptionRegistry alloc] initWithOptions:options];
     XCTAssertTrue([registry hasOptionNamed:@"flarn"]);
     XCTAssertTrue([registry hasOptionNamed:@"barf"]);
     XCTAssertFalse([registry hasOptionNamed:@"xyzzy"]);

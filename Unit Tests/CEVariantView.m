@@ -38,15 +38,14 @@ NS_ASSUME_NONNULL_END
 {
     self = [super init];
     if (self != nil) {
-        _variant = [variant retain];
+        _variant = variant;
         _sourceViews = [[NSMutableArray alloc] init];
-        _taxonomyMap = [[NSMapTable strongToStrongObjectsMapTable] retain];
+        _taxonomyMap = [NSMapTable strongToStrongObjectsMapTable];
         
         for (CEVariantSource *source in variant.sources) {
             CEVariantSourceView *view = [[CEVariantSourceView alloc] initWithVariantSource:source];
             [view addObserver:self];
             [_sourceViews addObject:view];
-            [view release];
         }
         
         for (NSUInteger i = 0, j = 1 ; j < _sourceViews.count ; i++, j++) {
@@ -57,14 +56,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_taxonomyMap release];
-    [_sourceViews release];
-    [_variant release];
-    [super dealloc];
 }
 
 #pragma mark -
@@ -93,7 +84,7 @@ NS_ASSUME_NONNULL_END
         }
     }
     
-    return [[[CECombination alloc] initWithBacking:combinationDict variant:_variant.tag] autorelease];
+    return [[CECombination alloc] initWithBacking:combinationDict variant:_variant.tag];
 }
 
 - (CEVariantSourceView *)_rootSourceView

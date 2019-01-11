@@ -18,7 +18,7 @@
 
 + (instancetype)specWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(NSArray<NSError *> *)errors
 {
-    return [[[self alloc] initWithConstraints:constraints errors:errors] autorelease];
+    return [[self alloc] initWithConstraints:constraints errors:errors];
 }
 
 - (instancetype)initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(NSArray<NSError *> *)errors
@@ -33,13 +33,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_errors release];
-    [_constraints release];
-    [super dealloc];
 }
 
 - (BOOL)shouldPass

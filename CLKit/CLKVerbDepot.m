@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_END
     self = [super init];
     if (self != nil) {
         _argumentVector = [argumentVector copy];
-        _topLevelVerbFamily = [[CLKVerbFamily familyWithName:@"(top-level verbs)" verbs:verbs] retain];
+        _topLevelVerbFamily = [CLKVerbFamily familyWithName:@"(top-level verbs)" verbs:verbs];
         _verbFamilyMap = [[NSMutableDictionary alloc] init];
         
         for (CLKVerbFamily *family in verbFamilies) {
@@ -61,14 +61,6 @@ NS_ASSUME_NONNULL_END
     return self;
 }
 
-- (void)dealloc
-{
-    [_verbFamilyMap release];
-    [_topLevelVerbFamily release];
-    [_argumentVector release];
-    [super dealloc];
-}
-
 #pragma mark -
 
 - (CLKCommandResult *)dispatchVerb
@@ -79,7 +71,7 @@ NS_ASSUME_NONNULL_END
     }
     
     id<CLKVerb> verb = nil;
-    NSMutableArray<NSString *> *remainingArguments = [[_argumentVector mutableCopy] autorelease];
+    NSMutableArray<NSString *> *remainingArguments = [_argumentVector mutableCopy];
     NSString *verbOrFamilyName = [remainingArguments clk_popFirstObject];
     
     CLKVerbFamily *family = _verbFamilyMap[verbOrFamilyName];

@@ -15,7 +15,7 @@
 
 - (void)testIntegerArgumentTransformer
 {
-    CLKIntArgumentTransformer *transformer = [CLKIntArgumentTransformer transformer];
+    CLKIntArgumentTransformer *transformer = [[CLKIntArgumentTransformer alloc] init];
     
     NSError *error = nil;
     NSNumber *num = [transformer transformedArgument:@"0" error:&error];
@@ -58,7 +58,7 @@
 
 - (void)testFloatArgumentTransformer
 {
-    CLKFloatArgumentTransformer *transformer = [CLKFloatArgumentTransformer transformer];
+    CLKFloatArgumentTransformer *transformer = [[CLKFloatArgumentTransformer alloc] init];
     
     NSError *error = nil;
     NSNumber *num = [transformer transformedArgument:@"0.7" error:&error];

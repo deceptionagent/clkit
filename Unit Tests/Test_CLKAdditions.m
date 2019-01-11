@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)specWithTokens:(NSArray<NSString *> *)tokens form:(CLKArgumentTokenForm)form
 {
-    return [[[self alloc] initWithTokens:tokens form:form] autorelease];
+    return [[self alloc] initWithTokens:tokens form:form];
 }
 
 - (instancetype)initWithTokens:(NSArray<NSString *> *)tokens form:(CLKArgumentTokenForm)form
@@ -53,12 +53,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_tokens release];
-    [super dealloc];
 }
 
 @end
@@ -182,11 +176,11 @@ NS_ASSUME_NONNULL_END
 
 - (void)test_clk_popLastObject
 {
-    NSMutableArray *alpha = [[@[ @"alpha" ] mutableCopy] autorelease];
+    NSMutableArray *alpha = [@[ @"alpha" ] mutableCopy];
     XCTAssertEqualObjects([alpha clk_popFirstObject], @"alpha");
     XCTAssertEqual(alpha.count, 0UL);
     
-    NSMutableArray *bravo = [[@[ @"alpha", @"bravo" ] mutableCopy] autorelease];
+    NSMutableArray *bravo = [@[ @"alpha", @"bravo" ] mutableCopy];
     XCTAssertEqualObjects([bravo clk_popFirstObject], @"alpha");
     XCTAssertEqualObjects(bravo, @[ @"bravo" ]);
     
@@ -475,7 +469,7 @@ NS_ASSUME_NONNULL_END
             @"-- :barf"
         ];
         
-        tokenFormSpecs = [@[
+        tokenFormSpecs = @[
             [TokenFormSpec specWithTokens:flags form:CLKArgumentTokenFormOptionFlag],
             [TokenFormSpec specWithTokens:flagSets form:CLKArgumentTokenFormOptionFlagSet],
             [TokenFormSpec specWithTokens:names form:CLKArgumentTokenFormOptionName],
@@ -484,7 +478,7 @@ NS_ASSUME_NONNULL_END
             [TokenFormSpec specWithTokens:@[ @"--" ] form:CLKArgumentTokenFormOptionParsingSentinel],
             [TokenFormSpec specWithTokens:arguments form:CLKArgumentTokenFormArgument],
             [TokenFormSpec specWithTokens:malformedOptions form:CLKArgumentTokenFormMalformedOption]
-        ] retain];
+        ];
     });
     
     return tokenFormSpecs;

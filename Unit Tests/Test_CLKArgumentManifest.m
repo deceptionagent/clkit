@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_END
 - (CLKArgumentManifest *)manifestWithRegisteredOptions:(NSArray<CLKOption *> *)options
 {
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:options];
-    return [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
+    return [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
 }
 
 - (void)testSwitchOptions
@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_END
     CLKOption *parameterOption = [CLKOption parameterOptionWithName:@"parameter" flag:@"p"];
     CLKOption *switchOption = [CLKOption optionWithName:@"switch" flag:@"f"];
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:@[ parameterOption, switchOption ]];
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
+    CLKArgumentManifest *manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
     
     // switch options and parameter options should not affect positional arguments
     [manifest accumulateArgument:@"flarn" forParameterOptionNamed:parameterOption.name];
@@ -116,7 +116,7 @@ NS_ASSUME_NONNULL_END
     CLKOption *switchOptionBravo = [CLKOption optionWithName:@"switchBravo" flag:@"r"];
     NSArray *options = @[ parameterOptionAlpha, parameterOptionBravo, switchOptionAlpha, switchOptionBravo ];
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:options];
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
+    CLKArgumentManifest *manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
     
     XCTAssertFalse([manifest hasOptionNamed:parameterOptionAlpha.name]);
     XCTAssertFalse([manifest hasOptionNamed:switchOptionAlpha.name]);
@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_END
     CLKOption *switchOptionBravo = [CLKOption optionWithName:@"switchBravo" flag:@"r"];
     NSArray *options = @[ parameterOptionAlpha, parameterOptionBravo, switchOptionAlpha, switchOptionBravo ];
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:options];
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
+    CLKArgumentManifest *manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
     
     XCTAssertEqual([manifest occurrencesOfOptionNamed:parameterOptionAlpha.name], 0UL);
     XCTAssertEqual([manifest occurrencesOfOptionNamed:switchOptionAlpha.name], 0UL);

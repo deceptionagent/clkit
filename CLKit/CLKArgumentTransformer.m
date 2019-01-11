@@ -10,11 +10,6 @@
 
 @implementation CLKArgumentTransformer
 
-+ (instancetype)transformer
-{
-    return [[[self alloc] init] autorelease];
-}
-
 - (id)transformedArgument:(NSString *)argument error:(__unused NSError **)outError
 {
     return argument;

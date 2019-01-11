@@ -197,7 +197,7 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:nil];
     [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:nil];
     
-    CLKArgumentTransformer *transformer = [CLKArgumentTransformer transformer];
+    CLKArgumentTransformer *transformer = [[CLKArgumentTransformer alloc] init];
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:transformer];
     [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:nil transformer:transformer];
     
@@ -231,7 +231,7 @@ NS_ASSUME_NONNULL_END
 - (void)testCopying
 {
     CLKOption *alphaA = [CLKOption optionWithName:@"flarn" flag:@"f"];
-    CLKOption *alphaB = [[alphaA copy] autorelease];
+    CLKOption *alphaB = [alphaA copy];
     XCTAssertEqual(alphaA, alphaB); // CLKOption is immutable; -copy should return the receiver retained
 }
 

@@ -42,16 +42,10 @@ NS_ASSUME_NONNULL_END
     
     self = [super init];
     if (self != nil) {
-        [_manifest = manifest retain];
+        _manifest = manifest;
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_manifest release];
-    [super dealloc];
 }
 
 #pragma mark -
@@ -61,14 +55,11 @@ NS_ASSUME_NONNULL_END
     // eliminate redundant errors by deduplicating identical constraints.
     // use an ordered set to keep error emission deterministic and testing sane.
     NSOrderedSet<CLKArgumentManifestConstraint *> *uniqueConstraints = [[NSOrderedSet alloc] initWithArray:constraints];
-    
     for (CLKArgumentManifestConstraint *constraint in uniqueConstraints) {
         @autoreleasepool {
             [self _validateConstraint:constraint issueHandler:issueHandler];
         }
     }
-    
-    [uniqueConstraints release];
 }
 
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
@@ -174,8 +165,6 @@ NS_ASSUME_NONNULL_END
                     NSString *whitelistDesc = [whitelist componentsJoinedByString:@" --"];
                     error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with options other than the following: --%@", constraint.option, whitelistDesc];
                 }
-                
-                [conflictedOptions release];
             }
         }
         

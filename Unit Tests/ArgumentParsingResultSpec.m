@@ -32,54 +32,54 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)specWithEmptyManifest
 {
-    return [[[self alloc] _initWithOptionManifest:@{} positionalArguments:@[] errors:nil] autorelease];
+    return [[self alloc] _initWithOptionManifest:@{} positionalArguments:@[] errors:nil];
 }
 
 + (instancetype)specWithSwitchOption:(NSString *)option occurrences:(NSUInteger)occurrences
 {
-    return [[[self alloc] _initWithOptionManifest:@{ option : @(occurrences) } positionalArguments:@[] errors:nil] autorelease];
+    return [[self alloc] _initWithOptionManifest:@{ option : @(occurrences) } positionalArguments:@[] errors:nil];
 }
 
 + (instancetype)specWithSwitchOption:(NSString *)option occurrences:(NSUInteger)occurrences positionalArguments:(NSArray<NSString *> *)positionalArguments
 {
-    return [[[self alloc] _initWithOptionManifest:@{ option : @(occurrences) } positionalArguments:positionalArguments errors:nil] autorelease];
+    return [[self alloc] _initWithOptionManifest:@{ option : @(occurrences) } positionalArguments:positionalArguments errors:nil];
 }
 
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest
 {
-    return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:@[] errors:nil] autorelease];
+    return [[self alloc] _initWithOptionManifest:optionManifest positionalArguments:@[] errors:nil];
 }
 
 + (instancetype)specWithPositionalArguments:(NSArray<NSString *> *)positionalArguments
 {
-    return [[[self alloc] _initWithOptionManifest:@{} positionalArguments:positionalArguments errors:nil] autorelease];
+    return [[self alloc] _initWithOptionManifest:@{} positionalArguments:positionalArguments errors:nil];
 }
 
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments
 {
-    return [[[self alloc] _initWithOptionManifest:optionManifest positionalArguments:positionalArguments errors:nil] autorelease];
+    return [[self alloc] _initWithOptionManifest:optionManifest positionalArguments:positionalArguments errors:nil];
 }
 
 + (instancetype)specWithError:(NSError *)error
 {
-    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
+    return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
 }
 
 + (instancetype)specWithErrors:(NSArray<NSError *> *)errors
 {
-    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:errors] autorelease];
+    return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:errors];
 }
 
 + (instancetype)specWithCLKErrorCode:(CLKError)code description:(NSString *)description
 {
     NSError *error = [NSError clk_CLKErrorWithCode:code description:@"%@", description];
-    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
+    return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
 }
 
 + (instancetype)specWithPOSIXErrorCode:(int)code description:(NSString *)description
 {
     NSError *error = [NSError clk_POSIXErrorWithCode:code description:@"%@", description];
-    return [[[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]] autorelease];
+    return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
 }
 
 - (instancetype)_initWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments errors:(NSArray<NSError *> *)errors
@@ -92,14 +92,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_optionManifest release];
-    [_positionalArguments release];
-    [_errors release];
-    [super dealloc];
 }
 
 #pragma mark -

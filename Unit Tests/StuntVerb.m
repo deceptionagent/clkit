@@ -27,47 +27,47 @@
 + (instancetype)flarnVerb
 {
     CLKOption *option = [CLKOption optionWithName:@"alpha" flag:@"a"];
-    return [[[self alloc] initWithName:@"flarn" options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:@"flarn" options:@[ option ] optionGroups:nil];
 }
 
 + (instancetype)barfVerb
 {
     CLKOption *option = [CLKOption optionWithName:@"bravo" flag:@"b"];
-    return [[[self alloc] initWithName:@"flarn" options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:@"flarn" options:@[ option ] optionGroups:nil];
 }
 
 + (instancetype)quoneVerb
 {
     CLKOption *option = [CLKOption optionWithName:@"charlie" flag:@"c"];
-    return [[[self alloc] initWithName:@"quone" options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:@"quone" options:@[ option ] optionGroups:nil];
 }
 
 + (instancetype)xyzzyVerb
 {
     CLKOption *option = [CLKOption optionWithName:@"delta" flag:@"d"];
-    return [[[self alloc] initWithName:@"xyzzy" options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:@"xyzzy" options:@[ option ] optionGroups:nil];
 }
 
 + (instancetype)synVerb
 {
     CLKOption *option = [CLKOption optionWithName:@"echo" flag:@"e"];
-    return [[[self alloc] initWithName:@"syn" options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:@"syn" options:@[ option ] optionGroups:nil] ;
 }
 
 + (instancetype)ackVerb
 {
     CLKOption *option = [CLKOption optionWithName:@"foxtrot" flag:@"f"];
-    return [[[self alloc] initWithName:@"ack" options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:@"ack" options:@[ option ] optionGroups:nil];
 }
 
 + (instancetype)verbWithName:(NSString *)name option:(CLKOption *)option
 {
-    return [[[self alloc] initWithName:name options:@[ option ] optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:name options:@[ option ] optionGroups:nil];
 }
 
 + (instancetype)verbWithName:(NSString *)name options:(NSArray<CLKOption *> *)options
 {
-    return [[[self alloc] initWithName:name options:options optionGroups:nil] autorelease];
+    return [[self alloc] initWithName:name options:options optionGroups:nil];
 }
 
 - (instancetype)initWithName:(NSString *)name
@@ -84,15 +84,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    [_name release];
-    [_options release];
-    [_optionGroups release];
-    [_runWithManifest_impl release];
-    [super dealloc];
-}
-
 #pragma mark -
 #pragma mark <CLKVerb>
 
@@ -104,7 +95,7 @@
             @"manifest" : manifest,
         };
         
-        return [[[CLKCommandResult alloc] initWithExitStatus:0 errors:nil userInfo:userInfo] autorelease];
+        return [[CLKCommandResult alloc] initWithExitStatus:0 errors:nil userInfo:userInfo];
     }
     
     return _runWithManifest_impl(manifest);

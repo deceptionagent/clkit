@@ -17,7 +17,7 @@
 + (instancetype)registryWithOptions:(NSArray<CLKOption *> *)options
 {
     // for some reason, the compiler doesn't know what -initWithOptions: we want
-    return [[(CLKOptionRegistry *)[self alloc] initWithOptions:options] autorelease];
+    return [(CLKOptionRegistry *)[self alloc] initWithOptions:options];
 }
 
 - (instancetype)initWithOptions:(NSArray<CLKOption *> *)options
@@ -41,13 +41,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_optionNameMap release];
-    [_optionFlagMap release];
-    [super dealloc];
 }
 
 #pragma mark -
