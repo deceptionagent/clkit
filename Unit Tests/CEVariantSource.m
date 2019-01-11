@@ -16,7 +16,7 @@
 
 + (instancetype)sourceWithIdentifier:(NSString *)identifier values:(NSArray *)values
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values] autorelease];
+    return [[self alloc] initWithIdentifier:identifier values:values];
 }
 
 - (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values
@@ -32,13 +32,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_values release];
-    [_identifier release];
-    [super dealloc];
 }
 
 - (NSString *)debugDescription

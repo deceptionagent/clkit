@@ -28,15 +28,15 @@
 
 - (void)testInit
 {
-    CEVariantSource *flarn = [[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"barf" ]] autorelease];
-    CEVariantSource *quone = [[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"confound", @"delivery" ]] autorelease];
+    CEVariantSource *flarn = [[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"barf" ]];
+    CEVariantSource *quone = [[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"confound", @"delivery" ]];
     
-    CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:flarn] autorelease];
+    CEVariantSourceView *view = [[CEVariantSourceView alloc] initWithVariantSource:flarn];
     XCTAssertNotNil(view);
     XCTAssertEqual(view.variantSource, flarn);
     XCTAssertEqualObjects(view.value, @"barf");
     
-    view = [[[CEVariantSourceView alloc] initWithVariantSource:quone] autorelease];
+    view = [[CEVariantSourceView alloc] initWithVariantSource:quone];
     XCTAssertNotNil(view);
     XCTAssertEqual(view.variantSource, quone);
     XCTAssertEqualObjects(view.value, @"confound");
@@ -44,8 +44,8 @@
 
 - (void)testAdvancing
 {
-    CEVariantSource *source = [[[CEVariantSource alloc] initWithIdentifier:@"xyzzy" values:@[ @"flarn", @"barf", @"quone" ]] autorelease];
-    CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:source] autorelease];
+    CEVariantSource *source = [[CEVariantSource alloc] initWithIdentifier:@"xyzzy" values:@[ @"flarn", @"barf", @"quone" ]];
+    CEVariantSourceView *view = [[CEVariantSourceView alloc] initWithVariantSource:source];
     [view addObserver:self];
     
     XCTAssertEqualObjects(view.value, @"flarn");
@@ -68,8 +68,8 @@
 
 - (void)testAdvancing_singleValue
 {
-    CEVariantSource *source = [[[CEVariantSource alloc] initWithIdentifier:@"xyzzy" values:@[ @"flarn" ]] autorelease];
-    CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:source] autorelease];
+    CEVariantSource *source = [[CEVariantSource alloc] initWithIdentifier:@"xyzzy" values:@[ @"flarn" ]];
+    CEVariantSourceView *view = [[CEVariantSourceView alloc] initWithVariantSource:source];
     [view addObserver:self];
     
     XCTAssertEqualObjects(view.value, @"flarn");
@@ -84,8 +84,8 @@
 
 - (void)testRemoveObserver
 {
-    CEVariantSource *source = [[[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"barf" ]] autorelease];
-    CEVariantSourceView *view = [[[CEVariantSourceView alloc] initWithVariantSource:source] autorelease];
+    CEVariantSource *source = [[CEVariantSource alloc] initWithIdentifier:@"flarn" values:@[ @"barf" ]];
+    CEVariantSourceView *view = [[CEVariantSourceView alloc] initWithVariantSource:source];
     [view addObserver:self];
     [view removeObserver:self];
     

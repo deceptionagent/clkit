@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)familyWithName:(NSString *)name verbs:(NSArray<id<CLKVerb>> *)verbs
 {
-    return [[[self alloc] _initWithName:name verbs:verbs] autorelease];
+    return [[self alloc] _initWithName:name verbs:verbs];
 }
 
 - (instancetype)_initWithName:(NSString *)name verbs:(NSArray<id<CLKVerb>> *)verbs
@@ -48,13 +48,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_verbMap release];
-    [_name release];
-    [super dealloc];
 }
 
 - (nullable id<CLKVerb>)verbNamed:(NSString *)verbName

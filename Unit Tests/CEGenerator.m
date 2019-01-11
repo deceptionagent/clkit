@@ -40,12 +40,6 @@ NS_ASSUME_NONNULL_END
     return self;
 }
 
-- (void)dealloc
-{
-    [_variants release];
-    [super dealloc];
-}
-
 #pragma mark -
 
 - (void)enumerateCombinations:(void (^)(CECombination *))combinationBlock
@@ -62,7 +56,6 @@ NS_ASSUME_NONNULL_END
 - (void)_processVariant:(CEVariant *)variant usingCombinationBlock:(void (^)(CECombination *))combinationBlock
 {
     CEVariantView *view = [[CEVariantView alloc] initWithVariant:variant];
-    
     while (!view.exhausted) {
         @autoreleasepool {
             CECombination *combination = view.combination;
@@ -70,8 +63,6 @@ NS_ASSUME_NONNULL_END
             [view advance];
         }
     }
-    
-    [view release];
 }
 
 @end

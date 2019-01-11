@@ -11,7 +11,7 @@
 {
     va_list ap;
     va_start(ap, fmt);
-    NSString *description = [[[NSString alloc] initWithFormat: fmt arguments: ap] autorelease];
+    NSString *description = [[NSString alloc] initWithFormat: fmt arguments: ap];
     va_end(ap);
     
     NSDictionary *info = @{ NSLocalizedDescriptionKey : description };
@@ -22,7 +22,7 @@
 {
     va_list ap;
     va_start(ap, fmt);
-    NSString *description = [[[NSString alloc] initWithFormat: fmt arguments: ap] autorelease];
+    NSString *description = [[NSString alloc] initWithFormat: fmt arguments: ap];
     va_end(ap);
     
     NSDictionary *info = @{ NSLocalizedDescriptionKey : description };

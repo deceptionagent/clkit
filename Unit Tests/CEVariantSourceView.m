@@ -33,18 +33,11 @@ NS_ASSUME_NONNULL_END
     
     self = [super init];
     if (self != nil) {
-        _source = [variantSource retain];
+        _source = variantSource;
         _observers = [[NSHashTable alloc] initWithOptions:(NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality) capacity:1];
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_observers release];
-    [_source release];
-    [super dealloc];
 }
 
 - (NSString *)debugDescription

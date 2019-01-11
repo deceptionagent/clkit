@@ -29,7 +29,7 @@
         NSArray<NSError *> *errors = combination[@"errors"];
         NSDictionary *userInfo_ = combination[@"userInfo"];
         
-        CLKCommandResult *result = [[[CLKCommandResult alloc] initWithExitStatus:7 errors:errors userInfo:userInfo_] autorelease];
+        CLKCommandResult *result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:errors userInfo:userInfo_];
         XCTAssertNotNil(result);
         XCTAssertEqual(result.exitStatus, 7);
         XCTAssertEqualObjects(result.errors, errors);
@@ -57,20 +57,20 @@
 
 - (void)test_errorDescription
 {
-    CLKCommandResult *result = [[[CLKCommandResult alloc] initWithExitStatus:7 errors:nil userInfo:nil] autorelease];
+    CLKCommandResult *result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:nil userInfo:nil];
     XCTAssertNil(result.errorDescription);
     
-    result = [[[CLKCommandResult alloc] initWithExitStatus:7 errors:@[] userInfo:nil] autorelease];
+    result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:@[] userInfo:nil];
     XCTAssertNil(result.errorDescription);
     
     NSError *errorAlpha = [NSError clk_POSIXErrorWithCode:ENOENT description:@"aye mak sicur"];
     NSError *errorBravo = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"ne cede malis"];
     
-    result = [[[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha ] userInfo:nil] autorelease];
+    result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha ] userInfo:nil];
     NSString *expectedErrorDescription = [NSString stringWithFormat:@"aye mak sicur (%@: %d)", NSPOSIXErrorDomain, ENOENT];
     XCTAssertEqualObjects(result.errorDescription, expectedErrorDescription);
     
-    result = [[[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha, errorBravo ] userInfo:nil] autorelease];
+    result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha, errorBravo ] userInfo:nil];
     NSString *fmt = @"aye mak sicur (%@: %d)\nne cede malis (%@: %ld)";
     expectedErrorDescription = [NSString stringWithFormat:fmt, NSPOSIXErrorDomain, ENOENT, CLKErrorDomain, CLKErrorRequiredOptionNotProvided];
     XCTAssertEqualObjects(result.errorDescription, expectedErrorDescription);

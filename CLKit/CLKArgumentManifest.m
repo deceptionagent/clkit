@@ -27,20 +27,12 @@
     
     self = [super init];
     if (self != nil) {
-        _optionRegistry = [optionRegistry retain];
+        _optionRegistry = optionRegistry;
         _optionManifest = [[NSMutableDictionary alloc] init];
         _positionalArguments = [[NSMutableArray alloc] init];
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_optionRegistry release];
-    [_optionManifest release];
-    [_positionalArguments release];
-    [super dealloc];
 }
 
 - (NSString *)debugDescription

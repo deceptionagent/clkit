@@ -17,17 +17,17 @@ int main(int argc, const char *argv[])
     @autoreleasepool {
         NSArray *argvec = [NSArray clk_arrayWithArgv:argv+1 argc:argc-1];
         NSArray<id<CLKVerb>> *topLevelVerbs = @[
-            [[[ConfoundVerb alloc] init] autorelease],
-            [[[DeliveryVerb alloc] init] autorelease]
+            [[ConfoundVerb alloc] init],
+            [[DeliveryVerb alloc] init]
         ];
         
         NSArray<id<CLKVerb>> *thrudVerbs = @[
-            [[[BrainVerb alloc] init] autorelease],
-            [[[HangVerb alloc] init] autorelease]
+            [[BrainVerb alloc] init],
+            [[HangVerb alloc] init]
         ];
         
         CLKVerbFamily *thrud = [CLKVerbFamily familyWithName:@"thrud" verbs:thrudVerbs];
-        CLKVerbDepot *depot = [[[CLKVerbDepot alloc] initWithArgumentVector:argvec verbs:topLevelVerbs verbFamilies:@[ thrud ]] autorelease];
+        CLKVerbDepot *depot = [[CLKVerbDepot alloc] initWithArgumentVector:argvec verbs:topLevelVerbs verbFamilies:@[ thrud ]];
         CLKCommandResult *result = [depot dispatchVerb];
         if (result.errors != nil) {
             fprintf(stderr, "%s\n", result.errorDescription.UTF8String);

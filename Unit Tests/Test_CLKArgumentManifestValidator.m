@@ -62,14 +62,14 @@ NS_ASSUME_NONNULL_END
 - (void)testInit
 {
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:@[]];
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
-    CLKArgumentManifestValidator *validator = [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+    CLKArgumentManifest *manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
+    CLKArgumentManifestValidator *validator = [[CLKArgumentManifestValidator alloc] initWithManifest:manifest];
     XCTAssertNotNil(validator);
     XCTAssertEqual(validator.manifest, manifest);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([[[CLKArgumentManifestValidator alloc] initWithManifest:nil] autorelease]);
+    XCTAssertThrows([[CLKArgumentManifestValidator alloc] initWithManifest:nil]);
 #pragma clang diagnostic pop
 }
 

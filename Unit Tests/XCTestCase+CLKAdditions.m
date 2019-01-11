@@ -62,7 +62,7 @@
     [options addObjectsFromArray:switchOptions.allKeys];
     [options addObjectsFromArray:parameterOptions.allKeys];
     CLKOptionRegistry *registry = [CLKOptionRegistry registryWithOptions:options];
-    CLKArgumentManifest *manifest = [[[CLKArgumentManifest alloc] initWithOptionRegistry:registry] autorelease];
+    CLKArgumentManifest *manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
     
     [switchOptions enumerateKeysAndObjectsUsingBlock:^(CLKOption *option, NSNumber *count, __unused BOOL *outStop) {
         for (int i = 0 ; i < count.intValue ; i++) {
@@ -82,7 +82,7 @@
 - (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
 {
     CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
-    return [[[CLKArgumentManifestValidator alloc] initWithManifest:manifest] autorelease];
+    return [[CLKArgumentManifestValidator alloc] initWithManifest:manifest];
 }
 
 @end

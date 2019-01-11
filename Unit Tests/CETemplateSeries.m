@@ -22,22 +22,22 @@
 
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(NSString *)variant
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:@[ variant ]] autorelease];
+    return [[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:@[ variant ]];
 }
 
 + (instancetype)seriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<NSString *> *)variants
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:variants] autorelease];
+    return [[self alloc] initWithIdentifier:identifier values:values elidable:NO variants:variants];
 }
 
 + (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variant:(NSString *)variant
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:@[ variant ]] autorelease];
+    return [[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:@[ variant ]];
 }
 
 + (instancetype)elidableSeriesWithIdentifier:(NSString *)identifier values:(NSArray *)values variants:(NSArray<NSString *> *)variants
 {
-    return [[[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:variants] autorelease];
+    return [[self alloc] initWithIdentifier:identifier values:values elidable:YES variants:variants];
 }
 
 - (instancetype)initWithIdentifier:(NSString *)identifier values:(NSArray *)values elidable:(BOOL)elidable variants:(NSArray<NSString *> *)variants
@@ -51,14 +51,6 @@
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_identifier release];
-    [_values release];
-    [_variants release];
-    [super dealloc];
 }
 
 @end

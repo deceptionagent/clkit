@@ -13,9 +13,9 @@
         return nil;
     }
     
-    id obj = [self.firstObject retain];
+    id obj = self.firstObject;
     [self removeObjectAtIndex:0];
-    return [obj autorelease];
+    return obj;
 }
 
 @end

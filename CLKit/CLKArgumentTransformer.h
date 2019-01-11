@@ -9,8 +9,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentTransformer : NSObject
 
-+ (instancetype)transformer;
-
 - (nullable id)transformedArgument:(NSString *)argument error:(NSError **)outError;
 
 @end

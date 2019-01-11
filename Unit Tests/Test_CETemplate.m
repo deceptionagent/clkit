@@ -17,10 +17,10 @@
 
 - (void)testInit
 {
-    CETemplateSeries *alpha = [[[CETemplateSeries alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] elidable:NO variants:@[ @"north", @"south" ]] autorelease];
-    CETemplateSeries *bravo = [[[CETemplateSeries alloc] initWithIdentifier:@"xyzzy" values:@[ @"confound", @"delivery" ] elidable:NO variants:@[ @"east", @"west" ]] autorelease];
+    CETemplateSeries *alpha = [[CETemplateSeries alloc] initWithIdentifier:@"quone" values:@[ @"flarn", @"barf" ] elidable:NO variants:@[ @"north", @"south" ]];
+    CETemplateSeries *bravo = [[CETemplateSeries alloc] initWithIdentifier:@"xyzzy" values:@[ @"confound", @"delivery" ] elidable:NO variants:@[ @"east", @"west" ]];
     
-    CETemplate *template = [[[CETemplate alloc] initWithSeries:@[ alpha, bravo ]] autorelease];
+    CETemplate *template = [[CETemplate alloc] initWithSeries:@[ alpha, bravo ]];
     XCTAssertNotNil(template);
     XCTAssertEqual(template.allSeries.count, 2UL);
     XCTAssertEqual(template.allSeries[0], alpha);

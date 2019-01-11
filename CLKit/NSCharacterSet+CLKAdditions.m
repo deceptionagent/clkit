@@ -12,7 +12,7 @@
     static NSMutableCharacterSet *optionFlagIllegalCharacterSet;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        optionFlagIllegalCharacterSet = [[NSMutableCharacterSet characterSetWithCharactersInString:@"-"] retain];
+        optionFlagIllegalCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"-"];
         [optionFlagIllegalCharacterSet formUnionWithCharacterSet:self.clk_parameterOptionAssignmentCharacterSet];
 //        [optionFlagIllegalCharacterSet formUnionWithCharacterSet:NSCharacterSet.decimalDigitCharacterSet];
         [optionFlagIllegalCharacterSet formUnionWithCharacterSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
@@ -26,7 +26,7 @@
     static NSMutableCharacterSet *optionNameIllegalCharacterSet;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        optionNameIllegalCharacterSet = [NSMutableCharacterSet.whitespaceAndNewlineCharacterSet retain];
+        optionNameIllegalCharacterSet = NSMutableCharacterSet.whitespaceAndNewlineCharacterSet;
         [optionNameIllegalCharacterSet formUnionWithCharacterSet:self.clk_parameterOptionAssignmentCharacterSet];
     });
     
@@ -38,7 +38,7 @@
     static NSCharacterSet *parameterOptionAssignmentCharacterSet;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        parameterOptionAssignmentCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@":="] retain];
+        parameterOptionAssignmentCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@":="];
     });
     
     return parameterOptionAssignmentCharacterSet;

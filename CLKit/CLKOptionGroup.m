@@ -56,33 +56,33 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:NO mutexed:NO] autorelease];
+    return [[self alloc] _initWithOptionsNamed:options subgroups:nil required:NO mutexed:NO];
 }
 
 + (instancetype)requiredGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:YES mutexed:NO] autorelease];
+    return [[self alloc] _initWithOptionsNamed:options subgroups:nil required:YES mutexed:NO];
 }
 
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:NO mutexed:YES] autorelease];
+    return [[self alloc] _initWithOptionsNamed:options subgroups:nil required:NO mutexed:YES];
 }
 
 + (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required mutexed:(BOOL)mutexed
 {
-    return [[[self alloc] _initWithOptionsNamed:options subgroups:nil required:required mutexed:mutexed] autorelease];
+    return [[self alloc] _initWithOptionsNamed:options subgroups:nil required:required mutexed:mutexed];
 }
 
 + (instancetype)mutexedGroupWithSubgroups:(NSArray<CLKOptionGroup *> *)subgroups
 {
-    return [[[self alloc] _initWithOptionsNamed:nil subgroups:subgroups required:NO mutexed:YES] autorelease];
+    return [[self alloc] _initWithOptionsNamed:nil subgroups:subgroups required:NO mutexed:YES];
 }
 
 + (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptionNames
 {
     CLKOptionGroup *whitelist = [CLKOptionGroup groupForOptionsNamed:whitelistedOptionNames];
-    return [[[self alloc] _initWithOptionsNamed:@[ option ] subgroups:@[ whitelist ] required:NO mutexed:NO standalone:YES] autorelease];
+    return [[self alloc] _initWithOptionsNamed:@[ option ] subgroups:@[ whitelist ] required:NO mutexed:NO standalone:YES];
 }
 
 - (instancetype)_initWithOptionsNamed:(NSArray<NSString *> *)options
@@ -112,13 +112,6 @@ NS_ASSUME_NONNULL_END
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    [_subgroups release];
-    [_options release];
-    [super dealloc];
 }
 
 #pragma mark -
@@ -214,7 +207,7 @@ NS_ASSUME_NONNULL_END
     
     NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
     
-    NSMutableArray<CLKOptionGroup *> *remainingSubgroups = [[_subgroups mutableCopy] autorelease];
+    NSMutableArray<CLKOptionGroup *> *remainingSubgroups = [_subgroups mutableCopy];
     CLKOptionGroup *currentSubgroup;
     while ((currentSubgroup = [remainingSubgroups clk_popFirstObject]) != nil) {
         for (NSString *currentSubgroupOption in currentSubgroup.options) {

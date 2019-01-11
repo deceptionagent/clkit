@@ -43,11 +43,11 @@ NS_ASSUME_NONNULL_END
     CEVariant *alphaVariant = [CEVariant variantWithTag:@"alpha" sources:@[ flarn ]];
     CEVariant *bravoVariant = [CEVariant variantWithTag:@"bravo" sources:@[ flarn, barf ]];
     
-    CEGenerator *generator = [[[CEGenerator alloc] initWithVariants:@[ alphaVariant ]] autorelease];
+    CEGenerator *generator = [[CEGenerator alloc] initWithVariants:@[ alphaVariant ]];
     XCTAssertNotNil(generator);
     XCTAssertEqualObjects(generator.variants, @[ alphaVariant ]);
     
-    generator = [[[CEGenerator alloc] initWithVariants:@[ alphaVariant, bravoVariant ]] autorelease];
+    generator = [[CEGenerator alloc] initWithVariants:@[ alphaVariant, bravoVariant ]];
     XCTAssertNotNil(generator);
     XCTAssertEqualObjects(generator.variants, (@[ alphaVariant, bravoVariant ]));
 }
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_END
         [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } variant:@"tag"]
     ];
     
-    CEGenerator *generator = [[[CEGenerator alloc] initWithVariants:@[ variant ]] autorelease];
+    CEGenerator *generator = [[CEGenerator alloc] initWithVariants:@[ variant ]];
     NSArray *combinations = [self generateCombinationsUsingGenerator:generator];
     XCTAssertEqualObjects(combinations, expectedCombinations);
 }
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_END
         [CECombination combinationWithBacking:@{ @"flarn" : @(2), @"barf" : @(4) } variant:@"bravo"],
     ];
 
-    CEGenerator *generator = [[[CEGenerator alloc] initWithVariants:@[ alphaVariant, bravoVariant ]] autorelease];
+    CEGenerator *generator = [[CEGenerator alloc] initWithVariants:@[ alphaVariant, bravoVariant ]];
     NSArray *combinations = [self generateCombinationsUsingGenerator:generator];
     XCTAssertEqualObjects(combinations, expectedCombinations);
 }
