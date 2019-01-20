@@ -11,11 +11,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CETemplate : NSObject
 
-+ (instancetype)templateWithSeries:(NSArray<CETemplateSeries *> *)series;
-- (instancetype)initWithSeries:(NSArray<CETemplateSeries *> *)series NS_DESIGNATED_INITIALIZER;
-
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
++ (instancetype)templateWithSeries:(NSArray<CETemplateSeries *> *)series;
+- (instancetype)initWithSeries:(NSArray<CETemplateSeries *> *)series NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) NSArray<CETemplateSeries *> *allSeries;
 

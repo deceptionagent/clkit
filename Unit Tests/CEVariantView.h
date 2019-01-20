@@ -12,10 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CEVariantView : NSObject
 
-- (instancetype)initWithVariant:(CEVariant *)variant NS_DESIGNATED_INITIALIZER;
-
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithVariant:(CEVariant *)variant NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) CEVariant *variant;
 @property (readonly) BOOL exhausted;
