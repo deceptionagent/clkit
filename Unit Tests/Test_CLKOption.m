@@ -284,9 +284,10 @@ NS_ASSUME_NONNULL_END
     }];
     
     // verify deduplication
+    NSSet *expectedOptionSet = [NSSet setWithArray:options];
     NSArray<CLKOption *> *redundantOptions = [options arrayByAddingObjectsFromArray:optionClones];
     NSSet *optionSet = [NSSet setWithArray:redundantOptions];
-    XCTAssertEqual(optionSet.count, options.count);
+    XCTAssertEqualObjects(optionSet, expectedOptionSet);
     
     for (NSUInteger i = 0 ; i < options.count ; i++) {
         CLKOption *option = options[i];

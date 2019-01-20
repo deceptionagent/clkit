@@ -204,9 +204,10 @@
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"]
     ];
     
+    NSSet *expectedConstraintSet = [NSSet setWithArray:constraints];
     NSArray *redundantConstraints = [constraints arrayByAddingObjectsFromArray:constraintClones];
     NSSet *constraintSet = [NSSet setWithArray:redundantConstraints];
-    XCTAssertEqual(constraintSet.count, constraints.count);
+    XCTAssertEqualObjects(constraintSet, expectedConstraintSet);
     
     for (NSUInteger i = 0 ; i < constraints.count ; i++) {
         CLKArgumentManifestConstraint *constraint = constraints[i];
