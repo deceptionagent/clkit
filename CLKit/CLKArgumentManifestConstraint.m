@@ -131,22 +131,31 @@ NS_ASSUME_NONNULL_END
         return NO;
     }
     
-    if (_option != nil || constraint.option != nil) {
-        if (![_option isEqualToString:constraint.option]) {
-            return NO;
-        }
+    if ((_option != nil) != (constraint.option != nil)) {
+        return NO;
     }
     
-    if (_associatedOption != nil || constraint.associatedOption != nil) {
-        if (![_associatedOption isEqualToString:constraint.associatedOption]) {
-            return NO;
-        }
+    BOOL compareOptions = (_option != nil && constraint.option != nil);
+    if (compareOptions && ![_option isEqualToString:constraint.option]) {
+        return NO;
     }
     
-    if (_linkedOptions != nil || constraint.linkedOptions != nil) {
-        if (![_linkedOptions isEqual:constraint.linkedOptions]) {
-            return NO;
-        }
+    if ((_associatedOption != nil) != (constraint.associatedOption != nil)) {
+        return NO;
+    }
+    
+    BOOL compareAssociatedOptions = (_associatedOption != nil && constraint.associatedOption != nil);
+    if (compareAssociatedOptions && ![_associatedOption isEqualToString:constraint.associatedOption]) {
+        return NO;
+    }
+    
+    if ((_linkedOptions != nil) != (constraint.linkedOptions != nil)) {
+        return NO;
+    }
+    
+    BOOL compareLinkedOptions = (_linkedOptions != nil && constraint.linkedOptions != nil);
+    if (compareLinkedOptions && ![_linkedOptions isEqualToArray:constraint.linkedOptions]) {
+        return NO;
     }
     
     return YES;

@@ -260,18 +260,24 @@ NS_ASSUME_NONNULL_END
         return NO;
     }
     
-    if (_flag != nil || option.flag != nil) {
-        if (![_flag isEqualToString:option.flag]) {
-            return NO;
-        }
+    if ((_flag != nil) != (option.flag != nil)) {
+        return NO;
     }
     
-    if (_dependencies != nil || option.dependencies != nil) {
-        if (![_dependencies isEqualToArray:option.dependencies]) {
-            return NO;
-        }
+    BOOL compareFlags = (_flag != nil && option.flag != nil);
+    if (compareFlags && ![_flag isEqualToString:option.flag]) {
+        return NO;
     }
-
+    
+    if ((_dependencies != nil) != (option.dependencies != nil)) {
+        return NO;
+    }
+    
+    BOOL compareDependencies = (_dependencies != nil && option.dependencies != nil);
+    if (compareDependencies && ![_dependencies isEqualToArray:option.dependencies]) {
+        return NO;
+    }
+    
     return YES;
 }
 
