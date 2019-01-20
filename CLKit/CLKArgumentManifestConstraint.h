@@ -18,15 +18,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifestConstraint : NSObject
 
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
 + (instancetype)constraintForRequiredOption:(NSString *)option;
 + (instancetype)constraintForConditionallyRequiredOption:(NSString *)option associatedOption:(NSString *)associatedOption;
 + (instancetype)constraintRequiringRepresentativeForOptions:(NSArray<NSString *> *)options;
 + (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options;
 + (instancetype)constraintForStandaloneOption:(NSString *)option allowingOptions:(nullable NSArray<NSString *> *)whitelistedOptions;
 + (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option;
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly) CLKConstraintType type;
 @property (nullable, readonly) NSString *option;
