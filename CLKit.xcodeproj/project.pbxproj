@@ -213,7 +213,6 @@
 		A6DB92F2212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSCharacterSet+CLKAdditions.m"; sourceTree = "<group>"; };
 		A6E34F69202C59E900CE22E1 /* ArgumentParsingResultSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentParsingResultSpec.h; sourceTree = "<group>"; };
 		A6E34F6A202C59E900CE22E1 /* ArgumentParsingResultSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgumentParsingResultSpec.m; sourceTree = "<group>"; };
-		A6E478C81F123CF20081EB82 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6E9BC1F203A173E001B7095 /* CEVariantSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEVariantSource.h; sourceTree = "<group>"; };
 		A6E9BC21203A173E001B7095 /* CEVariantSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEVariantSource.m; sourceTree = "<group>"; };
@@ -355,7 +354,6 @@
 		A66A9DD61F02294800456347 = {
 			isa = PBXGroup;
 			children = (
-				A6E478C81F123CF20081EB82 /* readme.txt */,
 				A6BE98CE21033D240056963C /* clklab */,
 				A66A9DE11F02294800456347 /* CLKit */,
 				A66A9DF11F02406F00456347 /* Unit Tests */,
