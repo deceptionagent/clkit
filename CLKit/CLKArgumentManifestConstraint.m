@@ -118,7 +118,7 @@ NS_ASSUME_NONNULL_END
         return YES;
     }
     
-    if (![obj isKindOfClass:[self class]]) {
+    if (![obj isKindOfClass:[CLKArgumentManifestConstraint class]]) {
         return NO;
     }
     
