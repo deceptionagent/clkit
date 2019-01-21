@@ -15,8 +15,8 @@
 		A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */; };
 		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
 		A6176E81210721DB00B2908B /* DeliveryVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E80210721DB00B2908B /* DeliveryVerb.m */; };
-		A6176E87210723F000B2908B /* BrainVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E85210723F000B2908B /* BrainVerb.m */; };
-		A6176E88210723F000B2908B /* HangVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E86210723F000B2908B /* HangVerb.m */; };
+		A6176E87210723F000B2908B /* BlasphemeVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E85210723F000B2908B /* BlasphemeVerb.m */; };
+		A6176E88210723F000B2908B /* QuarantineVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E86210723F000B2908B /* QuarantineVerb.m */; };
 		A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */; };
 		A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */; };
 		A634BCDC204C00A800E2BA10 /* Test_CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */; };
@@ -122,10 +122,10 @@
 		A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKAssert.m; sourceTree = "<group>"; };
 		A6176E7F210721DB00B2908B /* DeliveryVerb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DeliveryVerb.h; path = clklab/DeliveryVerb.h; sourceTree = "<group>"; };
 		A6176E80210721DB00B2908B /* DeliveryVerb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DeliveryVerb.m; path = clklab/DeliveryVerb.m; sourceTree = "<group>"; };
-		A6176E83210723F000B2908B /* BrainVerb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrainVerb.h; path = clklab/BrainVerb.h; sourceTree = "<group>"; };
-		A6176E84210723F000B2908B /* HangVerb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HangVerb.h; path = clklab/HangVerb.h; sourceTree = "<group>"; };
-		A6176E85210723F000B2908B /* BrainVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrainVerb.m; path = clklab/BrainVerb.m; sourceTree = "<group>"; };
-		A6176E86210723F000B2908B /* HangVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HangVerb.m; path = clklab/HangVerb.m; sourceTree = "<group>"; };
+		A6176E83210723F000B2908B /* BlasphemeVerb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlasphemeVerb.h; path = clklab/BlasphemeVerb.h; sourceTree = "<group>"; };
+		A6176E84210723F000B2908B /* QuarantineVerb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuarantineVerb.h; path = clklab/QuarantineVerb.h; sourceTree = "<group>"; };
+		A6176E85210723F000B2908B /* BlasphemeVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlasphemeVerb.m; path = clklab/BlasphemeVerb.m; sourceTree = "<group>"; };
+		A6176E86210723F000B2908B /* QuarantineVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QuarantineVerb.m; path = clklab/QuarantineVerb.m; sourceTree = "<group>"; };
 		A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstraintValidationSpec.h; sourceTree = "<group>"; };
 		A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConstraintValidationSpec.m; sourceTree = "<group>"; };
 		A634BCD8204BF96800E2BA10 /* CETemplateSeries.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETemplateSeries.h; sourceTree = "<group>"; };
@@ -254,10 +254,10 @@
 		A6176E82210723D900B2908B /* thrud */ = {
 			isa = PBXGroup;
 			children = (
-				A6176E83210723F000B2908B /* BrainVerb.h */,
-				A6176E85210723F000B2908B /* BrainVerb.m */,
-				A6176E84210723F000B2908B /* HangVerb.h */,
-				A6176E86210723F000B2908B /* HangVerb.m */,
+				A6176E83210723F000B2908B /* BlasphemeVerb.h */,
+				A6176E85210723F000B2908B /* BlasphemeVerb.m */,
+				A6176E84210723F000B2908B /* QuarantineVerb.h */,
+				A6176E86210723F000B2908B /* QuarantineVerb.m */,
 			);
 			name = thrud;
 			sourceTree = "<group>";
@@ -595,8 +595,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A696CC1221033DD000A9F7E7 /* ConfoundVerb.m in Sources */,
-				A6176E88210723F000B2908B /* HangVerb.m in Sources */,
-				A6176E87210723F000B2908B /* BrainVerb.m in Sources */,
+				A6176E88210723F000B2908B /* QuarantineVerb.m in Sources */,
+				A6176E87210723F000B2908B /* BlasphemeVerb.m in Sources */,
 				A696CC0F21033D6D00A9F7E7 /* main.m in Sources */,
 				A6176E81210721DB00B2908B /* DeliveryVerb.m in Sources */,
 			);

@@ -7,6 +7,6 @@
 #import "CLKit.h"
 
 
-@interface BrainVerb : NSObject <CLKVerb>
+@interface BlasphemeVerb : NSObject <CLKVerb>
 
 @end
