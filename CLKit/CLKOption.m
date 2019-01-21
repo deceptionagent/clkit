@@ -43,14 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
                  dependencies:(nullable NSArray<NSString *> *)dependencies
                   transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
 
-+ (void)_validateOptionType:(CLKOptionType)type
-                       name:(NSString *)name
-                       flag:(nullable NSString *)flag
-                   required:(BOOL)required
-                  recurrent:(__unused BOOL)recurrent
-                 standalone:(BOOL)standalone
-               dependencies:(nullable NSArray<NSString *> *)dependencies
-                transformer:(nullable CLKArgumentTransformer *)transformer;
++ (void)_validateOptionName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
 
 @end
 
@@ -150,7 +143,12 @@ NS_ASSUME_NONNULL_END
                  dependencies:(NSArray<NSString *> *)dependencies
                   transformer:(CLKArgumentTransformer *)transformer
 {
-    [[self class] _validateOptionType:type name:name flag:flag required:required recurrent:recurrent standalone:standalone dependencies:dependencies transformer:transformer];
+    CLKParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
+    CLKParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
+    CLKParameterAssert(!(standalone && required), @"standalone options cannot be required");
+    CLKParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
+    
+    [[self class] _validateOptionName:name flag:flag dependencies:dependencies];
     
     self = [super init];
     if (self != nil) {
@@ -167,20 +165,8 @@ NS_ASSUME_NONNULL_END
     return self;
 }
 
-+ (void)_validateOptionType:(CLKOptionType)type
-                       name:(NSString *)name
-                       flag:(NSString *)flag
-                   required:(BOOL)required
-                  recurrent:(__unused BOOL)recurrent
-                 standalone:(BOOL)standalone
-               dependencies:(NSArray<NSString *> *)dependencies
-                transformer:(CLKArgumentTransformer *)transformer
++ (void)_validateOptionName:(NSString *)name flag:(NSString *)flag dependencies:(NSArray<NSString *> *)dependencies
 {
-    CLKParameterAssert(!(type == CLKOptionTypeSwitch && required), @"switch options cannot be required");
-    CLKParameterAssert(!(type == CLKOptionTypeSwitch && transformer != nil), @"switch options do not support argument transformers");
-    CLKParameterAssert(!(standalone && required), @"standalone options cannot be required");
-    CLKParameterAssert(!(standalone && dependencies.count > 0), @"standalone options cannot have dependencies");
-    
     // name guards
     CLKHardParameterAssert(name.length > 0, @"options must have names");
     CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
