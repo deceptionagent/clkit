@@ -2,14 +2,14 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "BrainVerb.h"
+#import "BlasphemeVerb.h"
 
 
-@implementation BrainVerb
+@implementation BlasphemeVerb
 
 - (NSString *)name
 {
-    return @"brain";
+    return @"blaspheme";
 }
 
 - (NSArray<CLKOption *> *)options

@@ -6,10 +6,10 @@
 
 #import "CLKit.h"
 
-#import "BrainVerb.h"
+#import "BlasphemeVerb.h"
 #import "ConfoundVerb.h"
 #import "DeliveryVerb.h"
-#import "HangVerb.h"
+#import "QuarantineVerb.h"
 
 
 int main(int argc, const char *argv[])
@@ -22,8 +22,8 @@ int main(int argc, const char *argv[])
         ];
         
         NSArray<id<CLKVerb>> *thrudVerbs = @[
-            [[BrainVerb alloc] init],
-            [[HangVerb alloc] init]
+            [[BlasphemeVerb alloc] init],
+            [[QuarantineVerb alloc] init]
         ];
         
         CLKVerbFamily *thrud = [CLKVerbFamily familyWithName:@"thrud" verbs:thrudVerbs];

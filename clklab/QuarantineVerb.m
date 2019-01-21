@@ -2,14 +2,14 @@
 //  Copyright (c) 2018 Plastic Pulse. All rights reserved.
 //
 
-#import "HangVerb.h"
+#import "QuarantineVerb.h"
 
 
-@implementation HangVerb
+@implementation QuarantineVerb
 
 - (NSString *)name
 {
-    return @"hang";
+    return @"quarantine";
 }
 
 - (NSArray<CLKOption *> *)options

@@ -7,6 +7,6 @@
 #import "CLKit.h"
 
 
-@interface HangVerb : NSObject <CLKVerb>
+@interface QuarantineVerb : NSObject <CLKVerb>
 
 @end
