@@ -175,7 +175,7 @@ NS_ASSUME_NONNULL_END
 - (CLKArgumentManifestConstraint *)_requiredConstraint
 {
     NSAssert(_required, @"constructing required constraint for non-required group");
-    return [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:self.allOptions];
+    return [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:self.allOptions];
 }
 
 - (NSArray<CLKArgumentManifestConstraint *> *)_mutexConstraints

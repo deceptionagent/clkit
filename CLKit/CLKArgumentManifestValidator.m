@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
@@ -71,8 +71,8 @@ NS_ASSUME_NONNULL_END
         case CLKConstraintTypeConditionallyRequired:
             [self _validateConditionalRequirement:constraint issueHandler:issueHandler];
             break;
-        case CLKConstraintTypeRepresentativeRequired:
-            [self _validateRepresentativeRequirement:constraint issueHandler:issueHandler];
+        case CLKConstraintTypeRepresentationRequired:
+            [self _validateRepresentationRequirement:constraint issueHandler:issueHandler];
             break;
         case CLKConstraintTypeMutuallyExclusive:
             [self _validateMutualExclusion:constraint issueHandler:issueHandler];
@@ -106,9 +106,9 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateRepresentativeRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
-    NSParameterAssert(constraint.type == CLKConstraintTypeRepresentativeRequired);
+    NSParameterAssert(constraint.type == CLKConstraintTypeRepresentationRequired);
     
     for (NSString *option in constraint.linkedOptions) {
         if ([_manifest hasOptionNamed:option]) {

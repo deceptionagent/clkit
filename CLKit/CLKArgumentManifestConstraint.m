@@ -12,8 +12,8 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
             return @"required";
         case CLKConstraintTypeConditionallyRequired:
             return @"conditionally required";
-        case CLKConstraintTypeRepresentativeRequired:
-            return @"representative required";
+        case CLKConstraintTypeRepresentationRequired:
+            return @"representation required";
         case CLKConstraintTypeMutuallyExclusive:
             return @"mutually exclusive";
         case CLKConstraintTypeStandalone:
@@ -62,10 +62,10 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithType:CLKConstraintTypeConditionallyRequired option:option associatedOption:associatedOption linkedOptions:nil];
 }
 
-+ (instancetype)constraintRequiringRepresentativeForOptions:(NSArray<NSString *> *)options
++ (instancetype)constraintRequiringRepresentationForOptions:(NSArray<NSString *> *)options
 {
     NSParameterAssert(options.count > 1);
-    return [[self alloc] _initWithType:CLKConstraintTypeRepresentativeRequired option:nil associatedOption:nil linkedOptions:options];
+    return [[self alloc] _initWithType:CLKConstraintTypeRepresentationRequired option:nil associatedOption:nil linkedOptions:options];
 }
 
 + (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options

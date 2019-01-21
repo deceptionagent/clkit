@@ -162,7 +162,7 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
 }
 
-- (void)testValidateConstraint_representativeRequired
+- (void)testValidateConstraint_representationRequired
 {
     CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
@@ -180,26 +180,26 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"flarn" ]];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"flarn" ]];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"barf", @"flarn" ]];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"barf", @"flarn" ]];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"barf", @"flarn" ]];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"syn" ]];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"syn" ]];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"syn" ]];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"barf", @"syn" ]];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"syn", @"ack" ]];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"syn", @"ack" ]];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack"];
     
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"syn", @"ack", @"what" ]];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"syn", @"ack", @"what" ]];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack --what"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack --what"];
 }
@@ -338,11 +338,11 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"acme", @"station" ]], // passing constraint, no associated error
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
@@ -353,11 +353,11 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"acme", @"station" ]], // passing constraint, no associated error
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],

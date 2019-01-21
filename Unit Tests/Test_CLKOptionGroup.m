@@ -54,7 +54,7 @@
 - (void)testConstraints_requiredGroup
 {
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]]
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"barf", @"flarn" ]]
     ];
     
     CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"barf", @"flarn" ]];
@@ -82,7 +82,7 @@
     
     group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf", @"flarn" ] required:YES mutexed:YES];
     expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"barf", @"flarn" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"barf", @"flarn" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]]
     ];
     
