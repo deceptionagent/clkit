@@ -23,8 +23,8 @@
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { conditionally required | primary: flarn | associated: barf | linked: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 
-    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf", @"quone" ]];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { representative required | primary: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
+    constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf", @"quone" ]];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { representation required | primary: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
@@ -62,10 +62,10 @@
     XCTAssertNil(constraint.linkedOptions);
 }
 
-- (void)testRepresentativeRequired
+- (void)testRepresentationRequired
 {
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
-    XCTAssertEqual(constraint.type, CLKConstraintTypeRepresentativeRequired);
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]];
+    XCTAssertEqual(constraint.type, CLKConstraintTypeRepresentationRequired);
     XCTAssertNil(constraint.option);
     XCTAssertNil(constraint.associatedOption);
     XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"flarn", @"barf" ]));
@@ -130,12 +130,12 @@
     ASSERT_NOT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredCharlie);
     ASSERT_NOT_EQUAL_CONSTRAINTS(conditionallyRequiredCharlie, conditionallyRequiredDelta);
     
-    CLKArgumentManifestConstraint *representativeRequiredAlpha = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
-    CLKArgumentManifestConstraint *representativeRequiredBravo = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]];
-    CLKArgumentManifestConstraint *representativeRequiredCharlie = [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"quone" ]];
-    ASSERT_EQUAL_CONSTRAINTS(representativeRequiredAlpha, representativeRequiredAlpha);
-    ASSERT_EQUAL_CONSTRAINTS(representativeRequiredAlpha, representativeRequiredBravo);
-    ASSERT_NOT_EQUAL_CONSTRAINTS(representativeRequiredAlpha, representativeRequiredCharlie);
+    CLKArgumentManifestConstraint *representationRequiredAlpha = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]];
+    CLKArgumentManifestConstraint *representationRequiredBravo = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]];
+    CLKArgumentManifestConstraint *representationRequiredCharlie = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"quone" ]];
+    ASSERT_EQUAL_CONSTRAINTS(representationRequiredAlpha, representationRequiredAlpha);
+    ASSERT_EQUAL_CONSTRAINTS(representationRequiredAlpha, representationRequiredBravo);
+    ASSERT_NOT_EQUAL_CONSTRAINTS(representationRequiredAlpha, representationRequiredCharlie);
     
     CLKArgumentManifestConstraint *mutexedAlpha = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
     CLKArgumentManifestConstraint *mutexedBravo = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
@@ -156,7 +156,7 @@
     NSArray *constraints = @[
         requiredAlpha,
         conditionallyRequiredAlpha,
-        representativeRequiredAlpha,
+        representationRequiredAlpha,
         mutexedAlpha,
         limitedAlpha
     ];
@@ -182,8 +182,8 @@
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]],
@@ -196,8 +196,8 @@
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"flarn", @"barf" ]],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentativeForOptions:@[ @"quone", @"xyzzy" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]],
+        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]],
