@@ -15,10 +15,10 @@
 #import "CLKOptionGroup.h"
 #import "CLKOptionGroup_Private.h"
 #import "CLKOptionRegistry.h"
+#import "CLKToken.h"
 #import "NSCharacterSet+CLKAdditions.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
-#import "NSString+CLKAdditions.h"
 
 
 @implementation CLKArgumentParser
@@ -210,29 +210,29 @@
     }
     
     NSString *nextToken = _argumentVector.firstObject;
-    switch (nextToken.clk_argumentTokenForm) {
-        case CLKArgumentTokenFormOptionName:
+    switch (CLKTokenFormForToken(nextToken)) {
+        case CLKTokenFormOptionName:
             return CLKAPStateParseOptionName;
         
-        case CLKArgumentTokenFormOptionFlag:
+        case CLKTokenFormOptionFlag:
             return CLKAPStateParseOptionFlag;
         
-        case CLKArgumentTokenFormOptionFlagSet:
+        case CLKTokenFormOptionFlagSet:
             return CLKAPStateParseOptionFlagSet;
         
-        case CLKArgumentTokenFormParameterOptionNameAssignment:
+        case CLKTokenFormParameterOptionNameAssignment:
             return CLKAPStateParseParameterOptionNameAssignment;
         
-        case CLKArgumentTokenFormParameterOptionFlagAssignment:
+        case CLKTokenFormParameterOptionFlagAssignment:
             return CLKAPStateParseParameterOptionFlagAssignment;
         
-        case CLKArgumentTokenFormOptionParsingSentinel:
+        case CLKTokenFormOptionParsingSentinel:
             return CLKAPStateParseRemainingArguments;
         
-        case CLKArgumentTokenFormArgument:
+        case CLKTokenFormArgument:
             return CLKAPStateParseArgument;
         
-        case CLKArgumentTokenFormMalformedOption:
+        case CLKTokenFormMalformedOption:
             [_argumentVector removeObjectAtIndex:0];
             [self _accumulateError:[NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextToken]];
             return CLKAPStateReadNextArgumentToken;
@@ -421,7 +421,7 @@
         self.currentParameterOption = option;
         
         // if the next argument after this option is the parsing sentinel, transition to the sentinel parsing state
-        if (_argumentVector.firstObject.clk_argumentTokenForm == CLKArgumentTokenFormOptionParsingSentinel) {
+        if (CLKTokenFormForToken(_argumentVector.firstObject) == CLKTokenFormOptionParsingSentinel) {
             return CLKAPStateParseRemainingArguments;
         }
         
@@ -448,9 +448,12 @@
                                        || _state == CLKAPStateParseRemainingArguments);
         
         // reject: the next argument looks like an option, but we expect an argument
-        if (rejectOptionLikeToken && argument.clk_resemblesOptionTokenForm) {
-            CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument]));
-            return NO;
+        if (rejectOptionLikeToken) {
+            CLKTokenForm form = CLKTokenFormForToken(argument);
+            if (CLKTokenFormIsKindOfOption(form)) {
+                CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument]));
+                return NO;
+            }
         }
         
         CLKArgumentTransformer *transformer = option.transformer;
