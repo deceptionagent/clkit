@@ -928,6 +928,9 @@ NS_ASSUME_NONNULL_END
     CLKOptionGroup *subgroup = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ]];
     group = [CLKOptionGroup mutexedGroupWithSubgroups:@[ subgroup ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
+    
+    group = [CLKOptionGroup groupForOptionsNamed:@[ @"ack", @"barf" ]];
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
 - (void)testInvalidDependencies
