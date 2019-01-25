@@ -501,6 +501,23 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:@[ @"--flarn=what", @"--barf:what", @"-q=what", @"-x:what" ] options:options spec:spec];
 }
 
+- (void)testParameterOptionAssignmentForm_unregisteredOptions
+{
+    NSArray *options = @[
+        [CLKOption optionWithName:@"what" flag:@"w"],
+    ];
+    
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--flarn'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--barf'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-q'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-x'"]
+    ];
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:@[ @"--flarn=what", @"--barf:what", @"-q=what", @"-x:what" ] options:options spec:spec];
+}
+
 - (void)testPositionalArguments_withRegisteredOptions
 {
     NSArray *argv = @[ @"--foo", @"bar", @"/flarn.txt", @"/bort.txt" ];
