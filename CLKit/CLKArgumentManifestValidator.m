@@ -102,9 +102,9 @@ NS_ASSUME_NONNULL_END
     NSParameterAssert(constraint.type == CLKConstraintTypeConditionallyRequired);
     
     NSString *option = constraint.options.firstObject;
-    NSString *associatedOption = constraint.auxOptions.firstObject;
-    if ([_manifest hasOptionNamed:associatedOption] && ![_manifest hasOptionNamed:option]) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, associatedOption];
+    NSString *causalOption = constraint.auxOptions.firstObject;
+    if ([_manifest hasOptionNamed:causalOption] && ![_manifest hasOptionNamed:option]) {
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, causalOption];
         issueHandler(error);
     }
 }

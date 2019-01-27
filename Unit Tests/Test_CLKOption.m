@@ -357,15 +357,15 @@ NS_ASSUME_NONNULL_END
     
     CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"barf" ]];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
     
     quone = [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"barf", @"flarn" ]];
     expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);
@@ -401,8 +401,8 @@ NS_ASSUME_NONNULL_END
     quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:YES dependencies:@[ @"barf", @"flarn"] transformer:nil];
     expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"quone"]
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"quone"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"quone"]
     ];
     
     XCTAssertEqualObjects(quone.constraints, expectedConstraints);

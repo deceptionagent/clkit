@@ -53,10 +53,10 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithType:CLKConstraintTypeRequired options:[NSOrderedSet orderedSetWithObject:option] auxOptions:nil];
 }
 
-+ (instancetype)constraintForConditionallyRequiredOption:(NSString *)option associatedOption:(NSString *)associatedOption
++ (instancetype)constraintForConditionallyRequiredOption:(NSString *)option causalOption:(NSString *)causalOption
 {
     NSOrderedSet *options = [NSOrderedSet orderedSetWithObject:option];
-    NSOrderedSet *auxOptions = [NSOrderedSet orderedSetWithObject:associatedOption];
+    NSOrderedSet *auxOptions = [NSOrderedSet orderedSetWithObject:causalOption];
     return [[self alloc] _initWithType:CLKConstraintTypeConditionallyRequired options:options auxOptions:auxOptions];
 }
 

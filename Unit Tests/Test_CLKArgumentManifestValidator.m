@@ -105,21 +105,21 @@ NS_ASSUME_NONNULL_END
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"flarn"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"quone"];
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"quone"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
-    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"xyzzy" associatedOption:@"quone"];
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"xyzzy" causalOption:@"quone"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"--xyzzy is required when using --quone"];
     
-    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"xyzzy"];
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" causalOption:@"xyzzy"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
     
     // neither present in the manifest
-    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"ack" associatedOption:@"syn"];
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"ack" causalOption:@"syn"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
 }
@@ -336,7 +336,7 @@ NS_ASSUME_NONNULL_END
     NSArray<CLKArgumentManifestConstraint *> *constraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" causalOption:@"ack"],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
@@ -344,14 +344,14 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" causalOption:@"ack_alt"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"],
         
         // redundant constraints should be deduplicated
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" associatedOption:@"ack"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" causalOption:@"ack"],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
@@ -359,7 +359,7 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" associatedOption:@"ack_alt"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" causalOption:@"ack_alt"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
     ];

@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 
 + (instancetype)constraintForRequiredOption:(NSString *)option;
-+ (instancetype)constraintForConditionallyRequiredOption:(NSString *)option associatedOption:(NSString *)associatedOption;
++ (instancetype)constraintForConditionallyRequiredOption:(NSString *)option causalOption:(NSString *)causalOption;
 + (instancetype)constraintRequiringRepresentationForOptions:(NSArray<NSString *> *)options;
 + (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options;
 + (instancetype)constraintForStandaloneOption:(NSString *)option allowingOptions:(nullable NSArray<NSString *> *)whitelistedOptions;
