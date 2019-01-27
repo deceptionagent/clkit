@@ -180,10 +180,7 @@ NS_ASSUME_NONNULL_END
     
     /* dependency guards */
     
-    for (NSString *dependency in dependencies) {
-        CLKHardParameterAssert(![dependency isEqualToString:name], @"options cannot list themselves as dependencies");
-    }
-    
+    CLKHardParameterAssert(![dependencies containsObject:name], @"options cannot list themselves as dependencies");
     NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
     CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");
 }
