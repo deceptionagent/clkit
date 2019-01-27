@@ -16,103 +16,100 @@
 - (void)testDescription
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
-    NSString *expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { required | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    NSString *expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { required | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { conditionally required | primary: flarn | associated: barf | linked: [ (null) ] }", constraint];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { conditionally required | options: [ flarn ] | auxOptions: [ barf ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 
     constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf", @"quone" ]];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { representation required | primary: (null) | associated: (null) | linked: [ flarn, barf, quone ] }", constraint];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { representation required | options: [ flarn, barf, quone ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | primary: (null) | associated: (null) | linked: [ flarn, barf ] }", constraint];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { mutually exclusive | options: [ flarn, barf ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { standalone | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { standalone | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"quone", ]];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { standalone | primary: flarn | associated: (null) | linked: [ barf, quone ] }", constraint];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { standalone | options: [ flarn ] | auxOptions: [ barf, quone ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences limited | primary: flarn | associated: (null) | linked: [ (null) ] }", constraint];
+    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences limited | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 }
 
 - (void)testRequired
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
+    XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeRequired);
-    XCTAssertEqualObjects(constraint.option, @"flarn");
-    XCTAssertNil(constraint.associatedOption);
-    XCTAssertNil(constraint.linkedOptions);
+    XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
+    XCTAssertNil(constraint.auxOptions);
 }
 
 - (void)testConditionallyRequired
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
+    XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeConditionallyRequired);
-    XCTAssertEqualObjects(constraint.option, @"flarn");
-    XCTAssertEqualObjects(constraint.associatedOption, @"barf");
-    XCTAssertNil(constraint.linkedOptions);
+    XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
+    XCTAssertEqualObjects(constraint.auxOptions, [NSOrderedSet orderedSetWithObject:@"barf"]);
 }
 
 - (void)testRepresentationRequired
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]];
+    XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeRepresentationRequired);
-    XCTAssertNil(constraint.option);
-    XCTAssertNil(constraint.associatedOption);
-    XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"flarn", @"barf" ]));
+    XCTAssertEqualObjects(constraint.options, ([NSOrderedSet orderedSetWithObjects:@"flarn", @"barf", nil]));
+    XCTAssertNil(constraint.auxOptions);
 }
 
 - (void)testMutuallyExclusive
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]];
+    XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeMutuallyExclusive);
-    XCTAssertNil(constraint.option);
-    XCTAssertNil(constraint.associatedOption);
-    XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"flarn", @"barf" ]));
+    XCTAssertEqualObjects(constraint.options, ([NSOrderedSet orderedSetWithObjects:@"flarn", @"barf", nil]));
+    XCTAssertNil(constraint.auxOptions);
 }
 
 - (void)testStandalone
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
+    XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeStandalone);
-    XCTAssertEqualObjects(constraint.option, @"flarn");
-    XCTAssertNil(constraint.associatedOption);
-    XCTAssertNil(constraint.linkedOptions);
-
+    XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
+    XCTAssertNil(constraint.auxOptions);
+    
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"quone" ]];
     XCTAssertEqual(constraint.type, CLKConstraintTypeStandalone);
-    XCTAssertEqualObjects(constraint.option, @"flarn");
-    XCTAssertNil(constraint.associatedOption);
-    XCTAssertEqualObjects(constraint.linkedOptions, (@[ @"barf", @"quone" ]));
+    XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
+    XCTAssertEqualObjects(constraint.auxOptions, ([NSOrderedSet orderedSetWithObjects:@"barf", @"quone", nil]));
 }
 
 - (void)testOccurrencesLimited
 {
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
+    XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeOccurrencesLimited);
-    XCTAssertEqualObjects(constraint.option, @"flarn");
-    XCTAssertNil(constraint.associatedOption);
-    XCTAssertNil(constraint.linkedOptions);
+    XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
+    XCTAssertNil(constraint.auxOptions);
 }
 
 - (void)testEquality
 {
     #define ASSERT_EQUAL_CONSTRAINTS(c1, c2) \
-        XCTAssertEqualObjects(c1, c2); \
-        XCTAssertTrue([c1 isEqualToConstraint:c2], @"%@ :: %@", c1, c2);
+        XCTAssertTrue([c1 isEqual:c2], @"%@ :: %@", c1, c2);
     
     #define ASSERT_NOT_EQUAL_CONSTRAINTS(c1, c2) \
-        XCTAssertNotEqualObjects(c1, c2); \
-        XCTAssertFalse([c1 isEqualToConstraint:c2], @"%@ :: %@", c1, c2);
+        XCTAssertFalse([c1 isEqual:c2], @"%@ :: %@", c1, c2);
     
     CLKArgumentManifestConstraint *requiredAlpha = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredBravo = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
