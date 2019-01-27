@@ -29,9 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option;
 
 @property (readonly) CLKConstraintType type;
-@property (nullable, readonly) NSString *option;
-@property (nullable, readonly) NSString *associatedOption;
-@property (nullable, readonly) NSArray<NSString *> *linkedOptions;
+@property (readonly) NSOrderedSet<NSString *> *options;
+@property (nullable, readonly) NSOrderedSet<NSString *> *auxOptions;
 
 - (BOOL)isEqualToConstraint:(CLKArgumentManifestConstraint *)constraint;
 
