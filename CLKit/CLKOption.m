@@ -289,7 +289,7 @@ NS_ASSUME_NONNULL_END
     }
     
     for (NSString *dependency in _dependencies) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:dependency associatedOption:self.name];
+        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:dependency causalOption:self.name];
         [constraints addObject:constraint];
     }
     

@@ -19,7 +19,7 @@
     NSString *expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { required | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
-    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
+    constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"];
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { conditionally required | options: [ flarn ] | auxOptions: [ barf ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
 
@@ -55,7 +55,7 @@
 
 - (void)testConditionallyRequired
 {
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"];
     XCTAssertNotNil(constraint);
     XCTAssertEqual(constraint.type, CLKConstraintTypeConditionallyRequired);
     XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
@@ -118,10 +118,10 @@
     ASSERT_EQUAL_CONSTRAINTS(requiredAlpha, requiredBravo);
     ASSERT_NOT_EQUAL_CONSTRAINTS(requiredAlpha, requiredCharlie);
     
-    CLKArgumentManifestConstraint *conditionallyRequiredAlpha = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
-    CLKArgumentManifestConstraint *conditionallyRequiredBravo = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"];
-    CLKArgumentManifestConstraint *conditionallyRequiredCharlie = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"barf"];
-    CLKArgumentManifestConstraint *conditionallyRequiredDelta = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" associatedOption:@"xyzzy"];
+    CLKArgumentManifestConstraint *conditionallyRequiredAlpha = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"];
+    CLKArgumentManifestConstraint *conditionallyRequiredBravo = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"];
+    CLKArgumentManifestConstraint *conditionallyRequiredCharlie = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" causalOption:@"barf"];
+    CLKArgumentManifestConstraint *conditionallyRequiredDelta = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" causalOption:@"xyzzy"];
     ASSERT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredAlpha);
     ASSERT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredBravo);
     ASSERT_NOT_EQUAL_CONSTRAINTS(conditionallyRequiredAlpha, conditionallyRequiredCharlie);
@@ -177,8 +177,8 @@
     NSArray *constraints = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]],
@@ -191,8 +191,8 @@
     NSArray *constraintClones = @[
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" associatedOption:@"barf"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" associatedOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"flarn", @"barf" ]],
         [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"flarn", @"barf" ]],
