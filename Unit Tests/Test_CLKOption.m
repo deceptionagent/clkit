@@ -8,7 +8,6 @@
 #import "CLKArgumentTransformer.h"
 #import "CLKOption.h"
 #import "CLKOption_Private.h"
-#import "CombinationEngine.h"
 #import "XCTestCase+CLKAdditions.h"
 
 
@@ -16,9 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Test_CLKOption : XCTestCase
 
-@property (readonly) CETemplate *optionTemplate;
-
-- (CLKOption *)optionFromCombination:(CECombination *)combination;
+- (NSArray<CLKOption *> *)uniqueOptions;
 
 - (void)verifyParameterOption:(CLKOption *)option
                          name:(NSString *)name
@@ -48,45 +45,42 @@ NS_ASSUME_NONNULL_END
 
 @implementation Test_CLKOption
 
-- (CETemplate *)optionTemplate
+- (NSArray<CLKOption *> *)uniqueOptions
 {
-    NSArray *series = @[
-        [CETemplateSeries seriesWithIdentifier:@"name" values:@[ @"flarn", @"barf" ] variants:@[ @"switch", @"parameter", @"standalone_switch", @"standalone_parameter" ]],
-        [CETemplateSeries elidableSeriesWithIdentifier:@"flag" values:@[ @"a", @"b" ] variants:@[ @"switch", @"parameter", @"standalone_switch", @"standalone_parameter" ]],
-        [CETemplateSeries seriesWithIdentifier:@"required" values:@[ @YES, @NO ] variant:@"parameter"],
-        [CETemplateSeries seriesWithIdentifier:@"recurrent" values:@[ @YES, @NO ] variants:@[ @"parameter", @"standalone_parameter" ]],
-        [CETemplateSeries elidableSeriesWithIdentifier:@"dependencies" values:@[ @[ @"confound" ], @[ @"delivery" ] ] variants:@[ @"switch", @"parameter" ]]
+    NSMutableArray<CLKOption *> *uniqueOptions = [NSMutableArray array];
+    
+    NSArray *names = @[ @"flarn", @"barf"];
+    NSArray *flags = @[
+        [NSNull null],
+        @"x",
+        @"y"
     ];
     
-    return [CETemplate templateWithSeries:series];
-}
-
-- (CLKOption *)optionFromCombination:(CECombination *)combination
-{
-    CLKOption *option = nil;
-    NSString *name = combination[@"name"];
-    NSString *flag = combination[@"flag"];
+    NSArray *dependencyLists = @[
+        [NSNull null],
+        @[ @"confound" ],
+        @[ @"delivery" ]
+    ];
     
-    if ([combination.variant isEqualToString:@"switch"]) {
-        NSArray<NSString *> *dependencies = combination[@"dependencies"];
-        option = [CLKOption optionWithName:name flag:flag dependencies:dependencies];
-    } else if ([combination.variant isEqualToString:@"parameter"]) {
-        BOOL required = [combination[@"required"] boolValue];
-        BOOL recurrent = [combination[@"recurrent"] boolValue];
-        NSArray<NSString *> *dependencies = combination[@"dependencies"];
-        option = [CLKOption parameterOptionWithName:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:nil];
-    } else if ([combination.variant isEqualToString:@"standalone_switch"]) {
-        option = [CLKOption standaloneOptionWithName:name flag:flag];
-    } else if ([combination.variant isEqualToString:@"standalone_parameter"]) {
-        BOOL recurrent = [combination[@"recurrent"] boolValue];
-        option = [CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:recurrent transformer:nil];
-    } else {
-        XCTFail(@"unknown combination variant: '%@'", combination.variant);
+    for (NSString *name in names) {
+        for (id flag_ in flags) {
+            NSString *flag = (flag_ == [NSNull null] ? nil : flag_);
+            [uniqueOptions addObject:[CLKOption standaloneOptionWithName:name flag:flag]];
+            [uniqueOptions addObject:[CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:NO transformer:nil]];
+            [uniqueOptions addObject:[CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:YES transformer:nil]];
+            
+            for (id dependencies_ in dependencyLists) {
+                NSArray<NSString *> *dependencies = (dependencies_ == [NSNull null] ? nil : dependencies_);
+                [uniqueOptions addObject:[CLKOption optionWithName:name flag:flag dependencies:dependencies]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:NO  recurrent:NO  dependencies:dependencies transformer:nil]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:YES  recurrent:NO  dependencies:dependencies  transformer:nil]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:NO  recurrent:YES  dependencies:dependencies transformer:nil]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:YES  recurrent:YES  dependencies:dependencies transformer:nil]];
+            };
+        };
     }
     
-    XCTAssertNotNil(option);
-    
-    return option;
+    return uniqueOptions;
 }
 
 - (void)verifyParameterOption:(CLKOption *)option
@@ -237,15 +231,12 @@ NS_ASSUME_NONNULL_END
 
 - (void)testEquality
 {
-    __block NSMutableArray *options = [NSMutableArray array];
-    
-    CEGenerator *generator = [CEGenerator generatorWithTemplate:self.optionTemplate];
-    [generator enumerateCombinations:^(CECombination *combination) {
-        CLKOption *option = [self optionFromCombination:combination];
-        CLKOption *clone = [self optionFromCombination:combination];
+    NSArray<CLKOption *> *options = [self uniqueOptions];
+    NSArray<CLKOption *> *optionClones = [self uniqueOptions];
+    [options enumerateObjectsUsingBlock:^(CLKOption *option, NSUInteger idx, __unused BOOL *outStop) {
+        CLKOption *clone = optionClones[idx];
         XCTAssertEqualObjects(option, clone);
         XCTAssertEqual(option.hash, clone.hash);
-        [options addObject:option];
     }];
     
     for (NSUInteger i = 0 ; i < options.count ; i++) {
@@ -272,16 +263,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)testCollectionSupport_set
 {
-    __block NSMutableArray<CLKOption *> *options = [NSMutableArray array];
-    __block NSMutableArray<CLKOption *> *optionClones = [NSMutableArray array]; // verify lookup works for identical instances
-    
-    CEGenerator *generator = [CEGenerator generatorWithTemplate:self.optionTemplate];
-    [generator enumerateCombinations:^(CECombination *combination) {
-        CLKOption *option = [self optionFromCombination:combination];
-        CLKOption *clone = [self optionFromCombination:combination];
-        [options addObject:option];
-        [optionClones addObject:clone];
-    }];
+    NSArray<CLKOption *> *options = [self uniqueOptions];
+    NSArray<CLKOption *> *optionClones = [self uniqueOptions];
     
     // verify deduplication
     NSSet *expectedOptionSet = [NSSet setWithArray:options];
@@ -299,16 +282,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)testCollectionSupport_dictionaryKey
 {
-    __block NSMutableArray<CLKOption *> *options = [NSMutableArray array];
-    __block NSMutableArray<CLKOption *> *optionClones = [NSMutableArray array]; // verify lookup works for identical instances
-    
-    CEGenerator *generator = [CEGenerator generatorWithTemplate:self.optionTemplate];
-    [generator enumerateCombinations:^(CECombination *combination) {
-        CLKOption *option = [self optionFromCombination:combination];
-        CLKOption *clone = [self optionFromCombination:combination];
-        [options addObject:option];
-        [optionClones addObject:clone];
-    }];
+    NSArray<CLKOption *> *options = [self uniqueOptions];
+    NSArray<CLKOption *> *optionClones = [self uniqueOptions];
     
     NSMutableDictionary<CLKOption *, NSNumber *> *dict = [NSMutableDictionary dictionary];
     NSUInteger assignedRecord = 1;
