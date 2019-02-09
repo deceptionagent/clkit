@@ -18,14 +18,6 @@
 		A6176E87210723F000B2908B /* BlasphemeVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E85210723F000B2908B /* BlasphemeVerb.m */; };
 		A6176E88210723F000B2908B /* QuarantineVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E86210723F000B2908B /* QuarantineVerb.m */; };
 		A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */; };
-		A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */; };
-		A634BCDC204C00A800E2BA10 /* Test_CETemplateSeries.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */; };
-		A634BCDF204C047E00E2BA10 /* CETemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCDE204C047E00E2BA10 /* CETemplate.m */; };
-		A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE0204C074700E2BA10 /* Test_CETemplate.m */; };
-		A634BCE4204C0F9600E2BA10 /* CEVariant.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE3204C0F9600E2BA10 /* CEVariant.m */; };
-		A634BCE6204C10E400E2BA10 /* Test_CEVariant.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */; };
-		A634BCE9204C13C500E2BA10 /* CECombination.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCE8204C13C500E2BA10 /* CECombination.m */; };
-		A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */ = {isa = PBXBuildFile; fileRef = A634BCEB204C174F00E2BA10 /* Test_CECombination.m */; };
 		A6429D322122AC3B00B32FE0 /* NSString+CLKAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A6429D302122AC3B00B32FE0 /* NSString+CLKAdditions.h */; };
 		A6429D332122AC3B00B32FE0 /* NSString+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6429D312122AC3B00B32FE0 /* NSString+CLKAdditions.m */; };
 		A64615EC20FDF9EA001F885C /* CLKCommandResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615EA20FDF9EA001F885C /* CLKCommandResult.h */; };
@@ -44,20 +36,10 @@
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 		A696CC0F21033D6D00A9F7E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC0E21033D6D00A9F7E7 /* main.m */; };
 		A696CC1221033DD000A9F7E7 /* ConfoundVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */; };
-		A6A91ABA20577F78001B81CF /* CEGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AB920577F78001B81CF /* CEGenerator.m */; };
-		A6A91ABC2057CA2A001B81CF /* Test_CEGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */; };
-		A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */; };
-		A6A91AC1205A5123001B81CF /* Test_CEVariantBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */; };
-		A6A91AC5205B1E15001B81CF /* CEGenerator+Building.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC4205B1E15001B81CF /* CEGenerator+Building.m */; };
-		A6A91AC8205CE3B9001B81CF /* Test_CEGenerator+Building.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A91AC7205CE3B9001B81CF /* Test_CEGenerator+Building.m */; };
 		A6B0D30C200E006000BF6300 /* CLKError_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B0D30B200E006000BF6300 /* CLKError_Private.h */; };
 		A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */; };
 		A6BB1B3E2032F1A900927BD9 /* CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3C2032F1A900927BD9 /* CLKOptionRegistry.m */; };
 		A6BB1B402033F74A00927BD9 /* Test_CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3F2033F74A00927BD9 /* Test_CLKOptionRegistry.m */; };
-		A6C5F9012054EA410004E039 /* CEVariantSourceView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C5F9002054EA410004E039 /* CEVariantSourceView.m */; };
-		A6C5F9042054EBFB0004E039 /* CEVariantView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C5F9032054EBFB0004E039 /* CEVariantView.m */; };
-		A6C5F90620550DD40004E039 /* Test_CEVariantSourceView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C5F90520550DD40004E039 /* Test_CEVariantSourceView.m */; };
-		A6C5F9082055186D0004E039 /* Test_CEVariantView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C5F9072055186D0004E039 /* Test_CEVariantView.m */; };
 		A6CFEAA0200CB1350009B8D2 /* CLKArgumentManifestConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = A6CFEA9E200CB1350009B8D2 /* CLKArgumentManifestConstraint.h */; };
 		A6CFEAA1200CB1350009B8D2 /* CLKArgumentManifestConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEA9F200CB1350009B8D2 /* CLKArgumentManifestConstraint.m */; };
 		A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEAA2200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m */; };
@@ -75,8 +57,6 @@
 		A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */; };
 		A6E478FC1F1347530081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E478FF1F13475B0081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
-		A6E9BC23203A173E001B7095 /* CEVariantSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC21203A173E001B7095 /* CEVariantSource.m */; };
-		A6E9BC27203A17AE001B7095 /* Test_CEVariantSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */; };
 		A6FAEEB0210549C4001F408C /* CLKVerbFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = A6FAEEAE210549C4001F408C /* CLKVerbFamily.h */; };
 		A6FAEEB1210549C4001F408C /* CLKVerbFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = A6FAEEAF210549C4001F408C /* CLKVerbFamily.m */; };
 		A6FAEEB321055AD4001F408C /* Test_CLKVerbFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = A6FAEEB221055AD3001F408C /* Test_CLKVerbFamily.m */; };
@@ -131,19 +111,6 @@
 		A6176E86210723F000B2908B /* QuarantineVerb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QuarantineVerb.m; path = clklab/QuarantineVerb.m; sourceTree = "<group>"; };
 		A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstraintValidationSpec.h; sourceTree = "<group>"; };
 		A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConstraintValidationSpec.m; sourceTree = "<group>"; };
-		A634BCD8204BF96800E2BA10 /* CETemplateSeries.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETemplateSeries.h; sourceTree = "<group>"; };
-		A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CETemplateSeries.m; sourceTree = "<group>"; };
-		A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CETemplateSeries.m; sourceTree = "<group>"; };
-		A634BCDD204C047E00E2BA10 /* CETemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CETemplate.h; sourceTree = "<group>"; };
-		A634BCDE204C047E00E2BA10 /* CETemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CETemplate.m; sourceTree = "<group>"; };
-		A634BCE0204C074700E2BA10 /* Test_CETemplate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CETemplate.m; sourceTree = "<group>"; };
-		A634BCE2204C0F9600E2BA10 /* CEVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariant.h; sourceTree = "<group>"; };
-		A634BCE3204C0F9600E2BA10 /* CEVariant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariant.m; sourceTree = "<group>"; };
-		A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariant.m; sourceTree = "<group>"; };
-		A634BCE7204C13C500E2BA10 /* CECombination.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CECombination.h; sourceTree = "<group>"; };
-		A634BCE8204C13C500E2BA10 /* CECombination.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CECombination.m; sourceTree = "<group>"; };
-		A634BCEA204C16D500E2BA10 /* CECombination_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CECombination_Private.h; sourceTree = "<group>"; };
-		A634BCEB204C174F00E2BA10 /* Test_CECombination.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CECombination.m; sourceTree = "<group>"; };
 		A6429D302122AC3B00B32FE0 /* NSString+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+CLKAdditions.h"; sourceTree = "<group>"; };
 		A6429D312122AC3B00B32FE0 /* NSString+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+CLKAdditions.m"; sourceTree = "<group>"; };
 		A64615EA20FDF9EA001F885C /* CLKCommandResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKCommandResult.h; sourceTree = "<group>"; };
@@ -184,28 +151,11 @@
 		A696CC1021033DD000A9F7E7 /* ConfoundVerb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ConfoundVerb.h; path = clklab/ConfoundVerb.h; sourceTree = "<group>"; };
 		A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ConfoundVerb.m; path = clklab/ConfoundVerb.m; sourceTree = "<group>"; };
 		A696CC1321033E5B00A9F7E7 /* CLKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKit.h; sourceTree = "<group>"; };
-		A6A91AB820577F78001B81CF /* CEGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEGenerator.h; sourceTree = "<group>"; };
-		A6A91AB920577F78001B81CF /* CEGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEGenerator.m; sourceTree = "<group>"; };
-		A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEGenerator.m; sourceTree = "<group>"; };
-		A6A91ABD205A440E001B81CF /* CEVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariantBuilder.h; sourceTree = "<group>"; };
-		A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariantBuilder.m; sourceTree = "<group>"; };
-		A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantBuilder.m; sourceTree = "<group>"; };
-		A6A91AC2205B1D9F001B81CF /* CEGenerator_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEGenerator_Private.h; sourceTree = "<group>"; };
-		A6A91AC3205B1E15001B81CF /* CEGenerator+Building.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CEGenerator+Building.h"; sourceTree = "<group>"; };
-		A6A91AC4205B1E15001B81CF /* CEGenerator+Building.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CEGenerator+Building.m"; sourceTree = "<group>"; };
-		A6A91AC6205B1F9E001B81CF /* CombinationEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CombinationEngine.h; sourceTree = "<group>"; };
-		A6A91AC7205CE3B9001B81CF /* Test_CEGenerator+Building.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Test_CEGenerator+Building.m"; sourceTree = "<group>"; };
 		A6B0D30B200E006000BF6300 /* CLKError_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKError_Private.h; sourceTree = "<group>"; };
 		A6B47E8B2011E89000E49F5E /* CLKOptionGroup_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionGroup_Private.h; sourceTree = "<group>"; };
 		A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionRegistry.h; sourceTree = "<group>"; };
 		A6BB1B3C2032F1A900927BD9 /* CLKOptionRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKOptionRegistry.m; sourceTree = "<group>"; };
 		A6BB1B3F2033F74A00927BD9 /* Test_CLKOptionRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptionRegistry.m; sourceTree = "<group>"; };
-		A6C5F8FF2054EA410004E039 /* CEVariantSourceView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariantSourceView.h; sourceTree = "<group>"; };
-		A6C5F9002054EA410004E039 /* CEVariantSourceView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariantSourceView.m; sourceTree = "<group>"; };
-		A6C5F9022054EBFB0004E039 /* CEVariantView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEVariantView.h; sourceTree = "<group>"; };
-		A6C5F9032054EBFB0004E039 /* CEVariantView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEVariantView.m; sourceTree = "<group>"; };
-		A6C5F90520550DD40004E039 /* Test_CEVariantSourceView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantSourceView.m; sourceTree = "<group>"; };
-		A6C5F9072055186D0004E039 /* Test_CEVariantView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantView.m; sourceTree = "<group>"; };
 		A6CFEA9E200CB1350009B8D2 /* CLKArgumentManifestConstraint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifestConstraint.h; sourceTree = "<group>"; };
 		A6CFEA9F200CB1350009B8D2 /* CLKArgumentManifestConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLKArgumentManifestConstraint.m; sourceTree = "<group>"; };
 		A6CFEAA2200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKArgumentManifestConstraint.m; sourceTree = "<group>"; };
@@ -217,9 +167,6 @@
 		A6E34F69202C59E900CE22E1 /* ArgumentParsingResultSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgumentParsingResultSpec.h; sourceTree = "<group>"; };
 		A6E34F6A202C59E900CE22E1 /* ArgumentParsingResultSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgumentParsingResultSpec.m; sourceTree = "<group>"; };
 		A6E478CD1F133A780081EB82 /* libCLKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCLKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6E9BC1F203A173E001B7095 /* CEVariantSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEVariantSource.h; sourceTree = "<group>"; };
-		A6E9BC21203A173E001B7095 /* CEVariantSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEVariantSource.m; sourceTree = "<group>"; };
-		A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_CEVariantSource.m; sourceTree = "<group>"; };
 		A6F970B11F3320A000E0BD73 /* CLKOption_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOption_Private.h; sourceTree = "<group>"; };
 		A6F970B21F3321C300E0BD73 /* CLKArgumentManifest_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifest_Private.h; sourceTree = "<group>"; };
 		A6FAEEAE210549C4001F408C /* CLKVerbFamily.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKVerbFamily.h; sourceTree = "<group>"; };
@@ -266,54 +213,6 @@
 				A6176E86210723F000B2908B /* QuarantineVerb.m */,
 			);
 			name = thrud;
-			sourceTree = "<group>";
-		};
-		A634BCD1204BDC9900E2BA10 /* Combination Engine */ = {
-			isa = PBXGroup;
-			children = (
-				A634BCD5204BDF6B00E2BA10 /* Tests */,
-				A6A91AC6205B1F9E001B81CF /* CombinationEngine.h */,
-				A634BCE7204C13C500E2BA10 /* CECombination.h */,
-				A634BCEA204C16D500E2BA10 /* CECombination_Private.h */,
-				A634BCE8204C13C500E2BA10 /* CECombination.m */,
-				A6A91AB820577F78001B81CF /* CEGenerator.h */,
-				A6A91AC2205B1D9F001B81CF /* CEGenerator_Private.h */,
-				A6A91AB920577F78001B81CF /* CEGenerator.m */,
-				A6A91AC3205B1E15001B81CF /* CEGenerator+Building.h */,
-				A6A91AC4205B1E15001B81CF /* CEGenerator+Building.m */,
-				A634BCDD204C047E00E2BA10 /* CETemplate.h */,
-				A634BCDE204C047E00E2BA10 /* CETemplate.m */,
-				A634BCD8204BF96800E2BA10 /* CETemplateSeries.h */,
-				A634BCD9204BF96800E2BA10 /* CETemplateSeries.m */,
-				A634BCE2204C0F9600E2BA10 /* CEVariant.h */,
-				A634BCE3204C0F9600E2BA10 /* CEVariant.m */,
-				A6A91ABD205A440E001B81CF /* CEVariantBuilder.h */,
-				A6A91ABE205A440E001B81CF /* CEVariantBuilder.m */,
-				A6E9BC1F203A173E001B7095 /* CEVariantSource.h */,
-				A6E9BC21203A173E001B7095 /* CEVariantSource.m */,
-				A6C5F8FF2054EA410004E039 /* CEVariantSourceView.h */,
-				A6C5F9002054EA410004E039 /* CEVariantSourceView.m */,
-				A6C5F9022054EBFB0004E039 /* CEVariantView.h */,
-				A6C5F9032054EBFB0004E039 /* CEVariantView.m */,
-			);
-			name = "Combination Engine";
-			sourceTree = "<group>";
-		};
-		A634BCD5204BDF6B00E2BA10 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				A634BCEB204C174F00E2BA10 /* Test_CECombination.m */,
-				A6A91ABB2057CA2A001B81CF /* Test_CEGenerator.m */,
-				A6A91AC7205CE3B9001B81CF /* Test_CEGenerator+Building.m */,
-				A634BCE0204C074700E2BA10 /* Test_CETemplate.m */,
-				A634BCDB204C00A800E2BA10 /* Test_CETemplateSeries.m */,
-				A634BCE5204C10E400E2BA10 /* Test_CEVariant.m */,
-				A6A91AC0205A5123001B81CF /* Test_CEVariantBuilder.m */,
-				A6E9BC25203A17AE001B7095 /* Test_CEVariantSource.m */,
-				A6C5F90520550DD40004E039 /* Test_CEVariantSourceView.m */,
-				A6C5F9072055186D0004E039 /* Test_CEVariantView.m */,
-			);
-			name = Tests;
 			sourceTree = "<group>";
 		};
 		A6527C471F0A4CFA00BF6FAE /* Arguments */ = {
@@ -459,7 +358,6 @@
 		A6E9BC1D203A165B001B7095 /* Testing Support */ = {
 			isa = PBXGroup;
 			children = (
-				A634BCD1204BDC9900E2BA10 /* Combination Engine */,
 				A6E34F69202C59E900CE22E1 /* ArgumentParsingResultSpec.h */,
 				A6E34F6A202C59E900CE22E1 /* ArgumentParsingResultSpec.m */,
 				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
@@ -618,43 +516,23 @@
 			files = (
 				A6BB1B402033F74A00927BD9 /* Test_CLKOptionRegistry.m in Sources */,
 				A6E34F6B202C59E900CE22E1 /* ArgumentParsingResultSpec.m in Sources */,
-				A634BCE6204C10E400E2BA10 /* Test_CEVariant.m in Sources */,
 				A66A9DF31F02406F00456347 /* Test_CLKOption.m in Sources */,
-				A634BCDA204BF96800E2BA10 /* CETemplateSeries.m in Sources */,
 				A64615EF20FEC95E001F885C /* Test_CLKCommandResult.m in Sources */,
 				A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */,
 				A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */,
 				A64615F620FF3DEC001F885C /* Test_CLKVerbDepot.m in Sources */,
 				A6FAEEB321055AD4001F408C /* Test_CLKVerbFamily.m in Sources */,
-				A6C5F9082055186D0004E039 /* Test_CEVariantView.m in Sources */,
-				A6E9BC27203A17AE001B7095 /* Test_CEVariantSource.m in Sources */,
 				A64615F920FF3E2B001F885C /* StuntVerb.m in Sources */,
-				A6A91AC5205B1E15001B81CF /* CEGenerator+Building.m in Sources */,
-				A634BCEC204C174F00E2BA10 /* Test_CECombination.m in Sources */,
-				A6A91AC8205CE3B9001B81CF /* Test_CEGenerator+Building.m in Sources */,
 				A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */,
 				A6FEA8BE21F7C6BB00F84F27 /* Test_CLKToken.m in Sources */,
 				A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */,
-				A634BCE1204C074700E2BA10 /* Test_CETemplate.m in Sources */,
-				A6A91ABF205A440E001B81CF /* CEVariantBuilder.m in Sources */,
 				A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */,
-				A634BCE9204C13C500E2BA10 /* CECombination.m in Sources */,
 				A6CFEAA5200D39910009B8D2 /* Test_CLKOptionGroup.m in Sources */,
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
-				A634BCE4204C0F9600E2BA10 /* CEVariant.m in Sources */,
-				A6E9BC23203A173E001B7095 /* CEVariantSource.m in Sources */,
-				A634BCDF204C047E00E2BA10 /* CETemplate.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
-				A634BCDC204C00A800E2BA10 /* Test_CETemplateSeries.m in Sources */,
 				A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */,
-				A6A91ABC2057CA2A001B81CF /* Test_CEGenerator.m in Sources */,
-				A6C5F90620550DD40004E039 /* Test_CEVariantSourceView.m in Sources */,
-				A6C5F9012054EA410004E039 /* CEVariantSourceView.m in Sources */,
-				A6A91AC1205A5123001B81CF /* Test_CEVariantBuilder.m in Sources */,
 				A6D1906F219698E800741AB0 /* Test_CLKArgumentParser_Validation.m in Sources */,
-				A6A91ABA20577F78001B81CF /* CEGenerator.m in Sources */,
-				A6C5F9042054EBFB0004E039 /* CEVariantView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
