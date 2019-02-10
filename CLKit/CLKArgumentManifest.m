@@ -21,7 +21,7 @@
 @synthesize dictionaryRepresentation = _optionManifest;
 @synthesize positionalArguments = _positionalArguments;
 
-- (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry;
+- (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry
 {
     NSParameterAssert(optionRegistry != nil);
     
