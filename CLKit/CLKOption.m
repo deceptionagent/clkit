@@ -178,8 +178,7 @@ NS_ASSUME_NONNULL_END
     CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
     CLKHardParameterAssert(![NSCharacterSet.clk_optionFlagIllegalCharacterSet characterIsMember:[flag characterAtIndex:0]], @"illegal option flag: '%@'", flag);
     
-    /* dependency guards */
-    
+    // dependency guards
     CLKHardParameterAssert(![dependencies containsObject:name], @"options cannot list themselves as dependencies");
     NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
     CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"option dependency lists cannot contain duplicate references");

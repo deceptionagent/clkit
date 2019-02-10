@@ -5,4 +5,4 @@
 #import "CLKError.h"
 
 
-NSString * const CLKErrorDomain = @"CLKErrorDomain";
+NSString * const CLKErrorDomain = @"com.plasticpulse.clkit.error-domain";
