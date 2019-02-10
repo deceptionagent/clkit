@@ -66,16 +66,16 @@ NS_ASSUME_NONNULL_END
         for (id flag_ in flags) {
             NSString *flag = (flag_ == [NSNull null] ? nil : flag_);
             [uniqueOptions addObject:[CLKOption standaloneOptionWithName:name flag:flag]];
-            [uniqueOptions addObject:[CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:NO transformer:nil]];
+            [uniqueOptions addObject:[CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:NO  transformer:nil]];
             [uniqueOptions addObject:[CLKOption standaloneParameterOptionWithName:name flag:flag recurrent:YES transformer:nil]];
             
             for (id dependencies_ in dependencyLists) {
                 NSArray<NSString *> *dependencies = (dependencies_ == [NSNull null] ? nil : dependencies_);
                 [uniqueOptions addObject:[CLKOption optionWithName:name flag:flag dependencies:dependencies]];
                 [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:NO  recurrent:NO  dependencies:dependencies transformer:nil]];
-                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:YES  recurrent:NO  dependencies:dependencies  transformer:nil]];
-                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:NO  recurrent:YES  dependencies:dependencies transformer:nil]];
-                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:YES  recurrent:YES  dependencies:dependencies transformer:nil]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:YES recurrent:NO  dependencies:dependencies transformer:nil]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:NO  recurrent:YES dependencies:dependencies transformer:nil]];
+                [uniqueOptions addObject:[CLKOption parameterOptionWithName:name flag:flag required:YES recurrent:YES dependencies:dependencies transformer:nil]];
             };
         };
     }
