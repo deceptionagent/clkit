@@ -33,7 +33,6 @@
     NSMutableArray<NSError *> *_errors;
 }
 
-@synthesize currentParameterOption = _currentParameterOption;
 @synthesize errors = _errors;
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
