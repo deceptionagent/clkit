@@ -10,73 +10,9 @@
 #import "CLKOption.h"
 #import "CLKOptionGroup.h"
 #import "NSError+CLKAdditions.h"
+#import "StuntTransformer.h"
 #import "XCTestCase+CLKAdditions.h"
 
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface StuntTransformer : CLKArgumentTransformer
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)transformer NS_UNAVAILABLE;
-
-+ (instancetype)transformerWithTransformedObject:(id)object;
-+ (instancetype)erroringTransformerWithPOSIXErrorCode:(int)code description:(NSString *)description;
-
-- (instancetype)initWithObject:(id)object NS_DESIGNATED_INITIALIZER;
-
-@property (nullable, readonly) NSError *error;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-@implementation StuntTransformer
-{
-    id _object;
-}
-
-+ (instancetype)transformerWithTransformedObject:(id)object
-{
-    return [[self alloc] initWithObject:object];
-}
-
-+ (instancetype)erroringTransformerWithPOSIXErrorCode:(int)code description:(NSString *)description
-{
-    NSError *error = [NSError clk_POSIXErrorWithCode:code description:@"%@", description];
-    return [[self alloc] initWithObject:error];
-}
-
-- (instancetype)initWithObject:(id)object
-{
-    self = [super init];
-    if (self != nil) {
-        _object = object;
-    }
-    
-    return self;
-}
-
-- (id)transformedArgument:(NSString *)argument error:(NSError **)outError
-{
-    NSParameterAssert(argument != nil);
-    NSParameterAssert(outError != nil);
-    
-    if ([_object isKindOfClass:[NSError class]]) {
-        *outError = _object;
-        return nil;
-    }
-    
-    return _object;
-}
-
-- (NSError *)error
-{
-    return ([_object isKindOfClass:[NSError class]] ? _object : nil);
-}
-
-@end
 
 NS_ASSUME_NONNULL_BEGIN
 
