@@ -259,6 +259,9 @@ NS_ASSUME_NONNULL_END
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     XCTAssertNotEqualObjects(option, nil);
     XCTAssertNotEqualObjects(option, @"not an option");
+    
+    // self to self
+    XCTAssertTrue([option isEqual:option]);
 }
 
 - (void)testCollectionSupport_set
