@@ -36,6 +36,7 @@
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 		A696CC0F21033D6D00A9F7E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC0E21033D6D00A9F7E7 /* main.m */; };
 		A696CC1221033DD000A9F7E7 /* ConfoundVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */; };
+		A6AA544D220FF7210030C48A /* StuntTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AA544C220FF7210030C48A /* StuntTransformer.m */; };
 		A6B0D30C200E006000BF6300 /* CLKError_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B0D30B200E006000BF6300 /* CLKError_Private.h */; };
 		A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */; };
 		A6BB1B3E2032F1A900927BD9 /* CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3C2032F1A900927BD9 /* CLKOptionRegistry.m */; };
@@ -151,6 +152,8 @@
 		A696CC1021033DD000A9F7E7 /* ConfoundVerb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ConfoundVerb.h; path = clklab/ConfoundVerb.h; sourceTree = "<group>"; };
 		A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ConfoundVerb.m; path = clklab/ConfoundVerb.m; sourceTree = "<group>"; };
 		A696CC1321033E5B00A9F7E7 /* CLKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKit.h; sourceTree = "<group>"; };
+		A6AA544B220FF7210030C48A /* StuntTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StuntTransformer.h; sourceTree = "<group>"; };
+		A6AA544C220FF7210030C48A /* StuntTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StuntTransformer.m; sourceTree = "<group>"; };
 		A6B0D30B200E006000BF6300 /* CLKError_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLKError_Private.h; sourceTree = "<group>"; };
 		A6B47E8B2011E89000E49F5E /* CLKOptionGroup_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionGroup_Private.h; sourceTree = "<group>"; };
 		A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKOptionRegistry.h; sourceTree = "<group>"; };
@@ -362,6 +365,8 @@
 				A6E34F6A202C59E900CE22E1 /* ArgumentParsingResultSpec.m */,
 				A62FA2852029BF5B003FAEBB /* ConstraintValidationSpec.h */,
 				A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */,
+				A6AA544B220FF7210030C48A /* StuntTransformer.h */,
+				A6AA544C220FF7210030C48A /* StuntTransformer.m */,
 				A64615F720FF3E2B001F885C /* StuntVerb.h */,
 				A64615F820FF3E2B001F885C /* StuntVerb.m */,
 				A609E2C21F5964670088DEDA /* XCTestCase+CLKAdditions.h */,
@@ -532,6 +537,7 @@
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
 				A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */,
+				A6AA544D220FF7210030C48A /* StuntTransformer.m in Sources */,
 				A6D1906F219698E800741AB0 /* Test_CLKArgumentParser_Validation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
