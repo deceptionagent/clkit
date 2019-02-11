@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Test_CLKOption : XCTestCase
 
 - (NSArray<CLKOption *> *)uniqueOptions;
+- (NSArray<NSString *> *)illegalOptionNames;
+- (NSArray<NSString *> *)illegalOptionFlags;
+
 
 - (void)verifyParameterOption:(CLKOption *)option
                          name:(NSString *)name
@@ -83,6 +86,35 @@ NS_ASSUME_NONNULL_END
     return uniqueOptions;
 }
 
+- (NSArray<NSString *> *)illegalOptionNames
+{
+    return @[
+        @"",
+        @"-",
+        @"--",
+        @"-what",
+        @"--what",
+        @"w=hat",
+        @"w:hat",
+        @"w hat"
+    ];
+}
+
+- (NSArray<NSString *> *)illegalOptionFlags
+{
+    return @[
+        @"",
+        @"-",
+        @"--",
+        @"-q",
+        @"=",
+        @":",
+        @"qq"
+    ];
+}
+
+#pragma mark -
+
 - (void)verifyParameterOption:(CLKOption *)option
                          name:(NSString *)name
                          flag:(NSString *)flag
@@ -131,7 +163,7 @@ NS_ASSUME_NONNULL_END
 {
     CLKOption *option = [CLKOption optionWithName:@"flarn" flag:@"f"];
     [self verifySwitchOption:option name:@"flarn" flag:@"f" dependencies:nil];
-
+    
     option = [CLKOption optionWithName:@"zero" flag:@"0"];
     [self verifySwitchOption:option name:@"zero" flag:@"0" dependencies:nil];
     
@@ -144,23 +176,20 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
     [self verifySwitchOption:option name:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
     
-    // option names can include numeric characters and dashes
+    // option names are allowed to include numeric characters and dashes
+    // (leading dashes are illegal. this is covered below.)
     XCTAssertNotNil([CLKOption optionWithName:@"mode7" flag:nil]);
     XCTAssertNotNil([CLKOption optionWithName:@"pit-pat" flag:nil]);
     
-    XCTAssertThrows([CLKOption optionWithName:@"" flag:@"x"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@""]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"xx"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"--"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@":"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"="]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@" "]);
-    XCTAssertThrows([CLKOption optionWithName:@"w hat" flag:@"w"]);
-    XCTAssertThrows([CLKOption optionWithName:@"w:hat" flag:@"w"]);
-    XCTAssertThrows([CLKOption optionWithName:@"w=hat" flag:@"w"]);
-    XCTAssertThrows([CLKOption optionWithName:@"--flarn" flag:@"f"]);
-    XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"-f"]);
+    for (NSString *name in [self illegalOptionNames]) {
+        XCTAssertThrows([CLKOption optionWithName:name flag:@"f"]);
+    }
+    
+    for (NSString *flag in [self illegalOptionFlags]) {
+        XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:flag]);
+    }
+    
+    // options can't declare themselves as dependencies
     XCTAssertThrows([CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"flarn" ]]);
     
 #pragma clang diagnostic push
@@ -202,17 +231,14 @@ NS_ASSUME_NONNULL_END
     XCTAssertNotNil([CLKOption parameterOptionWithName:@"mode7" flag:nil]);
     XCTAssertNotNil([CLKOption parameterOptionWithName:@"pit-pat" flag:nil]);
     
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"" flag:@"x"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@""]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"xx"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@":"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"f:larn" flag:@"f"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"f=larn" flag:@"f"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"--flarn" flag:@"f"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"-f"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"w:hat" flag:@"w"]);
-    XCTAssertThrows([CLKOption parameterOptionWithName:@"w=hat" flag:@"-w"]);
+    for (NSString *name in [self illegalOptionNames]) {
+        XCTAssertThrows([CLKOption parameterOptionWithName:name flag:@"f"]);
+    }
+    
+    for (NSString *flag in [self illegalOptionFlags]) {
+        XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:flag]);
+    }
+    
     XCTAssertThrows([CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"flarn" ] transformer:nil]);
     
 #pragma clang diagnostic push
