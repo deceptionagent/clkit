@@ -78,8 +78,8 @@
     XCTAssertEqualObjects(result.errorDescription, expectedErrorDescription);
     
     result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha, errorBravo ] userInfo:nil];
-    NSString *fmt = @"aye mak sicur (%@: %d)\nne cede malis (%@: %ld)";
-    expectedErrorDescription = [NSString stringWithFormat:fmt, NSPOSIXErrorDomain, ENOENT, CLKErrorDomain, CLKErrorRequiredOptionNotProvided];
+    NSString *fmt = @"aye mak sicur (%@: %d)\nne cede malis";
+    expectedErrorDescription = [NSString stringWithFormat:fmt, NSPOSIXErrorDomain, ENOENT];
     XCTAssertEqualObjects(result.errorDescription, expectedErrorDescription);
 }
 
