@@ -15,16 +15,6 @@
 
 @implementation XCTestCase (CLKAdditions)
 
-- (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code
-{
-    if (error == nil) {
-        return;
-    }
-    
-    XCTAssertEqualObjects(error.domain, domain);
-    XCTAssertEqual(error.code, code);
-}
-
 - (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description
 {
     XCTAssertNotNil(error, @"[description: %@]", description);
@@ -35,23 +25,6 @@
     XCTAssertEqualObjects(error.domain, domain);
     XCTAssertEqual(error.code, code);
     XCTAssertEqualObjects(error.localizedDescription, description);
-}
-
-- (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code userInfo:(NSDictionary *)userInfo
-{
-    XCTAssertNotNil(error, @"[userInfo: %@]", userInfo);
-    if (error == nil) {
-        return;
-    }
-    
-    XCTAssertEqualObjects(error.domain, domain);
-    XCTAssertEqual(error.code, code);
-    XCTAssertEqualObjects(error.userInfo, userInfo);
-}
-
-- (void)verifyCLKError:(NSError *)error code:(CLKError)code description:(NSString *)description
-{
-    [self verifyError:error domain:CLKErrorDomain code:code description:description];
 }
 
 #pragma mark -
