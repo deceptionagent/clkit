@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(result.userInfo[@"verb"], expectedVerb);
     
     CLKArgumentManifest *manifest = result.userInfo[@"manifest"];
-    XCTAssertEqualObjects(manifest.dictionaryRepresentation, expectedManifest.dictionaryRepresentation);
+    XCTAssertEqualObjects(manifest.dictionaryRepresentationForAccumulatedOptions, expectedManifest.dictionaryRepresentationForAccumulatedOptions);
     XCTAssertEqualObjects(manifest.positionalArguments, expectedManifest.positionalArguments);
 }
 

@@ -14,11 +14,11 @@
 @implementation CLKArgumentManifest
 {
     CLKOptionRegistry *_optionRegistry;
-    NSMutableDictionary<NSString *, id> *_optionManifest; /* option name : NSNumber (switch) or NSArray (parameter) */
+    NSMutableDictionary<NSString *, NSNumber *> *_switchOptionOccurrences;
+    NSMutableDictionary<NSString *, NSMutableArray *> *_parameterOptionArguments;
     NSMutableArray<NSString *> *_positionalArguments;
 }
 
-@synthesize dictionaryRepresentation = _optionManifest;
 @synthesize positionalArguments = _positionalArguments;
 
 - (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry
@@ -28,7 +28,8 @@
     self = [super init];
     if (self != nil) {
         _optionRegistry = optionRegistry;
-        _optionManifest = [[NSMutableDictionary alloc] init];
+        _switchOptionOccurrences = [[NSMutableDictionary alloc] init];
+        _parameterOptionArguments = [[NSMutableDictionary alloc] init];
         _positionalArguments = [[NSMutableArray alloc] init];
     }
     
@@ -38,7 +39,7 @@
 - (NSString *)debugDescription
 {
     NSString *fmt = @"%@\n%@\n\npositional arguments:\n%@";
-    return [NSString stringWithFormat:fmt, super.debugDescription, self.dictionaryRepresentation, _positionalArguments];
+    return [NSString stringWithFormat:fmt, super.debugDescription, self.dictionaryRepresentationForAccumulatedOptions, _positionalArguments];
 }
 
 #pragma mark -
@@ -53,22 +54,21 @@
         return nil;
     }
     
-    id object = _optionManifest[optionName];
-    if (object == nil) {
-        return nil;
-    }
+    id object = nil;
     
     switch (option.type) {
         case CLKOptionTypeSwitch:
+            object = _switchOptionOccurrences[optionName];
             break;
         
         case CLKOptionTypeParameter:
-            // for non-recurrent parameter options, return the argument directly.
-            // don't assert multiple occurrences of non-recurrent options here.
-            // that is a usage error and the validator will handle it in order
-            // to provide a good message to the user at parsing time.
-            if (!option.recurrent) {
-                object = ((NSArray *)object).firstObject;
+            // for non-recurrent parameter options, return the single accumulated
+            // argument. multiple occurrences of non-recurrent options is a usage
+            // error handled by the manifest validator.
+            if (option.recurrent) {
+                object = _parameterOptionArguments[optionName];
+            } else {
+                object = _parameterOptionArguments[optionName].firstObject;
             }
             
             break;
@@ -79,38 +79,43 @@
 
 - (NSSet<NSString *> *)accumulatedOptionNames
 {
-    return [NSSet setWithArray:_optionManifest.allKeys];
+    NSMutableSet *names = [NSMutableSet setWithArray:_switchOptionOccurrences.allKeys];
+    [names addObjectsFromArray:_parameterOptionArguments.allKeys];
+    return names;
 }
 
 - (BOOL)hasOptionNamed:(NSString *)optionName
 {
-    return (_optionManifest[optionName] != nil);
+    return (_switchOptionOccurrences[optionName] != nil || _parameterOptionArguments[optionName] != nil);
 }
 
 - (NSUInteger)occurrencesOfOptionNamed:(NSString *)optionName
 {
-    id value = _optionManifest[optionName];
-    if (value == nil) {
+    CLKOption *option = [_optionRegistry optionNamed:optionName];
+    if (option == nil) {
         return 0;
     }
-    
-    CLKOption *option = [_optionRegistry optionNamed:optionName];
-    NSAssert(option != nil, @"found a manifest value for option named '%@', but no manifest entry", optionName);
     
     NSUInteger occurrences = 0;
     switch (option.type) {
         case CLKOptionTypeSwitch:
-            NSAssert2(([value isKindOfClass:[NSNumber class]]), @"unexpectedly found object of class %@ for option named '%@'", NSStringFromClass([value class]), optionName);
-            occurrences = ((NSNumber *)value).unsignedIntegerValue;
+            occurrences = _switchOptionOccurrences[optionName].unsignedIntegerValue;
             break;
         
         case CLKOptionTypeParameter:
-            NSAssert2(([value isKindOfClass:[NSMutableArray class]]), @"unexpectedly found object of class %@ for option named '%@'", NSStringFromClass([value class]), optionName);
-            occurrences = ((NSMutableArray *)value).count;
+            occurrences = _parameterOptionArguments[optionName].count;
             break;
     }
     
     return occurrences;
+}
+
+- (NSDictionary<NSString *, id> *)dictionaryRepresentationForAccumulatedOptions
+{
+    NSMutableDictionary *rep = [NSMutableDictionary dictionary];
+    [rep addEntriesFromDictionary:_switchOptionOccurrences];
+    [rep addEntriesFromDictionary:_parameterOptionArguments];
+    return rep;
 }
 
 #pragma mark -
@@ -120,8 +125,8 @@
 {
     CLKParameterAssert([_optionRegistry hasOptionNamed:optionName], @"attempting to accumulate unregistered option named '%@'", optionName);
     CLKParameterAssert(([_optionRegistry optionNamed:optionName].type == CLKOptionTypeSwitch), @"attempting to accumulate switch occurrence for parameter option named '%@'", optionName);
-    NSUInteger occurrences = [self occurrencesOfOptionNamed:optionName];
-    _optionManifest[optionName] = @(occurrences + 1);
+    NSUInteger occurrences = _switchOptionOccurrences[optionName].unsignedIntegerValue;
+    _switchOptionOccurrences[optionName] = @(occurrences + 1);
 }
 
 - (void)accumulateArgument:(id)argument forParameterOptionNamed:(NSString *)optionName
@@ -129,10 +134,10 @@
     CLKParameterAssert([_optionRegistry hasOptionNamed:optionName], @"attempting to accumulate unregistered option named '%@'", optionName);
     CLKParameterAssert(([_optionRegistry optionNamed:optionName].type == CLKOptionTypeParameter), @"attempting to accumulate argument for switch option named '%@'", optionName);
     
-    NSMutableArray *arguments = _optionManifest[optionName];
+    NSMutableArray *arguments = _parameterOptionArguments[optionName];
     if (arguments == nil) {
         arguments = [NSMutableArray array];
-        _optionManifest[optionName] = arguments;
+        _parameterOptionArguments[optionName] = arguments;
     }
     
     // don't assert multiple occurrences of non-recurrent options here.

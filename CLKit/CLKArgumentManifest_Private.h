@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithOptionRegistry:(CLKOptionRegistry *)optionRegistry NS_DESIGNATED_INITIALIZER;
 
-@property (readonly) NSDictionary<NSString *, id> *dictionaryRepresentation;
+@property (readonly) NSDictionary<NSString *, id> *dictionaryRepresentationForAccumulatedOptions;
 
 @property (readonly) NSSet<NSString *> *accumulatedOptionNames;
 - (BOOL)hasOptionNamed:(NSString *)optionName;
