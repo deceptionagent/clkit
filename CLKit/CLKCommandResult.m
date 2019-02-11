@@ -4,6 +4,8 @@
 
 #import "CLKCommandResult.h"
 
+#import "CLKError.h"
+
 
 @implementation CLKCommandResult
 {
@@ -57,7 +59,11 @@
         }
         
         NSError *error = self.errors[i];
-        [errorDescription appendFormat:@"%@ (%@: %ld)", error.localizedDescription, error.domain, error.code];
+        if ([error.domain isEqualToString:CLKErrorDomain]) {
+            [errorDescription appendString:error.localizedDescription];
+        } else {
+            [errorDescription appendFormat:@"%@ (%@: %ld)", error.localizedDescription, error.domain, error.code];
+        }
     }
     
     return errorDescription;
