@@ -88,7 +88,7 @@
         }
         
         XCTAssertNil(parser.errors);
-        XCTAssertEqualObjects(manifest.dictionaryRepresentation, spec.optionManifest);
+        XCTAssertEqualObjects(manifest.dictionaryRepresentationForAccumulatedOptions, spec.optionManifest);
         XCTAssertEqualObjects(manifest.positionalArguments, spec.positionalArguments);
     } else {
         XCTAssertNil(manifest);
