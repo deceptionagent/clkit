@@ -19,6 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSString *> *)illegalOptionNames;
 - (NSArray<NSString *> *)illegalOptionFlags;
 
+- (void)verifySwitchOption:(CLKOption *)option
+                      name:(NSString *)name
+                      flag:(nullable NSString *)flag
+              dependencies:(nullable NSArray<NSString *> *)dependencies;
 
 - (void)verifyParameterOption:(CLKOption *)option
                          name:(NSString *)name
@@ -28,10 +32,14 @@ NS_ASSUME_NONNULL_BEGIN
                  dependencies:(nullable NSArray<NSString *> *)dependencies
                   transformer:(nullable CLKArgumentTransformer *)transformer;
 
-- (void)verifySwitchOption:(CLKOption *)option
-                      name:(NSString *)name
-                      flag:(nullable NSString *)flag
-              dependencies:(nullable NSArray<NSString *> *)dependencies;
+- (void)verifyOption:(CLKOption *)option
+                type:(CLKOptionType)type
+                name:(NSString *)name
+                flag:(nullable NSString *)flag
+            required:(BOOL)required
+           recurrent:(BOOL)recurrent
+        dependencies:(nullable NSArray<NSString *> *)dependencies
+         transformer:(nullable CLKArgumentTransformer *)transformer;
 
 - (void)verifyOption:(CLKOption *)option
                 type:(CLKOptionType)type
@@ -39,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
                 flag:(nullable NSString *)flag
             required:(BOOL)required
            recurrent:(BOOL)recurrent
+          standalone:(BOOL)standalone
         dependencies:(nullable NSArray<NSString *> *)dependencies
          transformer:(nullable CLKArgumentTransformer *)transformer;
 
@@ -115,17 +124,6 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (void)verifyParameterOption:(CLKOption *)option
-                         name:(NSString *)name
-                         flag:(NSString *)flag
-                     required:(BOOL)required
-                    recurrent:(BOOL)recurrent
-                 dependencies:(NSArray<NSString *> *)dependencies
-                  transformer:(CLKArgumentTransformer *)transformer
-{
-    [self verifyOption:option type:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer];
-}
-
 - (void)verifySwitchOption:(CLKOption *)option
                       name:(NSString *)name
                       flag:(NSString *)flag
@@ -138,6 +136,17 @@ NS_ASSUME_NONNULL_END
     [self verifyOption:option type:CLKOptionTypeSwitch name:name flag:flag required:NO recurrent:YES dependencies:dependencies transformer:nil];
 }
 
+- (void)verifyParameterOption:(CLKOption *)option
+                         name:(NSString *)name
+                         flag:(NSString *)flag
+                     required:(BOOL)required
+                    recurrent:(BOOL)recurrent
+                 dependencies:(NSArray<NSString *> *)dependencies
+                  transformer:(CLKArgumentTransformer *)transformer
+{
+    [self verifyOption:option type:CLKOptionTypeParameter name:name flag:flag required:required recurrent:recurrent dependencies:dependencies transformer:transformer];
+}
+
 - (void)verifyOption:(CLKOption *)option
                 type:(CLKOptionType)type
                 name:(NSString *)name
@@ -147,12 +156,26 @@ NS_ASSUME_NONNULL_END
         dependencies:(NSArray<NSString *> *)dependencies
          transformer:(CLKArgumentTransformer *)transformer
 {
+    [self verifyOption:option type:type name:name flag:flag required:required recurrent:recurrent standalone:NO dependencies:dependencies transformer:transformer];
+}
+
+- (void)verifyOption:(CLKOption *)option
+                type:(CLKOptionType)type
+                name:(NSString *)name
+                flag:(NSString *)flag
+            required:(BOOL)required
+           recurrent:(BOOL)recurrent
+          standalone:(BOOL)standalone
+        dependencies:(NSArray<NSString *> *)dependencies
+         transformer:(CLKArgumentTransformer *)transformer
+{
     XCTAssertNotNil(option);
     XCTAssertEqual(option.type, type);
     XCTAssertEqualObjects(option.name, name);
     XCTAssertEqualObjects(option.flag, flag);
     XCTAssertEqual(option.required, required);
     XCTAssertEqual(option.recurrent, recurrent);
+    XCTAssertEqual(option.standalone, standalone);
     XCTAssertEqualObjects(option.dependencies, dependencies);
     XCTAssertEqual(option.transformer, transformer); // transformers don't support equality
 }
@@ -175,6 +198,9 @@ NS_ASSUME_NONNULL_END
     
     option = [CLKOption optionWithName:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
     [self verifySwitchOption:option name:@"flarn" flag:@"f" dependencies:@[ @"alpha", @"bravo" ]];
+    
+    option = [CLKOption standaloneOptionWithName:@"flarn" flag:@"f"];
+    [self verifyOption:option type:CLKOptionTypeSwitch name:@"flarn" flag:@"f" required:NO recurrent:YES standalone:YES dependencies:nil transformer:nil];
     
     // option names are allowed to include numeric characters and dashes
     // (leading dashes are illegal. this is covered below.)
@@ -226,6 +252,12 @@ NS_ASSUME_NONNULL_END
     
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:@[ @"barf" ] transformer:transformer];
     [self verifyParameterOption:option name:@"flarn" flag:@"f" required:YES recurrent:YES dependencies:@[ @"barf" ] transformer:transformer];
+    
+    option = [CLKOption standaloneParameterOptionWithName:@"flarn" flag:@"f"];
+    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO recurrent:NO standalone:YES dependencies:nil transformer:nil];
+    
+    option = [CLKOption standaloneParameterOptionWithName:@"flarn" flag:@"f" recurrent:YES transformer:transformer];
+    [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO recurrent:YES standalone:YES dependencies:nil transformer:transformer];
     
     // option names can include numeric characters and dashes
     XCTAssertNotNil([CLKOption parameterOptionWithName:@"mode7" flag:nil]);
