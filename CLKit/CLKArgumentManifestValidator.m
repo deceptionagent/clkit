@@ -62,9 +62,12 @@ NS_ASSUME_NONNULL_END
     }
 }
 
+#warning test coverage for inactive
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     switch (constraint.type) {
+        case CLKConstraintTypeInactive:
+            break;
         case CLKConstraintTypeRequired:
             [self _validateStrictRequirement:constraint issueHandler:issueHandler];
             break;

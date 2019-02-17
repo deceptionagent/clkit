@@ -73,6 +73,11 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic pop
 }
 
+- (void)testValidateConstraint_inactive
+{
+    XCTFail(@"implement me");
+}
+
 - (void)testValidateConstraint_required
 {
     CLKOption *flarn = [CLKOption requiredParameterOptionWithName:@"flarn" flag:@"f"];
@@ -306,6 +311,7 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
 }
 
+#warning add inactive
 - (void)testMultipleConstraints
 {
     CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];

@@ -160,6 +160,11 @@
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
+- (void)testValidation_inertGroup
+{
+    XCTFail(@"implement me");
+}
+
 - (void)testValidation_requiredGroup
 {
     NSArray *options = @[
@@ -215,63 +220,6 @@
     argv = @[ @"--flarn", @"--quone" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
-}
-
-- (void)testValidation_mutualExclusionGroupWithSubgroups
-{
-    NSArray *options = @[
-        [CLKOption optionWithName:@"flarn" flag:@"f"],
-        [CLKOption optionWithName:@"barf" flag:@"b"],
-        [CLKOption optionWithName:@"quone" flag:@"q"],
-        [CLKOption optionWithName:@"xyzzy" flag:@"x"],
-        [CLKOption optionWithName:@"syn" flag:@"s"],
-        [CLKOption optionWithName:@"ack" flag:@"a"],
-        [CLKOption optionWithName:@"what" flag:@"w"]
-    ];
-    
-    CLKOptionGroup *mutexedSubgroup = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
-    CLKOptionGroup *subgroupQuoneXyzzy = [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ]];
-    CLKOptionGroup *subgroupSynAck = [CLKOptionGroup groupForOptionsNamed:@[ @"syn", @"ack" ]];
-    CLKOptionGroup *mutexedGroup = [CLKOptionGroup mutexedGroupWithSubgroups:@[ mutexedSubgroup, subgroupQuoneXyzzy, subgroupSynAck ]];
-    
-    NSArray *argv = @[ @"--flarn", @"--barf" ];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-    
-    argv = @[ @"--flarn", @"--quone" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --quone: mutually exclusive options encountered"];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
-    argv = @[ @"--quone", @"--ack" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-    
-    argv = @[ @"--ack", @"--quone" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --ack: mutually exclusive options encountered"];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
-    NSDictionary *expectedOptionManifest = @{
-        @"syn" : @(1),
-        @"ack" : @(1)
-    };
-    
-    argv = @[ @"--syn", @"--ack" ];
-    spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-
-    argv = @[ @"--barf", @"--xyzzy", @"--syn" ];
-    NSArray *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --xyzzy: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --syn: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"]
-    ];
-    
-    spec = [ArgumentParsingResultSpec specWithErrors:errors];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
-    
-    argv = @[ @"--what", @"--xyzzy", @"--syn" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy --syn: mutually exclusive options encountered"];
-    [self performTestWithArgumentVector:argv options:options optionGroups:@[ mutexedGroup ] spec:spec];
 }
 
 - (void)testValidation_standaloneGroup
