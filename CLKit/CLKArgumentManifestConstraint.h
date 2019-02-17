@@ -6,12 +6,13 @@
 
 
 typedef NS_ENUM(uint32_t, CLKConstraintType) {
-    CLKConstraintTypeRequired = 0,
-    CLKConstraintTypeConditionallyRequired = 1,
-    CLKConstraintTypeRepresentationRequired = 2,
-    CLKConstraintTypeMutuallyExclusive = 3,
-    CLKConstraintTypeStandalone = 4,
-    CLKConstraintTypeOccurrencesLimited = 5,
+    CLKConstraintTypeInactive = 0,
+    CLKConstraintTypeRequired = 1,
+    CLKConstraintTypeConditionallyRequired = 2,
+    CLKConstraintTypeRepresentationRequired = 3,
+    CLKConstraintTypeMutuallyExclusive = 4,
+    CLKConstraintTypeStandalone = 5,
+    CLKConstraintTypeOccurrencesLimited = 6,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
+
+// a constraint that expresses no rule -- for option bookkeeping purposes
++ (instancetype)inactiveConstraintForOptions:(NSArray<NSString *> *)options;
 
 + (instancetype)constraintForRequiredOption:(NSString *)option;
 + (instancetype)constraintForConditionallyRequiredOption:(NSString *)option causalOption:(NSString *)causalOption;

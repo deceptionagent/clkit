@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:nil]);
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[]]);
     
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ] required:NO mutexed:NO];
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[ group ]]);
     
 #pragma clang diagnostic push
@@ -868,6 +868,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([parser parseArguments]);
 }
 
+#warning maybe add other factory methods?
 - (void)testUnregisteredGroupOptions
 {
     NSArray *options = @[
@@ -875,14 +876,16 @@ NS_ASSUME_NONNULL_END
          [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
     ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ] required:NO mutexed:NO];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
-    CLKOptionGroup *subgroup = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ]];
-    group = [CLKOptionGroup mutexedGroupWithSubgroups:@[ subgroup ]];
+    group = [CLKOptionGroup groupForOptionsNamed:@[ @"ack", @"barf" ] required:NO mutexed:NO];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
-    group = [CLKOptionGroup groupForOptionsNamed:@[ @"ack", @"barf" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"barf" allowing:@[ @"syn" ]];
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
+    
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"syn" allowing:@[ @"barf" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
