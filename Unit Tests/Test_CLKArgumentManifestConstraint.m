@@ -15,12 +15,8 @@
 
 - (void)testDescription
 {
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn" ]];
-    NSString *expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { inactive | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
-    XCTAssertEqualObjects(constraint.description, expectedDescription);
-    
-    constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
-    expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { required | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
+    NSString *expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { required | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
     
     constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"];
@@ -46,15 +42,6 @@
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
     expectedDescription = [NSString stringWithFormat:@"<CLKArgumentManifestConstraint: %p> { occurrences limited | options: [ flarn ] | auxOptions: [ (null) ] }", constraint];
     XCTAssertEqualObjects(constraint.description, expectedDescription);
-}
-
-- (void)testInactive
-{
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn" ]];
-    XCTAssertNotNil(constraint);
-    XCTAssertEqual(constraint.type, CLKConstraintTypeInactive);
-    XCTAssertEqualObjects(constraint.options, [NSOrderedSet orderedSetWithObject:@"flarn"]);
-    XCTAssertNil(constraint.auxOptions);
 }
 
 - (void)testRequired
@@ -124,13 +111,6 @@
     #define ASSERT_NOT_EQUAL_CONSTRAINTS(c1, c2) \
         XCTAssertFalse([c1 isEqual:c2], @"%@ :: %@", c1, c2);
     
-    CLKArgumentManifestConstraint *inactiveAlpha = [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn" ]];
-    CLKArgumentManifestConstraint *inactiveAlpha_clone = [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn" ]];
-    CLKArgumentManifestConstraint *inactiveBravo = [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"barf" ]];
-    ASSERT_EQUAL_CONSTRAINTS(inactiveAlpha, inactiveAlpha);
-    ASSERT_EQUAL_CONSTRAINTS(inactiveAlpha, inactiveAlpha_clone);
-    ASSERT_NOT_EQUAL_CONSTRAINTS(inactiveAlpha, inactiveBravo);
-    
     CLKArgumentManifestConstraint *requiredAlpha = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredAlpha_clone = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     CLKArgumentManifestConstraint *requiredBravo = [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"];
@@ -180,7 +160,6 @@
     /* cross-type tests */
     
     NSArray *constraints = @[
-        inactiveAlpha,
         requiredAlpha,
         conditionallyRequiredAlpha,
         representationRequiredAlpha,
@@ -206,8 +185,6 @@
 - (void)testCollectionSupport_set
 {
     NSArray *constraints = @[
-        [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn" ]],
-        [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn", @"barf" ]],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"],
@@ -222,8 +199,6 @@
     
     // redundant constraints should be deduplicated
     NSArray *constraintClones = @[
-        [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn" ]],
-        [CLKArgumentManifestConstraint inactiveConstraintForOptions:@[ @"flarn", @"barf" ]],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
         [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"flarn" causalOption:@"barf"],

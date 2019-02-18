@@ -73,20 +73,15 @@ NS_ASSUME_NONNULL_END
 #pragma clang diagnostic pop
 }
 
-- (void)testValidateConstraint_inactive
-{
-    XCTFail(@"implement me");
-}
-
 - (void)testValidateConstraint_required
 {
     CLKOption *flarn = [CLKOption requiredParameterOptionWithName:@"flarn" flag:@"f"];
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:nil parameterOptions:@{ flarn : @[ @"quone" ] }];
-    CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
+    CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
     [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
@@ -311,7 +306,6 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
 }
 
-#warning add inactive
 - (void)testMultipleConstraints
 {
     CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];
@@ -367,7 +361,7 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" causalOption:@"ack_alt"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"],
     ];
     
     NSArray<NSError *> *errors = @[

@@ -73,7 +73,8 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--flarn" ];
     NSArray *options = @[
-         [CLKOption optionWithName:@"barf" flag:@"b"],
+         [CLKOption optionWithName:@"flarn" flag:@"f"],
+         [CLKOption optionWithName:@"barf" flag:@"b"]
     ];
     
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
@@ -84,7 +85,7 @@ NS_ASSUME_NONNULL_END
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:nil]);
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[]]);
     
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ] required:NO mutexed:NO];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[ group ]]);
     
 #pragma clang diagnostic push
@@ -868,7 +869,6 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([parser parseArguments]);
 }
 
-#warning maybe add other factory methods?
 - (void)testUnregisteredGroupOptions
 {
     NSArray *options = @[
@@ -876,10 +876,10 @@ NS_ASSUME_NONNULL_END
          [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
     ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionsNamed:@[ @"barf" ] required:NO mutexed:NO];
+    CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"barf" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
-    group = [CLKOptionGroup groupForOptionsNamed:@[ @"ack", @"barf" ] required:NO mutexed:NO];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"ack", @"barf" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
     group = [CLKOptionGroup standaloneGroupForOptionNamed:@"barf" allowing:@[ @"syn" ]];

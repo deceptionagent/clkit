@@ -160,11 +160,6 @@
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-- (void)testValidation_inertGroup
-{
-    XCTFail(@"implement me");
-}
-
 - (void)testValidation_requiredGroup
 {
     NSArray *options = @[
@@ -195,13 +190,11 @@
     NSArray *options = @[
         [CLKOption optionWithName:@"flarn" flag:@"f"],
         [CLKOption optionWithName:@"barf" flag:@"b"],
-        [CLKOption optionWithName:@"quone" flag:@"q"],
-        [CLKOption optionWithName:@"xyzzy" flag:@"x"]
+        [CLKOption optionWithName:@"quone" flag:@"q"]
     ];
     
     NSArray *groups = @[
         [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
-        [CLKOptionGroup groupForOptionsNamed:@[ @"quone", @"xyzzy" ] required:YES mutexed:YES],
     ];
     
     NSArray *argv = @[ @"--quone", @"--flarn", @"--barf" ];
@@ -209,8 +202,20 @@
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     argv = @[ @"--flarn" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"];
+    spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @(1) }];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
+    
+    groups = @[
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf", @"quone" ]],
+    ];
+    
+    argv = @[ @"--quone", @"--flarn", @"--barf" ];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf --quone: mutually exclusive options encountered"];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
+    
+    groups = @[
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
+    ];
     
     NSDictionary *expectedOptionManifest = @{
         @"flarn" : @(1),
@@ -400,6 +405,33 @@
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone", @"--barf", @"--xyzzy" ] options:options optionGroups:groups spec:spec];
+}
+
+- (void)testValidation_multipleMixedGroupErrors
+{
+    NSArray *options = @[
+        [CLKOption optionWithName:@"flarn" flag:@"f"],
+        [CLKOption optionWithName:@"barf"  flag:@"b"],
+        [CLKOption optionWithName:@"quone" flag:@"q"],
+        [CLKOption optionWithName:@"xyzzy" flag:@"x"],
+        [CLKOption optionWithName:@"syn"  flag:@"s"],
+        [CLKOption optionWithName:@"ack"  flag:@"a"],
+    ];
+    
+    NSArray *groups = @[
+        [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"quone", @"xyzzy" ]],
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"syn" allowing:@[ @"ack" ]]
+    ];
+    
+    NSArray *errors = @[
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --xyzzy: mutually exclusive options encountered"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--syn may not be provided with options other than the following: --ack"],
+    ];
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:@[ @"--quone", @"--xyzzy", @"--syn" ] options:options optionGroups:groups spec:spec];
 }
 
 @end

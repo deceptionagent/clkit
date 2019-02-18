@@ -8,8 +8,6 @@
 static NSString *CLKStringForConstraintType(CLKConstraintType type)
 {
     switch (type) {
-        case CLKConstraintTypeInactive:
-            return @"inactive";
         case CLKConstraintTypeRequired:
             return @"required";
         case CLKConstraintTypeConditionallyRequired:
@@ -49,12 +47,6 @@ NS_ASSUME_NONNULL_END
 @synthesize type = _type;
 @synthesize options = _options;
 @synthesize auxOptions = _auxOptions;
-
-#warning test
-+ (instancetype)inactiveConstraintForOptions:(NSArray<NSString *> *)options
-{
-    return [[self alloc] _initWithType:CLKConstraintTypeInactive options:[NSOrderedSet orderedSetWithArray:options] auxOptions:nil];
-}
 
 + (instancetype)constraintForRequiredOption:(NSString *)option
 {
@@ -114,9 +106,6 @@ NS_ASSUME_NONNULL_END
 + (void)_validateConstraintType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(NSOrderedSet<NSString *> *)auxOptions
 {
     switch (type) {
-        case CLKConstraintTypeInactive:
-            NSParameterAssert(options.count > 0);
-            break;
         case CLKConstraintTypeRequired:
             NSParameterAssert(options.count == 1 && auxOptions == nil);
             break;
