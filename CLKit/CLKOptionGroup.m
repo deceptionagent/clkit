@@ -28,37 +28,16 @@ NS_ASSUME_NONNULL_END
 
 + (instancetype)requiredGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [self groupForOptionsNamed:options required:YES mutexed:NO];
+    CLKHardParameterAssert(options.count > 0, @"one or more option names required for required group");
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:options];
+    return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
-    return [self groupForOptionsNamed:options required:NO mutexed:YES];
-}
-
-+ (instancetype)groupForOptionsNamed:(NSArray<NSString *> *)options required:(BOOL)required mutexed:(BOOL)mutexed
-{
-    CLKHardParameterAssert(options != nil);
-    
-    if (options.count == 0) {
-        return [[self alloc] _initWithConstraints:@[]];
-    }
-    
-    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
-    
-    if (required) {
-        [constraints addObject:[CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:options]];
-    }
-    
-    if (mutexed) {
-        [constraints addObject:[CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:options]];
-    }
-    
-    if (constraints.count == 0) {
-        [constraints addObject:[CLKArgumentManifestConstraint inactiveConstraintForOptions:options]];
-    }
-    
-    return [[self alloc] _initWithConstraints:constraints];
+    CLKHardParameterAssert(options.count > 1, @"two or more option names required for mutexed group");
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:options];
+    return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
 + (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptionNames
@@ -70,7 +49,7 @@ NS_ASSUME_NONNULL_END
 
 - (instancetype)_initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints
 {
-    NSParameterAssert(constraints != nil);
+    NSParameterAssert(constraints.count > 0);
     
     self = [super init];
     if (self != nil) {
