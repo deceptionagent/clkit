@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Switch Options
 
 + (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag;
-+ (instancetype)optionWithName:(NSString *)name flag:(nullable NSString *)flag dependencies:(nullable NSArray<NSString *> *)dependencies;
 + (instancetype)standaloneOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 
 #pragma mark -
@@ -36,7 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
                                    flag:(nullable NSString *)flag
                                required:(BOOL)required
                               recurrent:(BOOL)recurrent
-                           dependencies:(nullable NSArray<NSString *> *)dependencies
                             transformer:(nullable CLKArgumentTransformer *)transformer;
 
 + (instancetype)standaloneParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
@@ -50,7 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) BOOL required;
 @property (readonly) BOOL recurrent;
 @property (readonly) BOOL standalone;
-@property (nullable, readonly) NSArray<NSString *> *dependencies;
 @property (nullable, readonly) CLKArgumentTransformer *transformer;
 
 - (BOOL)isEqualToOption:(CLKOption *)option;
