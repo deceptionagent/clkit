@@ -16,7 +16,7 @@
 
 @implementation Test_CLKOptionGroup
 
-- (void)testConstraints_requiredGroup
+- (void)testRequired
 {
     CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
@@ -29,7 +29,7 @@
     XCTAssertThrows([CLKOptionGroup requiredGroupForOptionsNamed:@[]]);
 }
 
-- (void)testConstraints_mutexedGroup
+- (void)testMutexed
 {
     CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf", @"quone" ]];
     NSArray<CLKArgumentManifestConstraint *> *expectedConstraints = @[
@@ -42,7 +42,7 @@
     XCTAssertThrows([CLKOptionGroup mutexedGroupForOptionsNamed:@[]]);
 }
 
-- (void)testConstraints_standalone
+- (void)testStandalone
 {
     CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[]];
     NSArray *expectedConstraints = @[
@@ -72,6 +72,11 @@
 #pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertThrows([CLKOptionGroup standaloneGroupForOptionNamed:nil allowing:@[ @"flarn" ]]);
 #pragma clang diagnostic pop
+}
+
+- (void)testDependencies
+{
+    XCTFail(@"unimplemented");
 }
 
 @end
