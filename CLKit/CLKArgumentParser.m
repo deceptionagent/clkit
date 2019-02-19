@@ -59,18 +59,6 @@
         _optionRegistry = [[CLKOptionRegistry alloc] initWithOptions:options];
         _manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:_optionRegistry];
         
-#warning convert to group inspection
-#if 0
-        // sanity-check dependencies
-        for (CLKOption *option in options) {
-            for (NSString *dependencyName in option.dependencies) {
-                CLKOption *dependency = [_optionRegistry optionNamed:dependencyName];
-                CLKHardAssert((dependency != nil), @"unregistered option '%@' found in dependency list for option '%@'", dependencyName, option.name);
-                CLKHardAssert((dependency.type == CLKOptionTypeParameter), @"dependencies must be parameter options -- switch options cannot be required (option: '%@' -> dependency: '%@')", option.name, dependencyName);
-            }
-        }
-#endif
-        
         // sanity-check groups
         for (CLKOptionGroup *group in groups) {
             for (NSString *optionName in group.allOptions) {

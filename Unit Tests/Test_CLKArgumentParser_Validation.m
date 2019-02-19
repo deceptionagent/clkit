@@ -138,19 +138,21 @@
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-#warning convert to group
-#if 0
 - (void)testValidation_dependencies
 {
     NSArray *options = @[
         [CLKOption optionWithName:@"alpha" flag:@"a"],
         [CLKOption parameterOptionWithName:@"bravo" flag:@"b"],
-        [CLKOption optionWithName:@"charlie" flag:@"c" dependencies:@[ @"bravo" ]]
+        [CLKOption optionWithName:@"charlie" flag:@"c"]
+    ];
+    
+    NSArray *groups = @[
+        [CLKOptionGroup groupForOptionNamed:@"charlie" requiringDependencies:@[ @"bravo" ]]
     ];
     
     NSArray *argv = @[ @"--charlie" ];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
         @"charlie" : @(1),
@@ -159,9 +161,8 @@
     
     argv = @[ @"--charlie", @"--bravo", @"flarn" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
 }
-#endif
 
 - (void)testValidation_requiredGroup
 {

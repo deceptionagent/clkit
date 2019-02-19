@@ -562,15 +562,14 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-#warning update with group
-#if 0
 - (void)testOptionParsingSentinel
 {
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     CLKOption *barf = [CLKOption requiredParameterOptionWithName:@"barf" flag:@"b"];
     CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
-    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:@[ @"delivery" ] transformer:nil];
+    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c"];
     CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
+    CLKOptionGroup *confoundDeliveryGroup = [CLKOptionGroup groupForOptionNamed:@"confound" requiringDependencies:@[ @"delivery"]];
     
     /* sentinel alone in argv */
     
@@ -665,13 +664,13 @@ NS_ASSUME_NONNULL_END
     
     argv = @[ @"--confound", @"acme", @"--", @"--delivery", @"station" ];
     spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--delivery is required when using --confound"];
-    [self performTestWithArgumentVector:argv options:@[ confound, delivery ] spec:spec];
+    [self performTestWithArgumentVector:argv options:@[ confound, delivery ] optionGroups:@[ confoundDeliveryGroup ] spec:spec];
     
     /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
     
     argv = @[ @"--flarn", @"acme", @"--", @"--confound", @"station" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] } positionalArguments:@[ @"--confound", @"station" ]];
-    [self performTestWithArgumentVector:argv options:@[ flarn, confound, delivery ] spec:spec];
+    [self performTestWithArgumentVector:argv options:@[ flarn, confound, delivery ] optionGroups:@[ confoundDeliveryGroup ] spec:spec];
     
     /* mutually exclusive options divided by sentinel (success) */
     
@@ -693,7 +692,6 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
 }
-#endif
 
 - (void)testNonSentinelOrphanedDashes
 {
@@ -783,10 +781,24 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
-#warning update with group
-#if 0
 - (void)testComplexMix
 {
+    CLKIntArgumentTransformer *synTransformer = [[CLKIntArgumentTransformer alloc] init];
+    
+    NSArray *options = @[
+         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
+         [CLKOption parameterOptionWithName:@"noise" flag:@"n" required:NO recurrent:NO transformer:nil],
+         [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES transformer:synTransformer],
+         [CLKOption optionWithName:@"quone" flag:@"q"],
+         [CLKOption optionWithName:@"xyzzy" flag:@"x"],
+         [CLKOption optionWithName:@"spline" flag:@"p"],
+    ];
+    
+    NSArray *groups = @[
+        [CLKOptionGroup groupForOptionNamed:@"quone" requiringDependencies:@[ @"noise" ]]
+    ];
+    
     // organized by how they should be interpreted by the parser
     NSArray *argv = @[
         @"acme",
@@ -806,18 +818,6 @@ NS_ASSUME_NONNULL_END
         @"-wormfood", @"--dude", @"--syn=7"
     ];
     
-    CLKIntArgumentTransformer *synTransformer = [[CLKIntArgumentTransformer alloc] init];
-    
-    NSArray *options = @[
-         [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"noise" flag:@"n" required:NO recurrent:NO transformer:nil],
-         [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES transformer:synTransformer],
-         [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
-         [CLKOption optionWithName:@"xyzzy" flag:@"x"],
-         [CLKOption optionWithName:@"spline" flag:@"p"],
-    ];
-    
     NSDictionary *expectedOptionManifest = @{
         @"xyzzy" : @(4),
         @"spline" : @(1),
@@ -830,9 +830,8 @@ NS_ASSUME_NONNULL_END
     NSArray *expectedPositionalArguments = @[ @"acme", @"-", @"thrud", @"confound", @"delivery", @"-wormfood", @"--dude", @"--syn=7" ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
 }
-#endif
 
 - (void)testMultipleMixedErrors
 {
@@ -895,26 +894,19 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
-#warning convert to group
-#if 0
 - (void)testInvalidDependencies
 {
     // dependencies can't reference unregistered options
     NSArray *options = @[
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"flarn" ] transformer:nil]
+         [CLKOption parameterOptionWithName:@"syn" flag:@"f"]
     ];
     
-    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
-    
-    // switches can't be dependencies
-    options = @[
-         [CLKOption optionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"syn" flag:@"f" required:NO recurrent:NO dependencies:@[ @"ack" ] transformer:nil]
+    NSArray *groups = @[
+        [CLKOptionGroup groupForOptionNamed:@"syn" requiringDependencies:@[ @"flarn" ]]
     ];
     
-    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
+    XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:groups]);
 }
-#endif
 
 @end
