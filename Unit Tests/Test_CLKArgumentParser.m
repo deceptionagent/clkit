@@ -178,7 +178,7 @@ NS_ASSUME_NONNULL_END
 {
     NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie", @"--syn-ack", @"quone", @"--ack--syn", @"xyzzy" ];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil],
+        [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES transformer:nil],
         [CLKOption parameterOptionWithName:@"bar" flag:@"b"],
         [CLKOption parameterOptionWithName:@"syn-ack" flag:@"s"],
         [CLKOption parameterOptionWithName:@"ack--syn" flag:@"a"]
@@ -366,10 +366,10 @@ NS_ASSUME_NONNULL_END
     StuntTransformer *quoneTransformer = [StuntTransformer transformerWithTransformedObject:@(666)];
     StuntTransformer *xyzzyTransformer = [StuntTransformer transformerWithTransformedObject:@(-7)];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:flarnTransformer],
-        [CLKOption parameterOptionWithName:@"barf"  flag:@"b" required:NO recurrent:NO dependencies:nil transformer:barfTransformer],
-        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO dependencies:nil transformer:quoneTransformer],
-        [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x" required:NO recurrent:NO dependencies:nil transformer:xyzzyTransformer]
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO transformer:flarnTransformer],
+        [CLKOption parameterOptionWithName:@"barf"  flag:@"b" required:NO recurrent:NO transformer:barfTransformer],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:quoneTransformer],
+        [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x" required:NO recurrent:NO transformer:xyzzyTransformer]
     ];
     
     NSDictionary *expectedManifest = @{
@@ -387,10 +387,10 @@ NS_ASSUME_NONNULL_END
     quoneTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"-q error"];
     xyzzyTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"-x error"];
     options = @[
-        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO dependencies:nil transformer:flarnTransformer],
-        [CLKOption parameterOptionWithName:@"barf"  flag:@"b" required:NO recurrent:NO dependencies:nil transformer:barfTransformer],
-        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO dependencies:nil transformer:quoneTransformer],
-        [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x" required:NO recurrent:NO dependencies:nil transformer:xyzzyTransformer]
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO transformer:flarnTransformer],
+        [CLKOption parameterOptionWithName:@"barf"  flag:@"b" required:NO recurrent:NO transformer:barfTransformer],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:NO recurrent:NO transformer:quoneTransformer],
+        [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x" required:NO recurrent:NO transformer:xyzzyTransformer]
     ];
     
     NSArray *argv = @[ @"--flarn=7", @"--barf:420", @"-q=666", @"-x:-7" ];
@@ -562,6 +562,8 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
+#warning update with group
+#if 0
 - (void)testOptionParsingSentinel
 {
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
@@ -691,6 +693,7 @@ NS_ASSUME_NONNULL_END
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
 }
+#endif
 
 - (void)testNonSentinelOrphanedDashes
 {
@@ -753,8 +756,8 @@ NS_ASSUME_NONNULL_END
 {
     CLKIntArgumentTransformer *transformer = [[CLKIntArgumentTransformer alloc] init];
     NSArray *options = @[
-        [CLKOption parameterOptionWithName:@"strange" flag:@"s" required:NO recurrent:NO dependencies:nil transformer:transformer],
-        [CLKOption parameterOptionWithName:@"aeons" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:transformer]
+        [CLKOption parameterOptionWithName:@"strange" flag:@"s" required:NO recurrent:NO transformer:transformer],
+        [CLKOption parameterOptionWithName:@"aeons" flag:@"a" required:NO recurrent:NO transformer:transformer]
     ];
     
     NSDictionary *expectedOptionManifest = @{
@@ -771,8 +774,8 @@ NS_ASSUME_NONNULL_END
     CLKArgumentTransformer *acmeTransformer = [[CLKArgumentTransformer alloc] init];
     StuntTransformer *confoundTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"confound error"];
     options = @[
-        [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO dependencies:nil transformer:acmeTransformer],
-        [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO dependencies:nil transformer:confoundTransformer]
+        [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO transformer:acmeTransformer],
+        [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO transformer:confoundTransformer]
     ];
     
     argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
@@ -780,6 +783,8 @@ NS_ASSUME_NONNULL_END
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
+#warning update with group
+#if 0
 - (void)testComplexMix
 {
     // organized by how they should be interpreted by the parser
@@ -805,9 +810,9 @@ NS_ASSUME_NONNULL_END
     
     NSArray *options = @[
          [CLKOption parameterOptionWithName:@"ack" flag:@"a"],
-         [CLKOption parameterOptionWithName:@"noise" flag:@"n" required:NO recurrent:NO dependencies:nil transformer:nil],
+         [CLKOption parameterOptionWithName:@"noise" flag:@"n" required:NO recurrent:NO transformer:nil],
          [CLKOption parameterOptionWithName:@"ghost" flag:@"g"], // not provided in argv
-         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES dependencies:nil transformer:synTransformer],
+         [CLKOption parameterOptionWithName:@"syn" flag:@"s" required:NO recurrent:YES transformer:synTransformer],
          [CLKOption optionWithName:@"quone" flag:@"q" dependencies:@[ @"noise" ]],
          [CLKOption optionWithName:@"xyzzy" flag:@"x"],
          [CLKOption optionWithName:@"spline" flag:@"p"],
@@ -827,10 +832,11 @@ NS_ASSUME_NONNULL_END
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest positionalArguments:expectedPositionalArguments];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
+#endif
 
 - (void)testMultipleMixedErrors
 {
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES transformer:nil];
     
     NSArray *argv = @[
         @"-o k", // malformed token
@@ -889,6 +895,8 @@ NS_ASSUME_NONNULL_END
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
+#warning convert to group
+#if 0
 - (void)testInvalidDependencies
 {
     // dependencies can't reference unregistered options
@@ -907,5 +915,6 @@ NS_ASSUME_NONNULL_END
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:nil]);
 }
+#endif
 
 @end

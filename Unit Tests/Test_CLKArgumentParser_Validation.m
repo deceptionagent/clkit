@@ -47,7 +47,7 @@
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES dependencies:nil transformer:nil];
+    flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES transformer:nil];
     NSDictionary *expectedOptionManifest = @{
         @"flarn" : @[ @"barf", @"barf" ]
     };
@@ -138,6 +138,8 @@
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
 
+#warning convert to group
+#if 0
 - (void)testValidation_dependencies
 {
     NSArray *options = @[
@@ -159,6 +161,7 @@
     spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
     [self performTestWithArgumentVector:argv options:options spec:spec];
 }
+#endif
 
 - (void)testValidation_requiredGroup
 {
