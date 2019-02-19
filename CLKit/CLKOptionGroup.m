@@ -78,9 +78,9 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (NSArray<NSString *> *)allOptions
+- (NSSet<NSString *> *)allOptions
 {
-    NSMutableArray *allOptions = [NSMutableArray array];
+    NSMutableSet *allOptions = [NSMutableSet set];
     
     for (CLKArgumentManifestConstraint *constraint in _constraints) {
         [allOptions addObjectsFromArray:constraint.options.array];

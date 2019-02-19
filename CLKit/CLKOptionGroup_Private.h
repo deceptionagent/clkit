@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOptionGroup ()
 
-@property (readonly) NSArray<NSString *> *allOptions;
+@property (readonly) NSSet<NSString *> *allOptions;
 @property (readonly) NSArray<CLKArgumentManifestConstraint *> *constraints;
 
 @end

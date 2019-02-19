@@ -24,7 +24,7 @@
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-    XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf" ]));
+    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", nil]));
     
     XCTAssertThrows([CLKOptionGroup requiredGroupForOptionsNamed:@[]]);
 }
@@ -37,7 +37,7 @@
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-    XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf", @"quone" ]));
+    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", @"quone", nil]));
     
     XCTAssertThrows([CLKOptionGroup mutexedGroupForOptionsNamed:@[]]);
 }
@@ -50,7 +50,7 @@
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-    XCTAssertEqualObjects(group.allOptions, @[ @"flarn" ]);
+    XCTAssertEqualObjects(group.allOptions, [NSSet setWithObject:@"flarn"]);
     
     group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
     expectedConstraints = @[
@@ -58,7 +58,7 @@
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-    XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf" ]));
+    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", nil]));
     
     group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf", @"quone" ]];
     expectedConstraints = @[
@@ -66,17 +66,29 @@
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
-    XCTAssertEqualObjects(group.allOptions, (@[ @"flarn", @"barf", @"quone" ]));
-    
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([CLKOptionGroup standaloneGroupForOptionNamed:nil allowing:@[ @"flarn" ]]);
-#pragma clang diagnostic pop
+    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", @"quone", nil]));
 }
 
 - (void)testDependencies
 {
-    XCTFail(@"unimplemented");
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependencies:@[ @"barf" ]];
+    NSArray *expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"flarn"]
+    ];
+    
+    XCTAssertEqualObjects(group.constraints, expectedConstraints);
+    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", nil]));
+    
+    group = [CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependencies:@[ @"syn", @"ack" ]];
+    expectedConstraints = @[
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" causalOption:@"flarn"],
+        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"ack" causalOption:@"flarn"]
+    ];
+    
+    XCTAssertEqualObjects(group.constraints, expectedConstraints);
+    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"syn", @"ack", nil]));
+    
+    XCTAssertThrows([CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependencies:@[]]);
 }
 
 @end
