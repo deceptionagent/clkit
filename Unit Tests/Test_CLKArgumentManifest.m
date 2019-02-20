@@ -28,6 +28,37 @@ NS_ASSUME_NONNULL_END
     return [[CLKArgumentManifest alloc] initWithOptionRegistry:registry];
 }
 
+- (void)testDebugDescription
+{
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:nil];
+    CLKOption *barf = [CLKOption parameterOptionWithName:@"barf" flag:nil];
+    
+    CLKArgumentManifest *manifest = [self manifestWithRegisteredOptions:@[ flarn, barf ]];
+    XCTAssertNotNil(manifest.debugDescription);
+    
+    manifest = [self manifestWithRegisteredOptions:@[ flarn, barf ]];
+    [manifest accumulateSwitchOptionNamed:@"flarn"];
+    XCTAssertTrue([manifest.debugDescription containsString:@"flarn"]);
+    
+    manifest = [self manifestWithRegisteredOptions:@[ flarn, barf ]];
+    [manifest accumulateArgument:@"quone" forParameterOptionNamed:@"barf"];
+    XCTAssertTrue([manifest.debugDescription containsString:@"barf"]);
+    XCTAssertTrue([manifest.debugDescription containsString:@"quone"]);
+    
+    manifest = [self manifestWithRegisteredOptions:@[ flarn, barf ]];
+    [manifest accumulatePositionalArgument:@"quone"];
+    XCTAssertTrue([manifest.debugDescription containsString:@"quone"]);
+    
+    manifest = [self manifestWithRegisteredOptions:@[ flarn, barf ]];
+    [manifest accumulateSwitchOptionNamed:@"flarn"];
+    [manifest accumulateArgument:@"quone" forParameterOptionNamed:@"barf"];
+    [manifest accumulatePositionalArgument:@"xyzzy"];
+    XCTAssertTrue([manifest.debugDescription containsString:@"flarn"]);
+    XCTAssertTrue([manifest.debugDescription containsString:@"barf"]);
+    XCTAssertTrue([manifest.debugDescription containsString:@"quone"]);
+    XCTAssertTrue([manifest.debugDescription containsString:@"xyzzy"]);
+}
+
 - (void)testSwitchOptions
 {
     CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:nil];
