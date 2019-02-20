@@ -1,4 +1,6 @@
 .DS_Store
 DerivedData
 CLKit.xcodeproj/project.xcworkspace
+CLKit.xcodeproj/xcshareddata
 CLKit.xcodeproj/xcuserdata
+
