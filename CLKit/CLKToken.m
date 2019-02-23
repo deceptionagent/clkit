@@ -42,7 +42,7 @@ CLKTokenForm CLKTokenFormForToken(NSString *token)
     
     // if the token has a leading dash and has failed all of the option form checks,
     // it looks like an option but is malformed somehow. (e.g., the option segment
-    // contains whitespace after the dash.) this is the only order-dependent check.
+    // contains whitespace after the dash.) this is an order-dependent check.
     if ([token hasPrefix:@"-"]) {
         return CLKTokenFormMalformedOption;
     }
