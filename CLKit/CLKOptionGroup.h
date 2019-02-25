@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)requiredGroupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options;
 + (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptionNames;
-+ (instancetype)groupForOptionNamed:(NSString *)option requiringDependencies:(NSArray<NSString *> *)dependencies;
++ (instancetype)groupForOptionNamed:(NSString *)option requiringDependency:(NSString *)dependency;
 
 @end
 

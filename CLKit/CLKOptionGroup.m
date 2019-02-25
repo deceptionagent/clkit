@@ -47,21 +47,13 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
-+ (instancetype)groupForOptionNamed:(NSString *)option requiringDependencies:(NSArray<NSString *> *)dependencies
++ (instancetype)groupForOptionNamed:(NSString *)option requiringDependency:(NSString *)dependency
 {
     CLKHardParameterAssert(option != nil);
-    CLKHardParameterAssert((dependencies.count > 0), @"dependency groups require one or more options");
-    CLKHardParameterAssert(![dependencies containsObject:option], @"dependent option '%@' found in dependency array", option);
-    NSUInteger uniqueDependencyCount = [NSSet setWithArray:dependencies].count;
-    CLKHardParameterAssert((uniqueDependencyCount == dependencies.count), @"dependency arrays should not contain duplicate options");
-    
-    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
-    for (NSString *dependency in dependencies) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:dependency causalOption:option];
-        [constraints addObject:constraint];
-    }
-    
-    return [[self alloc] _initWithConstraints:constraints];
+    CLKHardParameterAssert(dependency != nil);
+    CLKHardParameterAssert(![option isEqualToString:dependency], @"");
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:dependency causalOption:option];
+    return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
 - (instancetype)_initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints
