@@ -361,7 +361,7 @@ NS_ASSUME_NONNULL_END
         [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" causalOption:@"ack_alt"],
         [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"],
+        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
     ];
     
     NSArray<NSError *> *errors = @[
@@ -377,7 +377,7 @@ NS_ASSUME_NONNULL_END
         [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound --delivery: mutually exclusive options encountered"],
         [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn_alt is required when using --ack_alt"],
         [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud may not be provided more than once"],
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn_alt: required option not provided"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn_alt: required option not provided"]
     ];
     
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];

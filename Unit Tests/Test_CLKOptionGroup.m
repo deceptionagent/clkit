@@ -69,26 +69,15 @@
     XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", @"quone", nil]));
 }
 
-- (void)testDependencies
+- (void)testDependency
 {
-    CLKOptionGroup *group = [CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependencies:@[ @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependency:@"barf"];
     NSArray *expectedConstraints = @[
         [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"barf" causalOption:@"flarn"]
     ];
     
     XCTAssertEqualObjects(group.constraints, expectedConstraints);
     XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"barf", nil]));
-    
-    group = [CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependencies:@[ @"syn", @"ack" ]];
-    expectedConstraints = @[
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" causalOption:@"flarn"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"ack" causalOption:@"flarn"]
-    ];
-    
-    XCTAssertEqualObjects(group.constraints, expectedConstraints);
-    XCTAssertEqualObjects(group.allOptions, ([NSSet setWithObjects:@"flarn", @"syn", @"ack", nil]));
-    
-    XCTAssertThrows([CLKOptionGroup groupForOptionNamed:@"flarn" requiringDependencies:@[]]);
 }
 
 @end

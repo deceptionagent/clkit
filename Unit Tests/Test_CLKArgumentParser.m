@@ -569,7 +569,7 @@ NS_ASSUME_NONNULL_END
     CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
     CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c"];
     CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
-    CLKOptionGroup *confoundDeliveryGroup = [CLKOptionGroup groupForOptionNamed:@"confound" requiringDependencies:@[ @"delivery"]];
+    CLKOptionGroup *confoundDeliveryGroup = [CLKOptionGroup groupForOptionNamed:@"confound" requiringDependency:@"delivery"];
     
     /* sentinel alone in argv */
     
@@ -796,7 +796,7 @@ NS_ASSUME_NONNULL_END
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOptionNamed:@"quone" requiringDependencies:@[ @"noise" ]]
+        [CLKOptionGroup groupForOptionNamed:@"quone" requiringDependency:@"noise"]
     ];
     
     // organized by how they should be interpreted by the parser
@@ -903,7 +903,7 @@ NS_ASSUME_NONNULL_END
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOptionNamed:@"syn" requiringDependencies:@[ @"flarn" ]]
+        [CLKOptionGroup groupForOptionNamed:@"syn" requiringDependency:@"flarn"]
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:groups]);

@@ -147,7 +147,7 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOptionNamed:@"charlie" requiringDependencies:@[ @"bravo" ]]
+        [CLKOptionGroup groupForOptionNamed:@"charlie" requiringDependency:@"bravo"]
     ];
     
     NSArray *argv = @[ @"--charlie" ];
