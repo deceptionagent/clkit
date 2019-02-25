@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_END
 {
     CLKHardParameterAssert(option != nil);
     CLKHardParameterAssert(dependency != nil);
-    CLKHardParameterAssert(![option isEqualToString:dependency], @"");
+    CLKHardParameterAssert(![option isEqualToString:dependency], @"an option cannot be declared as its own dependency");
     CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:dependency causalOption:option];
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
