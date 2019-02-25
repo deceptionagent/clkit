@@ -432,7 +432,9 @@
         return NO;
     }
     
-    if (option != nil) {
+    if (option == nil) {
+        [_manifest accumulatePositionalArgument:argument];
+    } else {
         BOOL rejectOptionLikeToken = !(_state == CLKAPStateParseParameterOptionNameAssignment
                                        || _state == CLKAPStateParseParameterOptionFlagAssignment
                                        || _state == CLKAPStateParseRemainingArguments);
@@ -455,8 +457,6 @@
         }
         
         [_manifest accumulateArgument:argument forParameterOptionNamed:option.name];
-    } else { // option == nil
-        [_manifest accumulatePositionalArgument:argument];
     }
     
     return YES;
