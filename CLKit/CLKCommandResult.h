@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface CLKCommandResult : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -22,3 +24,5 @@
 @property (nullable, readonly) NSDictionary *userInfo;
 
 @end
+
+NS_ASSUME_NONNULL_END
