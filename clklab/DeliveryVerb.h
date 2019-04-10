@@ -7,6 +7,10 @@
 #import "CLKit.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface DeliveryVerb : NSObject <CLKVerb>
 
 @end
+
+NS_ASSUME_NONNULL_END

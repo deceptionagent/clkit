@@ -7,6 +7,10 @@
 #import "CLKit.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ConfoundVerb : NSObject <CLKVerb>
 
 @end
+
+NS_ASSUME_NONNULL_END
