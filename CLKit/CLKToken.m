@@ -81,7 +81,10 @@ BOOL CLKTokenIsParameterOptionNameAssignment(NSString *token)
 {
     /* `--flarn=barf`, `--flarn:barf` */
     
-    if (token.length < 3 && ![token hasPrefix:@"--"]) {
+    // name assignment forms contain at least two leading dashes, an assignment character, and at least one option name character.
+    // this check does not differentiate between (e.g.,) `--f=` (acceptable) and `--=f` (malformed); the latter will be
+    // detected as part of option name extraction below.
+    if (!(token.length > 3 && [token hasPrefix:@"--"])) {
         return NO;
     }
     
