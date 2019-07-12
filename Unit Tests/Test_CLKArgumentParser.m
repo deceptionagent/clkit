@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) NSString *argumentSegment;
 @property (readonly) NSString *composedToken;
+@property (readonly) BOOL malformed;
 
 @end
 
@@ -59,6 +60,11 @@ NS_ASSUME_NONNULL_END
 - (NSString *)composedToken
 {
     return [NSString stringWithFormat:@"%@%@%@", _optionSegment, _operator, _argumentSegment];
+}
+
+- (BOOL)malformed
+{
+    return ([_optionSegment isEqualToString:@"-"] || [_optionSegment isEqualToString:@"--"]);
 }
 
 @end
@@ -299,6 +305,8 @@ NS_ASSUME_NONNULL_END
         [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
     ];
     
+    NSArray *optionSegments = @[ @"--flarn", @"-f" ];
+    NSArray *operators = @[ @"=", @":" ];
     NSArray *argumentSegments = @[
         @"barf",
         @"-barf",
@@ -326,14 +334,20 @@ NS_ASSUME_NONNULL_END
         @":"
     ];
     
-    NSArray *optionSegments = @[ @"--flarn", @"-f" ];
-    NSArray *operators = @[ @"=", @":" ];
-    
+    // combine the above input segments to generate parser input
     NSMutableArray<AssignmentFormParsingSpec *> *formSpecs = [NSMutableArray array];
     for (NSString *optionSegment in optionSegments) {
         for (NSString *operator in operators) {
             for (NSString *argumentSegment in argumentSegments) {
                 AssignmentFormParsingSpec *spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:optionSegment operator:operator argumentSegment:argumentSegment];
+                [formSpecs addObject:spec];
+                
+                // malformed version where the option flag is missing, e.g., `-=barf`
+                spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:@"-" operator:operator argumentSegment:argumentSegment];
+                [formSpecs addObject:spec];
+                
+                // malformed version where the option name is missing, e.g., `--=barf`
+                spec = [[AssignmentFormParsingSpec alloc] initWithOptionSegment:@"--" operator:operator argumentSegment:argumentSegment];
                 [formSpecs addObject:spec];
             }
         }
@@ -341,20 +355,19 @@ NS_ASSUME_NONNULL_END
     
     for (AssignmentFormParsingSpec *formSpec in formSpecs) {
         NSArray *argv = @[ formSpec.composedToken ];
-        NSDictionary *expectedManifest = @{
-            @"flarn" : @[ formSpec.argumentSegment ]
-        };
+        ArgumentParsingResultSpec *resultSpec;
         
-        ArgumentParsingResultSpec *resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
-        [self performTestWithArgumentVector:argv options:options spec:resultSpec];
+        if (formSpec.malformed) {
+            NSString *error = [NSString stringWithFormat:@"unexpected token in argument vector: '%@'", formSpec.composedToken];
+            resultSpec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:error];
+        } else {
+             NSDictionary *expectedManifest = @{
+                @"flarn" : @[ formSpec.argumentSegment ]
+            };
+            
+            resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+        }
         
-        argv = @[ formSpec.composedToken, @"--barf", @"quone" ];
-        expectedManifest = @{
-            @"flarn" : @[ formSpec.argumentSegment ],
-            @"barf" : @[ @"quone" ]
-        };
-        
-        resultSpec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
         [self performTestWithArgumentVector:argv options:options spec:resultSpec];
     }
 }
