@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */; };
-		A609E2C51F5B6D580088DEDA /* CLKArgumentManifestValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = A609E2C31F5B6D570088DEDA /* CLKArgumentManifestValidator.h */; };
 		A609E2C61F5B6D580088DEDA /* CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2C41F5B6D570088DEDA /* CLKArgumentManifestValidator.m */; };
-		A609E2DC1F5D1BAB0088DEDA /* CLKError.h in Headers */ = {isa = PBXBuildFile; fileRef = A609E2DA1F5D1BAB0088DEDA /* CLKError.h */; };
 		A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DB1F5D1BAB0088DEDA /* CLKError.m */; };
 		A609E2DF1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DE1F5D2A300088DEDA /* Test_CLKArgumentManifestValidator.m */; };
 		A61030EE1F11D06F00AB2033 /* Test_CLKAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */; };
@@ -18,12 +16,9 @@
 		A6176E87210723F000B2908B /* BlasphemeVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E85210723F000B2908B /* BlasphemeVerb.m */; };
 		A6176E88210723F000B2908B /* QuarantineVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A6176E86210723F000B2908B /* QuarantineVerb.m */; };
 		A62FA2872029BF5B003FAEBB /* ConstraintValidationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A62FA2862029BF5B003FAEBB /* ConstraintValidationSpec.m */; };
-		A6429D322122AC3B00B32FE0 /* NSString+CLKAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A6429D302122AC3B00B32FE0 /* NSString+CLKAdditions.h */; };
 		A6429D332122AC3B00B32FE0 /* NSString+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6429D312122AC3B00B32FE0 /* NSString+CLKAdditions.m */; };
-		A64615EC20FDF9EA001F885C /* CLKCommandResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615EA20FDF9EA001F885C /* CLKCommandResult.h */; };
 		A64615ED20FDF9EA001F885C /* CLKCommandResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615EB20FDF9EA001F885C /* CLKCommandResult.m */; };
 		A64615EF20FEC95E001F885C /* Test_CLKCommandResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615EE20FEC95E001F885C /* Test_CLKCommandResult.m */; };
-		A64615F320FF26C6001F885C /* CLKVerbDepot.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615F120FF26C6001F885C /* CLKVerbDepot.h */; };
 		A64615F420FF26C6001F885C /* CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F220FF26C6001F885C /* CLKVerbDepot.m */; };
 		A64615F620FF3DEC001F885C /* Test_CLKVerbDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F520FF3DEC001F885C /* Test_CLKVerbDepot.m */; };
 		A64615F920FF3E2B001F885C /* StuntVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A64615F820FF3E2B001F885C /* StuntVerb.m */; };
@@ -31,22 +26,29 @@
 		A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E001F037A9400456347 /* Test_CLKArgumentManifest.m */; };
 		A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E061F03A14400456347 /* Test_CLKArgumentParser.m */; };
 		A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0E1F04219E00456347 /* Test_CLKAdditions.m */; };
-		A674001F2003209E00910474 /* CLKOptionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = A674001D2003209E00910474 /* CLKOptionGroup.h */; };
 		A67400202003209E00910474 /* CLKOptionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A674001E2003209E00910474 /* CLKOptionGroup.m */; };
 		A67BF0E71F07A61A0091B233 /* Test_ArgumentTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A67BF0E61F07A61A0091B233 /* Test_ArgumentTransformers.m */; };
 		A696CC0F21033D6D00A9F7E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC0E21033D6D00A9F7E7 /* main.m */; };
 		A696CC1221033DD000A9F7E7 /* ConfoundVerb.m in Sources */ = {isa = PBXBuildFile; fileRef = A696CC1121033DD000A9F7E7 /* ConfoundVerb.m */; };
 		A6AA544D220FF7210030C48A /* StuntTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AA544C220FF7210030C48A /* StuntTransformer.m */; };
-		A6B0D30C200E006000BF6300 /* CLKError_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B0D30B200E006000BF6300 /* CLKError_Private.h */; };
-		A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A6BB1B3B2032F1A900927BD9 /* CLKOptionRegistry.h */; };
 		A6BB1B3E2032F1A900927BD9 /* CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3C2032F1A900927BD9 /* CLKOptionRegistry.m */; };
 		A6BB1B402033F74A00927BD9 /* Test_CLKOptionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = A6BB1B3F2033F74A00927BD9 /* Test_CLKOptionRegistry.m */; };
-		A6CFEAA0200CB1350009B8D2 /* CLKArgumentManifestConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = A6CFEA9E200CB1350009B8D2 /* CLKArgumentManifestConstraint.h */; };
 		A6CFEAA1200CB1350009B8D2 /* CLKArgumentManifestConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEA9F200CB1350009B8D2 /* CLKArgumentManifestConstraint.m */; };
 		A6CFEAA3200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEAA2200CB72A0009B8D2 /* Test_CLKArgumentManifestConstraint.m */; };
 		A6CFEAA5200D39910009B8D2 /* Test_CLKOptionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A6CFEAA4200D39910009B8D2 /* Test_CLKOptionGroup.m */; };
 		A6D1906F219698E800741AB0 /* Test_CLKArgumentParser_Validation.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D1906E219698E800741AB0 /* Test_CLKArgumentParser_Validation.m */; };
-		A6DB92F3212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A6DB92F1212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.h */; };
+		A6D7166D2300FDF200FE28EA /* CLKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A696CC1321033E5B00A9F7E7 /* CLKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D7166E2300FDF200FE28EA /* CLKArgumentManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = A66A9DFC1F02DF4300456347 /* CLKArgumentManifest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D7166F2300FDF200FE28EA /* CLKArgumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A66A9DF91F0241DB00456347 /* CLKArgumentParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716702300FDF200FE28EA /* CLKOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A66A9DE91F023CE200456347 /* CLKOption.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716712300FDF200FE28EA /* CLKOptionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = A674001D2003209E00910474 /* CLKOptionGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716722300FDF200FE28EA /* NSArray+CLKAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A66A9E0B1F041DE600456347 /* NSArray+CLKAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716732300FDF200FE28EA /* CLKError.h in Headers */ = {isa = PBXBuildFile; fileRef = A609E2DA1F5D1BAB0088DEDA /* CLKError.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716742300FDF200FE28EA /* CLKCommandResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615EA20FDF9EA001F885C /* CLKCommandResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716752300FDF200FE28EA /* CLKVerb.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615F020FF2616001F885C /* CLKVerb.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716762300FDF200FE28EA /* CLKVerbDepot.h in Headers */ = {isa = PBXBuildFile; fileRef = A64615F120FF26C6001F885C /* CLKVerbDepot.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716772300FDF200FE28EA /* CLKVerbFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = A6FAEEAE210549C4001F408C /* CLKVerbFamily.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D716782300FEC100FE28EA /* CLKArgumentTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = A6527C381F0A2D0C00BF6FAE /* CLKArgumentTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6DB92F4212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A6DB92F2212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.m */; };
 		A6E34F6B202C59E900CE22E1 /* ArgumentParsingResultSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E34F6A202C59E900CE22E1 /* ArgumentParsingResultSpec.m */; };
 		A6E478D61F133AB80081EB82 /* NSArray+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9E0C1F041DE600456347 /* NSArray+CLKAdditions.m */; };
@@ -58,10 +60,8 @@
 		A6E478DC1F133AB80081EB82 /* CLKArgumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A66A9DFA1F0241DB00456347 /* CLKArgumentParser.m */; };
 		A6E478FC1F1347530081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
 		A6E478FF1F13475B0081EB82 /* libCLKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E478CD1F133A780081EB82 /* libCLKit.a */; };
-		A6FAEEB0210549C4001F408C /* CLKVerbFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = A6FAEEAE210549C4001F408C /* CLKVerbFamily.h */; };
 		A6FAEEB1210549C4001F408C /* CLKVerbFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = A6FAEEAF210549C4001F408C /* CLKVerbFamily.m */; };
 		A6FAEEB321055AD4001F408C /* Test_CLKVerbFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = A6FAEEB221055AD3001F408C /* Test_CLKVerbFamily.m */; };
-		A6FEA8BB21F6E38C00F84F27 /* CLKToken.h in Headers */ = {isa = PBXBuildFile; fileRef = A6FEA8B921F6E38C00F84F27 /* CLKToken.h */; };
 		A6FEA8BC21F6E38C00F84F27 /* CLKToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A6FEA8BA21F6E38C00F84F27 /* CLKToken.m */; };
 		A6FEA8BE21F7C6BB00F84F27 /* Test_CLKToken.m in Sources */ = {isa = PBXBuildFile; fileRef = A6FEA8BD21F7C6BB00F84F27 /* Test_CLKToken.m */; };
 /* End PBXBuildFile section */
@@ -378,22 +378,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		A6D7165D2300FC6E00FE28EA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A6E478CB1F133A780081EB82 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A609E2DC1F5D1BAB0088DEDA /* CLKError.h in Headers */,
-				A64615F320FF26C6001F885C /* CLKVerbDepot.h in Headers */,
-				A6BB1B3D2032F1A900927BD9 /* CLKOptionRegistry.h in Headers */,
-				A6429D322122AC3B00B32FE0 /* NSString+CLKAdditions.h in Headers */,
-				A609E2C51F5B6D580088DEDA /* CLKArgumentManifestValidator.h in Headers */,
-				A674001F2003209E00910474 /* CLKOptionGroup.h in Headers */,
-				A6DB92F3212A8A3F006ED421 /* NSCharacterSet+CLKAdditions.h in Headers */,
-				A6FAEEB0210549C4001F408C /* CLKVerbFamily.h in Headers */,
-				A6CFEAA0200CB1350009B8D2 /* CLKArgumentManifestConstraint.h in Headers */,
-				A64615EC20FDF9EA001F885C /* CLKCommandResult.h in Headers */,
-				A6B0D30C200E006000BF6300 /* CLKError_Private.h in Headers */,
-				A6FEA8BB21F6E38C00F84F27 /* CLKToken.h in Headers */,
+				A6D7166D2300FDF200FE28EA /* CLKit.h in Headers */,
+				A6D7166E2300FDF200FE28EA /* CLKArgumentManifest.h in Headers */,
+				A6D7166F2300FDF200FE28EA /* CLKArgumentParser.h in Headers */,
+				A6D716782300FEC100FE28EA /* CLKArgumentTransformer.h in Headers */,
+				A6D716702300FDF200FE28EA /* CLKOption.h in Headers */,
+				A6D716712300FDF200FE28EA /* CLKOptionGroup.h in Headers */,
+				A6D716722300FDF200FE28EA /* NSArray+CLKAdditions.h in Headers */,
+				A6D716732300FDF200FE28EA /* CLKError.h in Headers */,
+				A6D716742300FDF200FE28EA /* CLKCommandResult.h in Headers */,
+				A6D716752300FDF200FE28EA /* CLKVerb.h in Headers */,
+				A6D716762300FDF200FE28EA /* CLKVerbDepot.h in Headers */,
+				A6D716772300FDF200FE28EA /* CLKVerbFamily.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +411,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A66A9DE61F02294800456347 /* Build configuration list for PBXNativeTarget "clklab" */;
 			buildPhases = (
+				A6D7165D2300FC6E00FE28EA /* Headers */,
 				A66A9DDB1F02294800456347 /* Sources */,
 				A66A9DDC1F02294800456347 /* Frameworks */,
 				A66A9DDD1F02294800456347 /* CopyFiles */,
