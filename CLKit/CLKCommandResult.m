@@ -51,22 +51,12 @@
         return nil;
     }
     
-    NSMutableString *errorDescription = [NSMutableString string];
-    
-    for (NSUInteger i = 0 ; i < self.errors.count ; i++) {
-        if (i > 0) {
-            [errorDescription appendString:@"\n"];
-        }
-        
-        NSError *error = self.errors[i];
-        if ([error.domain isEqualToString:CLKErrorDomain]) {
-            [errorDescription appendString:error.localizedDescription];
-        } else {
-            [errorDescription appendFormat:@"%@ (%@: %ld)", error.localizedDescription, error.domain, error.code];
-        }
+    NSMutableArray<NSString *> *errorDescriptions = [NSMutableArray array];
+    for (NSError *error in self.errors) {
+        [errorDescriptions addObject:error.localizedDescription];
     }
     
-    return errorDescription;
+    return [errorDescriptions componentsJoinedByString:@"\n"];
 }
 
 @end
