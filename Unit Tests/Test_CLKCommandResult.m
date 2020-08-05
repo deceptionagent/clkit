@@ -74,13 +74,10 @@
     NSError *errorBravo = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"ne cede malis"];
     
     result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha ] userInfo:nil];
-    NSString *expectedErrorDescription = [NSString stringWithFormat:@"aye mak sicur (%@: %d)", NSPOSIXErrorDomain, ENOENT];
-    XCTAssertEqualObjects(result.errorDescription, expectedErrorDescription);
+    XCTAssertEqualObjects(result.errorDescription, @"aye mak sicur");
     
     result = [[CLKCommandResult alloc] initWithExitStatus:7 errors:@[ errorAlpha, errorBravo ] userInfo:nil];
-    NSString *fmt = @"aye mak sicur (%@: %d)\nne cede malis";
-    expectedErrorDescription = [NSString stringWithFormat:fmt, NSPOSIXErrorDomain, ENOENT];
-    XCTAssertEqualObjects(result.errorDescription, expectedErrorDescription);
+    XCTAssertEqualObjects(result.errorDescription, @"aye mak sicur\nne cede malis");
 }
 
 @end
