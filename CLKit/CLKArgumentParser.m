@@ -30,10 +30,9 @@
     CLKAPState _state;
     CLKOption *_currentParameterOption;
     CLKArgumentManifest *_manifest;
-    NSMutableArray<NSError *> *_errors;
+    NSMutableArray<NSError *> *_parsingErrors;
+    NSMutableArray<NSError *> *_validationErrors;
 }
-
-@synthesize errors = _errors;
 
 + (instancetype)parserWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options
 {
@@ -58,6 +57,8 @@
         _optionGroups = [groups copy];
         _optionRegistry = [[CLKOptionRegistry alloc] initWithOptions:options];
         _manifest = [[CLKArgumentManifest alloc] initWithOptionRegistry:_optionRegistry];
+        _parsingErrors = [[NSMutableArray alloc] init];
+        _validationErrors = [[NSMutableArray alloc] init];
         
         // sanity-check groups
         for (CLKOptionGroup *group in groups) {
@@ -119,13 +120,49 @@
     return option;
 }
 
-- (void)_accumulateError:(NSError *)error
+#pragma mark -
+#pragma mark Errors
+
+- (NSArray<NSError *> *)errors
 {
-    if (_errors == nil) {
-        _errors = [[NSMutableArray alloc] init];
+    NSMutableArray<NSError *> *errors = [NSMutableArray array];
+    [errors addObjectsFromArray:_parsingErrors];
+    [errors addObjectsFromArray:_validationErrors];
+    return (errors.count > 0 ? errors : nil);
+}
+
+- (void)_accumulateParsingError:(NSError *)error
+{
+    [_parsingErrors addObject:error];
+}
+
+- (void)_accumulateValidationError:(NSError *)error
+{
+    // the manifest won't contain a given required parameter option if no occurences of that option could be parsed.
+    // in this event, both a parsing error and a validation error are generated. displaying both errors is confusing.
+    // the solution is to display *just* the parsing error; we don't want to display both a parsing error *and* an
+    // "option not provided" error if we know the user *did* supply the option at least once.
+    if (error.code == CLKErrorRequiredOptionNotProvided && [error.domain isEqualToString:CLKErrorDomain]) {
+        NSAssert(error.clk_representedOptions.count > 0, @"represented options missing");
+        for (NSString *optionName in error.clk_representedOptions) {
+            if ([self _hasParsingErrorForOptionNamed:optionName]) {
+                return;
+            }
+        }
     }
     
-    [_errors addObject:error];
+    [_validationErrors addObject:error];
+}
+
+- (BOOL)_hasParsingErrorForOptionNamed:(NSString *)optionName
+{
+    for (NSError *error in _parsingErrors) {
+        if ([error.clk_representedOptions containsObject:optionName]) {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 #pragma mark -
@@ -224,7 +261,7 @@
         
         case CLKTokenFormMalformedOption:
             [_argumentVector removeObjectAtIndex:0];
-            [self _accumulateError:[NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextToken]];
+            [self _accumulateParsingError:[NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '%@'", nextToken]];
             return CLKAPStateReadNextArgumentToken;
     }
 }
@@ -238,7 +275,7 @@
     NSError *error;
     CLKOption *option = [self _optionForOptionNameToken:rawArgument error:&error];
     if (option == nil) {
-        [self _accumulateError:error];
+        [self _accumulateParsingError:error];
         return CLKAPStateReadNextArgumentToken;
     }
     
@@ -276,7 +313,7 @@
     NSError *error;
     CLKOption *option = [self _optionForOptionFlagToken:rawArgument error:&error];
     if (option == nil) {
-        [self _accumulateError:error];
+        [self _accumulateParsingError:error];
         return CLKAPStateReadNextArgumentToken;
     }
     
@@ -298,22 +335,22 @@
     NSAssert((optionSegment.length > 0), @"expected option segment");
     NSString *argumentSegment = [rawArgument substringWithRange:argumentRange];
     
-    if (argumentSegment.length == 0) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", optionSegment];
-        [self _accumulateError:error];
-        return CLKAPStateReadNextArgumentToken;
-    }
-    
     NSError *optionLookupError;
     CLKOption *option = [self _optionForOptionNameToken:optionSegment error:&optionLookupError];
     if (option == nil) {
-        [self _accumulateError:optionLookupError];
+        [self _accumulateParsingError:optionLookupError];
+        return CLKAPStateReadNextArgumentToken;
+    }
+    
+    if (argumentSegment.length == 0) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"expected argument for option '%@'", optionSegment];
+        [self _accumulateParsingError:error];
         return CLKAPStateReadNextArgumentToken;
     }
     
     NSError *processingError;
     if (![self _processAssignedArgument:argumentSegment forParameterOption:option userInvocation:optionSegment error:&processingError]) {
-        [self _accumulateError:processingError];
+        [self _accumulateParsingError:processingError];
         return CLKAPStateReadNextArgumentToken;
     }
     
@@ -330,22 +367,22 @@
     NSString *flagSegment = [rawArgument substringToIndex:2];
     NSString *argumentSegment = [rawArgument substringFromIndex:3];
     
-    if (argumentSegment.length == 0) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", flagSegment];
-        [self _accumulateError:error];
-        return CLKAPStateReadNextArgumentToken;
-    }
-    
     NSError *optionLookupError;
     CLKOption *option = [self _optionForOptionFlagToken:flagSegment error:&optionLookupError];
     if (option == nil) {
-        [self _accumulateError:optionLookupError];
+        [self _accumulateParsingError:optionLookupError];
+        return CLKAPStateReadNextArgumentToken;
+    }
+    
+    if (argumentSegment.length == 0) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"expected argument for option '%@'", flagSegment];
+        [self _accumulateParsingError:error];
         return CLKAPStateReadNextArgumentToken;
     }
     
     NSError *processingError;
     if (![self _processAssignedArgument:argumentSegment forParameterOption:option userInvocation:flagSegment error:&processingError]) {
-        [self _accumulateError:processingError];
+        [self _accumulateParsingError:processingError];
         return CLKAPStateReadNextArgumentToken;
     }
     
@@ -360,7 +397,7 @@
     NSError *error;
     if (![self _processArgument:argument forParameterOption:self.currentParameterOption error:&error]) {
         self.currentParameterOption = nil;
-        [self _accumulateError:error];
+        [self _accumulateParsingError:error];
         return CLKAPStateReadNextArgumentToken;
     }
     
@@ -377,7 +414,7 @@
         NSString *argument = [_argumentVector clk_popFirstObject];
         NSError *error;
         if (![self _processArgument:argument forParameterOption:self.currentParameterOption error:&error]) {
-            [self _accumulateError:error];
+            [self _accumulateParsingError:error];
         }
         
         self.currentParameterOption = nil;
@@ -389,7 +426,7 @@
 - (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation error:(NSError **)outError
 {
     if (option.type != CLKOptionTypeParameter) {
-        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"option '%@' does not accept arguments", userInvocation]));
+        CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"option '%@' does not accept arguments", userInvocation]));
         return NO;
     }
     
@@ -403,8 +440,8 @@
     if (option.type == CLKOptionTypeParameter) {
         // if the argument vector is empty at this point, we have encountered a parameter option at the end of the vector
         if (_argumentVector.count == 0) {
-            NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '%@'", userInvocation];
-            [self _accumulateError:error];
+            NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"expected argument for option '%@'", userInvocation];
+            [self _accumulateParsingError:error];
             return CLKAPStateReadNextArgumentToken;
         }
         
@@ -428,37 +465,39 @@
     
     // reject: empty string passed into argv (e.g., --foo "")
     if (argument.length == 0) {
-        CLKSetOutError(outError, [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]);
+        CLKSetOutError(outError, [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"encountered zero-length argument"]);
         return NO;
     }
     
     if (option == nil) {
         [_manifest accumulatePositionalArgument:argument];
-    } else {
-        BOOL rejectOptionLikeToken = !(_state == CLKAPStateParseParameterOptionNameAssignment
-                                       || _state == CLKAPStateParseParameterOptionFlagAssignment
-                                       || _state == CLKAPStateParseRemainingArguments);
-        
-        // reject: the next argument looks like an option, but we expect an argument
-        if (rejectOptionLikeToken) {
-            CLKTokenForm form = CLKTokenFormForToken(argument);
-            if (CLKTokenFormIsKindOfOption(form)) {
-                CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument but encountered option-like token '%@'", argument]));
-                return NO;
-            }
-        }
-        
-        CLKArgumentTransformer *transformer = option.transformer;
-        if (transformer != nil) {
-            argument = [transformer transformedArgument:argument error:outError];
-            if (argument == nil) {
-                return NO;
-            }
-        }
-        
-        [_manifest accumulateArgument:argument forParameterOptionNamed:option.name];
+        return YES;
     }
     
+    BOOL rejectOptionLikeToken = !(_state == CLKAPStateParseParameterOptionNameAssignment
+                                   || _state == CLKAPStateParseParameterOptionFlagAssignment
+                                   || _state == CLKAPStateParseRemainingArguments);
+    
+    // reject: the next argument looks like an option, but we expect an argument
+    if (rejectOptionLikeToken) {
+        CLKTokenForm form = CLKTokenFormForToken(argument);
+        if (CLKTokenFormIsKindOfOption(form)) {
+            CLKSetOutError(outError, ([NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"expected argument for option but encountered option-like token '%@'", argument]));
+            return NO;
+        }
+    }
+    
+    CLKArgumentTransformer *transformer = option.transformer;
+    if (transformer != nil) {
+        NSError *transformerError;
+        argument = [transformer transformedArgument:argument error:&transformerError];
+        if (argument == nil) {
+            *outError = [transformerError clk_errorByAddingRepresentedOptions:@[ option.name ]];
+            return NO;
+        }
+    }
+    
+    [_manifest accumulateArgument:argument forParameterOptionNamed:option.name];
     return YES;
 }
 
@@ -484,7 +523,7 @@
         CLKArgumentManifestValidator *validator = [[CLKArgumentManifestValidator alloc] initWithManifest:_manifest];
         [validator validateConstraints:constraints issueHandler:^(NSError *error) {
             result = NO;
-            [self _accumulateError:error];
+            [self _accumulateValidationError:error];
         }];
     }
     

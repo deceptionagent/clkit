@@ -34,7 +34,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable CLKOption *)_optionForOptionNameToken:(NSString *)token error:(NSError **)outError;
 - (nullable CLKOption *)_optionForOptionFlagToken:(NSString *)token error:(NSError **)outError;
 
-- (void)_accumulateError:(NSError *)error;
+#pragma mark -
+#pragma mark Errors
+
+- (void)_accumulateParsingError:(NSError *)error;
+- (void)_accumulateValidationError:(NSError *)error;
+- (BOOL)_hasParsingErrorForOptionNamed:(NSString *)optionName;
+
+#pragma mark -
+#pragma mark Parsing
 
 - (CLKAPState)_readNextArgumentToken;
 - (CLKAPState)_parseOptionName;
@@ -47,6 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation error:(NSError **)outError;
 - (CLKAPState)_processParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation;
 - (BOOL)_processArgument:(NSString *)argument forParameterOption:(nullable CLKOption *)option error:(NSError **)outError;
+
+#pragma mark -
+#pragma mark Validation
 
 - (BOOL)_validateManifest;
 

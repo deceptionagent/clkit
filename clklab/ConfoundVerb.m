@@ -14,9 +14,12 @@
 
 - (NSArray<CLKOption *> *)options
 {
+    CLKIntArgumentTransformer *intTransformer = [CLKIntArgumentTransformer new];
+    
     return @[
         [CLKOption optionWithName:@"acme" flag:@"a"],
-        [CLKOption optionWithName:@"station" flag:@"s"]
+        [CLKOption optionWithName:@"station" flag:@"s"],
+        [CLKOption parameterOptionWithName:@"oxygen" flag:@"o" required:YES recurrent:YES transformer:intTransformer]
     ];
 }
 
