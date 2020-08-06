@@ -64,6 +64,23 @@
     [self evaluateSpec:spec usingParser:parser];
 }
 
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options error:(NSError *)error
+{
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
+                              options:(NSArray<CLKOption *> *)options
+                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
+                                error:(NSError *)error
+{
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
+    CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:groups];
+    [self evaluateSpec:spec usingParser:parser];
+}
+
 - (void)evaluateSpec:(ArgumentParsingResultSpec *)spec usingParser:(CLKArgumentParser *)parser
 {
     CLKArgumentManifest *manifest = [parser parseArguments];

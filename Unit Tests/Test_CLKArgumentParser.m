@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 
+#import "AssignmentFormParsingSpec.h"
 #import "ArgumentParsingResultSpec.h"
 #import "CLKArgumentParser.h"
 #import "CLKArgumentTransformer.h"
@@ -13,61 +14,6 @@
 #import "StuntTransformer.h"
 #import "XCTestCase+CLKAdditions.h"
 
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface AssignmentFormParsingSpec : NSObject
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-
-- (instancetype)initWithOptionSegment:(NSString *)optionSegment operator:(NSString *)operator argumentSegment:(NSString *)argumentSegment NS_DESIGNATED_INITIALIZER;
-
-@property (readonly) NSString *argumentSegment;
-@property (readonly) NSString *composedToken;
-@property (readonly) BOOL malformed;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-@implementation AssignmentFormParsingSpec
-{
-    NSString *_optionSegment;
-    NSString *_operator;
-    NSString *_argumentSegment;
-}
-
-@synthesize argumentSegment = _argumentSegment;
-
-- (instancetype)initWithOptionSegment:(NSString *)optionSegment operator:(NSString *)operator argumentSegment:(NSString *)argumentSegment
-{
-    self = [super init];
-    if (self != nil) {
-        _optionSegment = [optionSegment copy];
-        _operator = [operator copy];
-        _argumentSegment = [argumentSegment copy];
-    }
-    
-    return self;
-}
-
-- (NSString *)debugDescription
-{
-    return self.composedToken;
-}
-
-- (NSString *)composedToken
-{
-    return [NSString stringWithFormat:@"%@%@%@", _optionSegment, _operator, _argumentSegment];
-}
-
-- (BOOL)malformed
-{
-    return ([_optionSegment isEqualToString:@"-"] || [_optionSegment isEqualToString:@"--"]);
-}
-
-@end
 
 @interface Test_CLKArgumentParser : XCTestCase
 
@@ -802,8 +748,11 @@ NS_ASSUME_NONNULL_END
     ];
     
     argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
-    spec = [ArgumentParsingResultSpec specWithError:confoundError];
-    [self performTestWithArgumentVector:argv options:options spec:spec];
+    [self performTestWithArgumentVector:argv options:options error:confoundError];
+    
+    // verify the parser bails before running the transformer
+    NSError *earlyError = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"confound" ] description:@"expected argument for option but encountered option-like token '-a'"];
+    [self performTestWithArgumentVector:@[ @"--confound", @"-a" ] options:options error:earlyError];
 }
 
 - (void)testComplexMix
@@ -932,6 +881,120 @@ NS_ASSUME_NONNULL_END
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:groups]);
+}
+
+- (void)testValidationErrorElidingForParsingErrors
+{
+    /*
+        expanding on a brief explanation in ArgumentParser.m:
+        
+        there exists a class of failure where a parsing issue and a validation issue
+        can happen for a single occurence of a parameter option. when this occurs, we
+        generate two errors for what, to the user, is a single problem.
+        
+        there are several cases below, each involving required parameter options:
+        
+        #1: the option is supplied as the last element of the vector
+        #2: a zero-length argument is supplied
+        #3: an option-like token is supplied
+        #4: the transformer fails on the supplied argument
+        #5: parsing fails for the argument slice of an assignment form option
+        
+        first, the option fails to parse fully. no value is placed into the manifest.
+        if there are no other occurrences of the option, or all other occurrences also
+        encounter parsing issues, the manifest will have no data for the option.
+        
+        second, when parsing completes and the validator is run, validation detects that
+        the manifest has no data for the option. that generates a second error that is
+        accumulated by the parser.
+        
+        we don't want to display "required option not provided" after the parse error
+        because that is confusing.
+        
+        if the validation error is one where a required option is not present in the
+        manifest, and we previously saw a parsing error for that option, we know we
+        could not have put anything into the manifest and expect the validation error.
+        drop the validation error on the floor.
+    */
+    
+    NSArray<CLKOption *> *options = @[
+        [CLKOption optionWithName:@"flarn" flag:@"f"],
+        [CLKOption requiredParameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    /* #1: option supplied as the last element of the vector */
+    
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '--barf'"];
+    [self performTestWithArgumentVector:@[ @"-f", @"--barf" ] options:options error:error];
+    
+    /* #2: zero-length argument supplied */
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"encountered zero-length argument"];
+    [self performTestWithArgumentVector:@[ @"--barf", @"", @"-f" ] options:options error:error];
+    
+    /* #3: option-like token supplied */
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option but encountered option-like token '-f'"];
+    [self performTestWithArgumentVector:@[ @"--barf", @"-f" ] options:options error:error];
+    
+    /* #4: transformer fails on the supplied argument */
+    
+    StuntTransformer *transformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"transformer error"];
+    options = @[
+        [CLKOption optionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:transformer]
+    ];
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"quone" ] description:@"transformer error"];
+    [self performTestWithArgumentVector:@[ @"-f", @"-q", @"666" ] options:options error:error];
+    
+    /* #5: parsing fails for the argument slice of an assignment form option */
+    
+    options = @[
+        [CLKOption optionWithName:@"flarn" flag:@"f"],
+        [CLKOption requiredParameterOptionWithName:@"barf" flag:@"b"]
+    ];
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '-b'"];
+    [self performTestWithArgumentVector:@[ @"-b=", @"-f" ] options:options error:error];
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '--barf'"];
+    [self performTestWithArgumentVector:@[ @"--barf=", @"-f" ] options:options error:error];
+    
+    /* combine all of the above cases */
+    
+    options = @[
+        [CLKOption optionWithName:@"alpha" flag:@"a"],
+        [CLKOption parameterOptionWithName:@"bravo" flag:@"b" required:YES recurrent:NO transformer:transformer],
+        [CLKOption requiredParameterOptionWithName:@"charlie" flag:@"c"],
+        [CLKOption requiredParameterOptionWithName:@"delta" flag:@"d"],
+        [CLKOption requiredParameterOptionWithName:@"echo" flag:@"e"]
+    ];
+    
+    NSArray *argv = @[ @"--alpha=", @"--bravo", @"666", @"--charlie", @"-x", @"--delta", @"", @"--echo" ];
+    NSArray *errors = @[
+        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"alpha" ] description:@"expected argument for option '--alpha'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"bravo" ] description:@"transformer error"],
+        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"charlie" ] description:@"expected argument for option but encountered option-like token '-x'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"delta" ] description:@"encountered zero-length argument"],
+        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"echo" ] description:@"expected argument for option '--echo'"]
+    ];
+    
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
+    [self performTestWithArgumentVector:argv options:options spec:spec];
+    
+    /* required group  */
+    
+    options = @[
+        [CLKOption parameterOptionWithName:@"flarn" flag:@"f"],
+        [CLKOption parameterOptionWithName:@"barf"  flag:@"b"],
+        [CLKOption parameterOptionWithName:@"quone" flag:@"q"]
+    ];
+    
+    CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf", @"quone" ]];
+    
+    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option '--flarn'"];
+    [self performTestWithArgumentVector:@[ @"--flarn" ] options:options optionGroups:@[ group ] error:error];
 }
 
 @end

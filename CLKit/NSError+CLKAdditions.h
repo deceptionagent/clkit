@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)clk_errorByAddingRepresentedOptions:(NSArray<NSString *> *)optionNames;
 
 @property (nullable, readonly) NSArray<NSString *> *clk_representedOptions;
+@property (readonly) BOOL clk_isValidationError;
 
 @end
 

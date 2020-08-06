@@ -183,6 +183,23 @@ NS_ASSUME_NONNULL_END
     [self verifyError:augmentedError domain:NSPOSIXErrorDomain code:7 representedOptions:@[ @"sfiera" ] description:@"ne cede malis"];
 }
 
+- (void)test_clk_isValidationError
+{
+    NSError *alpha = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"alpha"];
+    NSError *bravo = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"bravo"];
+    NSError *charlie = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"charlie"];
+    NSError *delta = [NSError clk_CLKErrorWithCode:CLKErrorNoVerbSpecified description:@"delta"];
+    NSError *echo = [NSError clk_POSIXErrorWithCode:ENOENT representedOptions:@[ @"flarn" ] description:@"echo"];
+    NSError *foxtrot = [NSError clk_POSIXErrorWithCode:CLKErrorNoVerbSpecified /* code overlap */ representedOptions:@[ @"flarn" ] description:@"foxtrot"];
+    
+    XCTAssertTrue(alpha.clk_isValidationError);
+    XCTAssertTrue(bravo.clk_isValidationError);
+    XCTAssertTrue(charlie.clk_isValidationError);
+    XCTAssertFalse(delta.clk_isValidationError);
+    XCTAssertFalse(echo.clk_isValidationError);
+    XCTAssertFalse(foxtrot.clk_isValidationError);
+}
+
 @end
 
 #pragma mark -

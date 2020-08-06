@@ -138,6 +138,13 @@
 
 - (void)_accumulateValidationError:(NSError *)error
 {
+    [_validationErrors addObject:error];
+}
+
+- (BOOL)_shouldAccumulateValidationError:(NSError *)error
+{
+    NSParameterAssert(error.clk_isValidationError);
+    
     // the manifest won't contain a given required parameter option if no occurences of that option could be parsed.
     // in this event, both a parsing error and a validation error are generated. displaying both errors is confusing.
     // the solution is to display *just* the parsing error; we don't want to display both a parsing error *and* an
@@ -146,12 +153,12 @@
         NSAssert(error.clk_representedOptions.count > 0, @"represented options missing");
         for (NSString *optionName in error.clk_representedOptions) {
             if ([self _hasParsingErrorForOptionNamed:optionName]) {
-                return;
+                return NO;
             }
         }
     }
     
-    [_validationErrors addObject:error];
+    return YES;
 }
 
 - (BOOL)_hasParsingErrorForOptionNamed:(NSString *)optionName
@@ -528,7 +535,9 @@
         CLKArgumentManifestValidator *validator = [[CLKArgumentManifestValidator alloc] initWithManifest:_manifest];
         [validator validateConstraints:constraints issueHandler:^(NSError *error) {
             result = NO;
-            [self _accumulateValidationError:error];
+            if ([self _shouldAccumulateValidationError:error]) {
+                [self _accumulateValidationError:error];
+            }
         }];
     }
     
