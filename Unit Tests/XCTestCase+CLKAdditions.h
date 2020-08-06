@@ -28,10 +28,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XCTestCase (CLKArgumentParserTestingAdditions)
 
 - (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options spec:(ArgumentParsingResultSpec *)spec;
+
 - (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
                               options:(NSArray<CLKOption *> *)options
                          optionGroups:(NSArray<CLKOptionGroup *> *)groups
                                  spec:(ArgumentParsingResultSpec *)spec;
+
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options error:(NSError *)error;
+
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
+                              options:(NSArray<CLKOption *> *)options
+                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
+                                error:(NSError *)error;
 
 - (void)evaluateSpec:(ArgumentParsingResultSpec *)spec usingParser:(CLKArgumentParser *)parser;
 

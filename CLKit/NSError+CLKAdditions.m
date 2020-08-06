@@ -73,4 +73,15 @@ static NSString * const CLKErrorRepresentedOptionsKey = @"CLKErrorRepresentedOpt
     return self.userInfo[CLKErrorRepresentedOptionsKey];
 }
 
+- (BOOL)clk_isValidationError
+{
+    if (![self.domain isEqualToString:CLKErrorDomain]) {
+        return NO;
+    }
+    
+    return (self.code == CLKErrorRequiredOptionNotProvided
+            || self.code == CLKErrorTooManyOccurrencesOfOption
+            || self.code == CLKErrorMutuallyExclusiveOptionsPresent);
+}
+
 @end
