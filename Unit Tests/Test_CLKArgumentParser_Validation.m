@@ -25,10 +25,10 @@
          [CLKOption requiredParameterOptionWithName:@"bravo" flag:@"b"]
     ];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"bravo" ] description:@"--bravo: required option not provided"];
     [self performTestWithArgumentVector:@[] options:options spec:spec];
     
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--bravo: required option not provided"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"bravo" ] description:@"--bravo: required option not provided"];
     [self performTestWithArgumentVector:@[ @"--alpha" ] options:options spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
@@ -44,7 +44,7 @@
     CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     NSArray *argv = @[ @"--flarn", @"barf", @"--flarn", @"barf" ];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorTooManyOccurrencesOfOption representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided more than once"];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:YES transformer:nil];
@@ -109,17 +109,17 @@
     /* validation failures */
     
     argv = @[ @"--flarn", @"--quone" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with other options"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with other options"];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"--xyzzy", @"what" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy may not be provided with other options"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"xyzzy" ] description:@"--xyzzy may not be provided with other options"];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--quone", @"--xyzzy", @"what" ];
     NSArray *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with other options"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--xyzzy may not be provided with other options"]
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with other options"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"xyzzy" ] description:@"--xyzzy may not be provided with other options"]
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -151,7 +151,7 @@
     ];
     
     NSArray *argv = @[ @"--charlie" ];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--bravo is required when using --charlie"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"bravo" ] description:@"--bravo is required when using --charlie"];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
@@ -174,10 +174,10 @@
     
     CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
     
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn", @"barf" ] description:@"one or more of the following options must be provided: --flarn --barf"];
     [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
     
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn", @"barf" ] description:@"one or more of the following options must be provided: --flarn --barf"];
     [self performTestWithArgumentVector:@[ @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
     
     NSDictionary *expectedOptionManifest = @{
@@ -193,8 +193,9 @@
 {
     NSArray *options = @[
         [CLKOption optionWithName:@"flarn" flag:@"f"],
-        [CLKOption optionWithName:@"barf" flag:@"b"],
-        [CLKOption optionWithName:@"quone" flag:@"q"]
+        [CLKOption optionWithName:@"barf"  flag:@"b"],
+        [CLKOption optionWithName:@"quone" flag:@"q"],
+        [CLKOption optionWithName:@"xyzzy" flag:@"x"] // not part of any mutex groups
     ];
     
     NSArray *groups = @[
@@ -202,7 +203,7 @@
     ];
     
     NSArray *argv = @[ @"--quone", @"--flarn", @"--barf" ];
-    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf: mutually exclusive options encountered"];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn", @"barf" ] description:@"--flarn --barf: mutually exclusive options encountered"];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     argv = @[ @"--flarn" ];
@@ -214,7 +215,11 @@
     ];
     
     argv = @[ @"--quone", @"--flarn", @"--barf" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --barf --quone: mutually exclusive options encountered"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn", @"barf", @"quone" ] description:@"--flarn --barf --quone: mutually exclusive options encountered"];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
+    
+    argv = @[ @"--flarn", @"--xyzzy", @"--quone" ];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn", @"quone" ] description:@"--flarn --quone: mutually exclusive options encountered"];
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     groups = @[
@@ -292,11 +297,11 @@
     /* validation failures */
     
     group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[]];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with other options"];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ group ] spec:spec];
     
     group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone", @"confound.mak" ] options:options optionGroups:@[ group ] spec:spec];
     
     NSArray *groups = @[
@@ -305,8 +310,8 @@
     ];
     
     NSArray *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with options other than the following: --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with options other than the following: --barf"],
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -318,8 +323,8 @@
     ];
     
     errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with options other than the following: --xyzzy"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with options other than the following: --xyzzy"],
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -331,8 +336,8 @@
     ];
     
     errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn --quone: mutually exclusive options encountered"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn", @"quone" ] description:@"--flarn --quone: mutually exclusive options encountered"],
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -350,7 +355,7 @@
         [CLKOptionGroup standaloneGroupForOptionNamed:@"quone" allowing:@[ @"flarn" ]]
     ];
     
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone", @"confound.mak" ] options:options optionGroups:groups spec:spec];
 }
 
@@ -382,15 +387,15 @@
     
     /* validation failures */
     
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with other options"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with other options"];
     [self performTestWithArgumentVector:@[ @"--quone", @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
     
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
     
     NSArray *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with other options"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"]
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with other options"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"]
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -402,9 +407,9 @@
     ];
     
     errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone may not be provided with other options"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --xyzzy: mutually exclusive options encountered"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone" ] description:@"--quone may not be provided with other options"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"barf", @"xyzzy" ] description:@"--barf --xyzzy: mutually exclusive options encountered"],
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -429,9 +434,9 @@
     ];
     
     NSArray *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --xyzzy: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--syn may not be provided with options other than the following: --ack"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn", @"barf" ] description:@"one or more of the following options must be provided: --flarn --barf"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone", @"xyzzy" ] description:@"--quone --xyzzy: mutually exclusive options encountered"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"syn" ] description:@"--syn may not be provided with options other than the following: --ack"],
     ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];

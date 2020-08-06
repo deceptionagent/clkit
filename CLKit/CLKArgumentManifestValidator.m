@@ -89,6 +89,7 @@ NS_ASSUME_NONNULL_END
 - (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeRequired);
+    NSParameterAssert(constraint.options.count == 1);
     
     NSString *option = constraint.options.firstObject;
     if (![_manifest hasOptionNamed:option]) {
@@ -100,6 +101,8 @@ NS_ASSUME_NONNULL_END
 - (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeConditionallyRequired);
+    NSParameterAssert(constraint.options.count == 1);
+    NSParameterAssert(constraint.auxOptions.count == 1);
     
     NSString *option = constraint.options.firstObject;
     NSString *causalOption = constraint.auxOptions.firstObject;

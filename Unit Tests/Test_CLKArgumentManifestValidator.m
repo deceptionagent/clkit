@@ -21,7 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Test_CLKArgumentManifestValidator : XCTestCase
 
 - (void)verifyValidationPassForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator;
-- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator code:(CLKError)code description:(NSString *)description;
+
+- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint
+                              usingValidator:(CLKArgumentManifestValidator *)validator
+                                        code:(CLKError)code
+                          representedOptions:(NSArray<NSString *> *)representedOptions
+                                 description:(NSString *)description;
+
 - (void)evaluateSpec:(ConstraintValidationSpec *)spec usingValidator:(CLKArgumentManifestValidator *)validator;
 
 @end
@@ -36,9 +42,13 @@ NS_ASSUME_NONNULL_END
     [self evaluateSpec:spec usingValidator:validator];
 }
 
-- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator code:(CLKError)code description:(NSString *)description
+- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint
+                              usingValidator:(CLKArgumentManifestValidator *)validator
+                                        code:(CLKError)code
+                          representedOptions:(NSArray<NSString *> *)representedOptions
+                                 description:(NSString *)description
 {
-    NSError *error = [NSError clk_CLKErrorWithCode:code description:@"%@", description];
+    NSError *error = [NSError clk_CLKErrorWithCode:code representedOptions:representedOptions description:@"%@", description];
     ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:@[ constraint ] errors:@[ error ]];
     [self evaluateSpec:spec usingValidator:validator];
 }
@@ -83,8 +93,8 @@ NS_ASSUME_NONNULL_END
     
     CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
     constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:@"barf"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"barf" ] description:@"--barf: required option not provided"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"barf" ] description:@"--barf: required option not provided"];
 }
 
 - (void)testValidateConstraint_conditionallyRequired
@@ -112,7 +122,7 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
     constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"xyzzy" causalOption:@"quone"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"--xyzzy is required when using --quone"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"xyzzy" ] description:@"--xyzzy is required when using --quone"];
     
     constraint = [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"quone" causalOption:@"xyzzy"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
@@ -148,13 +158,13 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
 
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption description:@"--flarn may not be provided more than once"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided more than once"];
     
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"xyzzy"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption description:@"--xyzzy may not be provided more than once"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption representedOptions:@[ @"xyzzy" ] description:@"--xyzzy may not be provided more than once"];
     
     // not present in the manifest
     constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"aeon"];
@@ -196,12 +206,12 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
     
     constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"syn", @"ack" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"syn", @"ack" ] description:@"one or more of the following options must be provided: --syn --ack"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"syn", @"ack" ] description:@"one or more of the following options must be provided: --syn --ack"];
     
     constraint = [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"syn", @"ack", @"what" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack --what"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --syn --ack --what"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"syn", @"ack", @"what" ] description:@"one or more of the following options must be provided: --syn --ack --what"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:emptyValidator code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"syn", @"ack", @"what" ] description:@"one or more of the following options must be provided: --syn --ack --what"];
 }
 
 - (void)testValidateConstraint_mutuallyExclusive
@@ -239,19 +249,19 @@ NS_ASSUME_NONNULL_END
     [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"barf" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --barf: mutually exclusive options encountered"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone", @"barf" ] description:@"--quone --barf: mutually exclusive options encountered"];
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"flarn" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --flarn: mutually exclusive options encountered"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone", @"flarn"] description:@"--quone --flarn: mutually exclusive options encountered"];
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --flarn: mutually exclusive options encountered"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"barf", @"flarn" ] description:@"--barf --flarn: mutually exclusive options encountered"];
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"quone", @"barf", @"flarn" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--quone --barf --flarn: mutually exclusive options encountered"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"quone", @"barf", @"flarn" ] description:@"--quone --barf --flarn: mutually exclusive options encountered"];
     
     constraint = [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"barf", @"flarn", @"xyzzy" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--barf --flarn: mutually exclusive options encountered"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"barf", @"flarn" ] description:@"--barf --flarn: mutually exclusive options encountered"];
 }
 
 - (void)testValidateConstraint_standalone
@@ -283,11 +293,11 @@ NS_ASSUME_NONNULL_END
     
     validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:nil];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with other options"];
     
     validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with other options"];
     
     switchOptions = @{
         flarn : @(1),
@@ -297,10 +307,10 @@ NS_ASSUME_NONNULL_END
     
     validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"];
     
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound" ]];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf --confound"];
+    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf --confound"];
     
     constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound", @"delivery" ]];
     [self verifyValidationPassForConstraint:constraint usingValidator:validator];
@@ -365,19 +375,19 @@ NS_ASSUME_NONNULL_END
     ];
     
     NSArray<NSError *> *errors = @[
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn: required option not provided"],
-        [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud_alt may not be provided more than once"],
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn is required when using --ack"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound_alt --delivery_alt: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--thrud may not be provided with other options"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"--flarn: required option not provided"],
+        [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption representedOptions:@[ @"thrud_alt" ] description:@"--thrud_alt may not be provided more than once"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"syn" ] description:@"--syn is required when using --ack"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"confound_alt", @"delivery_alt" ] description:@"--confound_alt --delivery_alt: mutually exclusive options encountered"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"quone", @"xyzzy" ] description:@"one or more of the following options must be provided: --quone --xyzzy"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"thrud" ] description:@"--thrud may not be provided with other options"],
         // no error for acme/station constraint
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--thrud_alt may not be provided with other options"],
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone_alt --xyzzy_alt"],
-        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound --delivery: mutually exclusive options encountered"],
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn_alt is required when using --ack_alt"],
-        [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud may not be provided more than once"],
-        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn_alt: required option not provided"]
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"thrud_alt" ] description:@"--thrud_alt may not be provided with other options"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"quone_alt", @"xyzzy_alt" ] description:@"one or more of the following options must be provided: --quone_alt --xyzzy_alt"],
+        [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ @"confound", @"delivery" ] description:@"--confound --delivery: mutually exclusive options encountered"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"syn_alt" ] description:@"--syn_alt is required when using --ack_alt"],
+        [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption representedOptions:@[ @"thrud" ] description:@"--thrud may not be provided more than once"],
+        [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn_alt" ] description:@"--flarn_alt: required option not provided"]
     ];
     
     CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
