@@ -15,20 +15,6 @@
 
 @implementation XCTestCase (CLKAdditions)
 
-- (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description
-{
-    XCTAssertNotNil(error, @"[description: %@]", description);
-    if (error == nil) {
-        return;
-    }
-    
-    XCTAssertEqualObjects(error.domain, domain);
-    XCTAssertEqual(error.code, code);
-    XCTAssertEqualObjects(error.localizedDescription, description);
-}
-
-#pragma mark -
-
 - (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
 {
     NSMutableArray *options = [NSMutableArray array];
