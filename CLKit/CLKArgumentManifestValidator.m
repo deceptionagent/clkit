@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_END
     
     NSString *option = constraint.options.firstObject;
     if (![_manifest hasOptionNamed:option]) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", option];
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ option ] description:@"--%@: required option not provided", option];
         issueHandler(error);
     }
 }
@@ -104,7 +104,7 @@ NS_ASSUME_NONNULL_END
     NSString *option = constraint.options.firstObject;
     NSString *causalOption = constraint.auxOptions.firstObject;
     if ([_manifest hasOptionNamed:causalOption] && ![_manifest hasOptionNamed:option]) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, causalOption];
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ option ] description:@"--%@ is required when using --%@", option, causalOption];
         issueHandler(error);
     }
 }
@@ -120,7 +120,7 @@ NS_ASSUME_NONNULL_END
     }
     
     NSString *desc = [constraint.options.array componentsJoinedByString:@" --"];
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", desc];
+    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:constraint.options.array description:@"one or more of the following options must be provided: --%@", desc];
     issueHandler(error);
 }
 
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_END
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeMutuallyExclusive);
     
-    NSMutableArray *hits = nil;
+    NSMutableArray<NSString *> *hits = nil;
     
     for (NSString *option in constraint.options) {
         if ([_manifest hasOptionNamed:option]) {
@@ -144,7 +144,7 @@ NS_ASSUME_NONNULL_END
     
     if (hits != nil && hits.count > 1) {
         NSString *desc = [hits componentsJoinedByString:@" --"];
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@: mutually exclusive options encountered", desc];
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:hits description:@"--%@: mutually exclusive options encountered", desc];
         issueHandler(error);
     }
 }
@@ -152,6 +152,7 @@ NS_ASSUME_NONNULL_END
 - (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeStandalone);
+    NSParameterAssert(constraint.options.count == 1);
     
     NSString *option = constraint.options.firstObject;
     if ([_manifest hasOptionNamed:option]) {
@@ -160,14 +161,14 @@ NS_ASSUME_NONNULL_END
         if (accumulatedOptions.count > 1) {
             NSOrderedSet<NSString *> *whitelist = constraint.auxOptions;
             if (whitelist.count == 0) {
-                error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with other options", option];
+                error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ option ] description:@"--%@ may not be provided with other options", option];
             } else {
                 NSMutableSet<NSString *> *conflictedOptions = [accumulatedOptions mutableCopy];
                 [conflictedOptions minusSet:whitelist.set];
                 [conflictedOptions removeObject:option];
                 if (conflictedOptions.count > 0) {
                     NSString *whitelistDesc = [whitelist.array componentsJoinedByString:@" --"];
-                    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with options other than the following: --%@", option, whitelistDesc];
+                    error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent representedOptions:@[ option ] description:@"--%@ may not be provided with options other than the following: --%@", option, whitelistDesc];
                 }
             }
         }
@@ -181,10 +182,11 @@ NS_ASSUME_NONNULL_END
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeOccurrencesLimited);
+    NSParameterAssert(constraint.options.count == 1);
     
     NSString *option = constraint.options.firstObject;
     if ([_manifest occurrencesOfOptionNamed:option] > 1) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", option];
+        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption representedOptions:@[ option ] description:@"--%@ may not be provided more than once", option];
         issueHandler(error);
     }
 }
