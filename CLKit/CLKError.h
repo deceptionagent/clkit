@@ -10,9 +10,6 @@ extern NSString * const CLKErrorDomain;
 typedef NS_ERROR_ENUM(CLKErrorDomain, CLKError) {
     CLKErrorNoError = 0,
     
-    // parsing errors
-    CLKErrorParameterArgumentParsingFailed = 1,
-    
     // manifest validation errors
     CLKErrorRequiredOptionNotProvided = 100,
     CLKErrorTooManyOccurrencesOfOption = 101,
