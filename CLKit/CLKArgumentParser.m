@@ -465,7 +465,12 @@
     
     // reject: empty string passed into argv (e.g., --foo "")
     if (argument.length == 0) {
-        CLKSetOutError(outError, [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"encountered zero-length argument"]);
+        if (option == nil) {
+            CLKSetOutError(outError, [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]);
+        } else {
+            CLKSetOutError(outError, [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ option.name ] description:@"encountered zero-length argument"]);
+        }
+        
         return NO;
     }
     

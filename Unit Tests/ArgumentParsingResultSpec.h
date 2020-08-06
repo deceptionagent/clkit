@@ -20,10 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest;
 + (instancetype)specWithPositionalArguments:(NSArray<NSString *> *)positionalArguments;
 + (instancetype)specWithOptionManifest:(NSDictionary<NSString *, id> *)optionManifest positionalArguments:(NSArray<NSString *> *)positionalArguments;
+
 + (instancetype)specWithError:(NSError *)error;
 + (instancetype)specWithErrors:(NSArray<NSError *> *)errors;
 + (instancetype)specWithCLKErrorCode:(CLKError)code description:(NSString *)description;
++ (instancetype)specWithCLKErrorCode:(CLKError)code representedOptions:(NSArray<NSString *> *)options description:(NSString *)description;
 + (instancetype)specWithPOSIXErrorCode:(int)code description:(NSString *)description;
++ (instancetype)specWithPOSIXErrorCode:(int)code representedOptions:(NSArray<NSString *> *)options description:(NSString *)description;
 
 @property (nullable, readonly) NSDictionary<NSString *, id> *optionManifest;
 @property (nullable, readonly) NSArray<NSString *> *positionalArguments;
