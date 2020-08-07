@@ -14,7 +14,6 @@
 #import "StuntTransformer.h"
 #import "XCTestCase+CLKAdditions.h"
 
-
 @interface Test_CLKArgumentParser : XCTestCase
 
 @end

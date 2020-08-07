@@ -11,7 +11,6 @@
 #import "NSError+CLKAdditions.h"
 #import "XCTestCase+CLKAdditions.h"
 
-
 @interface Test_CLKArgumentParser_Validation : XCTestCase
 
 @end

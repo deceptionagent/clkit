@@ -4,7 +4,6 @@
 
 #import "NSArray+CLKAdditions.h"
 
-
 @implementation NSArray (CLKAdditions)
 
 + (NSArray<NSString *> *)clk_arrayWithArgv:(const char *[])argv argc:(int)argc

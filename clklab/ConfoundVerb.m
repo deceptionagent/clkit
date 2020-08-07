@@ -4,7 +4,6 @@
 
 #import "ConfoundVerb.h"
 
-
 @implementation ConfoundVerb
 
 - (NSString *)name

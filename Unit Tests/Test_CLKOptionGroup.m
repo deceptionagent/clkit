@@ -6,9 +6,7 @@
 
 #import "CLKArgumentManifestConstraint.h"
 #import "CLKOption.h"
-#import "CLKOptionGroup.h"
 #import "CLKOptionGroup_Private.h"
-
 
 @interface Test_CLKOptionGroup : XCTestCase
 

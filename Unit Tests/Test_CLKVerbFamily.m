@@ -7,7 +7,6 @@
 #import "CLKVerbFamily.h"
 #import "StuntVerb.h"
 
-
 @interface Test_CLKVerbFamily : XCTestCase
 
 @end

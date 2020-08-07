@@ -6,7 +6,6 @@
 
 #import "CLKArgumentManifestConstraint.h"
 
-
 @implementation ConstraintValidationSpec
 {
     NSArray<CLKArgumentManifestConstraint *> *_constraints;

@@ -4,6 +4,21 @@
 
 #import "CLKArgumentManifestConstraint.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+static NSString *CLKStringForConstraintType(CLKConstraintType type);
+
+@interface CLKArgumentManifestConstraint ()
+
+- (instancetype)_initWithType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(nullable NSOrderedSet<NSString *> *)auxOptions NS_DESIGNATED_INITIALIZER;
+
+#if !NS_BLOCK_ASSERTIONS
++ (void)_validateConstraintType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(nullable NSOrderedSet<NSString *> *)auxOptions;
+#endif
+
+@end
+
+NS_ASSUME_NONNULL_END
 
 static NSString *CLKStringForConstraintType(CLKConstraintType type)
 {
@@ -22,20 +37,6 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
             return @"occurrences limited";
     }
 }
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface CLKArgumentManifestConstraint ()
-
-- (instancetype)_initWithType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(nullable NSOrderedSet<NSString *> *)auxOptions NS_DESIGNATED_INITIALIZER;
-
-#if !NS_BLOCK_ASSERTIONS
-+ (void)_validateConstraintType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(nullable NSOrderedSet<NSString *> *)auxOptions;
-#endif
-
-@end
-
-NS_ASSUME_NONNULL_END
 
 @implementation CLKArgumentManifestConstraint
 {

@@ -4,7 +4,6 @@
 
 #import "AssignmentFormParsingSpec.h"
 
-
 @implementation AssignmentFormParsingSpec
 {
     NSString *_optionSegment;

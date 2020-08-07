@@ -4,7 +4,6 @@
 
 #import "QuarantineVerb.h"
 
-
 @implementation QuarantineVerb
 
 - (NSString *)name

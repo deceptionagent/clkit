@@ -4,7 +4,6 @@
 
 #import "DeliveryVerb.h"
 
-
 @implementation DeliveryVerb
 
 - (NSString *)name

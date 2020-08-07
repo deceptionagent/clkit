@@ -4,7 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 typedef NS_ENUM(uint32_t, CLKConstraintType) {
     CLKConstraintTypeRequired = 0,
     CLKConstraintTypeConditionallyRequired = 1,

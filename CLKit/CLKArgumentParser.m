@@ -5,22 +5,18 @@
 #import "CLKArgumentParser_Internal.h"
 
 #import "CLKArgumentIssue.h"
-#import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
 #import "CLKArgumentManifestValidator.h"
 #import "CLKArgumentTransformer.h"
 #import "CLKAssert.h"
 #import "CLKError_Private.h"
-#import "CLKOption.h"
 #import "CLKOption_Private.h"
-#import "CLKOptionGroup.h"
 #import "CLKOptionGroup_Private.h"
 #import "CLKOptionRegistry.h"
 #import "CLKToken.h"
 #import "NSCharacterSet+CLKAdditions.h"
 #import "NSError+CLKAdditions.h"
 #import "NSMutableArray+CLKAdditions.h"
-
 
 @implementation CLKArgumentParser
 {

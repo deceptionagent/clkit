@@ -7,7 +7,6 @@
 #import "CLKArgumentIssue.h"
 #import "NSError+CLKAdditions.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Test_CLKArgumentIssue : XCTestCase

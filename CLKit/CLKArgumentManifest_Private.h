@@ -4,7 +4,6 @@
 
 #import "CLKArgumentManifest.h"
 
-
 @class CLKOptionRegistry;
 
 NS_ASSUME_NONNULL_BEGIN

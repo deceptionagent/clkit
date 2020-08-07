@@ -12,7 +12,6 @@
 #import "NSString+CLKAdditions.h"
 #import "XCTestCase+CLKAdditions.h"
 
-
 @interface Test_NSArray_CLKAdditions : XCTestCase
 
 @end

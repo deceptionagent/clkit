@@ -6,7 +6,6 @@
 
 #import "CLKit.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface QuarantineVerb : NSObject <CLKVerb>

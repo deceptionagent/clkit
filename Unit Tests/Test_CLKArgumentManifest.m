@@ -4,11 +4,9 @@
 
 #import <XCTest/XCTest.h>
 
-#import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
 #import "CLKOption.h"
 #import "CLKOptionRegistry.h"
-
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -7,7 +7,6 @@
 #import "CLKError_Private.h"
 #import "NSError+CLKAdditions.h"
 
-
 @implementation CLKArgumentTransformer
 
 - (id)transformedArgument:(NSString *)argument error:(__unused NSError **)outError

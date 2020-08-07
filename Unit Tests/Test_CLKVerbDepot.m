@@ -16,7 +16,6 @@
 #import "NSError+CLKAdditions.h"
 #import "XCTestCase+CLKAdditions.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Test_CLKVerbDepot : XCTestCase

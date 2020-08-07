@@ -6,7 +6,6 @@
 
 #import "NSError+CLKAdditions.h"
 
-
 @implementation StuntTransformer
 {
     id _object;

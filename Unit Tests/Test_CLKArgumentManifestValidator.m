@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 
 #import "CLKArgumentIssue.h"
-#import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
 #import "CLKArgumentManifestConstraint.h"
 #import "CLKArgumentManifestValidator.h"
@@ -15,7 +14,6 @@
 #import "ConstraintValidationSpec.h"
 #import "NSError+CLKAdditions.h"
 #import "XCTestCase+CLKAdditions.h"
-
 
 NS_ASSUME_NONNULL_BEGIN
 

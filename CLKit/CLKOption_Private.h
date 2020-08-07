@@ -4,7 +4,6 @@
 
 #import "CLKOption.h"
 
-
 @class CLKArgumentManifestConstraint;
 @class CLKArgumentTransformer;
 

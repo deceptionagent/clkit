@@ -6,7 +6,6 @@
 
 #import "CLKArgumentManifestConstraint.h"
 
-
 @interface Test_CLKArgumentManifestConstraint : XCTestCase
 
 @end

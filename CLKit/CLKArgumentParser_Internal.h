@@ -4,7 +4,6 @@
 
 #import "CLKArgumentParser.h"
 
-
 typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateBegin = 0,
     CLKAPStateReadNextArgumentToken = 1,

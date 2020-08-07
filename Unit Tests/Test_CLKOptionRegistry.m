@@ -7,7 +7,6 @@
 #import "CLKOption.h"
 #import "CLKOptionRegistry.h"
 
-
 @interface Test_CLKOptionRegistry : XCTestCase
 
 @end

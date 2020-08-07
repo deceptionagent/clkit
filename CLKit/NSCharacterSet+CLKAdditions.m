@@ -4,7 +4,6 @@
 
 #import "NSCharacterSet+CLKAdditions.h"
 
-
 @implementation NSCharacterSet (CLKAdditions)
 
 + (NSCharacterSet *)clk_optionFlagIllegalCharacterSet
@@ -14,7 +13,7 @@
     dispatch_once(&once, ^{
         optionFlagIllegalCharacterSet = [NSMutableCharacterSet characterSetWithCharactersInString:@"-"];
         [optionFlagIllegalCharacterSet formUnionWithCharacterSet:self.clk_parameterOptionAssignmentCharacterSet];
-//        [optionFlagIllegalCharacterSet formUnionWithCharacterSet:NSCharacterSet.decimalDigitCharacterSet];
+        // [?] should decimalDigitCharacterSet be illegal?
         [optionFlagIllegalCharacterSet formUnionWithCharacterSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
     });
     

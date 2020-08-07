@@ -7,7 +7,6 @@
 #import "CLKAssert.h"
 #import "CLKOption.h"
 
-
 @implementation CLKOptionRegistry
 {
     NSMutableDictionary<NSString *, CLKOption *> *_optionNameMap;
