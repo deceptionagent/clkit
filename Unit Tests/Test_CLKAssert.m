@@ -6,7 +6,6 @@
 
 #import "CLKAssert.h"
 
-
 @interface Test_CLKAssert : XCTestCase
 
 @end

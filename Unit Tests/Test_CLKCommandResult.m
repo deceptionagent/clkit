@@ -7,7 +7,6 @@
 #import "CLKCommandResult.h"
 #import "NSError+CLKAdditions.h"
 
-
 @interface Test_CLKCommandResult : XCTestCase
 
 @end

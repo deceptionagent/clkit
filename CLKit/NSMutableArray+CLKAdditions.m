@@ -4,7 +4,6 @@
 
 #import "NSMutableArray+CLKAdditions.h"
 
-
 @implementation NSMutableArray (CLKAdditions)
 
 - (id)clk_popFirstObject

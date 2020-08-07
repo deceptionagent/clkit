@@ -7,7 +7,6 @@
 
 #import "CLKError.h"
 
-
 @class ArgumentParsingResultSpec;
 @class CLKArgumentManifest;
 @class CLKArgumentManifestValidator;
@@ -20,8 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XCTestCase (CLKAdditions)
 
-- (CLKArgumentManifest *)manifestWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, NSArray *> *)parameterOptions;
-- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(nullable NSDictionary<CLKOption *, id> *)parameterOptions;
+- (CLKArgumentManifest *)manifestWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions
+                                  parameterOptions:(nullable NSDictionary<CLKOption *, NSArray *> *)parameterOptions;
+
+- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(nullable NSDictionary<CLKOption *, NSNumber *> *)switchOptions
+                                            parameterOptions:(nullable NSDictionary<CLKOption *, id> *)parameterOptions;
 
 @end
 

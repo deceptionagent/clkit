@@ -7,7 +7,6 @@
 #import "NSCharacterSet+CLKAdditions.h"
 #import "NSString+CLKAdditions.h"
 
-
 CLKTokenForm CLKTokenFormForToken(NSString *token)
 {
     if (token.length < 2) {

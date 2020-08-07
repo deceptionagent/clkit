@@ -6,7 +6,6 @@
 
 #import "CLKToken.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TokenFormSpec : NSObject

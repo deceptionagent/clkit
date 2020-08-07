@@ -6,7 +6,6 @@
 
 #import "CLKVerb.h"
 
-
 @class CLKArgumentManifest;
 @class CLKCommandResult;
 @class CLKOption;

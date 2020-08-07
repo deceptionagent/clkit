@@ -2,7 +2,6 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "CLKOption.h"
 #import "CLKOption_Private.h"
 
 #import "CLKArgumentManifestConstraint.h"
@@ -10,17 +9,6 @@
 #import "CLKAssert.h"
 #import "NSCharacterSet+CLKAdditions.h"
 #import "NSString+CLKAdditions.h"
-
-
-NSString *CLKStringForOptionType(CLKOptionType type)
-{
-    switch (type) {
-        case CLKOptionTypeSwitch:
-            return @"switch";
-        case CLKOptionTypeParameter:
-            return @"parameter";
-    }
-}
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -39,6 +27,16 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+NSString *CLKStringForOptionType(CLKOptionType type)
+{
+    switch (type) {
+        case CLKOptionTypeSwitch:
+            return @"switch";
+        case CLKOptionTypeParameter:
+            return @"parameter";
+    }
+}
 
 @implementation CLKOption
 {

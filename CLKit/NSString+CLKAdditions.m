@@ -4,7 +4,6 @@
 
 #import "NSString+CLKAdditions.h"
 
-
 @implementation NSString (CLKAdditions)
 
 - (BOOL)clk_containsString:(NSString *)string range:(NSRange)range

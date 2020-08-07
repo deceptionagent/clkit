@@ -6,8 +6,7 @@
 
 #import "CLKArgumentManifestConstraint.h"
 #import "CLKAssert.h"
-#import "NSMutableArray+CLKAdditions.h"
-
+#import "NSArray+CLKAdditions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

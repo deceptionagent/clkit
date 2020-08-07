@@ -8,7 +8,6 @@
 #import "CLKOption.h"
 #import "CLKOptionGroup.h"
 
-
 @implementation StuntVerb
 {
     NSString *_name;

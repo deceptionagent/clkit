@@ -6,7 +6,6 @@
 
 #import "CLKArgumentTransformer.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface StuntTransformer : CLKArgumentTransformer

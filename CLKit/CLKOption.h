@@ -4,7 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 typedef NS_ENUM(uint32_t, CLKOptionType) {
     CLKOptionTypeSwitch = 0,
     CLKOptionTypeParameter = 1

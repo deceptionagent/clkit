@@ -2,14 +2,11 @@
 //  Copyright (c) 2017 Plastic Pulse. All rights reserved.
 //
 
-#import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
 
 #import "CLKAssert.h"
-#import "CLKOption.h"
 #import "CLKOption_Private.h"
 #import "CLKOptionRegistry.h"
-
 
 @implementation CLKArgumentManifest
 {

@@ -4,9 +4,6 @@
 
 #import "NSError+CLKAdditions.h"
 
-
-static NSString * const CLKErrorRepresentedOptionsKey = @"CLKErrorRepresentedOptions";
-
 @implementation NSError (CLKAdditions)
 
 + (instancetype)clk_POSIXErrorWithCode:(int)code description:(NSString *)fmt, ...

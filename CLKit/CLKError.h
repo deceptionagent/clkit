@@ -4,8 +4,11 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const CLKErrorDomain;
+
+NS_ASSUME_NONNULL_END
 
 typedef NS_ERROR_ENUM(CLKErrorDomain, CLKError) {
     CLKErrorNoError = 0,

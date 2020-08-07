@@ -5,17 +5,16 @@
 #import "XCTestCase+CLKAdditions.h"
 
 #import "ArgumentParsingResultSpec.h"
-#import "CLKArgumentManifest.h"
 #import "CLKArgumentManifest_Private.h"
 #import "CLKArgumentManifestValidator.h"
 #import "CLKArgumentParser.h"
 #import "CLKOption.h"
 #import "CLKOptionRegistry.h"
 
-
 @implementation XCTestCase (CLKAdditions)
 
-- (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
+- (CLKArgumentManifest *)manifestWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions
+                                  parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
 {
     NSMutableArray *options = [NSMutableArray array];
     [options addObjectsFromArray:switchOptions.allKeys];
@@ -38,7 +37,8 @@
     return manifest;
 }
 
-- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
+- (CLKArgumentManifestValidator *)validatorWithSwitchOptions:(NSDictionary<CLKOption *, NSNumber *> *)switchOptions
+                                            parameterOptions:(NSDictionary<CLKOption *, NSArray *> *)parameterOptions
 {
     CLKArgumentManifest *manifest = [self manifestWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
     return [[CLKArgumentManifestValidator alloc] initWithManifest:manifest];

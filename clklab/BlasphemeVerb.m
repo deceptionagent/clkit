@@ -4,7 +4,6 @@
 
 #import "BlasphemeVerb.h"
 
-
 @implementation BlasphemeVerb
 
 - (NSString *)name

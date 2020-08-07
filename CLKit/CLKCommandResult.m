@@ -6,7 +6,6 @@
 
 #import "CLKError.h"
 
-
 @implementation CLKCommandResult
 {
     int _exitStatus;

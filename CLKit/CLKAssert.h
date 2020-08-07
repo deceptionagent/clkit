@@ -4,7 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 #define CLKHardAssert(condition, exception, ...) \
 ({ \
     if (!(condition)) { \
