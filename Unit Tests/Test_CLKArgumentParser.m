@@ -154,8 +154,8 @@
         [CLKOption parameterOptionWithName:@"barf" flag:@"b"]
     ];
     
-    NSError *longError = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '--barf'"];
-    NSError *shortError = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '-b'"];
+    NSError *longError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--barf'"];
+    NSError *shortError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '-b'"];
     
     NSArray *argv = @[ @"--barf" ];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:longError];
@@ -174,34 +174,34 @@
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"--barf", @"what" ];
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '--barf'"];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '--barf'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"-b", @"what" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '-b'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-b'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"-lol", @"what" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '-lol'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-lol'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"-0x0", @"what" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '-0x0'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-0x0'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"--w hat", @"what" ];
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '--w hat'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '--w hat'"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:options spec:spec];
     
     argv = @[ @"--flarn", @"--barf", @"what", @"--flarn", @"-q" ];
     NSArray *errors = @[
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '--barf'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '-q'"]
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '--barf'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-q'"]
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -355,10 +355,10 @@
     ];
     
     NSArray *errors = @[
-        [flarnTransformer.error clk_errorByAddingRepresentedOptions:@[ @"flarn" ]],
-        [barfTransformer.error  clk_errorByAddingRepresentedOptions:@[ @"barf" ]],
-        [quoneTransformer.error clk_errorByAddingRepresentedOptions:@[ @"quone" ]],
-        [xyzzyTransformer.error clk_errorByAddingRepresentedOptions:@[ @"xyzzy" ]],
+        flarnTransformer.error,
+        barfTransformer.error,
+        quoneTransformer.error,
+        xyzzyTransformer.error,
     ];
     
     NSArray *argv = @[ @"--flarn=7", @"--barf:420", @"-q=666", @"-x:-7" ];
@@ -376,10 +376,10 @@
     ];
     
     NSArray *errors = @[
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option '--flarn'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ]  description:@"expected argument for option '--barf'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"quone" ] description:@"expected argument for option '-q'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"xyzzy" ] description:@"expected argument for option '-x'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--flarn'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--barf'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '-q'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '-x'"],
     ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -396,10 +396,10 @@
     ];
     
     NSArray *errors = @[
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"option '--flarn' does not accept arguments"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ]  description:@"option '--barf' does not accept arguments"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"quone" ] description:@"option '-q' does not accept arguments"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"xyzzy" ] description:@"option '-x' does not accept arguments"]
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '--flarn' does not accept arguments"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '--barf' does not accept arguments"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '-q' does not accept arguments"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '-x' does not accept arguments"]
     ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -464,7 +464,7 @@
     CLKOption *option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
     
     NSArray *argv = @[ @"--flarn", @"", @"what" ];
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"encountered zero-length argument"];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ option ] spec:spec];
     
@@ -486,7 +486,7 @@
     argv = @[ @"", @"syn", @"ack", @"--flarn", @"" ];
     NSArray *errors = @[
         [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"encountered zero-length argument"]
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"]
     ];
     
     spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -596,7 +596,7 @@
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     argv = @[ @"--flarn", @"--", @"", @"-y" ]; // processing first post-sentinel argument for a parameter option, zero-length argument (error condition)
-    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL representedOptions:@[ @"flarn" ] description:@"encountered zero-length argument"];
+    spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"encountered zero-length argument"];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
     /* no constraints, sentinel at argv.firstObject (success) */
@@ -625,13 +625,13 @@
     /* required option appears after sentinel (error) */
     
     argv = @[ @"--flarn", @"what", @"--", @"--barf" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"barf" ] description:@"--barf: required option not provided"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--barf: required option not provided"];
     [self performTestWithArgumentVector:argv options:@[ flarn, barf ] spec:spec];
     
     /* option declaring dependency provided before sentinel, dependency provided after sentinel (error) */
     
     argv = @[ @"--confound", @"acme", @"--", @"--delivery", @"station" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"delivery" ] description:@"--delivery is required when using --confound"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"--delivery is required when using --confound"];
     [self performTestWithArgumentVector:argv options:@[ confound, delivery ] optionGroups:@[ confoundDeliveryGroup ] spec:spec];
     
     /* option declaring dependency provided after sentinel, dependency not provided before sentinel (success) */
@@ -651,7 +651,7 @@
     
     CLKOptionGroup *requiredGroup = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"quone", @"delivery" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
-    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"quone", @"delivery" ] description:@"one or more of the following options must be provided: --quone --delivery"];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
     
     /* zero-length argument provided after sentinel */
@@ -740,7 +740,6 @@
     
     CLKArgumentTransformer *acmeTransformer = [[CLKArgumentTransformer alloc] init];
     StuntTransformer *confoundTransformer = [StuntTransformer erroringTransformerWithPOSIXErrorCode:EINVAL description:@"confound error"];
-    NSError *confoundError = [confoundTransformer.error clk_errorByAddingRepresentedOptions:@[ @"confound" ]];
     
     options = @[
         [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO transformer:acmeTransformer],
@@ -748,10 +747,10 @@
     ];
     
     argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];
-    [self performTestWithArgumentVector:argv options:options error:confoundError];
+    [self performTestWithArgumentVector:argv options:options error:confoundTransformer.error];
     
     // verify the parser bails before running the transformer
-    NSError *earlyError = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"confound" ] description:@"expected argument for option but encountered option-like token '-a'"];
+    NSError *earlyError = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-a'"];
     [self performTestWithArgumentVector:@[ @"--confound", @"-a" ] options:options error:earlyError];
 }
 
@@ -824,9 +823,9 @@
         [NSError clk_POSIXErrorWithCode:EINVAL description:@"unexpected token in argument vector: '-o k'"],
         [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '--xyzzy'"],
         [NSError clk_POSIXErrorWithCode:EINVAL description:@"unrecognized option: '-x'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"encountered zero-length argument"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option but encountered option-like token '-f'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option '--flarn'"]
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-f'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--flarn'"]
     ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -924,17 +923,17 @@
     
     /* #1: option supplied as the last element of the vector */
     
-    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '--barf'"];
+    NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--barf'"];
     [self performTestWithArgumentVector:@[ @"-f", @"--barf" ] options:options error:error];
     
     /* #2: zero-length argument supplied */
     
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"encountered zero-length argument"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     [self performTestWithArgumentVector:@[ @"--barf", @"", @"-f" ] options:options error:error];
     
     /* #3: option-like token supplied */
     
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option but encountered option-like token '-f'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-f'"];
     [self performTestWithArgumentVector:@[ @"--barf", @"-f" ] options:options error:error];
     
     /* #4: transformer fails on the supplied argument */
@@ -945,7 +944,7 @@
         [CLKOption parameterOptionWithName:@"quone" flag:@"q" required:YES recurrent:NO transformer:transformer]
     ];
     
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"quone" ] description:@"transformer error"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"transformer error"];
     [self performTestWithArgumentVector:@[ @"-f", @"-q", @"666" ] options:options error:error];
     
     /* #5: parsing fails for the argument slice of an assignment form option */
@@ -955,10 +954,10 @@
         [CLKOption requiredParameterOptionWithName:@"barf" flag:@"b"]
     ];
     
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '-b'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '-b'"];
     [self performTestWithArgumentVector:@[ @"-b=", @"-f" ] options:options error:error];
     
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"barf" ] description:@"expected argument for option '--barf'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--barf'"];
     [self performTestWithArgumentVector:@[ @"--barf=", @"-f" ] options:options error:error];
     
     /* combine all of the above cases */
@@ -973,11 +972,11 @@
     
     NSArray *argv = @[ @"--alpha=", @"--bravo", @"666", @"--charlie", @"-x", @"--delta", @"", @"--echo" ];
     NSArray *errors = @[
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"alpha" ] description:@"expected argument for option '--alpha'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"bravo" ] description:@"transformer error"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"charlie" ] description:@"expected argument for option but encountered option-like token '-x'"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"delta" ] description:@"encountered zero-length argument"],
-        [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"echo" ] description:@"expected argument for option '--echo'"]
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--alpha'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"transformer error"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option but encountered option-like token '-x'"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"],
+        [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--echo'"]
     ];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithErrors:errors];
@@ -993,7 +992,7 @@
     
     CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf", @"quone" ]];
     
-    error = [NSError clk_POSIXErrorWithCode:EINVAL representedOptions:@[ @"flarn" ] description:@"expected argument for option '--flarn'"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--flarn'"];
     [self performTestWithArgumentVector:@[ @"--flarn" ] options:options optionGroups:@[ group ] error:error];
 }
 

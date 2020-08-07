@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 
 
+@class CLKArgumentIssue;
 @class CLKArgumentManifestConstraint;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,11 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (instancetype)specWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(nullable NSArray<NSError *> *)errors;
-- (instancetype)initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(nullable NSArray<NSError *> *)errors NS_DESIGNATED_INITIALIZER;
++ (instancetype)specWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issues:(nullable NSArray<CLKArgumentIssue *> *)issues;
+- (instancetype)initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issues:(nullable NSArray<CLKArgumentIssue *> *)issues NS_DESIGNATED_INITIALIZER;
 
 @property (readonly) NSArray<CLKArgumentManifestConstraint *> *constraints;
-@property (nullable, readonly) NSArray<NSError *> *errors;
+@property (nullable, readonly) NSArray<CLKArgumentIssue *> *issues;
 @property (readonly) BOOL shouldPass;
 
 @end
