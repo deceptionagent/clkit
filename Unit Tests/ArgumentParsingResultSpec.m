@@ -76,21 +76,9 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
 }
 
-+ (instancetype)specWithCLKErrorCode:(CLKError)code representedOptions:(NSArray<NSString *> *)options description:(NSString *)description
-{
-    NSError *error = [NSError clk_CLKErrorWithCode:code representedOptions:options description:@"%@", description];
-    return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
-}
-
 + (instancetype)specWithPOSIXErrorCode:(int)code description:(NSString *)description
 {
     NSError *error = [NSError clk_POSIXErrorWithCode:code description:@"%@", description];
-    return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
-}
-
-+ (instancetype)specWithPOSIXErrorCode:(int)code representedOptions:(NSArray<NSString *> *)options description:(NSString *)description
-{
-    NSError *error = [NSError clk_POSIXErrorWithCode:code representedOptions:options description:@"%@", description];
     return [[self alloc] _initWithOptionManifest:nil positionalArguments:nil errors:@[ error ]];
 }
 

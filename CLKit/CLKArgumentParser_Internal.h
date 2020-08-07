@@ -18,6 +18,7 @@ typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateEnd = 9
 };
 
+@class CLKArgumentIssue;
 @class CLKOption;
 @class CLKOptionGroup;
 
@@ -31,15 +32,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, retain) CLKOption *currentParameterOption;
 
-- (nullable CLKOption *)_optionForOptionNameToken:(NSString *)token error:(NSError **)outError;
-- (nullable CLKOption *)_optionForOptionFlagToken:(NSString *)token error:(NSError **)outError;
+- (nullable CLKOption *)_optionForOptionNameToken:(NSString *)token issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
+- (nullable CLKOption *)_optionForOptionFlagToken:(NSString *)token issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
 
 #pragma mark -
 #pragma mark Errors
 
-- (void)_accumulateParsingError:(NSError *)error;
-- (void)_accumulateValidationError:(NSError *)error;
-- (BOOL)_hasParsingErrorForOptionNamed:(NSString *)optionName;
+- (void)_accumulateParsingIssue:(CLKArgumentIssue *)issue;
+- (void)_accumulateValidationIssue:(CLKArgumentIssue *)issue;
+- (BOOL)_shouldAccumulateValidationIssue:(CLKArgumentIssue *)issue;
+- (BOOL)_hasParsingIssueForOptionNamed:(NSString *)optionName;
 
 #pragma mark -
 #pragma mark Parsing
@@ -52,9 +54,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (CLKAPState)_parseOptionFlagAssignment;
 - (CLKAPState)_parseArgument;
 - (CLKAPState)_parseRemainingArguments;
-- (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation error:(NSError **)outError;
+- (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
 - (CLKAPState)_processParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation;
-- (BOOL)_processArgument:(NSString *)argument forParameterOption:(nullable CLKOption *)option error:(NSError **)outError;
+- (BOOL)_processArgument:(NSString *)argument forParameterOption:(nullable CLKOption *)option issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
 
 #pragma mark -
 #pragma mark Validation

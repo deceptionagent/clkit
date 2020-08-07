@@ -98,16 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Test_NSError_CLKAdditions : XCTestCase
 
-- (void)verifyError:(NSError *)error
-             domain:(NSString *)domain
-               code:(NSInteger)code
-        description:(NSString *)description;
-
-- (void)verifyError:(NSError *)error
-             domain:(NSString *)domain
-               code:(NSInteger)code
- representedOptions:(nullable NSArray<NSString *> *)representedOptions
-        description:(NSString *)description;
+- (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description;
 
 @end
 
@@ -115,19 +106,7 @@ NS_ASSUME_NONNULL_END
 
 @implementation Test_NSError_CLKAdditions
 
-- (void)verifyError:(NSError *)error
-             domain:(NSString *)domain
-               code:(NSInteger)code
-        description:(NSString *)description
-{
-    [self verifyError:error domain:domain code:code representedOptions:nil description:description];
-}
-
-- (void)verifyError:(NSError *)error
-             domain:(NSString *)domain
-               code:(NSInteger)code
- representedOptions:(NSArray<NSString *> *)representedOptions
-        description:(NSString *)description
+- (void)verifyError:(NSError *)error domain:(NSString *)domain code:(NSInteger)code description:(NSString *)description
 {
     XCTAssertNotNil(error, @"[description: %@]", description);
     if (error == nil) {
@@ -137,7 +116,6 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(error.domain, domain);
     XCTAssertEqual(error.code, code);
     XCTAssertEqualObjects(error.localizedDescription, description);
-    XCTAssertEqualObjects(error.clk_representedOptions, representedOptions);
 }
 
 - (void)test_clk_POSIXErrorWithCode_description
@@ -149,15 +127,6 @@ NS_ASSUME_NONNULL_END
     [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT description:@"404 flarn not found"];
 }
 
-- (void)test_clk_POSIXErrorWithCode_representedOptions_description
-{
-    NSError *error = [NSError clk_POSIXErrorWithCode:ENOENT representedOptions:@[ @"flarn" ] description:@"404 flarn not found"];
-    [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT representedOptions:@[ @"flarn" ] description:@"404 flarn not found"];
-    
-    error = [NSError clk_POSIXErrorWithCode:ENOENT representedOptions:@[ @"flarn" ] description:@"404 %@ not found", @"flarn"];
-    [self verifyError:error domain:NSPOSIXErrorDomain code:ENOENT representedOptions:@[ @"flarn" ] description:@"404 flarn not found"];
-}
-
 - (void)test_clk_CLKErrorWithCode_description
 {
     NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"404 flarn not found"];
@@ -165,39 +134,6 @@ NS_ASSUME_NONNULL_END
     
     error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"404 %@ not found", @"flarn"];
     [self verifyError:error domain:CLKErrorDomain code:CLKErrorRequiredOptionNotProvided description:@"404 flarn not found"];
-}
-
-- (void)test_clk_CLKErrorWithCode_representedOptions_description
-{
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"404 flarn not found"];
-    [self verifyError:error domain:CLKErrorDomain code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"404 flarn not found"];
-    
-    error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"404 %@ not found", @"flarn"];
-    [self verifyError:error domain:CLKErrorDomain code:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"404 flarn not found"];
-}
-
-- (void)test_clk_errorByAddingRepresentedOptions
-{
-    NSError *error = [NSError clk_POSIXErrorWithCode:7 description:@"ne cede malis"];
-    NSError *augmentedError = [error clk_errorByAddingRepresentedOptions:@[ @"sfiera" ]];
-    [self verifyError:augmentedError domain:NSPOSIXErrorDomain code:7 representedOptions:@[ @"sfiera" ] description:@"ne cede malis"];
-}
-
-- (void)test_clk_isValidationError
-{
-    NSError *alpha = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"alpha"];
-    NSError *bravo = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"bravo"];
-    NSError *charlie = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided representedOptions:@[ @"flarn" ] description:@"charlie"];
-    NSError *delta = [NSError clk_CLKErrorWithCode:CLKErrorNoVerbSpecified description:@"delta"];
-    NSError *echo = [NSError clk_POSIXErrorWithCode:ENOENT representedOptions:@[ @"flarn" ] description:@"echo"];
-    NSError *foxtrot = [NSError clk_POSIXErrorWithCode:CLKErrorNoVerbSpecified /* code overlap */ representedOptions:@[ @"flarn" ] description:@"foxtrot"];
-    
-    XCTAssertTrue(alpha.clk_isValidationError);
-    XCTAssertTrue(bravo.clk_isValidationError);
-    XCTAssertTrue(charlie.clk_isValidationError);
-    XCTAssertFalse(delta.clk_isValidationError);
-    XCTAssertFalse(echo.clk_isValidationError);
-    XCTAssertFalse(foxtrot.clk_isValidationError);
 }
 
 @end

@@ -10,26 +10,26 @@
 @implementation ConstraintValidationSpec
 {
     NSArray<CLKArgumentManifestConstraint *> *_constraints;
-    NSArray<NSError *> *_errors;
+    NSArray<CLKArgumentIssue *> *_issues;
 }
 
 @synthesize constraints = _constraints;
-@synthesize errors = _errors;
+@synthesize issues = _issues;
 
-+ (instancetype)specWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(NSArray<NSError *> *)errors
++ (instancetype)specWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issues:(NSArray<CLKArgumentIssue *> *)issues
 {
-    return [[self alloc] initWithConstraints:constraints errors:errors];
+    return [[self alloc] initWithConstraints:constraints issues:issues];
 }
 
-- (instancetype)initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints errors:(NSArray<NSError *> *)errors
+- (instancetype)initWithConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issues:(NSArray<CLKArgumentIssue *> *)issues
 {
     NSParameterAssert(constraints.count > 0);
-    NSParameterAssert(errors == nil || errors.count > 0);
+    NSParameterAssert(issues == nil || issues.count > 0);
     
     self = [super init];
     if (self != nil) {
         _constraints = [constraints copy];
-        _errors = [errors copy];
+        _issues = [issues copy];
     }
     
     return self;
@@ -37,7 +37,7 @@
 
 - (BOOL)shouldPass
 {
-    return (self.errors.count == 0);
+    return (self.issues.count == 0);
 }
 
 @end

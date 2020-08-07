@@ -20,21 +20,6 @@ static NSString * const CLKErrorRepresentedOptionsKey = @"CLKErrorRepresentedOpt
     return [self errorWithDomain:NSPOSIXErrorDomain code:code userInfo:info];
 }
 
-+ (instancetype)clk_POSIXErrorWithCode:(int)code representedOptions:(NSArray<NSString *> *)optionNames description:(NSString *)fmt, ...
-{
-    va_list ap;
-    va_start(ap, fmt);
-    NSString *description = [[NSString alloc] initWithFormat: fmt arguments: ap];
-    va_end(ap);
-    
-    NSDictionary *info = @{
-        NSLocalizedDescriptionKey : description,
-        CLKErrorRepresentedOptionsKey : [optionNames copy]
-    };
-    
-    return [self errorWithDomain:NSPOSIXErrorDomain code:code userInfo:info];
-}
-
 + (instancetype)clk_CLKErrorWithCode:(CLKError)code description:(NSString *)fmt, ...
 {
     va_list ap;
@@ -44,44 +29,6 @@ static NSString * const CLKErrorRepresentedOptionsKey = @"CLKErrorRepresentedOpt
     
     NSDictionary *info = @{ NSLocalizedDescriptionKey : description };
     return [self errorWithDomain:CLKErrorDomain code:code userInfo:info];
-}
-
-+ (instancetype)clk_CLKErrorWithCode:(CLKError)code representedOptions:(NSArray<NSString *> *)optionNames description:(NSString *)fmt, ...
-{
-    va_list ap;
-    va_start(ap, fmt);
-    NSString *description = [[NSString alloc] initWithFormat: fmt arguments: ap];
-    va_end(ap);
-    
-    NSDictionary *info = @{
-        NSLocalizedDescriptionKey : description,
-        CLKErrorRepresentedOptionsKey : [optionNames copy]
-    };
-    
-    return [self errorWithDomain:CLKErrorDomain code:code userInfo:info];
-}
-
-- (instancetype)clk_errorByAddingRepresentedOptions:(NSArray<NSString *> *)optionNames
-{
-    NSMutableDictionary *info = [self.userInfo mutableCopy];
-    info[CLKErrorRepresentedOptionsKey] = [optionNames copy];
-    return [self.class errorWithDomain:self.domain code:self.code userInfo:info];
-}
-
-- (NSArray<NSString *> *)clk_representedOptions
-{
-    return self.userInfo[CLKErrorRepresentedOptionsKey];
-}
-
-- (BOOL)clk_isValidationError
-{
-    if (![self.domain isEqualToString:CLKErrorDomain]) {
-        return NO;
-    }
-    
-    return (self.code == CLKErrorRequiredOptionNotProvided
-            || self.code == CLKErrorTooManyOccurrencesOfOption
-            || self.code == CLKErrorMutuallyExclusiveOptionsPresent);
 }
 
 @end

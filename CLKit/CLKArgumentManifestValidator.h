@@ -5,13 +5,14 @@
 #import <Foundation/Foundation.h>
 
 
+@class CLKArgumentIssue;
 @class CLKArgumentManifest;
 @class CLKArgumentManifestConstraint;
 @class CLKOption;
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^CLKAMVIssueHandler)(NSError *error);
+typedef void (^CLKAMVIssueHandler)(CLKArgumentIssue *issue);
 
 @interface CLKArgumentManifestValidator : NSObject
 

@@ -263,8 +263,13 @@ NS_ASSUME_NONNULL_END
     
     for (NSUInteger i = 0 ; i < options.count ; i++) {
         CLKOption *alpha = options[i];
-        for (NSUInteger r = i + 1 ; r < options.count ; r++) {
-            CLKOption *bravo = options[r];
+        for (NSUInteger c = 0 ; c < options.count ; c++) {
+            // skip the clone of alpha
+            if (c == i) {
+                continue;
+            }
+            
+            CLKOption *bravo = options[c];
             XCTAssertNotEqualObjects(alpha, bravo);
         }
     }
