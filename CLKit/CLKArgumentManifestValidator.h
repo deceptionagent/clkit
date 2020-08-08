@@ -22,7 +22,7 @@ typedef void (^CLKAMVIssueHandler)(CLKArgumentIssue *issue);
 
 @property (nonnull, readonly) CLKArgumentManifest *manifest;
 
-- (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 
 @end
 

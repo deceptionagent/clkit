@@ -15,13 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKArgumentManifestValidator ()
 
-- (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
-- (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler;
+- (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 
 @end
 
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark -
 
-- (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     // eliminate redundant errors by deduplicating identical constraints.
     // use an ordered set to keep error emission deterministic and testing sane.
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     switch (constraint.type) {
         case CLKConstraintTypeRequired:
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeRequired);
     NSParameterAssert(constraint.options.count == 1);
@@ -102,7 +102,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeConditionallyRequired);
     NSParameterAssert(constraint.options.count == 1);
@@ -117,7 +117,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeRepresentationRequired);
     
@@ -133,7 +133,7 @@ NS_ASSUME_NONNULL_END
     issueHandler(issue);
 }
 
-- (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeMutuallyExclusive);
     
@@ -159,7 +159,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeStandalone);
     NSParameterAssert(constraint.options.count == 1);
@@ -191,7 +191,7 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(CLKAMVIssueHandler)issueHandler
+- (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeOccurrencesLimited);
     NSParameterAssert(constraint.options.count == 1);
