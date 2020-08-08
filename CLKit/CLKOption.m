@@ -33,6 +33,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     switch (type) {
         case CLKOptionTypeSwitch:
             return @"switch";
+        
         case CLKOptionTypeParameter:
             return @"parameter";
     }
