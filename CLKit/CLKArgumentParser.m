@@ -434,6 +434,15 @@
     NSAssert([_argumentVector.firstObject isEqualToString:@"--"], @"expected sentinel at index 0 of argument vector");
     
     [_argumentVector removeObjectAtIndex:0]; // discard sentinel
+    
+    if (self.currentParameterOption != nil && _argumentVector.count == 0) {
+        // a parameter option was supplied prior to the sentinel but no argument was supplied on the other side
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected option argument following sentinel"];
+        CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOption:self.currentParameterOption.name];
+        [self _accumulateParsingIssue:issue];
+        return CLKAPStateEnd;
+    }
+    
     while (_argumentVector.count > 0) {
         // if we were handling a parameter option when we encountered the sentinel,
         // the first argument after the sentinel will be collected as an argument
