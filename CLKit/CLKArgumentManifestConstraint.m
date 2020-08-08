@@ -25,14 +25,19 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
     switch (type) {
         case CLKConstraintTypeRequired:
             return @"required";
+        
         case CLKConstraintTypeConditionallyRequired:
             return @"conditionally required";
+        
         case CLKConstraintTypeRepresentationRequired:
             return @"representation required";
+        
         case CLKConstraintTypeMutuallyExclusive:
             return @"mutually exclusive";
+        
         case CLKConstraintTypeStandalone:
             return @"standalone";
+        
         case CLKConstraintTypeOccurrencesLimited:
             return @"occurrences limited";
     }
@@ -110,18 +115,23 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
         case CLKConstraintTypeRequired:
             NSParameterAssert(options.count == 1 && auxOptions == nil);
             break;
+        
         case CLKConstraintTypeConditionallyRequired:
             NSParameterAssert(options.count == 1 && auxOptions.count == 1);
             break;
+        
         case CLKConstraintTypeRepresentationRequired:
             NSParameterAssert(options.count > 0 && auxOptions == nil);
             break;
+        
         case CLKConstraintTypeMutuallyExclusive:
             NSParameterAssert(options.count > 0 && auxOptions == nil);
             break;
+        
         case CLKConstraintTypeStandalone:
             NSParameterAssert(options.count == 1);
             break;
+        
         case CLKConstraintTypeOccurrencesLimited:
             NSParameterAssert(options.count == 1 && auxOptions == nil);
             break;

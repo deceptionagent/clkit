@@ -66,18 +66,23 @@ NS_ASSUME_NONNULL_END
         case CLKConstraintTypeRequired:
             [self _validateStrictRequirement:constraint issueHandler:issueHandler];
             break;
+        
         case CLKConstraintTypeConditionallyRequired:
             [self _validateConditionalRequirement:constraint issueHandler:issueHandler];
             break;
+        
         case CLKConstraintTypeRepresentationRequired:
             [self _validateRepresentationRequirement:constraint issueHandler:issueHandler];
             break;
+        
         case CLKConstraintTypeMutuallyExclusive:
             [self _validateMutualExclusion:constraint issueHandler:issueHandler];
             break;
+        
         case CLKConstraintTypeStandalone:
             [self _validateStandaloneExclusion:constraint issueHandler:issueHandler];
             break;
+        
         case CLKConstraintTypeOccurrencesLimited:
             [self _validateOccurrenceLimit:constraint issueHandler:issueHandler];
             break;
