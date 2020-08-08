@@ -15,13 +15,11 @@
     BOOL _public;
     NSArray<CLKOption *> *_options;
     NSArray<CLKOptionGroup *> *_optionGroups;
-    CLKCommandResult *(^_runWithManifest_impl)(CLKArgumentManifest *);
 }
 
 @synthesize name = _name;
 @synthesize options = _options;
 @synthesize optionGroups = _optionGroups;
-@synthesize runWithManifest_impl = _runWithManifest_impl;
 
 + (instancetype)flarnVerb
 {
@@ -88,16 +86,12 @@
 
 - (CLKCommandResult *)runWithManifest:(CLKArgumentManifest *)manifest
 {
-    if (_runWithManifest_impl == nil) {
-        NSDictionary *userInfo = @{
-            @"verb" : _name,
-            @"manifest" : manifest,
-        };
-        
-        return [[CLKCommandResult alloc] initWithExitStatus:0 errors:nil userInfo:userInfo];
-    }
+    NSDictionary *userInfo = @{
+        @"verb" : _name,
+        @"manifest" : manifest,
+    };
     
-    return _runWithManifest_impl(manifest);
+    return [[CLKCommandResult alloc] initWithExitStatus:0 errors:nil userInfo:userInfo];
 }
 
 @end
