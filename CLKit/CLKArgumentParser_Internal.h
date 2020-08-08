@@ -13,7 +13,7 @@ typedef NS_ENUM(uint32_t, CLKAPState) {
     CLKAPStateParseParameterOptionNameAssignment = 5,
     CLKAPStateParseParameterOptionFlagAssignment = 6,
     CLKAPStateParseArgument = 7,
-    CLKAPStateParseRemainingArguments = 8,
+    CLKAPStateParseRemainderArguments = 8,
     CLKAPStateEnd = 9
 };
 
@@ -47,15 +47,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CLKAPState)_readNextArgumentToken;
 - (CLKAPState)_parseOptionName;
-- (CLKAPState)_parseOptionFlag;
 - (CLKAPState)_parseOptionFlagSet;
+- (CLKAPState)_parseOptionFlag;
 - (CLKAPState)_parseOptionNameAssignment;
 - (CLKAPState)_parseOptionFlagAssignment;
 - (CLKAPState)_parseArgument;
-- (CLKAPState)_parseRemainingArguments;
+- (CLKAPState)_parseRemainderArguments;
+- (CLKAPState)_handleParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation;
+
+#pragma mark -
+#pragma mark Processing
+
+- (BOOL)_processArgument:(NSString *)argument issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
+- (BOOL)_processPositionalArgument:(NSString *)argument issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
+- (BOOL)_processArgument:(NSString *)argument forParameterOption:(CLKOption *)option issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
 - (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
-- (CLKAPState)_processParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation;
-- (BOOL)_processArgument:(NSString *)argument forParameterOption:(nullable CLKOption *)option issue:(CLKArgumentIssue *__nullable *__nonnull)outIssue;
 
 #pragma mark -
 #pragma mark Validation
