@@ -222,8 +222,8 @@
                     _state = [self _parseArgument];
                     break;
                 
-                case CLKAPStateParseRemainingArguments:
-                    _state = [self _parseRemainingArguments];
+                case CLKAPStateParseRemainderArguments:
+                    _state = [self _parseRemainderArguments];
                     break;
                 
                 case CLKAPStateEnd:
@@ -274,7 +274,7 @@
         }
         
         case CLKTokenFormOptionParsingSentinel: {
-            return CLKAPStateParseRemainingArguments;
+            return CLKAPStateParseRemainderArguments;
         }
         
         case CLKTokenFormArgument: {
@@ -304,7 +304,7 @@
         return CLKAPStateReadNextArgumentToken;
     }
     
-    return [self _processParsedOption:option userInvocation:rawArgument];
+    return [self _handleParsedOption:option userInvocation:rawArgument];
 }
 
 - (CLKAPState)_parseOptionFlagSet
@@ -342,7 +342,7 @@
         return CLKAPStateReadNextArgumentToken;
     }
     
-    return [self _processParsedOption:option userInvocation:rawArgument];
+    return [self _handleParsedOption:option userInvocation:rawArgument];
 }
 
 - (CLKAPState)_parseOptionNameAssignment
@@ -422,50 +422,35 @@
     
     NSString *argument = [_argumentVector clk_popFirstObject];
     CLKArgumentIssue *issue;
-    if (![self _processArgument:argument forParameterOption:self.currentParameterOption issue:&issue]) {
-        self.currentParameterOption = nil;
+    if (![self _processArgument:argument issue:&issue]) {
         [self _accumulateParsingIssue:issue];
-        return CLKAPStateReadNextArgumentToken;
     }
     
-    self.currentParameterOption = nil;
     return CLKAPStateReadNextArgumentToken;
 }
 
-- (CLKAPState)_parseRemainingArguments
+- (CLKAPState)_parseRemainderArguments
 {
     NSAssert([_argumentVector.firstObject isEqualToString:@"--"], @"expected sentinel at index 0 of argument vector");
     
     [_argumentVector removeObjectAtIndex:0]; // discard sentinel
     while (_argumentVector.count > 0) {
+        // if we were handling a parameter option when we encountered the sentinel,
+        // the first argument after the sentinel will be collected as an argument
+        // for that option.
         NSString *argument = [_argumentVector clk_popFirstObject];
         CLKArgumentIssue *issue;
-        if (![self _processArgument:argument forParameterOption:self.currentParameterOption issue:&issue]) {
+        if (![self _processArgument:argument issue:&issue]) {
             [self _accumulateParsingIssue:issue];
         }
-        
-        self.currentParameterOption = nil;
     }
     
     return CLKAPStateEnd;
 }
 
-- (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation issue:(CLKArgumentIssue **)outIssue
+- (CLKAPState)_handleParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation
 {
-    NSParameterAssert(outIssue != nil);
-    
-    if (option.type != CLKOptionTypeParameter) {
-        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '%@' does not accept arguments", userInvocation];
-        *outIssue = [CLKArgumentIssue issueWithError:error salientOption:option.name];
-        return NO;
-    }
-    
-    return [self _processArgument:argument forParameterOption:option issue:outIssue];
-}
-
-- (CLKAPState)_processParsedOption:(CLKOption *)option userInvocation:(NSString *)userInvocation
-{
-    NSAssert(self.currentParameterOption == nil, @"currentParameterOption previously set");
+    NSAssert(self.currentParameterOption == nil, @"currentParameterOption unexpectedly set");
     
     if (option.type == CLKOptionTypeParameter) {
         // if the argument vector is empty at this point, we have encountered a parameter option at the end of the vector
@@ -480,7 +465,7 @@
         
         // if the next argument after this option is the parsing sentinel, transition to the sentinel parsing state
         if (CLKTokenFormForToken(_argumentVector.firstObject) == CLKTokenFormOptionParsingSentinel) {
-            return CLKAPStateParseRemainingArguments;
+            return CLKAPStateParseRemainderArguments;
         }
         
         return CLKAPStateParseArgument;
@@ -490,9 +475,39 @@
     return CLKAPStateReadNextArgumentToken;
 }
 
+#pragma mark -
+#pragma mark Processing
+
+- (BOOL)_processArgument:(NSString *)argument issue:(CLKArgumentIssue **)outIssue
+{
+    if (self.currentParameterOption != nil) {
+        BOOL result = [self _processArgument:argument forParameterOption:self.currentParameterOption issue:outIssue];
+        self.currentParameterOption = nil;
+        return result;
+    } else {
+        return [self _processPositionalArgument:argument issue:outIssue];
+    }
+}
+
+- (BOOL)_processPositionalArgument:(NSString *)argument issue:(CLKArgumentIssue **)outIssue
+{
+    NSParameterAssert(outIssue != nil);
+    NSAssert(self.currentParameterOption == nil, @"currentParameterOption unexpectedly set");
+    
+    // reject: empty string passed into argv (e.g., --foo "")
+    if (argument.length == 0) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
+        *outIssue = [CLKArgumentIssue issueWithError:error];
+        return NO;
+    }
+    
+    [_manifest accumulatePositionalArgument:argument];
+    return YES;
+}
+
 - (BOOL)_processArgument:(NSString *)argument forParameterOption:(CLKOption *)option issue:(CLKArgumentIssue **)outIssue
 {
-    NSParameterAssert(option == nil || option.type == CLKOptionTypeParameter);
+    NSParameterAssert(option != nil && option.type == CLKOptionTypeParameter);
     NSParameterAssert(outIssue != nil);
     
     // reject: empty string passed into argv (e.g., --foo "")
@@ -502,14 +517,9 @@
         return NO;
     }
     
-    if (option == nil) {
-        [_manifest accumulatePositionalArgument:argument];
-        return YES;
-    }
-    
     BOOL rejectOptionLikeToken = !(_state == CLKAPStateParseParameterOptionNameAssignment
                                    || _state == CLKAPStateParseParameterOptionFlagAssignment
-                                   || _state == CLKAPStateParseRemainingArguments);
+                                   || _state == CLKAPStateParseRemainderArguments);
     
     // reject: the next argument looks like an option, but we expect an argument
     if (rejectOptionLikeToken) {
@@ -533,6 +543,19 @@
     
     [_manifest accumulateArgument:argument forParameterOptionNamed:option.name];
     return YES;
+}
+
+- (BOOL)_processAssignedArgument:(NSString *)argument forParameterOption:(CLKOption *)option userInvocation:(NSString *)userInvocation issue:(CLKArgumentIssue **)outIssue
+{
+    NSParameterAssert(outIssue != nil);
+    
+    if (option.type != CLKOptionTypeParameter) {
+        NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"option '%@' does not accept arguments", userInvocation];
+        *outIssue = [CLKArgumentIssue issueWithError:error salientOption:option.name];
+        return NO;
+    }
+    
+    return [self _processArgument:argument forParameterOption:option issue:outIssue];
 }
 
 #pragma mark -

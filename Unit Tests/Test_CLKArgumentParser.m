@@ -574,27 +574,27 @@
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"what" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    argv = @[ @"--flarn", @"--", @"--quone" ]; // interpreting `--quone` as an argument, not an option
+    argv = @[ @"--flarn", @"--", @"--quone" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"--quone" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    argv = @[ @"--flarn", @"--", @"-q" ]; // interpreting `-q` as an argument, not an option
+    argv = @[ @"--flarn", @"--", @"-q" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-q" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    argv = @[ @"--flarn", @"--", @"--xyzzy" ]; // interpreting `--xyzzy` (unregistered) as an argument, not an option
+    argv = @[ @"--flarn", @"--", @"--xyzzy" ]; // --xyzzy is unregistered
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"--xyzzy" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    argv = @[ @"--flarn", @"--", @"-x" ]; // interpreting `-x` (unregistered) as an argument, not an option
+    argv = @[ @"--flarn", @"--", @"-x" ]; // -x is unregistered
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-x" ] }];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    argv = @[ @"--flarn", @"--", @"-x", @"-y" ]; // not interpreting `-y` as an argument to the earlier parameter option
+    argv = @[ @"--flarn", @"--", @"-x", @"-y" ]; // not interpreting `-y` as an argument to --flarn
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"-x" ] } positionalArguments:@[ @"-y" ]];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    argv = @[ @"--flarn", @"--", @"", @"-y" ]; // processing first post-sentinel argument for a parameter option, zero-length argument (error condition)
+    argv = @[ @"--flarn", @"--", @"", @"-y" ]; // processing first post-sentinel argument to --flarn, zero-length argument (error condition)
     spec = [ArgumentParsingResultSpec specWithPOSIXErrorCode:EINVAL description:@"encountered zero-length argument"];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
