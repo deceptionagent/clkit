@@ -653,14 +653,14 @@
     spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
     
-    /* zero-length argument provided after sentinel */
+    /* zero-length argument provided after sentinel (error) */
     
     argv = @[ @"--flarn", @"acme", @"--", @"", @"station" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
     
-    /* argument to parameter option not supplied after sentinel */
+    /* argument to parameter option not supplied after sentinel (error) */
     
     argv = @[ @"--flarn", @"--"];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected option argument following sentinel"];
