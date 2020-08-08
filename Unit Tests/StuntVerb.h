@@ -33,8 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
                      options:(nullable NSArray<CLKOption *> *)options
                 optionGroups:(nullable NSArray<CLKOptionGroup *> *)optionGroups NS_DESIGNATED_INITIALIZER;
 
-@property (nullable, copy) CLKCommandResult *(^runWithManifest_impl)(CLKArgumentManifest *);
-
 @end
 
 NS_ASSUME_NONNULL_END
