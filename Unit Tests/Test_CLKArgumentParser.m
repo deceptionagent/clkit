@@ -654,8 +654,16 @@
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
     
     /* zero-length argument provided after sentinel */
+    
     argv = @[ @"--flarn", @"acme", @"--", @"", @"station" ];
     NSError *error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"encountered zero-length argument"];
+    spec = [ArgumentParsingResultSpec specWithError:error];
+    [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
+    
+    /* argument to parameter option not supplied after sentinel */
+    
+    argv = @[ @"--flarn", @"--"];
+    error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected option argument following sentinel"];
     spec = [ArgumentParsingResultSpec specWithError:error];
     [self performTestWithArgumentVector:argv options:@[ flarn ] spec:spec];
 }
