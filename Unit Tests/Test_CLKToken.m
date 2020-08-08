@@ -302,7 +302,7 @@ NS_ASSUME_NONNULL_END
     return tokenFormSpecs;
 }
 
-- (void)enumerateInputTokens:(void (^)(NSString *, CLKTokenForm))block
+- (void)enumerateInputTokens:(void (NS_NOESCAPE ^)(NSString *, CLKTokenForm))block
 {
     for (TokenFormSpec *spec in self.tokenFormSpecs) {
         for (NSString *token in spec.tokens) {
