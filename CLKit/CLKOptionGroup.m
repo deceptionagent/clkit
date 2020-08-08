@@ -39,10 +39,10 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
-+ (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptionNames
++ (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptions
 {
     CLKHardParameterAssert(option != nil);
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:option allowingOptions:whitelistedOptionNames];
+    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:option allowingOptions:whitelistedOptions];
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
