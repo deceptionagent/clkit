@@ -167,6 +167,8 @@
         standaloneAlpha
     ];
     
+    // check each constraint against each constraint that succeeds it in the list.
+    // when we're done, we will have exhausted the comparison space.
     for (NSUInteger i = 0 ; i < constraints.count ; i++) {
         CLKArgumentManifestConstraint *alpha = constraints[i];
         for (NSUInteger r = i + 1 ; r < constraints.count ; r++) {

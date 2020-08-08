@@ -131,15 +131,12 @@ NS_ASSUME_NONNULL_END
         XCTAssertEqual(issue.hash, clone.hash);
     }];
     
+    // check each issue against each issue that succeeds it in the list.
+    // when we're done, we will have exhausted the comparison space.
     for (NSUInteger i = 0 ; i < issues.count ; i++) {
         CLKArgumentIssue *alpha = issues[i];
-        for (NSUInteger c = 0 ; c < issues.count ; c++) {
-            // skip the clone of alpha
-            if (c == i) {
-                continue;
-            }
-            
-            CLKArgumentIssue *bravo = issues[c];
+        for (NSUInteger r = i + 1 ; r < issues.count ; r++) {
+            CLKArgumentIssue *bravo = issues[r];
             XCTAssertFalse([alpha isEqual:bravo], @"issues unexpectedly match:\n%@ is equal to %@", alpha.debugDescription, bravo.debugDescription);
         }
     }

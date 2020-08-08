@@ -259,15 +259,12 @@ NS_ASSUME_NONNULL_END
         XCTAssertEqual(option.hash, clone.hash);
     }];
     
+    // check each option against each option that succeeds it in the list.
+    // when we're done, we will have exhausted the comparison space.
     for (NSUInteger i = 0 ; i < options.count ; i++) {
         CLKOption *alpha = options[i];
-        for (NSUInteger c = 0 ; c < options.count ; c++) {
-            // skip the clone of alpha
-            if (c == i) {
-                continue;
-            }
-            
-            CLKOption *bravo = options[c];
+        for (NSUInteger r = i + 1 ; r < options.count ; r++) {
+            CLKOption *bravo = options[r];
             XCTAssertNotEqualObjects(alpha, bravo);
         }
     }
