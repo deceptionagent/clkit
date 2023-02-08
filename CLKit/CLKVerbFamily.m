@@ -20,10 +20,12 @@ NS_ASSUME_NONNULL_END
 @implementation CLKVerbFamily
 {
     NSString *_name;
+    NSArray<id<CLKVerb>> *_verbs;
     NSMutableDictionary<NSString *, id<CLKVerb>> *_verbMap;
 }
 
 @synthesize name = _name;
+@synthesize verbs = _verbs;
 
 + (instancetype)familyWithName:(NSString *)name verbs:(NSArray<id<CLKVerb>> *)verbs
 {
@@ -38,6 +40,7 @@ NS_ASSUME_NONNULL_END
     self = [super init];
     if (self != nil) {
         _name = [name copy];
+        _verbs = [verbs copy];
         _verbMap = [[NSMutableDictionary alloc] init];
         
         for (id<CLKVerb> verb in verbs) {

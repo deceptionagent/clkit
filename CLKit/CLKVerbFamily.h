@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)familyWithName:(NSString *)name verbs:(NSArray<id<CLKVerb>> *)verbs;
 
 @property (readonly) NSString *name;
+@property (readonly) NSArray<id<CLKVerb>> *verbs;
 
 - (nullable id<CLKVerb>)verbNamed:(NSString *)verbName;
 

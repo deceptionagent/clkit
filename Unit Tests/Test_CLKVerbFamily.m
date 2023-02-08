@@ -15,14 +15,14 @@
 
 - (void)testInit
 {
-    NSArray *verbs = @[ [StuntVerb flarnVerb] ];
-    
-    CLKVerbFamily *family = [CLKVerbFamily familyWithName:@"confound" verbs:verbs];
+    StuntVerb *flarn = [StuntVerb flarnVerb];
+    CLKVerbFamily *family = [CLKVerbFamily familyWithName:@"confound" verbs:@[ flarn ]];
     XCTAssertEqualObjects(family.name, @"confound");
+    XCTAssertEqualObjects(family.verbs, @[ flarn ]);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    XCTAssertThrows([CLKVerbFamily familyWithName:nil verbs:verbs]);
+    XCTAssertThrows([CLKVerbFamily familyWithName:nil verbs:@[ flarn ]]);
     XCTAssertThrows([CLKVerbFamily familyWithName:@"flarn" verbs:nil]);
     XCTAssertThrows([CLKVerbFamily familyWithName:@"flarn" verbs:@[]]);
 #pragma clang diagnostic pop
