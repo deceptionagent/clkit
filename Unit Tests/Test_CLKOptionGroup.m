@@ -14,6 +14,8 @@
 
 @implementation Test_CLKOptionGroup
 
+#warning is there value in these cases?
+
 - (void)testRequired
 {
     CLKOptionGroup *group = [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"flarn", @"barf" ]];

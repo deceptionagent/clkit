@@ -20,7 +20,7 @@ typedef void (^CLKAMVIssueHandler)(CLKArgumentIssue *issue);
 
 - (instancetype)initWithManifest:(CLKArgumentManifest *)manifest NS_DESIGNATED_INITIALIZER;
 
-@property (nonnull, readonly) CLKArgumentManifest *manifest;
+@property (readonly) CLKArgumentManifest *manifest;
 
 - (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 

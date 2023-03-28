@@ -8,16 +8,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 static NSString *CLKStringForConstraintType(CLKConstraintType type);
 
-@interface CLKArgumentManifestConstraint ()
-
-- (instancetype)_initWithType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(nullable NSOrderedSet<NSString *> *)auxOptions NS_DESIGNATED_INITIALIZER;
-
-#if !NS_BLOCK_ASSERTIONS
-+ (void)_validateConstraintType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(nullable NSOrderedSet<NSString *> *)auxOptions;
-#endif
-
-@end
-
 NS_ASSUME_NONNULL_END
 
 static NSString *CLKStringForConstraintType(CLKConstraintType type)
@@ -26,131 +16,61 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
         case CLKConstraintTypeRequired:
             return @"required";
         
-        case CLKConstraintTypeConditionallyRequired:
-            return @"conditionally required";
-        
-        case CLKConstraintTypeRepresentationRequired:
-            return @"representation required";
+        case CLKConstraintTypeAnyRequired:
+            return @"any-required";
         
         case CLKConstraintTypeMutuallyExclusive:
-            return @"mutually exclusive";
+            return @"mutex";
         
         case CLKConstraintTypeStandalone:
             return @"standalone";
         
         case CLKConstraintTypeOccurrencesLimited:
-            return @"occurrences limited";
+            return @"limit";
     }
 }
 
 @implementation CLKArgumentManifestConstraint
 {
     CLKConstraintType _type;
-    NSOrderedSet<NSString *> *_options;
-    NSOrderedSet<NSString *> *_auxOptions;
+    NSOrderedSet<NSString *> *_bandedOptions;
+    NSString *_significantOption;
+    NSString *_predicatingOption;
 }
 
 @synthesize type = _type;
-@synthesize options = _options;
-@synthesize auxOptions = _auxOptions;
+@synthesize bandedOptions = _bandedOptions;
+@synthesize significantOption = _significantOption;
+@synthesize predicatingOption = _predicatingOption;
 
-+ (instancetype)constraintForRequiredOption:(NSString *)option
+- (instancetype)initWithType:(CLKConstraintType)type
+               bandedOptions:(NSOrderedSet<NSString *> *)bandedOptions
+           significantOption:(NSString *)significantOption
+           predicatingOption:(NSString *)predicatingOption
 {
-    return [[self alloc] _initWithType:CLKConstraintTypeRequired options:[NSOrderedSet orderedSetWithObject:option] auxOptions:nil];
-}
-
-+ (instancetype)constraintForConditionallyRequiredOption:(NSString *)option causalOption:(NSString *)causalOption
-{
-    NSOrderedSet *options = [NSOrderedSet orderedSetWithObject:option];
-    NSOrderedSet *auxOptions = [NSOrderedSet orderedSetWithObject:causalOption];
-    return [[self alloc] _initWithType:CLKConstraintTypeConditionallyRequired options:options auxOptions:auxOptions];
-}
-
-+ (instancetype)constraintRequiringRepresentationForOptions:(NSArray<NSString *> *)options
-{
-    return [[self alloc] _initWithType:CLKConstraintTypeRepresentationRequired options:[NSOrderedSet orderedSetWithArray:options] auxOptions:nil];
-}
-
-+ (instancetype)constraintForMutuallyExclusiveOptions:(NSArray<NSString *> *)options
-{
-    return [[self alloc] _initWithType:CLKConstraintTypeMutuallyExclusive options:[NSOrderedSet orderedSetWithArray:options] auxOptions:nil];
-}
-
-+ (instancetype)constraintForStandaloneOption:(NSString *)option allowingOptions:(NSArray<NSString *> *)whitelistedOptions
-{
-    NSOrderedSet *options = [NSOrderedSet orderedSetWithObject:option];
-    NSOrderedSet *auxOptions = (whitelistedOptions != nil ? [NSOrderedSet orderedSetWithArray:whitelistedOptions] : nil);
-    return [[self alloc] _initWithType:CLKConstraintTypeStandalone options:options auxOptions:auxOptions];
-}
-
-+ (instancetype)constraintLimitingOccurrencesForOption:(NSString *)option
-{
-    return [[self alloc] _initWithType:CLKConstraintTypeOccurrencesLimited options:[NSOrderedSet orderedSetWithObject:option] auxOptions:nil];
-}
-
-- (instancetype)_initWithType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(NSOrderedSet<NSString *> *)auxOptions
-{
-#if !NS_BLOCK_ASSERTIONS
-    [[self class] _validateConstraintType:type options:options auxOptions:auxOptions];
-#endif
-    
     self = [super init];
     if (self != nil) {
         _type = type;
-        _options = [options copy];
-        _auxOptions = [auxOptions copy];
+        _bandedOptions = [bandedOptions copy];
+        _significantOption = [significantOption copy];
+        _predicatingOption = [predicatingOption copy];
     }
     
     return self;
 }
 
-// since all this method does is use Foundation asserts that get compiled out in debug,
-// conditionally compile the whole thing away to avoid unused parameter warnings in
-// build configurations where NS_BLOCK_ASSERTIONS is enabled.
-#if !NS_BLOCK_ASSERTIONS
-
-+ (void)_validateConstraintType:(CLKConstraintType)type options:(NSOrderedSet<NSString *> *)options auxOptions:(NSOrderedSet<NSString *> *)auxOptions
-{
-    switch (type) {
-        case CLKConstraintTypeRequired:
-            NSParameterAssert(options.count == 1 && auxOptions == nil);
-            break;
-        
-        case CLKConstraintTypeConditionallyRequired:
-            NSParameterAssert(options.count == 1 && auxOptions.count == 1);
-            break;
-        
-        case CLKConstraintTypeRepresentationRequired:
-            NSParameterAssert(options.count > 0 && auxOptions == nil);
-            break;
-        
-        case CLKConstraintTypeMutuallyExclusive:
-            NSParameterAssert(options.count > 0 && auxOptions == nil);
-            break;
-        
-        case CLKConstraintTypeStandalone:
-            NSParameterAssert(options.count == 1);
-            break;
-        
-        case CLKConstraintTypeOccurrencesLimited:
-            NSParameterAssert(options.count == 1 && auxOptions == nil);
-            break;
-    }
-}
-
-#endif
-
 - (NSString *)description
 {
-    NSString * const fmt = @"%@ { %@ | options: [ %@ ] | auxOptions: [ %@ ] }";
-    NSString *optionsDesc = [_options.array componentsJoinedByString:@", "];
-    NSString *auxOptionsDesc = [_auxOptions.array componentsJoinedByString:@", "];
-    return [NSString stringWithFormat:fmt, super.description, CLKStringForConstraintType(_type), optionsDesc, auxOptionsDesc];
+    NSString *fmt = @"%@ { %@ | banded: %@ | significant: %@ | predicating: %@ }";
+    NSString *bandDesc = (_bandedOptions != nil ? [_bandedOptions.array componentsJoinedByString:@", "] : @"(nil)");
+    NSString *signiDesc = (_significantOption != nil ? _significantOption : @"(nil)");
+    NSString *predDesc = (_predicatingOption != nil ? _predicatingOption : @"(nil)");
+    return [NSString stringWithFormat:fmt, super.description, CLKStringForConstraintType(_type), bandDesc, signiDesc, predDesc];
 }
 
 - (NSUInteger)hash
 {
-    return (_options.hash ^ _auxOptions.hash + _type);
+    return (_bandedOptions.hash ^ _significantOption.hash ^ _predicatingOption.hash + _type);
 }
 
 - (BOOL)isEqual:(id)obj
@@ -172,16 +92,35 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
         return NO;
     }
     
-    if (![_options isEqualToOrderedSet:constraint.options]) {
+    NSOrderedSet *bandedOptions = constraint.bandedOptions;
+    NSString *significantOption = constraint.significantOption;
+    NSString *predicatingOption = constraint.predicatingOption;
+    
+    if ((_bandedOptions != nil) != (bandedOptions != nil)) {
         return NO;
     }
     
-    if ((_auxOptions != nil) != (constraint.auxOptions != nil)) {
+    if ((_significantOption != nil) != (significantOption != nil)) {
         return NO;
     }
     
-    BOOL compareAuxOptions = (_auxOptions != nil && constraint.auxOptions != nil);
-    if (compareAuxOptions && ![_auxOptions isEqualToOrderedSet:constraint.auxOptions]) {
+    if ((_predicatingOption != nil) != (predicatingOption != nil)) {
+        return NO;
+    }
+    
+    BOOL compareBandedOptions = (_bandedOptions != nil && bandedOptions != nil);
+    BOOL compareSignificantOption = (_significantOption != nil && predicatingOption != nil);
+    BOOL comparePredicatingOption = (_predicatingOption != nil && predicatingOption != nil);
+    
+    if (compareBandedOptions && ![_bandedOptions isEqualToOrderedSet:bandedOptions]) {
+        return NO;
+    }
+    
+    if (compareSignificantOption && ![_significantOption isEqualToString:significantOption]) {
+        return NO;
+    }
+    
+    if (comparePredicatingOption && ![_predicatingOption isEqualToString:predicatingOption]) {
         return NO;
     }
     

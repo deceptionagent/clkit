@@ -17,8 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
-- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
-- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (void)_validateAnyPresentRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
@@ -51,7 +50,7 @@ NS_ASSUME_NONNULL_END
 - (void)validateConstraints:(NSArray<CLKArgumentManifestConstraint *> *)constraints issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     // eliminate redundant errors by deduplicating identical constraints.
-    // use an ordered set to keep error emission deterministic and testing sane.
+    // use an ordered set to assist testing.
     NSOrderedSet<CLKArgumentManifestConstraint *> *uniqueConstraints = [[NSOrderedSet alloc] initWithArray:constraints];
     for (CLKArgumentManifestConstraint *constraint in uniqueConstraints) {
         @autoreleasepool {
@@ -62,17 +61,17 @@ NS_ASSUME_NONNULL_END
 
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
+    if (constraint.predicatingOption != nil && ![_manifest hasOptionNamed:constraint.predicatingOption]) {
+        return;
+    }
+    
     switch (constraint.type) {
         case CLKConstraintTypeRequired:
             [self _validateStrictRequirement:constraint issueHandler:issueHandler];
             break;
         
-        case CLKConstraintTypeConditionallyRequired:
-            [self _validateConditionalRequirement:constraint issueHandler:issueHandler];
-            break;
-        
-        case CLKConstraintTypeRepresentationRequired:
-            [self _validateRepresentationRequirement:constraint issueHandler:issueHandler];
+        case CLKConstraintTypeAnyRequired:
+            [self _validateAnyPresentRequirement:constraint issueHandler:issueHandler];
             break;
         
         case CLKConstraintTypeMutuallyExclusive:
@@ -92,57 +91,53 @@ NS_ASSUME_NONNULL_END
 - (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeRequired);
-    NSParameterAssert(constraint.options.count == 1);
+    NSParameterAssert(constraint.significantOption != nil);
     
-    NSString *option = constraint.options.firstObject;
+    NSString *option = constraint.significantOption;
     if (![_manifest hasOptionNamed:option]) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", option];
+        NSError *error;
+        if (constraint.predicatingOption != nil) {
+            error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, constraint.predicatingOption];
+        } else {
+            error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", option];
+        }
+        
         CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOption:option];
         issueHandler(issue);
     }
 }
 
-- (void)_validateConditionalRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
+- (void)_validateAnyPresentRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
-    NSParameterAssert(constraint.type == CLKConstraintTypeConditionallyRequired);
-    NSParameterAssert(constraint.options.count == 1);
-    NSParameterAssert(constraint.auxOptions.count == 1);
+    NSParameterAssert(constraint.type == CLKConstraintTypeAnyRequired);
     
-    NSString *option = constraint.options.firstObject;
-    NSString *causalOption = constraint.auxOptions.firstObject;
-    if ([_manifest hasOptionNamed:causalOption] && ![_manifest hasOptionNamed:option]) {
-        NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, causalOption];
-        CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOption:option];
-        issueHandler(issue);
-    }
-}
-
-- (void)_validateRepresentationRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
-{
-    NSParameterAssert(constraint.type == CLKConstraintTypeRepresentationRequired);
-    
-    for (NSString *option in constraint.options) {
+    for (NSString *option in constraint.bandedOptions) {
         if ([_manifest hasOptionNamed:option]) {
             return;
         }
     }
     
-    NSString *desc = [constraint.options.array componentsJoinedByString:@" --"];
-    NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", desc];
-    CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOptions:constraint.options.array];
+    NSError *error;
+    NSString *optionsDesc = [constraint.bandedOptions.array componentsJoinedByString:@" --"];
+    if (constraint.predicatingOption != nil) {
+        error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", optionsDesc];
+    } else {
+        error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided when using --%@: --%@", constraint.predicatingOption, optionsDesc];
+    }
+    
+    CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOptions:constraint.bandedOptions.array];
     issueHandler(issue);
 }
 
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeMutuallyExclusive);
+    NSParameterAssert(constraint.bandedOptions.count > 0);
     
     NSMutableArray<NSString *> *hits = nil;
     
-    for (NSString *option in constraint.options) {
+    for (NSString *option in constraint.bandedOptions) {
         if ([_manifest hasOptionNamed:option]) {
-            // we can skip array allocation if no linked options are present
-            // [TACK] still not great -- we could create and destroy a lot of arrays that contain only one option
             if (hits == nil) {
                 hits = [NSMutableArray array];
             }
@@ -162,14 +157,14 @@ NS_ASSUME_NONNULL_END
 - (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeStandalone);
-    NSParameterAssert(constraint.options.count == 1);
+    NSParameterAssert(constraint.significantOption != nil);
     
-    NSString *option = constraint.options.firstObject;
+    NSString *option = constraint.significantOption;
     if ([_manifest hasOptionNamed:option]) {
         CLKArgumentIssue *issue = nil;
         NSSet<NSString *> *accumulatedOptions = _manifest.accumulatedOptionNames;
         if (accumulatedOptions.count > 1) {
-            NSOrderedSet<NSString *> *whitelist = constraint.auxOptions;
+            NSOrderedSet<NSString *> *whitelist = constraint.bandedOptions;
             if (whitelist.count == 0) {
                 NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--%@ may not be provided with other options", option];
                 issue = [CLKArgumentIssue issueWithError:error salientOption:option];
@@ -194,9 +189,9 @@ NS_ASSUME_NONNULL_END
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeOccurrencesLimited);
-    NSParameterAssert(constraint.options.count == 1);
+    NSParameterAssert(constraint.significantOption != nil);
     
-    NSString *option = constraint.options.firstObject;
+    NSString *option = constraint.significantOption;
     if ([_manifest occurrencesOfOptionNamed:option] > 1) {
         NSError *error = [NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--%@ may not be provided more than once", option];
         CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOption:option];

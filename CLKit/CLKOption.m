@@ -4,30 +4,6 @@
 
 #import "CLKOption_Private.h"
 
-#import "CLKArgumentManifestConstraint.h"
-#import "CLKArgumentTransformer.h"
-#import "CLKAssert.h"
-#import "NSCharacterSet+CLKAdditions.h"
-#import "NSString+CLKAdditions.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface CLKOption ()
-
-- (instancetype)_initWithType:(CLKOptionType)type
-                         name:(NSString *)name
-                         flag:(nullable NSString *)flag
-                     required:(BOOL)required
-                    recurrent:(BOOL)recurrent
-                   standalone:(BOOL)standalone
-                  transformer:(nullable CLKArgumentTransformer *)transformer NS_DESIGNATED_INITIALIZER;
-
-+ (void)_validateOptionName:(NSString *)name flag:(nullable NSString *)flag;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
 NSString *CLKStringForOptionType(CLKOptionType type)
 {
     switch (type) {
@@ -48,6 +24,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     BOOL _recurrent;
     BOOL _standalone;
     CLKArgumentTransformer *_transformer;
+    NSMutableArray<CLKArgumentManifestConstraint *> *_constraints;
 }
 
 @synthesize type = _type;
@@ -57,6 +34,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 @synthesize recurrent = _recurrent;
 @synthesize standalone = _standalone;
 @synthesize transformer = _transformer;
+@synthesize constraints = _constraints;
 
 #pragma mark -
 #pragma mark Switch Options
@@ -128,23 +106,42 @@ NSString *CLKStringForOptionType(CLKOptionType type)
         _recurrent = recurrent;
         _standalone = standalone;
         _transformer = transformer;
+        [self _initConstraints];
     }
     
     return self;
 }
 
-+ (void)_validateOptionName:(NSString *)name flag:(NSString *)flag
+- (void)_initConstraints
 {
-    // name guards
-    CLKHardParameterAssert(name.length > 0, @"options must have names");
-    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
-    NSRange r = [name rangeOfCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet options:NSLiteralSearch];
-    BOOL nameIsLegal = (r.location == NSNotFound);
-    CLKHardParameterAssert(nameIsLegal, @"illegal character in option name '%@': '%C'", name, [name characterAtIndex:r.location]);
+    _constraints = [NSMutableArray array];
     
-    // flag guards
-    CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
-    CLKHardParameterAssert(![NSCharacterSet.clk_optionFlagIllegalCharacterSet characterIsMember:[flag characterAtIndex:0]], @"illegal option flag: '%@'", flag);
+    if (_required) {
+        CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeRequired
+                                                                                          bandedOptions:nil
+                                                                                      significantOption:self.name
+                                                                                      predicatingOption:nil];
+        
+        [_constraints addObject:constraint];
+    }
+    
+    if (!_recurrent) {
+        CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeOccurrencesLimited
+                                                                                          bandedOptions:nil
+                                                                                      significantOption:self.name
+                                                                                      predicatingOption:nil];
+        
+        [_constraints addObject:constraint];
+    }
+    
+    if (_standalone) {
+        CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeStandalone
+                                                                                          bandedOptions:nil
+                                                                                      significantOption:self.name
+                                                                                      predicatingOption:nil];
+        
+        [_constraints addObject:constraint];
+    }
 }
 
 - (id)copyWithZone:(__unused NSZone *)zone
@@ -218,26 +215,16 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 #pragma mark -
 
-- (NSArray<CLKArgumentManifestConstraint *> *)constraints
++ (void)_validateOptionName:(NSString *)name flag:(NSString *)flag
 {
-    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [NSMutableArray array];
+    CLKHardParameterAssert(name.length > 0, @"options must have names");
+    CLKHardParameterAssert(![name hasPrefix:@"-"], @"option names should not begin with -- or -");
+    NSRange r = [name rangeOfCharacterFromSet:NSCharacterSet.clk_optionNameIllegalCharacterSet options:NSLiteralSearch];
+    BOOL nameIsLegal = (r.location == NSNotFound);
+    CLKHardParameterAssert(nameIsLegal, @"illegal character in option name '%@': '%C'", name, [name characterAtIndex:r.location]);
     
-    if (_required) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForRequiredOption:self.name];
-        [constraints addObject:constraint];
-    }
-    
-    if (!_recurrent) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:self.name];
-        [constraints addObject:constraint];
-    }
-    
-    if (_standalone) {
-        CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:self.name allowingOptions:nil];
-        [constraints addObject:constraint];
-    }
-    
-    return constraints;
+    CLKHardParameterAssert((flag == nil || flag.length == 1), @"option flags must be single characters");
+    CLKHardParameterAssert(![NSCharacterSet.clk_optionFlagIllegalCharacterSet characterIsMember:[flag characterAtIndex:0]], @"illegal option flag: '%@'", flag);
 }
 
 @end

@@ -253,17 +253,20 @@ NS_ASSUME_NONNULL_END
 {
     NSArray<CLKOption *> *options = [self uniqueOptions];
     NSArray<CLKOption *> *optionClones = [self uniqueOptions];
-    [options enumerateObjectsUsingBlock:^(CLKOption *option, NSUInteger idx, __unused BOOL *outStop) {
-        CLKOption *clone = optionClones[idx];
+    NSUInteger count = options.count;
+    
+    for (NSUInteger i = 0 ; i < count ; i++) {
+        CLKOption *option = options[i];
+        CLKOption *clone = optionClones[i];
         XCTAssertEqualObjects(option, clone);
         XCTAssertEqual(option.hash, clone.hash);
-    }];
+    }
     
     // check each option against each option that succeeds it in the list.
     // when we're done, we will have exhausted the comparison space.
-    for (NSUInteger i = 0 ; i < options.count ; i++) {
+    for (NSUInteger i = 0 ; i < count ; i++) {
         CLKOption *alpha = options[i];
-        for (NSUInteger r = i + 1 ; r < options.count ; r++) {
+        for (NSUInteger r = i + 1 ; r < count ; r++) {
             CLKOption *bravo = options[r];
             XCTAssertNotEqualObjects(alpha, bravo);
         }
@@ -292,16 +295,16 @@ NS_ASSUME_NONNULL_END
     NSArray<CLKOption *> *optionClones = [self uniqueOptions];
     
     // verify deduplication
-    NSSet *expectedOptionSet = [NSSet setWithArray:options];
-    NSArray<CLKOption *> *redundantOptions = [options arrayByAddingObjectsFromArray:optionClones];
-    NSSet *optionSet = [NSSet setWithArray:redundantOptions];
-    XCTAssertEqualObjects(optionSet, expectedOptionSet);
+    NSSet *expectedSet = [NSSet setWithArray:options];
+    NSArray<CLKOption *> *redundantList = [options arrayByAddingObjectsFromArray:optionClones];
+    NSSet *deduplicatedSet = [NSSet setWithArray:redundantList];
+    XCTAssertEqualObjects(deduplicatedSet, expectedSet);
     
     for (NSUInteger i = 0 ; i < options.count ; i++) {
         CLKOption *option = options[i];
         CLKOption *clone = optionClones[i];
-        XCTAssertTrue([optionSet containsObject:option]);
-        XCTAssertTrue([optionSet containsObject:clone]);
+        XCTAssertTrue([deduplicatedSet containsObject:option]);
+        XCTAssertTrue([deduplicatedSet containsObject:clone]);
     }
 }
 
@@ -346,6 +349,8 @@ NS_ASSUME_NONNULL_END
     XCTAssertEqualObjects(paramB.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramB | -(null) | parameter, required, recurrent }", paramB]));
     XCTAssertEqualObjects(paramC.description, ([NSString stringWithFormat:@"<CLKOption: %p> { --paramC | -p | parameter, recurrent, standalone }", paramC]));
 }
+
+#warning is there value in testConstraints cases?
 
 - (void)testConstraints_switchOptions
 {

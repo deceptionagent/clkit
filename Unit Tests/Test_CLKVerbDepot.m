@@ -113,7 +113,7 @@ NS_ASSUME_NONNULL_END
     depot = [[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:topLevelVerbs verbFamilies:families];
     XCTAssertNotNil(depot);
 
-    // [TACK] should this be allowed?
+    // [#] should this be allowed?
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
     XCTAssertThrows([[CLKVerbDepot alloc] initWithArgumentVector:@[] verbs:nil verbFamilies:families]);

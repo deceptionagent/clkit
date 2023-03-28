@@ -346,7 +346,7 @@
         a whitelist that contains a standalone option is a nonsensical configuration that we don't currently guard against.
         test it here so we at least know how it behaves and that it doesn't explode.
      
-        [TACK] constraint coherency checking would define this away.
+        [#] constraint coherency checking would define this away.
     */
     
     groups = @[
