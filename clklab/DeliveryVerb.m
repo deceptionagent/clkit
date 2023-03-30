@@ -22,8 +22,8 @@
 - (NSArray<CLKOptionGroup *> *)optionGroups
 {
     return @[
-        [CLKOptionGroup requiredGroupForOptionsNamed:@[ @"ex", @"cathedra" ]],
-        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"ex", @"cathedra" ]],
+        [CLKOptionGroup groupRequiringAnyOfOptions:@[ @"ex", @"cathedra" ]],
+        [CLKOptionGroup mutexedGroupForOptions:@[ @"ex", @"cathedra" ]],
     ];
 }
 
