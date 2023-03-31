@@ -120,9 +120,10 @@ NS_ASSUME_NONNULL_END
     NSError *error;
     NSString *optionsDesc = [constraint.bandedOptions.array componentsJoinedByString:@" --"];
     if (constraint.predicatingOption != nil) {
-        error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", optionsDesc];
-    } else {
         error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided when using --%@: --%@", constraint.predicatingOption, optionsDesc];
+    } else {
+        #warning maybe emit "--%@: required option not provided" if bandedOptions.count == 1
+        error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", optionsDesc];
     }
     
     CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOptions:constraint.bandedOptions.array];

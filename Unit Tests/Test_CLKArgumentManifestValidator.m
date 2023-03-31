@@ -146,7 +146,7 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
     }];
     
     if (spec.shouldPass) {
-        XCTAssertEqual(issues.count, 0UL, @"unexpected validation failure for constraints:\n%@\n\n*** issues:\n%@\n\n*** manifest:\n%@\n", spec.constraints, issues, validator.manifest.debugDescription);
+        XCTAssertEqual(issues.count, 0UL, @"unexpected validation failure for constraints:\n%@\n\n*** issues:\n%@\n\n*** manifest:\n%@\n", spec.constraints, issues.debugDescription, validator.manifest.debugDescription);
     } else {
         XCTAssertTrue([issues isEqualToArray:spec.issues], @"unsatisfied issues match: %@ is not equal to %@\nconstraints:\n%@\n\n*** manifest:\n%@\n", issues.debugDescription, spec.issues.debugDescription, spec.constraints, validator.manifest.debugDescription);
     }
@@ -189,7 +189,14 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
     
     NSDictionary *emptyManifestSuite = @{
         kConstraintTypeKey : @(CLKConstraintTypeRequired),
-        kSubtestsKey : suite[kSubtestsKey]
+        kSubtestsKey : @[
+            @{
+                kSignificantOptionKey : @"barf",
+                kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
+                kErrorSalienceKey     : @[ @"barf" ],
+                kErrorDescriptionKey  : @"--barf: required option not provided"
+            }
+        ]
     };
     
     [self performSubtestSuite:suite];
@@ -279,17 +286,13 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
         },
         
         kSubtestsKey : @[
+            @{ kBandedOptionsKey : @[ @"quone" ]},
             @{ kBandedOptionsKey : @[ @"quone", @"flarn" ]},
             @{ kBandedOptionsKey : @[ @"barf", @"flarn" ]},
             @{ kBandedOptionsKey : @[ @"quone", @"barf", @"flarn" ]},
             @{ kBandedOptionsKey : @[ @"quone", @"syn" ]},
             @{ kBandedOptionsKey : @[ @"barf", @"syn" ]}
         ]
-    };
-    
-    NSDictionary *emptyManifestSuite = @{
-        kConstraintTypeKey : @(CLKConstraintTypeAnyRequired),
-        kSubtestsKey : suite[kSubtestsKey]
     };
     
     NSDictionary *errorSuite = @{
@@ -301,6 +304,13 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
         },
         
         kSubtestsKey : @[
+            @{
+                kBandedOptionsKey    : @[ @"syn" ],
+                kErrorCodeKey        : @(CLKErrorRequiredOptionNotProvided),
+                kErrorSalienceKey    : @[ @"syn" ],
+                kErrorDescriptionKey : @"one or more of the following options must be provided: --syn"
+            },
+            
             @{
                 kBandedOptionsKey    : @[ @"syn", @"ack" ],
                 kErrorCodeKey        : @(CLKErrorRequiredOptionNotProvided),
@@ -317,12 +327,17 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
         ]
     };
     
+    NSDictionary *emptyManifestSuite = @{
+        kConstraintTypeKey : @(CLKConstraintTypeAnyRequired),
+        kSubtestsKey : errorSuite[kSubtestsKey]
+    };
+    
     [self performSubtestSuite:suite];
-    [self performSubtestSuite:emptyManifestSuite];
     [self performSubtestSuite:errorSuite];
+    [self performSubtestSuite:emptyManifestSuite];
 }
 
-#warning add coverage for CLKConstraintTypeAnyRequired + predicatingOption
+#warning add coverage for CLKConstraintTypeAnyRequired + predicatingOption (any-of-dependents)
 
 - (void)testValidateConstraint_mutuallyExclusive
 {
@@ -355,7 +370,7 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
         kConstraintTypeKey     : @(CLKConstraintTypeMutuallyExclusive),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            barf : @[ @"xyzzy" ],
+            barf  : @[ @"xyzzy" ],
             flarn : @[ @"confound", @"delivery" ]
         },
         
@@ -384,8 +399,8 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
             @{
                 kBandedOptionsKey    : @[ @"quone", @"barf", @"flarn" ],
                 kErrorCodeKey        : @(CLKErrorMutuallyExclusiveOptionsPresent),
-                kErrorSalienceKey    : @[ @"quone", @"barf" ],
-                kErrorDescriptionKey : @"--quone --barf: mutually exclusive options encountered"
+                kErrorSalienceKey    : @[ @"quone", @"barf", @"flarn" ],
+                kErrorDescriptionKey : @"--quone --barf --flarn: mutually exclusive options encountered"
             },
             
             @{
@@ -406,107 +421,168 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
 {
     CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
     CLKOption *barf  = [CLKOption optionWithName:@"barf" flag:@"b"];
-    CLKOption *confound = [CLKOption optionWithName:@"confound" flag:@"c"];
+    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c"];
     CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
     
-    {
-        NSDictionary *manifestSwitches = @{ flarn : @(1) };
-        CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:manifestSwitches parameterOptions:nil];
-        
-        CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeStandalone bandedOptions:nil significantOption:@"flarn" predicatingOption:nil];
-        [self verifyValidationPassForConstraint:constraint usingValidator:validator];
-        
-        constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeStandalone bandedOptions:[NSOrderedSet orderedSet] significantOption:@"flarn" predicatingOption:nil];
-        [self verifyValidationPassForConstraint:constraint usingValidator:validator];
-    }
+    NSDictionary *suiteA = @{
+        kConstraintTypeKey   : @(CLKConstraintTypeStandalone),
+        kManifestSwitchesKey : @{ flarn : @(1) },
+        kSubtestsKey : @[
+            @{ kSignificantOptionKey : @"flarn" },
+            
+            @{
+                kBandedOptionsKey : @[],
+                kSignificantOptionKey : @"flarn"
+            }
+        ]
+    };
     
-    #warning need to cover manifestParameters only (no switches present)
-    #warning need success where flarn is specified more than once -- standalone options can be recurrent
-    #warning do we need empty manifest cases?
+    NSDictionary *suiteB = @{
+        kConstraintTypeKey     : @(CLKConstraintTypeStandalone),
+        kManifestParametersKey : @{ confound : @[ @"acme" ] },
+        kSubtestsKey : @[
+            @{ kSignificantOptionKey : @"confound" },
+            
+            @{
+                kBandedOptionsKey : @[],
+                kSignificantOptionKey : @"confound"
+            }
+        ]
+    };
     
-    {
-        NSDictionary *manifestSwitches = @{
+    // standalone options can be recurrent
+    NSMutableDictionary *suiteA_recurrent = [suiteA mutableCopy];
+    NSMutableDictionary *suiteB_recurrent = [suiteB mutableCopy];
+    suiteA_recurrent[kManifestSwitchesKey]   = @{ flarn : @(7) };
+    suiteB_recurrent[kManifestParametersKey] = @{ confound : @[ @"acme", @"station" ] };
+    
+    // empty manifests
+    NSMutableDictionary *suiteA_empty = [suiteA mutableCopy];
+    NSMutableDictionary *suiteB_empty = [suiteB mutableCopy];
+    suiteA_empty[kManifestSwitchesKey]   = nil;
+    suiteB_empty[kManifestParametersKey] = nil;
+    
+    NSDictionary *suiteC = @{
+        kConstraintTypeKey   : @(CLKConstraintTypeStandalone),
+        kManifestSwitchesKey : @{
             flarn : @(1),
-            barf : @(1)
-        };
+            barf  : @(7)
+        },
         
-        NSDictionary *manifestParameters = @{
-            delivery : @[ @"xyzzy" ]
-        };
+        kManifestParametersKey : @{
+            confound : @[ @"acme" ],
+            delivery : @[ @"station" ]
+        },
         
-        CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:manifestSwitches parameterOptions:manifestParameters];
-        
-        CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeStandalone bandedOptions:nil significantOption:@"flarn" predicatingOption:nil];
-        [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent salientOptions:@[ @"flarn" ] description:@"--flarn may not be provided with other options"];
-        
-        constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeStandalone bandedOptions:[NSOrderedSet orderedSet] significantOption:@"flarn" predicatingOption:nil];
-        [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent salientOptions:@[ @"flarn" ] description:@"--flarn may not be provided with other options"];
-    }
+        kSubtestsKey : @[
+            @{
+                kSignificantOptionKey : @"flarn",
+                kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+                kErrorSalienceKey     : @[ @"flarn" ],
+                kErrorDescriptionKey  : @"--flarn may not be provided with other options"
+            },
+            
+            @{
+                kSignificantOptionKey : @"confound",
+                kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+                kErrorSalienceKey     : @[ @"confound" ],
+                kErrorDescriptionKey  : @"--confound may not be provided with other options"
+            },
+            
+            // empty whitelist
+            @{
+                kBandedOptionsKey     : @[],
+                kSignificantOptionKey : @"flarn",
+                kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+                kErrorSalienceKey     : @[ @"flarn" ],
+                kErrorDescriptionKey  : @"--flarn may not be provided with other options"
+            },
+            
+            @{
+                kBandedOptionsKey     : @[ @"barf" ],
+                kSignificantOptionKey : @"flarn",
+                kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+                kErrorSalienceKey     : @[ @"flarn" ],
+                kErrorDescriptionKey  : @"--flarn may not be provided with options other than the following: --barf"
+            },
+            
+            @{
+                kBandedOptionsKey     : @[ @"delivery" ],
+                kSignificantOptionKey : @"confound",
+                kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+                kErrorSalienceKey     : @[ @"confound" ],
+                kErrorDescriptionKey  : @"--confound may not be provided with options other than the following: --delivery"
+            },
+            
+            @{
+                kBandedOptionsKey     : @[ @"barf", @"confound" ],
+                kSignificantOptionKey : @"flarn",
+                kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+                kErrorSalienceKey     : @[ @"flarn" ],
+                kErrorDescriptionKey  : @"--flarn may not be provided with options other than the following: --barf --confound"
+            },
+            
+            @{
+                kBandedOptionsKey     : @[ @"barf", @"confound", @"delivery" ],
+                kSignificantOptionKey : @"flarn",
+            }
+        ]
+    };
     
-    {
-        NSDictionary *manifestSwitches = @{
-            flarn : @(1),
-            barf : @(1),
-            confound : @(1),
-        };
-        
-        NSDictionary *manifestParameters = @{
-            delivery : @[ @"xyzzy" ]
-        };
-        
-        CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:manifestSwitches parameterOptions:manifestParameters];
-        
-        constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf" ]];
-        [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent salientOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf"];
-        
-        constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound" ]];
-        [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorMutuallyExclusiveOptionsPresent salientOptions:@[ @"flarn" ] description:@"--flarn may not be provided with options other than the following: --barf --confound"];
-        
-        constraint = [CLKArgumentManifestConstraint constraintForStandaloneOption:@"flarn" allowingOptions:@[ @"barf", @"confound", @"delivery" ]];
-        [self verifyValidationPassForConstraint:constraint usingValidator:validator];
-    }
-    
-    #warning error cases: need to cover manifestParameters only (no switches present)
+    [self performSubtestSuite:suiteA];
+    [self performSubtestSuite:suiteA_recurrent];
+    [self performSubtestSuite:suiteA_empty];
+    [self performSubtestSuite:suiteB];
+    [self performSubtestSuite:suiteB_recurrent];
+    [self performSubtestSuite:suiteB_empty];
+    [self performSubtestSuite:suiteC];
 }
 
 - (void)testValidateConstraint_occurrencesLimited
 {
-    CLKOption *barf  = [CLKOption parameterOptionWithName:@"barf" flag:@"b"];
-    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
-    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
-    CLKOption *xyzzy = [CLKOption optionWithName:@"xyzzy" flag:@"x"];
+    CLKOption *barf  = [CLKOption optionWithName:@"barf" flag:@"b"];
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
+    CLKOption *quone = [CLKOption parameterOptionWithName:@"quone" flag:@"q"];
+    CLKOption *xyzzy = [CLKOption parameterOptionWithName:@"xyzzy" flag:@"x"];
     
-    NSDictionary *switchOptions = @{
-        quone : @(1),
-        xyzzy : @(2)
+    NSDictionary *suite = @{
+        kConstraintTypeKey   : @(CLKConstraintTypeOccurrencesLimited),
+        kManifestSwitchesKey : @{
+            flarn : @(1),
+            barf  : @(2)
+        },
+        
+        kManifestParametersKey : @{
+            quone : @[ @"thrud"],
+            xyzzy : @[ @"confound", @"delivery" ]
+        },
+        
+        kSubtestsKey : @[
+            @{ kSignificantOptionKey : @"flarn" },
+            @{ kSignificantOptionKey : @"thrud" },
+            @{ kSignificantOptionKey : @"acme"  }, // not in the manifest
+            
+            @{
+                kSignificantOptionKey : @"barf",
+                kErrorCodeKey         : @(CLKErrorTooManyOccurrencesOfOption),
+                kErrorSalienceKey     : @[ @"barf" ],
+                kErrorDescriptionKey  : @"--barf may not be provided more than once"
+            },
+            
+            @{
+                kSignificantOptionKey : @"xyzzy",
+                kErrorCodeKey         : @(CLKErrorTooManyOccurrencesOfOption),
+                kErrorSalienceKey     : @[ @"xyzzy" ],
+                kErrorDescriptionKey  : @"--xyzzy may not be provided more than once"
+            }
+        ]
     };
     
-    NSDictionary *parameterOptions = @{
-        barf : @[ @"thrud" ],
-        flarn : @[ @"confound", @"delivery" ]
-    };
-    
-    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
-    CLKArgumentManifestValidator *emptyValidator = [self validatorWithSwitchOptions:nil parameterOptions:nil];
-    
-    CLKArgumentManifestConstraint *constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"barf"];
-    [self verifyValidationPassForConstraint:constraint usingValidator:validator];
-
-    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"flarn"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption salientOptions:@[ @"flarn" ] description:@"--flarn may not be provided more than once"];
-    
-    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"quone"];
-    [self verifyValidationPassForConstraint:constraint usingValidator:validator];
-    
-    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"xyzzy"];
-    [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:CLKErrorTooManyOccurrencesOfOption salientOptions:@[ @"xyzzy" ] description:@"--xyzzy may not be provided more than once"];
-    
-    // not present in the manifest
-    constraint = [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"aeon"];
-    [self verifyValidationPassForConstraint:constraint usingValidator:validator];
-    [self verifyValidationPassForConstraint:constraint usingValidator:emptyValidator];
+    [self performSubtestSuite:suite];
 }
 
+#warning 1. does testMultipleConstraints provide value? 2. if so, update it.
+#if 0
 - (void)testMultipleConstraints
 {
     CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];
@@ -588,5 +664,5 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
     ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:constraints issues:issues];
     [self evaluateSpec:spec usingValidator:validator];
 }
-
+#endif
 @end

@@ -163,7 +163,7 @@
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
 }
 
-- (void)testValidation_requiredGroup
+- (void)testValidation_anyPresentRequiredGroup
 {
     NSArray *options = @[
         [CLKOption optionWithName:@"flarn" flag:@"f"],
@@ -187,6 +187,8 @@
     spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedOptionManifest];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
 }
+
+#warning need testValidation_anyPresentDependentRequiredGroup
 
 - (void)testValidation_mutualExclusionGroup
 {

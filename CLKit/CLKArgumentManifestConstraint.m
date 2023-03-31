@@ -109,7 +109,7 @@ static NSString *CLKStringForConstraintType(CLKConstraintType type)
     }
     
     BOOL compareBandedOptions = (_bandedOptions != nil && bandedOptions != nil);
-    BOOL compareSignificantOption = (_significantOption != nil && predicatingOption != nil);
+    BOOL compareSignificantOption = (_significantOption != nil && significantOption != nil);
     BOOL comparePredicatingOption = (_predicatingOption != nil && predicatingOption != nil);
     
     if (compareBandedOptions && ![_bandedOptions isEqualToOrderedSet:bandedOptions]) {
