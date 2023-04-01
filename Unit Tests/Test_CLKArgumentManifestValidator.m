@@ -17,26 +17,6 @@
 
 #define SET(...) [[NSOrderedSet alloc] initWithObjects:__VA_ARGS__, nil]
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface Test_CLKArgumentManifestValidator : XCTestCase
-
-- (void)verifyValidationPassForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator;
-
-- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint
-                              usingValidator:(CLKArgumentManifestValidator *)validator
-                                        code:(CLKError)code
-                              salientOptions:(NSArray<NSString *> *)salientOptions
-                                 description:(NSString *)description;
-
-- (void)evaluateSpec:(ConstraintValidationSpec *)spec usingValidator:(CLKArgumentManifestValidator *)validator;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-@implementation Test_CLKArgumentManifestValidator
-
 /*
     test cases can be described with a convenient dictionary form that is turned into concrete test spec objects.
     
@@ -89,6 +69,37 @@ static NSString * const kErrorCodeKey          = @"error_code";
 static NSString * const kErrorSalienceKey      = @"error_salience";
 static NSString * const kErrorDescriptionKey   = @"error_description";
 
+NS_ASSUME_NONNULL_BEGIN
+
+static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstraintType type, NSDictionary<NSString *, id> *subtest);
+
+@interface Test_CLKArgumentManifestValidator : XCTestCase
+
+- (void)verifyValidationPassForConstraint:(CLKArgumentManifestConstraint *)constraint usingValidator:(CLKArgumentManifestValidator *)validator;
+
+- (void)verifyValidationFailureForConstraint:(CLKArgumentManifestConstraint *)constraint
+                              usingValidator:(CLKArgumentManifestValidator *)validator
+                                        code:(CLKError)code
+                              salientOptions:(NSArray<NSString *> *)salientOptions
+                                 description:(NSString *)description;
+
+- (void)evaluateSpec:(ConstraintValidationSpec *)spec usingValidator:(CLKArgumentManifestValidator *)validator;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstraintType type, NSDictionary<NSString *, id> *subtest)
+{
+    NSArray<NSString *> *band = subtest[kBandedOptionsKey];
+    NSOrderedSet<NSString *> *bandSet = (band != nil ? [NSOrderedSet orderedSetWithArray:band] : nil);
+    NSString *sig = subtest[kSignificantOptionKey];
+    NSString *pred = subtest[kPredicatingOptionKey];
+    return [[CLKArgumentManifestConstraint alloc] initWithType:type bandedOptions:bandSet significantOption:sig predicatingOption:pred];
+}
+
+@implementation Test_CLKArgumentManifestValidator
+
 - (void)performSubtestSuite:(NSDictionary<NSString *, id> *)suite
 {
     NSParameterAssert(suite[kConstraintTypeKey] != nil);
@@ -101,20 +112,15 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
     
     NSArray<NSDictionary *> *subtests = suite[kSubtestsKey];
     for (NSDictionary<NSString *, id> *subtest in subtests) {
-        NSArray<NSString *> *band = subtest[kBandedOptionsKey];
-        NSOrderedSet<NSString *> *bandSet = (band != nil ? [NSOrderedSet orderedSetWithArray:band] : nil);
-        NSString *sig = subtest[kSignificantOptionKey];
-        NSString *pred = subtest[kPredicatingOptionKey];
-        CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:type bandedOptions:bandSet significantOption:sig predicatingOption:pred];
-        
+        CLKArgumentManifestConstraint *constraint = _ConstraintFromSubtestTemplate(type, subtest);
         CLKError errorCode = [subtest[kErrorCodeKey] unsignedIntValue];
         if (errorCode == CLKErrorNoError) {
             [self verifyValidationPassForConstraint:constraint usingValidator:validator];
         } else {
-            NSParameterAssert(subtest[kErrorDescriptionKey] != nil);
             NSParameterAssert([subtest[kErrorSalienceKey] count] > 0);
-            NSString *desc = subtest[kErrorDescriptionKey];
+            NSParameterAssert(subtest[kErrorDescriptionKey] != nil);
             NSArray<NSString *> *salience = subtest[kErrorSalienceKey];
+            NSString *desc = subtest[kErrorDescriptionKey];
             [self verifyValidationFailureForConstraint:constraint usingValidator:validator code:errorCode salientOptions:salience description:desc];
         }
     }
@@ -581,88 +587,104 @@ static NSString * const kErrorDescriptionKey   = @"error_description";
     [self performSubtestSuite:suite];
 }
 
-#warning 1. does testMultipleConstraints provide value? 2. if so, update it.
-#if 0
 - (void)testMultipleConstraints
 {
-    CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];
-    CLKOption *thrud_alt = [CLKOption optionWithName:@"thrud_alt" flag:nil];
-    CLKOption *ack = [CLKOption parameterOptionWithName:@"ack" flag:nil];
-    CLKOption *ack_alt = [CLKOption optionWithName:@"ack_alt" flag:nil];
-    CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:nil];
-    CLKOption *confound_alt = [CLKOption parameterOptionWithName:@"confound_alt" flag:nil];
+    CLKOption *confound = [CLKOption optionWithName:@"confound" flag:nil];
     CLKOption *delivery = [CLKOption optionWithName:@"delivery" flag:nil];
-    CLKOption *delivery_alt = [CLKOption optionWithName:@"delivery_alt" flag:nil];
-    CLKOption *acme = [CLKOption optionWithName:@"acme" flag:nil];
+    CLKOption *acme = [CLKOption parameterOptionWithName:@"acme" flag:nil];
+    CLKOption *station = [CLKOption parameterOptionWithName:@"station" flag:nil];
+    CLKOption *thrud = [CLKOption parameterOptionWithName:@"thrud" flag:nil];
     
-    NSDictionary<CLKOption *, NSNumber *> *switchOptions = @{
-        thrud_alt : @(2),
-        ack_alt : @(1),
-        delivery : @(7),
-        delivery_alt : @(10),
-        acme : @(7)
+    NSDictionary<CLKOption *, NSNumber *> *manifestSwitches = @{
+        confound : @(1),
+        delivery : @(7)
     };
     
-    NSDictionary<CLKOption *, NSArray *> *parameterOptions = @{
-        thrud : @[ @"#", @"#"],
-        ack : @[ @"!" ],
-        confound : @[ @"?" ],
-        confound_alt : @[ @"?" ]
+    NSDictionary<CLKOption *, NSArray *> *manifestParameters = @{
+        acme    : @[ @"!" ],
+        station : @[ @"@", @"&" ], // violates occurence limit
+        thrud   : @[ @"#" ]
     };
     
-    NSArray<CLKArgumentManifestConstraint *> *constraints = @[
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
-        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" causalOption:@"ack"],
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
-        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"acme", @"station" ]], // passing constraint, no associated error
-        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" causalOption:@"ack_alt"],
-        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"],
+    NSArray<NSDictionary *> *baseConstraintSpecs = @[
+        @{
+            kConstraintTypeKey    : @(CLKConstraintTypeRequired),
+            kSignificantOptionKey : @"xyzzy",
+            kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
+            kErrorSalienceKey     : @[ @"xyzzy" ],
+            kErrorDescriptionKey  : @"--xyzzy: required option not provided"
+        },
         
-        // redundant constraints should be deduplicated
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn"],
-        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud_alt"],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn" causalOption:@"ack"],
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound_alt", @"delivery_alt" ]],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone", @"xyzzy" ]],
-        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud" allowingOptions:nil],
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"acme", @"station" ]], // passing constraint, no associated error
-        [CLKArgumentManifestConstraint constraintForStandaloneOption:@"thrud_alt" allowingOptions:nil],
-        [CLKArgumentManifestConstraint constraintRequiringRepresentationForOptions:@[ @"quone_alt", @"xyzzy_alt" ]],
-        [CLKArgumentManifestConstraint constraintForMutuallyExclusiveOptions:@[ @"confound", @"delivery" ]],
-        [CLKArgumentManifestConstraint constraintForConditionallyRequiredOption:@"syn_alt" causalOption:@"ack_alt"],
-        [CLKArgumentManifestConstraint constraintLimitingOccurrencesForOption:@"thrud"],
-        [CLKArgumentManifestConstraint constraintForRequiredOption:@"flarn_alt"]
+        @{
+            kConstraintTypeKey   : @(CLKConstraintTypeAnyRequired),
+            kBandedOptionsKey    : @[ @"xyzzy", @"quone" ],
+            kErrorCodeKey        : @(CLKErrorRequiredOptionNotProvided),
+            kErrorSalienceKey    : @[ @"xyzzy", @"quone" ],
+            kErrorDescriptionKey : @"one or more of the following options must be provided: --xyzzy --quone"
+        },
+        
+        @{
+            kConstraintTypeKey   : @(CLKConstraintTypeMutuallyExclusive),
+            kBandedOptionsKey    : @[ @"confound", @"station" ],
+            kErrorCodeKey        : @(CLKErrorMutuallyExclusiveOptionsPresent),
+            kErrorSalienceKey    : @[ @"confound", @"station" ],
+            kErrorDescriptionKey : @"--confound --station: mutually exclusive options encountered"
+        },
+        
+        @{
+            kConstraintTypeKey    : @(CLKConstraintTypeStandalone),
+            kSignificantOptionKey : @"acme",
+            kErrorCodeKey         : @(CLKErrorMutuallyExclusiveOptionsPresent),
+            kErrorSalienceKey     : @[ @"acme" ],
+            kErrorDescriptionKey  : @"--acme may not be provided with other options"
+        },
+        
+        @{
+            kConstraintTypeKey    : @(CLKConstraintTypeOccurrencesLimited),
+            kSignificantOptionKey : @"station",
+            kErrorCodeKey         : @(CLKErrorTooManyOccurrencesOfOption),
+            kErrorSalienceKey     : @[ @"station" ],
+            kErrorDescriptionKey  : @"--station may not be provided more than once"
+        }
+        
+/*
+        @{
+            kConstraintTypeKey    : @(CLKConstraintType),
+            kBandedOptionsKey     : @[ @"" ],
+            kSignificantOptionKey : @"",
+            kPredicatingOptionKey : @"",
+            kErrorCodeKey         : @(CLKError),
+            kErrorSalienceKey     : @[ @"" ],
+            kErrorDescriptionKey  : @""
+        },
+*/
     ];
     
-    #define ISSUE(error, options) \
-        [CLKArgumentIssue issueWithError:error salientOptions:options]
+    NSArray<NSDictionary *> *redundantConstraintSpecs = [baseConstraintSpecs arrayByAddingObjectsFromArray:baseConstraintSpecs];
+    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [[NSMutableArray alloc] init];
+    for (NSDictionary<NSString *, id> *spec in redundantConstraintSpecs) {
+        NSAssert(spec[kConstraintTypeKey] != nil, @"missing constraint type in subtest spec");
+        CLKConstraintType type = [spec[kConstraintTypeKey] unsignedIntValue];
+        CLKArgumentManifestConstraint *constraint = _ConstraintFromSubtestTemplate(type, spec);
+        [constraints addObject:constraint];
+    }
     
-    NSArray<CLKArgumentIssue *> *issues = @[
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn: required option not provided"], @[ @"flarn" ]),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud_alt may not be provided more than once"], @[ @"thrud_alt" ]),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn is required when using --ack"], @[ @"syn" ]),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound_alt --delivery_alt: mutually exclusive options encountered"], (@[ @"confound_alt", @"delivery_alt" ])),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --xyzzy"], (@[ @"quone", @"xyzzy" ])),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--thrud may not be provided with other options"], @[ @"thrud" ]),
-        // no error for acme/station constraint
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--thrud_alt may not be provided with other options"], @[ @"thrud_alt" ]),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone_alt --xyzzy_alt"], (@[ @"quone_alt", @"xyzzy_alt" ])),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--confound --delivery: mutually exclusive options encountered"], (@[ @"confound", @"delivery" ])),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--syn_alt is required when using --ack_alt"], @[ @"syn_alt" ]),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorTooManyOccurrencesOfOption description:@"--thrud may not be provided more than once"], @[ @"thrud" ]),
-        ISSUE([NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--flarn_alt: required option not provided"], @[ @"flarn_alt" ])
-    ];
+    NSMutableArray<CLKArgumentIssue *> *expectedIssues = [[NSMutableArray alloc] init];
+    for (NSDictionary<NSString *, id> *spec in baseConstraintSpecs) {
+        NSAssert(spec[kErrorCodeKey] != nil, @"missing error code in subtest spec");
+        NSAssert(spec[kErrorDescriptionKey] != nil, @"missing error description in subtest spec");
+        NSAssert([spec[kErrorSalienceKey] count] > 0, @"missing or empty error salience in subtest spec");
+        CLKError code = [spec[kErrorCodeKey] unsignedIntValue];
+        NSArray<NSString *> *salience = spec[kErrorSalienceKey];
+        NSString *desc = spec[kErrorDescriptionKey];
+        NSError *error = [NSError clk_CLKErrorWithCode:code description:@"%@", desc];
+        CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOptions:salience];
+        [expectedIssues addObject:issue];
+    }
     
-    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:switchOptions parameterOptions:parameterOptions];
-    ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:constraints issues:issues];
+    CLKArgumentManifestValidator *validator = [self validatorWithSwitchOptions:manifestSwitches parameterOptions:manifestParameters];
+    ConstraintValidationSpec *spec = [ConstraintValidationSpec specWithConstraints:constraints issues:expectedIssues];
     [self evaluateSpec:spec usingValidator:validator];
 }
-#endif
+
 @end
