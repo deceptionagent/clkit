@@ -4,8 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-#warning +groupForOption:requiringAnyOfDependents: needs test coverage
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CLKOptionGroup : NSObject

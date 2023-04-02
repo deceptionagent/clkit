@@ -58,6 +58,15 @@
 - (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
                               options:(NSArray<CLKOption *> *)options
                          optionGroups:(NSArray<CLKOptionGroup *> *)groups
+                     expectedManifest:(NSDictionary<NSString *, id> *)expectedManifest
+{
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
+}
+
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
+                              options:(NSArray<CLKOption *> *)options
+                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
                                  spec:(ArgumentParsingResultSpec *)spec
 {
     CLKArgumentParser *parser = [CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:groups];

@@ -188,7 +188,55 @@
     [self performTestWithArgumentVector:@[ @"--flarn", @"--xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
 }
 
-#warning need testValidation_anyPresentDependentRequiredGroup
+- (void)testValidation_anyPresentDependentRequiredGroup
+{
+    NSArray *options = @[
+        [CLKOption optionWithName:@"alpha" flag:@"a"],
+        [CLKOption parameterOptionWithName:@"bravo" flag:@"b"],
+        [CLKOption optionWithName:@"charlie" flag:@"c"],
+        [CLKOption optionWithName:@"xyzzy" flag:@"x"] // not part of the group
+    ];
+    
+    NSArray *groups = @[
+        [CLKOptionGroup groupForOption:@"alpha" requiringAnyOfDependents:@[ @"bravo", @"charlie" ]]
+    ];
+    
+    NSArray *argv = @[ @"--alpha" ];
+    ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided when using --alpha: --bravo --charlie"];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
+    
+    argv = @[ @"--alpha", @"--xyzzy" ];
+    spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided when using --alpha: --bravo --charlie"];
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
+    
+    argv = @[ @"--charlie", @"--alpha" ];
+    NSDictionary *expectedManifest = @{
+        @"charlie" : @(1),
+        @"alpha"   : @(1)
+    };
+    
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups expectedManifest:expectedManifest];
+    
+    argv = @[ @"--charlie", @"--alpha", @"--bravo", @"bo_arg0" ];
+    expectedManifest = @{
+        @"charlie" : @(1),
+        @"alpha"   : @(1),
+        @"bravo"   : @[ @"bo_arg0" ]
+    };
+    
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups expectedManifest:expectedManifest];
+    
+    argv = @[ @"--alpha", @"--bravo", @"bo_arg0" ];
+    expectedManifest = @{
+        @"alpha"   : @(1),
+        @"bravo"   : @[ @"bo_arg0" ]
+    };
+    
+    [self performTestWithArgumentVector:argv options:options optionGroups:groups expectedManifest:expectedManifest];
+    
+    // an empty world
+    [self performTestWithArgumentVector:@[] options:options optionGroups:groups expectedManifest:@{}];
+}
 
 - (void)testValidation_mutualExclusionGroup
 {

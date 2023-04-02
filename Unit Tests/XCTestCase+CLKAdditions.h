@@ -31,6 +31,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv options:(NSArray<CLKOption *> *)options spec:(ArgumentParsingResultSpec *)spec;
 
+// a convenience for passing tests (since they always produce manifests and `expectedManifest` is nonnull)
+- (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
+                              options:(NSArray<CLKOption *> *)options
+                         optionGroups:(NSArray<CLKOptionGroup *> *)groups
+                     expectedManifest:(NSDictionary<NSString *, id> *)expectedManifest;
+
 - (void)performTestWithArgumentVector:(NSArray<NSString *> *)argv
                               options:(NSArray<CLKOption *> *)options
                          optionGroups:(NSArray<CLKOptionGroup *> *)groups
