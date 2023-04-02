@@ -15,10 +15,10 @@
 #import "NSError+CLKAdditions.h"
 #import "XCTestCase+CLKAdditions.h"
 
-#define SET(...) [[NSOrderedSet alloc] initWithObjects:__VA_ARGS__, nil]
-
 /*
-    test cases can be described with a convenient dictionary form that is turned into concrete test spec objects.
+    test cases can be described with a convenient dictionary form that is turned into
+    concrete test spec objects. tests may also use these keys to construct custom
+    subtest templates.
     
     :? = optional key
     
@@ -38,19 +38,19 @@
         kSubtestsKey : [
             // a case that should pass validation
             @{
-                kBandedOptionsKey :? [ <str> ]
+                kBandedOptionsKey     :? [ <str> ]
                 kSignificantOptionKey :? <str>
                 kPredicatingOptionKey :? <str>
             },
             
             // a case that should not pass validation
             @{
-                kBandedOptionsKey :? [ <str> ]
+                kBandedOptionsKey     :? [ <str> ]
                 kSignificantOptionKey :? <str>
                 kPredicatingOptionKey :? <str>
-                kErrorCodeKey : <CLKError>
-                kErrorSalienceKey : [ <str> ] // the salientOptions of CLKArgumentIssue
-                kErrorDescriptionKey : <str>
+                kErrorCodeKey         :  <CLKError>
+                kErrorSalienceKey     :  [ <str> ] // the salientOptions of CLKArgumentIssue
+                kErrorDescriptionKey  :  <str>
             }
         ]
     }
@@ -176,19 +176,21 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
 
 - (void)testValidateConstraint_required
 {
-    CLKOption *flarn = [CLKOption requiredParameterOptionWithName:@"flarn" flag:@"f"];
+    CLKOption *flarn = [CLKOption optionWithName:@"flarn" flag:@"f"];
+    CLKOption *barf = [CLKOption requiredParameterOptionWithName:@"barf" flag:@"b"];
     
     NSDictionary *suite = @{
         kConstraintTypeKey : @(CLKConstraintTypeRequired),
-        kManifestParametersKey : @{ flarn : @[ @"quone" ] },
+        kManifestSwitchesKey   : @{ flarn : @(1) },
+        kManifestParametersKey : @{ barf  : @[ @"bf_arg0" ] },
         kSubtestsKey : @[
-            @{ kSignificantOptionKey : @"flarn" },
+            @{ kSignificantOptionKey : @"barf" },
             
             @{
-                kSignificantOptionKey : @"barf",
+                kSignificantOptionKey : @"xyzzy",
                 kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
-                kErrorSalienceKey     : @[ @"barf" ],
-                kErrorDescriptionKey  : @"--barf: required option not provided"
+                kErrorSalienceKey     : @[ @"xyzzy" ],
+                kErrorDescriptionKey  : @"--xyzzy: required option not provided"
             }
         ]
     };
@@ -197,10 +199,10 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey : @(CLKConstraintTypeRequired),
         kSubtestsKey : @[
             @{
-                kSignificantOptionKey : @"barf",
+                kSignificantOptionKey : @"xyzzy",
                 kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
-                kErrorSalienceKey     : @[ @"barf" ],
-                kErrorDescriptionKey  : @"--barf: required option not provided"
+                kErrorSalienceKey     : @[ @"xyzzy" ],
+                kErrorDescriptionKey  : @"--xyzzy: required option not provided"
             }
         ]
     };
@@ -219,8 +221,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey     : @(CLKConstraintTypeRequired),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            flarn : @[ @"confound" ],
-            barf  : @[ @"delivery" ]
+            flarn : @[ @"fn_arg0" ],
+            barf  : @[ @"bf_arg0" ]
         },
         
         kSubtestsKey : @[
@@ -257,8 +259,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey     : @(CLKConstraintTypeRequired),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            flarn : @[ @"confound" ],
-            barf  : @[ @"delivery" ]
+            flarn : @[ @"fl_arg0" ],
+            barf  : @[ @"bf_arg0" ]
         },
         
         kSubtestsKey : @[
@@ -287,8 +289,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey     : @(CLKConstraintTypeAnyRequired),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            barf  : @[ @"xyzzy" ],
-            flarn : @[ @"confound", @"delivery" ]
+            barf  : @[ @"bf_arg0" ],
+            flarn : @[ @"fn_arg0", @"fn_arg1" ]
         },
         
         kSubtestsKey : @[
@@ -305,8 +307,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey     : @(CLKConstraintTypeAnyRequired),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            barf  : @[ @"xyzzy" ],
-            flarn : @[ @"confound", @"delivery" ]
+            barf  : @[ @"bf_arg0" ],
+            flarn : @[ @"fn_arg0", @"fn_arg1" ]
         },
         
         kSubtestsKey : @[
@@ -343,7 +345,71 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
     [self performSubtestSuite:emptyManifestSuite];
 }
 
-#warning add coverage for CLKConstraintTypeAnyRequired + predicatingOption (any-of-dependents)
+- (void)testValidateConstraint_anyRequired_predicatingOption
+{
+    CLKOption *acme  = [CLKOption parameterOptionWithName:@"acme" flag:@"a"];
+    CLKOption *flarn = [CLKOption parameterOptionWithName:@"flarn" flag:@"f"];
+    CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
+    
+    NSDictionary *suite = @{
+        kConstraintTypeKey     : @(CLKConstraintTypeAnyRequired),
+        kManifestSwitchesKey   : @{ quone : @(1) },
+        kManifestParametersKey : @{
+            acme  : @[ @"bf_arg0" ],
+            flarn : @[ @"fn_arg0", @"fn_arg1" ]
+        },
+        
+        kSubtestsKey : @[
+            @{
+                kBandedOptionsKey : @[ @"quone", @"syn" ],
+                kPredicatingOptionKey : @"acme"
+            },
+            
+            @{
+                kBandedOptionsKey : @[ @"flarn", @"syn" ],
+                kPredicatingOptionKey : @"acme"
+            },
+            
+            @{
+                kBandedOptionsKey : @[ @"flarn", @"quone" ],
+                kPredicatingOptionKey : @"acme"
+            }
+        ]
+    };
+    
+    NSDictionary *emptyManifestSuite = @{
+        kConstraintTypeKey : @(CLKConstraintTypeAnyRequired),
+        kSubtestsKey : @[
+            @{
+                kBandedOptionsKey : @[ @"flarn", @"quone" ],
+                kPredicatingOptionKey : @"acme"
+            }
+        ]
+    };
+    
+    NSDictionary *errorSuite = @{
+        kConstraintTypeKey     : @(CLKConstraintTypeAnyRequired),
+        kManifestSwitchesKey   : @{ quone : @(1) },
+        kManifestParametersKey : @{
+            acme  : @[ @"bf_arg0" ],
+            flarn : @[ @"fn_arg0", @"fn_arg1" ]
+        },
+        
+        kSubtestsKey : @[
+            @{
+                kBandedOptionsKey     : @[ @"syn", @"ack" ],
+                kPredicatingOptionKey : @"acme",
+                kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
+                kErrorSalienceKey     : @[ @"syn", @"ack" ],
+                kErrorDescriptionKey  : @"one or more of the following options must be provided when using --acme: --syn --ack"
+            },
+        ]
+    };
+
+    [self performSubtestSuite:suite];
+    [self performSubtestSuite:emptyManifestSuite];
+    [self performSubtestSuite:errorSuite];
+}
 
 - (void)testValidateConstraint_mutuallyExclusive
 {
@@ -355,15 +421,14 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey     : @(CLKConstraintTypeMutuallyExclusive),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            barf : @[ @"xyzzy" ],
-            flarn : @[ @"confound", @"delivery" ]
+            barf  : @[ @"bf_arg0" ],
+            flarn : @[ @"fn_arg0", @"fn_arg1" ]
         },
         
         kSubtestsKey : @[
-            @{ kBandedOptionsKey : @[ @"syn", @"ack" ] },
-            @{ kBandedOptionsKey : @[ @"syn", @"ack", @"what"] },
-            @{ kBandedOptionsKey : @[ @"quone", @"xyzzy" ] },
-            @{ kBandedOptionsKey : @[ @"barf", @"xyzzy" ] }
+            @{ kBandedOptionsKey : @[ @"xyzzy", @"quone" ] },
+            @{ kBandedOptionsKey : @[ @"barf", @"xyzzy" ] },
+            @{ kBandedOptionsKey : @[ @"syn", @"ack" ] }
         ]
     };
     
@@ -376,8 +441,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         kConstraintTypeKey     : @(CLKConstraintTypeMutuallyExclusive),
         kManifestSwitchesKey   : @{ quone : @(1) },
         kManifestParametersKey : @{
-            barf  : @[ @"xyzzy" ],
-            flarn : @[ @"confound", @"delivery" ]
+            barf  : @[ @"bf_arg0" ],
+            flarn : @[ @"fn_arg0", @"fn_arg1" ]
         },
         
         kSubtestsKey : @[
@@ -437,7 +502,7 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
             @{ kSignificantOptionKey : @"flarn" },
             
             @{
-                kBandedOptionsKey : @[],
+                kBandedOptionsKey     : @[],
                 kSignificantOptionKey : @"flarn"
             }
         ]
@@ -445,12 +510,12 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
     
     NSDictionary *suiteB = @{
         kConstraintTypeKey     : @(CLKConstraintTypeStandalone),
-        kManifestParametersKey : @{ confound : @[ @"acme" ] },
+        kManifestParametersKey : @{ confound : @[ @"cd_arg0" ] },
         kSubtestsKey : @[
             @{ kSignificantOptionKey : @"confound" },
             
             @{
-                kBandedOptionsKey : @[],
+                kBandedOptionsKey     : @[],
                 kSignificantOptionKey : @"confound"
             }
         ]
@@ -460,7 +525,7 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
     NSMutableDictionary *suiteA_recurrent = [suiteA mutableCopy];
     NSMutableDictionary *suiteB_recurrent = [suiteB mutableCopy];
     suiteA_recurrent[kManifestSwitchesKey]   = @{ flarn : @(7) };
-    suiteB_recurrent[kManifestParametersKey] = @{ confound : @[ @"acme", @"station" ] };
+    suiteB_recurrent[kManifestParametersKey] = @{ confound : @[ @"cd_arg0", @"cd_arg1" ] };
     
     // empty manifests
     NSMutableDictionary *suiteA_empty = [suiteA mutableCopy];
@@ -476,8 +541,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         },
         
         kManifestParametersKey : @{
-            confound : @[ @"acme" ],
-            delivery : @[ @"station" ]
+            confound : @[ @"cd_arg0" ],
+            delivery : @[ @"dy_arg0" ]
         },
         
         kSubtestsKey : @[
@@ -559,8 +624,8 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         },
         
         kManifestParametersKey : @{
-            quone : @[ @"thrud"],
-            xyzzy : @[ @"confound", @"delivery" ]
+            quone : @[ @"qe_arg0"],
+            xyzzy : @[ @"xy_arg0", @"xy_arg1" ]
         },
         
         kSubtestsKey : @[
@@ -616,6 +681,15 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         },
         
         @{
+            kConstraintTypeKey    : @(CLKConstraintTypeRequired),
+            kSignificantOptionKey : @"xyzzy",
+            kPredicatingOptionKey : @"confound",
+            kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
+            kErrorSalienceKey     : @[ @"xyzzy" ],
+            kErrorDescriptionKey  : @"--xyzzy is required when using --confound"
+        },
+        
+        @{
             kConstraintTypeKey   : @(CLKConstraintTypeAnyRequired),
             kBandedOptionsKey    : @[ @"xyzzy", @"quone" ],
             kErrorCodeKey        : @(CLKErrorRequiredOptionNotProvided),
@@ -623,6 +697,15 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
             kErrorDescriptionKey : @"one or more of the following options must be provided: --xyzzy --quone"
         },
         
+        @{
+            kConstraintTypeKey    : @(CLKConstraintTypeAnyRequired),
+            kBandedOptionsKey     : @[ @"xyzzy", @"quone" ],
+            kPredicatingOptionKey : @"confound",
+            kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
+            kErrorSalienceKey     : @[ @"xyzzy", @"quone" ],
+            kErrorDescriptionKey  : @"one or more of the following options must be provided when using --confound: --xyzzy --quone"
+        },
+
         @{
             kConstraintTypeKey   : @(CLKConstraintTypeMutuallyExclusive),
             kBandedOptionsKey    : @[ @"confound", @"station" ],
@@ -646,18 +729,6 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
             kErrorSalienceKey     : @[ @"station" ],
             kErrorDescriptionKey  : @"--station may not be provided more than once"
         }
-        
-/*
-        @{
-            kConstraintTypeKey    : @(CLKConstraintType),
-            kBandedOptionsKey     : @[ @"" ],
-            kSignificantOptionKey : @"",
-            kPredicatingOptionKey : @"",
-            kErrorCodeKey         : @(CLKError),
-            kErrorSalienceKey     : @[ @"" ],
-            kErrorDescriptionKey  : @""
-        },
-*/
     ];
     
     NSArray<NSDictionary *> *redundantConstraintSpecs = [baseConstraintSpecs arrayByAddingObjectsFromArray:baseConstraintSpecs];
