@@ -316,7 +316,7 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
                 kBandedOptionsKey    : @[ @"syn" ],
                 kErrorCodeKey        : @(CLKErrorRequiredOptionNotProvided),
                 kErrorSalienceKey    : @[ @"syn" ],
-                kErrorDescriptionKey : @"one or more of the following options must be provided: --syn"
+                kErrorDescriptionKey : @"--syn: required option not provided"
             },
             
             @{
@@ -397,12 +397,20 @@ static CLKArgumentManifestConstraint *_ConstraintFromSubtestTemplate(CLKConstrai
         
         kSubtestsKey : @[
             @{
+                kBandedOptionsKey     : @[ @"syn" ],
+                kPredicatingOptionKey : @"acme",
+                kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
+                kErrorSalienceKey     : @[ @"syn" ],
+                kErrorDescriptionKey  : @"--syn is required when using --acme"
+            },
+            
+            @{
                 kBandedOptionsKey     : @[ @"syn", @"ack" ],
                 kPredicatingOptionKey : @"acme",
                 kErrorCodeKey         : @(CLKErrorRequiredOptionNotProvided),
                 kErrorSalienceKey     : @[ @"syn", @"ack" ],
                 kErrorDescriptionKey  : @"one or more of the following options must be provided when using --acme: --syn --ack"
-            },
+            }
         ]
     };
 

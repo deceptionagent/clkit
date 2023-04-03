@@ -11,11 +11,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (instancetype)groupRequiringAnyOfOptions:(NSArray<NSString *> *)options;
-+ (instancetype)groupForOption:(NSString *)option requiringAnyOfDependents:(NSArray<NSString *> *)dependentOptions;
-+ (instancetype)mutexedGroupForOptions:(NSArray<NSString *> *)options;
-+ (instancetype)standaloneGroupForOption:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptions;
-+ (instancetype)groupForOption:(NSString *)option requiringDependency:(NSString *)parentOption;
++ (instancetype)groupRequiringAnyOfOptionsNamed:(NSArray<NSString *> *)options;
++ (instancetype)groupForOptionNamed:(NSString *)option requiringAnyOfDependents:(NSArray<NSString *> *)dependentOptions;
++ (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options;
++ (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptions;
++ (instancetype)groupForOptionNamed:(NSString *)option requiringDependency:(NSString *)parentOption;
 
 @end
 

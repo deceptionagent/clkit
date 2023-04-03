@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E1D5F8329DA59E300EBD41C /* Test_CLKOptionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E1D5F8229DA59E300EBD41C /* Test_CLKOptionGroup.m */; };
 		A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */; };
 		A609E2C61F5B6D580088DEDA /* CLKArgumentManifestValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2C41F5B6D570088DEDA /* CLKArgumentManifestValidator.m */; };
 		A609E2DD1F5D1BAB0088DEDA /* CLKError.m in Sources */ = {isa = PBXBuildFile; fileRef = A609E2DB1F5D1BAB0088DEDA /* CLKError.m */; };
@@ -100,6 +101,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5E1D5F8229DA59E300EBD41C /* Test_CLKOptionGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_CLKOptionGroup.m; sourceTree = "<group>"; };
 		A609E2C01F59642B0088DEDA /* XCTestCase+CLKAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+CLKAdditions.m"; sourceTree = "<group>"; };
 		A609E2C21F5964670088DEDA /* XCTestCase+CLKAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+CLKAdditions.h"; sourceTree = "<group>"; };
 		A609E2C31F5B6D570088DEDA /* CLKArgumentManifestValidator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLKArgumentManifestValidator.h; sourceTree = "<group>"; };
@@ -318,6 +320,7 @@
 				A61030ED1F11D06F00AB2033 /* Test_CLKAssert.m */,
 				A64615EE20FEC95E001F885C /* Test_CLKCommandResult.m */,
 				A66A9DF21F02406F00456347 /* Test_CLKOption.m */,
+				5E1D5F8229DA59E300EBD41C /* Test_CLKOptionGroup.m */,
 				A6BB1B3F2033F74A00927BD9 /* Test_CLKOptionRegistry.m */,
 				A64615F520FF3DEC001F885C /* Test_CLKVerbDepot.m */,
 				A6FAEEB221055AD3001F408C /* Test_CLKVerbFamily.m */,
@@ -558,6 +561,7 @@
 				A66A9E0F1F04219E00456347 /* Test_CLKAdditions.m in Sources */,
 				A66A9E011F037A9400456347 /* Test_CLKArgumentManifest.m in Sources */,
 				A66A9E071F03A14400456347 /* Test_CLKArgumentParser.m in Sources */,
+				5E1D5F8329DA59E300EBD41C /* Test_CLKOptionGroup.m in Sources */,
 				A609E2C11F59642B0088DEDA /* XCTestCase+CLKAdditions.m in Sources */,
 				A6DFB20424DCCEEB00C17F0E /* Test_CLKArgumentIssue.m in Sources */,
 				A6AA544D220FF7210030C48A /* StuntTransformer.m in Sources */,

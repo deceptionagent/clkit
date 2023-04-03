@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_END
 
 @synthesize constraints = _constraints;
 
-+ (instancetype)groupRequiringAnyOfOptions:(NSArray<NSString *> *)options
++ (instancetype)groupRequiringAnyOfOptionsNamed:(NSArray<NSString *> *)options
 {
     CLKHardParameterAssert(options.count > 0, @"one or more option names required for required group");
     NSOrderedSet<NSString *> *optionSet = [NSOrderedSet orderedSetWithArray:options];
@@ -37,9 +37,12 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
-+ (instancetype)groupForOption:(NSString *)option requiringAnyOfDependents:(NSArray<NSString *> *)dependentOptions
++ (instancetype)groupForOptionNamed:(NSString *)option requiringAnyOfDependents:(NSArray<NSString *> *)dependentOptions
 {
+    CLKHardParameterAssert(option != nil);
     CLKHardParameterAssert(dependentOptions.count > 0, @"one or more option names required for required dependents group");
+    CLKHardParameterAssert(![dependentOptions containsObject:option], @"an option cannot be its own dependent");
+    
     NSOrderedSet<NSString *> *optionSet = [NSOrderedSet orderedSetWithArray:dependentOptions];
     CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeAnyRequired
                                                                                       bandedOptions:optionSet
@@ -49,7 +52,7 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
-+ (instancetype)mutexedGroupForOptions:(NSArray<NSString *> *)options
++ (instancetype)mutexedGroupForOptionsNamed:(NSArray<NSString *> *)options
 {
     CLKHardParameterAssert(options.count > 1, @"two or more option names required for mutexed group");
     NSOrderedSet<NSString *> *optionSet = [NSOrderedSet orderedSetWithArray:options];
@@ -61,9 +64,11 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
-+ (instancetype)standaloneGroupForOption:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptions
++ (instancetype)standaloneGroupForOptionNamed:(NSString *)option allowing:(NSArray<NSString *> *)whitelistedOptions
 {
     CLKHardParameterAssert(option != nil);
+    CLKHardParameterAssert(![whitelistedOptions containsObject:option], @"an option cannot be its whitelist");
+    
     NSOrderedSet<NSString *> *optionSet = [NSOrderedSet orderedSetWithArray:whitelistedOptions];
     CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeStandalone
                                                                                       bandedOptions:optionSet
@@ -73,11 +78,11 @@ NS_ASSUME_NONNULL_END
     return [[self alloc] _initWithConstraints:@[ constraint ]];
 }
 
-+ (instancetype)groupForOption:(NSString *)option requiringDependency:(NSString *)dependency
++ (instancetype)groupForOptionNamed:(NSString *)option requiringDependency:(NSString *)dependency
 {
     CLKHardParameterAssert(option != nil);
     CLKHardParameterAssert(dependency != nil);
-    CLKHardParameterAssert(![option isEqualToString:dependency], @"an option cannot be declared as its own dependency");
+    CLKHardParameterAssert(![option isEqualToString:dependency], @"an option cannot be its own dependency");
     
     CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeRequired
                                                                                       bandedOptions:nil

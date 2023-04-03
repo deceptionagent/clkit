@@ -95,13 +95,7 @@ NS_ASSUME_NONNULL_END
     
     NSString *option = constraint.significantOption;
     if (![_manifest hasOptionNamed:option]) {
-        NSError *error;
-        if (constraint.predicatingOption != nil) {
-            error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, constraint.predicatingOption];
-        } else {
-            error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", option];
-        }
-        
+        NSError *error = [self _errorForUnsatisfiedPresenceOfOption:option predicatedByOption:constraint.predicatingOption];
         CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOption:option];
         issueHandler(issue);
     }
@@ -111,6 +105,7 @@ NS_ASSUME_NONNULL_END
 {
     NSParameterAssert(constraint.type == CLKConstraintTypeAnyRequired);
     
+    NSOrderedSet<NSString *> *bandedOptions = constraint.bandedOptions;
     for (NSString *option in constraint.bandedOptions) {
         if ([_manifest hasOptionNamed:option]) {
             return;
@@ -118,16 +113,28 @@ NS_ASSUME_NONNULL_END
     }
     
     NSError *error;
-    NSString *optionsDesc = [constraint.bandedOptions.array componentsJoinedByString:@" --"];
-    if (constraint.predicatingOption != nil) {
-        error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided when using --%@: --%@", constraint.predicatingOption, optionsDesc];
+    if (bandedOptions.count == 1) {
+        error = [self _errorForUnsatisfiedPresenceOfOption:bandedOptions[0] predicatedByOption:constraint.predicatingOption];
     } else {
-        #warning maybe emit "--%@: required option not provided" if bandedOptions.count == 1
-        error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", optionsDesc];
+        NSString *optionsDesc = [bandedOptions.array componentsJoinedByString:@" --"];
+        if (constraint.predicatingOption != nil) {
+            error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided when using --%@: --%@", constraint.predicatingOption, optionsDesc];
+        } else {
+            error = [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --%@", optionsDesc];
+        }
     }
     
-    CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOptions:constraint.bandedOptions.array];
+    CLKArgumentIssue *issue = [CLKArgumentIssue issueWithError:error salientOptions:bandedOptions.array];
     issueHandler(issue);
+}
+
+- (NSError *)_errorForUnsatisfiedPresenceOfOption:(NSString *)option predicatedByOption:(NSString *)predicate
+{
+    if (predicate != nil) {
+        return [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@ is required when using --%@", option, predicate];
+    } else {
+        return [NSError clk_CLKErrorWithCode:CLKErrorRequiredOptionNotProvided description:@"--%@: required option not provided", option];
+    }
 }
 
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler

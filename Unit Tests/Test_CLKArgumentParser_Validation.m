@@ -146,7 +146,7 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOption:@"charlie" requiringDependency:@"bravo"]
+        [CLKOptionGroup groupForOptionNamed:@"charlie" requiringDependency:@"bravo"]
     ];
     
     NSArray *argv = @[ @"--charlie" ];
@@ -171,7 +171,7 @@
         [CLKOption optionWithName:@"xyzzy" flag:@"x"]
     ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupRequiringAnyOfOptions:@[ @"flarn", @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup groupRequiringAnyOfOptionsNamed:@[ @"flarn", @"barf" ]];
     
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --flarn --barf"];
     [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
@@ -198,7 +198,7 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOption:@"alpha" requiringAnyOfDependents:@[ @"bravo", @"charlie" ]]
+        [CLKOptionGroup groupForOptionNamed:@"alpha" requiringAnyOfDependents:@[ @"bravo", @"charlie" ]]
     ];
     
     NSArray *argv = @[ @"--alpha" ];
@@ -248,7 +248,7 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup mutexedGroupForOptions:@[ @"flarn", @"barf" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
     ];
     
     NSArray *argv = @[ @"--quone", @"--flarn", @"--barf" ];
@@ -260,7 +260,7 @@
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     groups = @[
-        [CLKOptionGroup mutexedGroupForOptions:@[ @"flarn", @"barf", @"quone" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf", @"quone" ]],
     ];
     
     argv = @[ @"--quone", @"--flarn", @"--barf" ];
@@ -272,7 +272,7 @@
     [self performTestWithArgumentVector:argv options:options optionGroups:groups spec:spec];
     
     groups = @[
-        [CLKOptionGroup mutexedGroupForOptions:@[ @"flarn", @"barf" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]],
     ];
     
     NSDictionary *expectedOptionManifest = @{
@@ -296,14 +296,14 @@
     
     /* success: no standalone option provided */
     
-    CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[]];
+    CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[]];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithEmptyManifest];
     [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
     
     spec = [ArgumentParsingResultSpec specWithSwitchOption:@"barf" occurrences:1];
     [self performTestWithArgumentVector:@[ @"--barf" ] options:options optionGroups:@[ group ] spec:spec];
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
     [self performTestWithArgumentVector:@[ @"--barf" ] options:options optionGroups:@[ group ] spec:spec];
     
     /* success: standalone option provided */
@@ -321,7 +321,7 @@
         @"barf" : @(1)
     };
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ group ] spec:spec];
 
@@ -339,23 +339,23 @@
         @"quone" : @[ @"xyzzy" ]
     };
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf", @"quone" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf", @"quone" ]];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:expectedManifest];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--barf", @"--quone", @"xyzzy" ] options:options optionGroups:@[ group ] spec:spec];
     
     /* validation failures */
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[]];
     spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with other options"];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--barf" ] options:options optionGroups:@[ group ] spec:spec];
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
     spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone", @"confound.mak" ] options:options optionGroups:@[ group ] spec:spec];
     
     NSArray *groups = @[
-        [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]],
-        [CLKOptionGroup standaloneGroupForOption:@"quone" allowing:@[ @"barf" ]]
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]],
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"quone" allowing:@[ @"barf" ]]
     ];
     
     NSArray *errors = @[
@@ -367,8 +367,8 @@
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone", @"confound.mak" ] options:options optionGroups:groups spec:spec];
     
     groups = @[
-        [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]],
-        [CLKOptionGroup standaloneGroupForOption:@"quone" allowing:@[ @"xyzzy" ]]
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]],
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"quone" allowing:@[ @"xyzzy" ]]
     ];
     
     errors = @[
@@ -380,8 +380,8 @@
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone", @"confound.mak" ] options:options optionGroups:groups spec:spec];
     
     groups = @[
-        [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]],
-        [CLKOptionGroup mutexedGroupForOptions:@[ @"flarn", @"quone" ]]
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"quone" ]]
     ];
     
     errors = @[
@@ -400,8 +400,8 @@
     */
     
     groups = @[
-        [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]],
-        [CLKOptionGroup standaloneGroupForOption:@"quone" allowing:@[ @"flarn" ]]
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]],
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"quone" allowing:@[ @"flarn" ]]
     ];
     
     spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorMutuallyExclusiveOptionsPresent description:@"--flarn may not be provided with options other than the following: --barf"];
@@ -419,7 +419,7 @@
     
     /* success: no standalone option provided */
     
-    CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]];
     ArgumentParsingResultSpec *spec = [ArgumentParsingResultSpec specWithEmptyManifest];
     [self performTestWithArgumentVector:@[] options:options optionGroups:@[ group ] spec:spec];
     
@@ -451,8 +451,8 @@
     [self performTestWithArgumentVector:@[ @"--flarn", @"--quone" ] options:options optionGroups:@[ group ] spec:spec];
 
     NSArray *groups = @[
-        [CLKOptionGroup standaloneGroupForOption:@"flarn" allowing:@[ @"barf" ]],
-        [CLKOptionGroup mutexedGroupForOptions:@[ @"barf", @"xyzzy" ]]
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"flarn" allowing:@[ @"barf" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"barf", @"xyzzy" ]]
     ];
     
     errors = @[
@@ -477,9 +477,9 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupRequiringAnyOfOptions:@[ @"flarn", @"barf" ]],
-        [CLKOptionGroup mutexedGroupForOptions:@[ @"quone", @"xyzzy" ]],
-        [CLKOptionGroup standaloneGroupForOption:@"syn" allowing:@[ @"ack" ]]
+        [CLKOptionGroup groupRequiringAnyOfOptionsNamed:@[ @"flarn", @"barf" ]],
+        [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"quone", @"xyzzy" ]],
+        [CLKOptionGroup standaloneGroupForOptionNamed:@"syn" allowing:@[ @"ack" ]]
     ];
     
     NSArray *errors = @[

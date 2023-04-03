@@ -36,7 +36,7 @@
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:nil]);
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[]]);
     
-    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptions:@[ @"flarn", @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"barf" ]];
     XCTAssertNotNil([CLKArgumentParser parserWithArgumentVector:argv options:options optionGroups:@[ group ]]);
     
 #pragma clang diagnostic push
@@ -536,7 +536,7 @@
     CLKOption *quone = [CLKOption optionWithName:@"quone" flag:@"q"];
     CLKOption *confound = [CLKOption parameterOptionWithName:@"confound" flag:@"c"];
     CLKOption *delivery = [CLKOption parameterOptionWithName:@"delivery" flag:@"d"];
-    CLKOptionGroup *confoundDeliveryGroup = [CLKOptionGroup groupForOption:@"confound" requiringDependency:@"delivery"];
+    CLKOptionGroup *confoundDeliveryGroup = [CLKOptionGroup groupForOptionNamed:@"confound" requiringDependency:@"delivery"];
     
     /* sentinel alone in argv */
     
@@ -641,14 +641,14 @@
     
     /* mutually exclusive options divided by sentinel (success) */
     
-    CLKOptionGroup *mutex = [CLKOptionGroup mutexedGroupForOptions:@[ @"flarn", @"quone" ]];
+    CLKOptionGroup *mutex = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"flarn", @"quone" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"station" ];
     spec = [ArgumentParsingResultSpec specWithOptionManifest:@{ @"flarn" : @[ @"acme" ] } positionalArguments:@[ @"--quone", @"station" ]];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone ] optionGroups:@[ mutex ] spec:spec];
     
     /* required group member provided after sentinel (error) */
     
-    CLKOptionGroup *requiredGroup = [CLKOptionGroup groupRequiringAnyOfOptions:@[ @"quone", @"delivery" ]];
+    CLKOptionGroup *requiredGroup = [CLKOptionGroup groupRequiringAnyOfOptionsNamed:@[ @"quone", @"delivery" ]];
     argv = @[ @"--flarn", @"acme", @"--", @"--quone", @"xyzzy" ];
     spec = [ArgumentParsingResultSpec specWithCLKErrorCode:CLKErrorRequiredOptionNotProvided description:@"one or more of the following options must be provided: --quone --delivery"];
     [self performTestWithArgumentVector:argv options:@[ flarn, quone, delivery ] optionGroups:@[ requiredGroup ] spec:spec];
@@ -776,7 +776,7 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOption:@"quone" requiringDependency:@"noise"]
+        [CLKOptionGroup groupForOptionNamed:@"quone" requiringDependency:@"noise"]
     ];
     
     // organized by how they should be interpreted by the parser
@@ -861,16 +861,16 @@
          [CLKOption parameterOptionWithName:@"syn" flag:@"s"],
     ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupRequiringAnyOfOptions:@[ @"barf" ]];
+    CLKOptionGroup *group = [CLKOptionGroup groupRequiringAnyOfOptionsNamed:@[ @"barf" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
-    group = [CLKOptionGroup mutexedGroupForOptions:@[ @"ack", @"barf" ]];
+    group = [CLKOptionGroup mutexedGroupForOptionsNamed:@[ @"ack", @"barf" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"barf" allowing:@[ @"syn" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"barf" allowing:@[ @"syn" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
     
-    group = [CLKOptionGroup standaloneGroupForOption:@"syn" allowing:@[ @"barf" ]];
+    group = [CLKOptionGroup standaloneGroupForOptionNamed:@"syn" allowing:@[ @"barf" ]];
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:@[ group ]]);
 }
 
@@ -883,7 +883,7 @@
     ];
     
     NSArray *groups = @[
-        [CLKOptionGroup groupForOption:@"syn" requiringDependency:@"flarn"]
+        [CLKOptionGroup groupForOptionNamed:@"syn" requiringDependency:@"flarn"]
     ];
     
     XCTAssertThrows([CLKArgumentParser parserWithArgumentVector:@[] options:options optionGroups:groups]);
@@ -997,7 +997,7 @@
         [CLKOption parameterOptionWithName:@"quone" flag:@"q"]
     ];
     
-    CLKOptionGroup *group = [CLKOptionGroup groupRequiringAnyOfOptions:@[ @"flarn", @"barf", @"quone" ]];
+    CLKOptionGroup *group = [CLKOptionGroup groupRequiringAnyOfOptionsNamed:@[ @"flarn", @"barf", @"quone" ]];
     error = [NSError clk_POSIXErrorWithCode:EINVAL description:@"expected argument for option '--flarn'"];
     [self performTestWithArgumentVector:@[ @"--flarn" ] options:options optionGroups:@[ group ] error:error];
 }
