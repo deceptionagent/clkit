@@ -104,7 +104,7 @@
 
 - (void)testSwitchOptions
 {
-    NSArray *argv = @[ @"--foo", @"-f", @"-bfb", @"-qqq",  @"--syn-ack", @"--ack--syn" ];
+    NSArray *argv = @[ @"--foo", @"-f", @"-bfs", @"-qqq",  @"--syn-ack", @"--ack--syn" ];
     NSArray *options = @[
         [CLKOption optionWithName:@"foo" flag:@"f"],
         [CLKOption optionWithName:@"bar" flag:@"b"],
@@ -115,9 +115,9 @@
     
     NSDictionary *expectedOptionManifest = @{
         @"foo" : @(3),
-        @"bar" : @(2),
+        @"bar" : @(1),
         @"quone" : @(3),
-        @"syn-ack" : @(1),
+        @"syn-ack" : @(2),
         @"ack--syn" : @(1)
     };
     

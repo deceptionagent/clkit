@@ -318,13 +318,22 @@
     //    3. let normal option flag parsing take care of them
     //
     
-    NSString *flagSet = [[_argumentVector clk_popFirstObject] substringFromIndex:1];
+    NSString *token = [_argumentVector clk_popFirstObject];
+    NSAssert(token.length > 1, @"invalid option flag set token length");
+    NSAssert([token characterAtIndex:0] == '-' && [token characterAtIndex:1] != '-', @"encountered '%@' when attempting to parse an option flag set", token);
     
-    NSRange range = NSMakeRange(0, flagSet.length);
-    NSStringEnumerationOptions enumerationOpts = (NSStringEnumerationByComposedCharacterSequences | NSStringEnumerationReverse); // backward to preserve order when inserting
-    [flagSet enumerateSubstringsInRange:range options:enumerationOpts usingBlock:^(NSString *flag, __unused NSRange substringRange, __unused NSRange enclosingRange, __unused BOOL *outStop) {
-        [_argumentVector insertObject:[@"-" stringByAppendingString:flag] atIndex:0];
-    }];
+    NSUInteger len = token.length - 1;
+    unichar flags[len];
+    [token getCharacters:flags range:NSMakeRange(1, len)];
+    
+    // reverse enumeration preserves order when inserted at index 0 in _argumentVector
+    NSUInteger ri = len;
+    for (NSUInteger i = 0 ; i < len ; i++) {
+        ri--;
+        unichar f = flags[ri];
+        NSString *synthSwitch = [[NSString alloc] initWithFormat:@"-%C", f];
+        [_argumentVector insertObject:synthSwitch atIndex:0];
+    }
     
     return CLKAPStateReadNextArgumentToken;
 }
@@ -332,17 +341,17 @@
 - (CLKAPState)_parseOptionFlag
 {
     NSAssert((_argumentVector.count > 0), @"empty argument vector");
-    NSString *rawArgument = [_argumentVector clk_popFirstObject];
-    NSAssert((rawArgument.length == 2 && [rawArgument hasPrefix:@"-"]), @"encountered '%@' when attempting to parse an option flag", rawArgument);
+    NSString *token = [_argumentVector clk_popFirstObject];
+    NSAssert((token.length == 2 && [token characterAtIndex:0] == '-'), @"encountered '%@' when attempting to parse an option flag", token);
     
     CLKArgumentIssue *issue;
-    CLKOption *option = [self _optionForOptionFlagToken:rawArgument issue:&issue];
+    CLKOption *option = [self _optionForOptionFlagToken:token issue:&issue];
     if (option == nil) {
         [self _accumulateParsingIssue:issue];
         return CLKAPStateReadNextArgumentToken;
     }
     
-    return [self _handleParsedOption:option userInvocation:rawArgument];
+    return [self _handleParsedOption:option userInvocation:token];
 }
 
 - (CLKAPState)_parseOptionNameAssignment

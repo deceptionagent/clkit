@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -484,7 +484,8 @@
 		A66A9DD71F02294800456347 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Plastic Pulse";
 				TargetAttributes = {
 					A66A9DDE1F02294800456347 = {
@@ -637,9 +638,11 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -649,6 +652,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -704,9 +708,11 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -716,6 +722,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -741,6 +748,7 @@
 		A66A9DE71F02294800456347 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -749,6 +757,7 @@
 		A66A9DE81F02294800456347 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -759,8 +768,14 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "unit tests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.plasticpulse.unit-tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -772,8 +787,14 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "unit tests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.plasticpulse.unit-tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -784,6 +805,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -793,6 +815,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
