@@ -24,7 +24,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     BOOL _recurrent;
     BOOL _standalone;
     CLKArgumentTransformer *_transformer;
-    NSMutableArray<CLKArgumentManifestConstraint *> *_constraints;
+    NSArray<CLKArgumentManifestConstraint *> *_constraints;
 }
 
 @synthesize type = _type;
@@ -114,7 +114,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
 
 - (void)_initConstraints
 {
-    _constraints = [NSMutableArray array];
+    NSMutableArray<CLKArgumentManifestConstraint *> *constraints = [[NSMutableArray alloc] init];
     
     if (_required) {
         CLKArgumentManifestConstraint *constraint = [[CLKArgumentManifestConstraint alloc] initWithType:CLKConstraintTypeRequired
@@ -122,7 +122,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
                                                                                       significantOption:self.name
                                                                                       predicatingOption:nil];
         
-        [_constraints addObject:constraint];
+        [constraints addObject:constraint];
     }
     
     if (!_recurrent) {
@@ -131,7 +131,7 @@ NSString *CLKStringForOptionType(CLKOptionType type)
                                                                                       significantOption:self.name
                                                                                       predicatingOption:nil];
         
-        [_constraints addObject:constraint];
+        [constraints addObject:constraint];
     }
     
     if (_standalone) {
@@ -140,8 +140,10 @@ NSString *CLKStringForOptionType(CLKOptionType type)
                                                                                       significantOption:self.name
                                                                                       predicatingOption:nil];
         
-        [_constraints addObject:constraint];
+        [constraints addObject:constraint];
     }
+    
+    _constraints = constraints;
 }
 
 - (id)copyWithZone:(__unused NSZone *)zone

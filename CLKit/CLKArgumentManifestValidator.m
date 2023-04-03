@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_validateConstraint:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateStrictRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateAnyPresentRequirement:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
+- (NSError *)_errorForUnsatisfiedPresenceOfOption:(NSString *)option predicatedByOption:(nullable NSString *)predicate;
 - (void)_validateMutualExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateStandaloneExclusion:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
 - (void)_validateOccurrenceLimit:(CLKArgumentManifestConstraint *)constraint issueHandler:(NS_NOESCAPE CLKAMVIssueHandler)issueHandler;
