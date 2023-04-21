@@ -62,6 +62,11 @@ NSString *CLKStringForOptionType(CLKOptionType type)
     return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:YES recurrent:NO standalone:NO transformer:nil];
 }
 
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(NSString *)flag transformer:(CLKArgumentTransformer *)transformer
+{
+    return [[self alloc] _initWithType:CLKOptionTypeParameter name:name flag:flag required:NO recurrent:NO standalone:NO transformer:transformer];
+}
+
 + (instancetype)parameterOptionWithName:(NSString *)name
                                    flag:(nullable NSString *)flag
                                required:(BOOL)required

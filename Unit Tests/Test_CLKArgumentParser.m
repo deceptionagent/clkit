@@ -127,9 +127,10 @@
 
 - (void)testParameterOptions
 {
-    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie", @"--syn-ack", @"quone", @"--ack--syn", @"xyzzy" ];
+    NSArray *argv = @[ @"--foo", @"alpha", @"-f", @"bravo", @"-b", @"charlie", @"--syn-ack", @"quone", @"--ack--syn", @"xyzzy", @"-p", @"!?!" ];
     NSArray *options = @[
         [CLKOption parameterOptionWithName:@"foo" flag:@"f" required:NO recurrent:YES transformer:nil],
+        [CLKOption parameterOptionWithName:@"boop" flag:@"p" transformer:nil],
         [CLKOption parameterOptionWithName:@"bar" flag:@"b"],
         [CLKOption parameterOptionWithName:@"syn-ack" flag:@"s"],
         [CLKOption parameterOptionWithName:@"ack--syn" flag:@"a"]
@@ -137,6 +138,7 @@
     
     NSDictionary *expectedOptionManifest = @{
         @"foo" : @[ @"alpha", @"bravo" ],
+        @"boop" : @[ @"!?!" ],
         @"bar" : @[ @"charlie" ],
         @"syn-ack" : @[ @"quone" ],
         @"ack--syn" : @[ @"xyzzy" ]
@@ -750,7 +752,7 @@
     
     options = @[
         [CLKOption parameterOptionWithName:@"acme" flag:@"a" required:NO recurrent:NO transformer:acmeTransformer],
-        [CLKOption parameterOptionWithName:@"confound" flag:@"c" required:NO recurrent:NO transformer:confoundTransformer]
+        [CLKOption parameterOptionWithName:@"confound" flag:@"c" transformer:confoundTransformer]
     ];
     
     argv = @[ @"--acme", @"station", @"--confound", @"819", @"/fatum/iustum/stultorum" ];

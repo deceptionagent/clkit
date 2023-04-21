@@ -217,6 +217,9 @@ NS_ASSUME_NONNULL_END
     option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" required:NO recurrent:NO transformer:transformer];
     [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:transformer];
     
+    option = [CLKOption parameterOptionWithName:@"flarn" flag:@"f" transformer:transformer];
+    [self verifyParameterOption:option name:@"flarn" flag:@"f" required:NO recurrent:NO transformer:transformer];
+    
     option = [CLKOption standaloneParameterOptionWithName:@"flarn" flag:@"f"];
     [self verifyOption:option type:CLKOptionTypeParameter name:@"flarn" flag:@"f" required:NO recurrent:NO standalone:YES transformer:nil];
     

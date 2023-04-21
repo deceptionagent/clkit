@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
 + (instancetype)requiredParameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag;
++ (instancetype)parameterOptionWithName:(NSString *)name flag:(nullable NSString *)flag transformer:(nullable CLKArgumentTransformer *)transformer;
 
 + (instancetype)parameterOptionWithName:(NSString *)name
                                    flag:(nullable NSString *)flag
